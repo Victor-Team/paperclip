@@ -3,6 +3,7 @@ import {
   PROVIDER_QUOTA_RECOVERY_DEFAULT_BACKOFF_MS,
   classifyAdapterFailureForRecovery,
   classifyContinuationFailure,
+  isProviderQuotaFailureMessage,
 } from "./service.js";
 import { legacyExecutionNeedsReconciliation } from "../legacy-execution-recovery.js";
 
@@ -125,5 +126,53 @@ describe("classifyAdapterFailureForRecovery", () => {
       error: "Workspace storage capacity limit reached.",
       resultJson: null,
     })).toBeNull();
+  });
+
+  // TOK-185: the Gemini-CLI family words its 429 differently from the Claude
+  // and Codex adapters. Without these alternatives the turn was classified as
+  // a generic adapter failure and lost the quota backoff entirely.
+  it("classifies Gemini-CLI 429 wordings as provider quota", () => {
+    const now = new Date("2026-07-15T20:00:00.000Z");
+    const expected = {
+      kind: "provider_quota",
+      retryAt: new Date(now.getTime() + PROVIDER_QUOTA_RECOVERY_DEFAULT_BACKOFF_MS),
+      parsedResetTime: false,
+    };
+    for (const error of [
+      "API error (attempt 7): RESOURCE_EXHAUSTED (code 429): Individual quota reached.",
+      "429 You have exceeded the weekly usage quota.",
+      "You exceeded your current quota, please check your plan and billing details.",
+    ]) {
+      expect(classifyAdapterFailureForRecovery({
+        errorCode: "adapter_failed",
+        error,
+        resultJson: null,
+      }, now), error).toEqual(expected);
+    }
+  });
+});
+
+describe("isProviderQuotaFailureMessage", () => {
+  it("matches provider quota wordings across adapter families", () => {
+    for (const message of [
+      "You've hit your usage limit for GPT-5.",
+      "Provider quota exceeded for this model.",
+      "RESOURCE_EXHAUSTED (code 429): Individual quota reached.",
+      "429 You have exceeded the weekly usage quota.",
+    ]) {
+      expect(isProviderQuotaFailureMessage(message), message).toBe(true);
+    }
+  });
+
+  it("does not match unrelated failures or absent messages", () => {
+    for (const message of [
+      "Workspace storage capacity limit reached.",
+      "model gemini-3.5-flash not found",
+      "spawn ENOENT",
+    ]) {
+      expect(isProviderQuotaFailureMessage(message), message).toBe(false);
+    }
+    expect(isProviderQuotaFailureMessage(null)).toBe(false);
+    expect(isProviderQuotaFailureMessage(undefined)).toBe(false);
   });
 });

@@ -70,6 +70,12 @@ const mockedAppendHeartbeatRunEvent = vi.mocked(appendHeartbeatRunEvent);
 const embeddedPostgresSupport = await getEmbeddedPostgresTestSupport();
 const describeEmbeddedPostgres = embeddedPostgresSupport.supported ? describe : describe.skip;
 const PROVIDER_QUOTA_TEST_ADAPTER = "provider_quota_test";
+// Mirrors the installed `antigravity_local` plugin: the Gemini CLI exits 0 and
+// the adapter reports no errorMessage, while the structured final response
+// under `resultJson.parsed` carries the failed turn (TOK-185).
+const STRUCTURED_ERROR_TEST_ADAPTER = "structured_final_error_test";
+const STRUCTURED_ERROR_QUOTA_MESSAGE =
+  "API error (attempt 7): RESOURCE_EXHAUSTED (code 429): Individual quota reached.";
 
 if (!embeddedPostgresSupport.supported) {
   console.warn(
@@ -124,6 +130,31 @@ describeEmbeddedPostgres("heartbeat bounded retry scheduling", () => {
         testedAt: new Date().toISOString(),
       }),
     });
+    registerServerAdapter({
+      type: STRUCTURED_ERROR_TEST_ADAPTER,
+      execute: async () => ({
+        exitCode: 0,
+        signal: null,
+        timedOut: false,
+        errorMessage: null,
+        errorCode: null,
+        summary: "",
+        resultJson: {
+          raw: "{}",
+          parsed: {
+            status: "ERROR",
+            response: "",
+            error: STRUCTURED_ERROR_QUOTA_MESSAGE,
+          },
+        },
+      }),
+      testEnvironment: async () => ({
+        adapterType: STRUCTURED_ERROR_TEST_ADAPTER,
+        status: "pass",
+        checks: [],
+        testedAt: new Date().toISOString(),
+      }),
+    });
   }, 20_000);
 
   afterEach(async () => {
@@ -140,6 +171,7 @@ describeEmbeddedPostgres("heartbeat bounded retry scheduling", () => {
 
   afterAll(async () => {
     unregisterServerAdapter(PROVIDER_QUOTA_TEST_ADAPTER);
+    unregisterServerAdapter(STRUCTURED_ERROR_TEST_ADAPTER);
     await tempDb?.cleanup();
   });
 
@@ -362,6 +394,50 @@ describeEmbeddedPostgres("heartbeat bounded retry scheduling", () => {
         { timeout: 5_000, interval: 50 },
       )
       .toEqual({ status: "idle", errorReason: null });
+  });
+
+  // TOK-185 seam guard: the exit code alone must not decide the run outcome for
+  // an adapter whose structured final response owns the truth about the turn.
+  // Before this, the 429 turn below was persisted as `succeeded`, which skipped
+  // provider-quota recovery entirely and dead-ended the issue in a
+  // missing-disposition escalation with no waiting path.
+  it("fails a run whose structured final response reports an error despite exit 0, and derives the provider quota family", async () => {
+    const companyId = randomUUID();
+    const agentId = randomUUID();
+
+    await db.insert(companies).values({
+      id: companyId,
+      name: "Paperclip",
+      issuePrefix: `T${companyId.replace(/-/g, "").slice(0, 6).toUpperCase()}`,
+      requireBoardApprovalForNewAgents: false,
+      defaultResponsibleUserId: "responsible-user",
+    });
+
+    await db.insert(agents).values({
+      id: agentId,
+      companyId,
+      name: "Structured Error Test",
+      role: "engineer",
+      status: "idle",
+      adapterType: STRUCTURED_ERROR_TEST_ADAPTER,
+      adapterConfig: {},
+      runtimeConfig: {
+        heartbeat: { wakeOnDemand: true, maxConcurrentRuns: 1 },
+      },
+      permissions: {},
+    });
+
+    const run = await heartbeat.invoke(agentId, "on_demand", {}, "manual");
+    expect(run).not.toBeNull();
+
+    const finishedRun = await waitForRunToFinish(heartbeat, run!.id);
+    expect(finishedRun?.status).toBe("failed");
+    expect(finishedRun?.exitCode).toBe(0);
+    expect(finishedRun?.errorCode).toBe("adapter_failed");
+    expect(finishedRun?.error).toBe(STRUCTURED_ERROR_QUOTA_MESSAGE);
+    expect(
+      (finishedRun?.resultJson as Record<string, unknown> | null)?.errorFamily,
+    ).toBe("provider_quota");
   });
 
   async function seedMaxTurnFixture(input?: {

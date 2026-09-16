@@ -321,6 +321,7 @@ import {
   selectHeartbeatRunFinalAgentMessage,
   type RunPresentationDecision,
 } from "./heartbeat-run-summary.js";
+import { readAdapterStructuredFinalFailure } from "./adapter-final-response.js";
 import {
   buildHeartbeatRunStopMetadata,
   mergeHeartbeatRunStopMetadata,
@@ -490,6 +491,7 @@ import {
 import { withRecoveryContext } from "./recovery/status-only-context.js";
 import {
   ACTIVE_RUN_OUTPUT_SUSPICION_THRESHOLD_MS as RECOVERY_ACTIVE_RUN_OUTPUT_SUSPICION_THRESHOLD_MS,
+  isProviderQuotaFailureMessage,
   recoveryService,
 } from "./recovery/service.js";
 import {
@@ -24283,6 +24285,15 @@ export function heartbeatService(
           failedProcessRunCancellations.get(run.id);
         await processCancellation?.settled;
         let outcome: RunSessionOutcome;
+        // A Gemini-CLI-family adapter can exit 0 while its structured final
+        // response reports an ERROR turn. The process exit code alone must not
+        // mark such a run succeeded (TOK-185): a 429 RESOURCE_EXHAUSTED turn
+        // reported as a succeeded run bypasses the provider-quota recovery
+        // machinery and dead-ends the task tree in a missing-disposition
+        // escalation.
+        const structuredFinalFailure = readAdapterStructuredFinalFailure({
+          resultJson: adapterResult.resultJson,
+        });
         const latestRun = await getRun(run.id);
         if (isHeartbeatRunTerminalStatus(latestRun?.status)) {
           outcome = latestRun.status;
@@ -24303,7 +24314,8 @@ export function heartbeatService(
           (adapterResult.exitCode ?? 0) === 0 &&
           !adapterResult.errorMessage &&
           !adapterResult.signal &&
-          !processCancellation?.failed
+          !processCancellation?.failed &&
+          !structuredFinalFailure
         ) {
           outcome = "succeeded";
         } else {
@@ -24336,6 +24348,7 @@ export function heartbeatService(
               ? null
               : redactCurrentUserText(
                   adapterResult.errorMessage ??
+                    structuredFinalFailure?.message ??
                     (outcome === "timed_out" ? "Timed out" : "Adapter failed"),
                   currentUserRedactionOptions,
                 );
@@ -24351,6 +24364,14 @@ export function heartbeatService(
                   recordedResponsibleUserDenialCode ??
                   "adapter_failed")
                 : null;
+        // External adapters cannot set errorFamily themselves; derive it from
+        // the structured failure so provider-quota failures keep the bounded
+        // retry-with-backoff, keep-idle, and recovery classification paths.
+        const structuredFailureErrorFamily =
+          outcome === "failed" &&
+          isProviderQuotaFailureMessage(structuredFinalFailure?.message)
+            ? ("provider_quota" as const)
+            : null;
 
         let logSummary: {
           bytes: number;
@@ -24459,7 +24480,8 @@ export function heartbeatService(
                   : {}),
                 configFreshness: configFreshnessResultMetadata,
               },
-              errorFamily: adapterResult.errorFamily ?? null,
+              errorFamily:
+                adapterResult.errorFamily ?? structuredFailureErrorFamily,
               retryNotBefore: adapterResult.retryNotBefore ?? null,
             }),
             errorCode: runErrorCode,

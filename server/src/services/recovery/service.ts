@@ -516,8 +516,24 @@ const CONTINUATION_RECOVERY_DEFAULT_MAX_ATTEMPTS = 1;
 const CONTINUATION_RECOVERY_TRANSIENT_BASE_BACKOFF_MS = 60_000;
 export const PROVIDER_QUOTA_RECOVERY_DEFAULT_BACKOFF_MS = 60 * 60 * 1000;
 
+// `RESOURCE_EXHAUSTED` is the gRPC/Gemini status for a rate or quota limit, and
+// the Gemini-CLI family words its 429 as "exceeded the weekly usage quota" /
+// "quota reached" rather than the "usage limit reached" wording the Claude and
+// Codex adapters use. Without those alternatives a 429 turn is classified as a
+// generic adapter failure and loses the quota backoff (TOK-185).
 const PROVIDER_QUOTA_ERROR_RE =
-  /(?:you(?:'|’)ve hit your (?:\w+ )?limit|usage limit(?: reached| exceeded)?|provider quota|quota (?:limit )?exceeded|model (?:is )?at capacity)/i;
+  /(?:you(?:'|’)ve hit your (?:\w+ )?limit|usage limit(?: reached| exceeded)?|provider quota|quota (?:limit )?(?:exceeded|reached)|exceeded (?:your |the )?(?:\w+ ){0,3}quota|resource[_ ]exhausted|model (?:is )?at capacity)/i;
+
+/**
+ * Whether an adapter-reported failure message describes a provider quota or
+ * rate limit. Single owner of the quota vocabulary: the heartbeat outcome path
+ * uses it to derive `errorFamily` for adapters that cannot set it themselves,
+ * and `classifyAdapterFailureForRecovery` below uses it to pick the quota
+ * backoff.
+ */
+export function isProviderQuotaFailureMessage(value: string | null | undefined) {
+  return typeof value === "string" && PROVIDER_QUOTA_ERROR_RE.test(value);
+}
 const CONFIGURATION_INCOMPLETE_ERROR_RE =
   /(?:model_not_found|model [^\n]{0,120} not found|missing (?:api )?(?:key|credentials?)|credentials? (?:are |is )?missing|no (?:api )?(?:key|credentials?) (?:was |were )?(?:found|configured|provided)|api key (?:is )?(?:not set|unavailable))/i;
 
