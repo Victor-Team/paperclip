@@ -110,10 +110,12 @@ import {
   FINISH_SUCCESSFUL_RUN_HANDOFF_REASON,
   SUCCESSFUL_RUN_MISSING_STATE_REASON,
   buildSuccessfulRunHandoffExhaustedNotice,
+  ensureSuccessfulRunHandoffBoardWaitingPath,
   isPluginManagedIssueLifecycle,
   noticeMetadataReferencesRecoveryAction,
   type SuccessfulRunHandoffNotice,
 } from "./successful-run-handoff.js";
+import { issueThreadInteractionService } from "../issue-thread-interactions.js";
 import {
   SANDBOX_PROVIDER_PLUGIN_NOT_READY_REASON,
   sandboxProviderPluginRemedy,
@@ -206,7 +208,7 @@ type ResolvedDependencyWakeBackstopOptions = {
   source?: ResolvedDependencyWakeBackstopSource;
 };
 
-type LatestIssueRun =
+export type LatestIssueRun =
   | (Pick<
       typeof heartbeatRuns.$inferSelect,
       | "id"
@@ -3824,8 +3826,32 @@ export function recoveryService(
             )
             .limit(1)
         : [];
+      // Without this the escalation ends at a prose comment: no interaction, no
+      // named unblock owner, nothing that can wake anyone. The waiting path is
+      // created before the notice is built so the notice records which
+      // first-class object (or which create failure) this issue is waiting on.
+      const waitingPath = await ensureSuccessfulRunHandoffBoardWaitingPath(
+        {
+          createInteraction: async (request) =>
+            issueThreadInteractionService(db).create(
+              { id: input.issue.id, companyId: input.issue.companyId },
+              request,
+              { systemId: "recovery" },
+            ),
+        },
+        {
+          issue: input.issue,
+          sourceRun: sourceRun ?? null,
+          sourceAssignee,
+          recoveryActionId: recoveryAction.id,
+          recoveryOwner,
+          missingDisposition:
+            input.successfulRunHandoffEvidence.missingDisposition,
+        },
+      );
       notice = buildSuccessfulRunHandoffExhaustedNotice({
         issue: input.issue,
+        waitingPath,
         sourceRun: sourceRun ?? null,
         correctiveRun: input.latestRun
           ? {

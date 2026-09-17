@@ -3,6 +3,7 @@ import type { Db } from "@paperclipai/db";
 import { agentWakeupRequests, agents, heartbeatRuns, issues } from "@paperclipai/db";
 import {
   isUuidLike,
+  type CreateIssueThreadInteraction,
   type IssueCommentMetadata,
   type IssueCommentPresentation,
   type RunLivenessState,
@@ -196,6 +197,219 @@ export function buildSuccessfulRunHandoffRequiredNotice(input: {
   };
 }
 
+export const SUCCESSFUL_RUN_HANDOFF_BOARD_DISPOSITION_REASON =
+  "successful_run_handoff_board_disposition";
+export const SUCCESSFUL_RUN_HANDOFF_BOARD_DISPOSITION_QUESTION_ID = "disposition";
+export const DEFAULT_MAX_BOARD_DISPOSITION_CREATE_ATTEMPTS = 2;
+
+/**
+ * Missing-disposition recovery ends here once the bounded corrective handoff is
+ * exhausted. Before this waiting path existed the escalation only wrote a prose
+ * comment whose "Recovery owner" row read "Board decision required" — a literal,
+ * not an object. Nothing in the database could wake anyone, so the issue sat
+ * blocked with no live continuation and the board's question went unanswered.
+ * Both entry points that reach this escalation (a provider-quota corrective run
+ * and an exhausted `empty_response` liveness continuation) share that dead end,
+ * so the waiting path is created here rather than at either caller.
+ */
+export type SuccessfulRunHandoffWaitingPath =
+  | { kind: "recovery_owner"; ownerAgentId: string }
+  | { kind: "board_interaction"; interactionId: string }
+  | { kind: "unavailable"; failureReason: string };
+
+export function buildSuccessfulRunHandoffBoardDispositionIdempotencyKey(input: {
+  issueId: string;
+  sourceRunId: string | null;
+  recoveryActionId: string | null;
+}) {
+  return [
+    SUCCESSFUL_RUN_HANDOFF_BOARD_DISPOSITION_REASON,
+    input.issueId,
+    input.sourceRunId ?? "unknown_source_run",
+    input.recoveryActionId ?? "unknown_recovery_action",
+  ].join(":");
+}
+
+/**
+ * Board-facing copy is written in Chinese on purpose: this company's board has
+ * stated that English is a barrier, and the escalation is useless if the reader
+ * cannot act on it. It states what each answer causes, what happens if nobody
+ * answers, and where the evidence lives, so the card is decidable on its own.
+ */
+export function buildSuccessfulRunHandoffBoardDispositionRequest(input: {
+  issue: NoticeIssue;
+  sourceRun: NullableNoticeRun;
+  sourceAssignee: NullableNoticeAgent;
+  recoveryActionId: string | null;
+  missingDisposition: string;
+  evidencePath?: string | null;
+}): CreateIssueThreadInteraction {
+  const issueLabel = input.issue.identifier ?? input.issue.id;
+  const assigneeLabel = input.sourceAssignee?.name ?? "原负责席位";
+  const evidenceLine = input.evidencePath
+    ? `证据文件：${input.evidencePath}`
+    : `证据位置：本单评论线程中的「Missing disposition recovery blocked」系统通知，以及来源运行 ${input.sourceRun?.id ?? "（未记录）"}。`;
+  return {
+    kind: "ask_user_questions",
+    idempotencyKey: buildSuccessfulRunHandoffBoardDispositionIdempotencyKey({
+      issueId: input.issue.id,
+      sourceRunId: input.sourceRun?.id ?? null,
+      recoveryActionId: input.recoveryActionId,
+    }),
+    ...(input.sourceRun?.id ? { sourceRunId: input.sourceRun.id } : {}),
+    title: `${issueLabel} 自动恢复已耗尽，需要董事会给出处置`,
+    summary: [
+      `要定什么：${issueLabel}「${input.issue.title}」的最终处置，由你选一个。`,
+      `为什么找你：${assigneeLabel} 的运行结束时没有留下有效处置，系统的自动纠正已用尽且仍未解决，没有其他人有权决定。`,
+      "答了会发生什么：本单立即按你选的那一项执行，并唤醒原负责席位落实；只有「原样保持阻塞」不触发任何动作。",
+      "不答会怎样：本单一直停在 blocked，不会自行恢复，下游全部继续等待。",
+      `没定的是哪一处：工作到底完成没有——系统只能确认运行成功结束，无法确认成果是否达标。${evidenceLine}`,
+      "权限变更：不涉及，本次不改变任何人的权限。",
+    ].join("\n"),
+    continuationPolicy: "wake_assignee",
+    payload: {
+      version: 1,
+      title: "请为这张单选择一个处置",
+      submitLabel: "提交处置",
+      // The board should stay able to discuss in comments without silently
+      // voiding the only waiting path this issue has.
+      supersedeOnUserComment: false,
+      questions: [
+        {
+          id: SUCCESSFUL_RUN_HANDOFF_BOARD_DISPOSITION_QUESTION_ID,
+          prompt: `${issueLabel}「${input.issue.title}」现在停在 blocked，缺少的处置是「${input.missingDisposition}」。请选一项。`,
+          helpText: [
+            `原负责席位：${assigneeLabel}。`,
+            `来源运行：${input.sourceRun?.id ?? "（未记录）"}。`,
+            input.recoveryActionId ? `恢复动作：${input.recoveryActionId}。` : null,
+            evidenceLine,
+            "选定之后系统会唤醒原负责席位执行你选的这一项。",
+          ]
+            .filter((line): line is string => Boolean(line))
+            .join("\n"),
+          selectionMode: "single",
+          required: true,
+          options: [
+            {
+              id: "mark_done_or_cancelled",
+              label: "已完成或就此取消——结掉这张单",
+              description:
+                "选这项：本单标记为完成/取消，不再有后续动作，依赖它的下游随即解阻。适用于成果已达标或不再需要。",
+            },
+            {
+              id: "send_for_review_or_ask_for_input",
+              label: "送去复核——指定一个人来看",
+              description:
+                "选这项：本单转入复核态，由你指定的复核人接手判断成果是否达标。适用于你无法直接判断完成度。",
+            },
+            {
+              id: "mark_blocked",
+              label: "原样保持阻塞——等外部条件",
+              description:
+                "选这项：本单保持 blocked，不触发任何动作。适用于确有外部条件未满足；请在评论里写明解阻的人和动作，否则本单会再次无人应答。",
+            },
+            {
+              id: "delegate_or_continue_from_checkpoint",
+              label: "还有活要干——让原席位接着做",
+              description:
+                "选这项：唤醒原负责席位从中断处继续，或由它拆出后续子单。适用于成果未达标、工作确实没做完。",
+            },
+            {
+              id: "other",
+              label: "以上都不对——我来说明",
+              description: "选这项并写明你要的处置，本单会把你的说明转给原负责席位执行。",
+              freeText: true,
+            },
+          ],
+        },
+      ],
+    },
+  };
+}
+
+/**
+ * fail-closed: a failed create must never degrade into "we posted a comment, so
+ * it is handled". Retries are bounded, and an exhausted attempt returns an
+ * `unavailable` path that the caller records verbatim in the escalation notice
+ * while the issue stays blocked — a queryable failure marker rather than a
+ * silent one.
+ */
+export async function ensureSuccessfulRunHandoffBoardWaitingPath(
+  deps: {
+    createInteraction: (
+      request: CreateIssueThreadInteraction,
+    ) => Promise<{ id: string }>;
+    onAttemptFailed?: (error: unknown, attempt: number) => void;
+    maxAttempts?: number;
+  },
+  input: {
+    issue: NoticeIssue;
+    sourceRun: NullableNoticeRun;
+    sourceAssignee: NullableNoticeAgent;
+    recoveryActionId: string | null;
+    recoveryOwner: NullableNoticeAgent;
+    missingDisposition: string;
+    evidencePath?: string | null;
+  },
+): Promise<SuccessfulRunHandoffWaitingPath> {
+  // A named recovery owner already is a first-class wakeable path; adding a
+  // board card on top would ask the board to arbitrate work that has an owner.
+  if (input.recoveryOwner) {
+    return { kind: "recovery_owner", ownerAgentId: input.recoveryOwner.id };
+  }
+
+  const maxAttempts = Math.max(
+    1,
+    Math.floor(deps.maxAttempts ?? DEFAULT_MAX_BOARD_DISPOSITION_CREATE_ATTEMPTS),
+  );
+  const request = buildSuccessfulRunHandoffBoardDispositionRequest({
+    issue: input.issue,
+    sourceRun: input.sourceRun,
+    sourceAssignee: input.sourceAssignee,
+    recoveryActionId: input.recoveryActionId,
+    missingDisposition: input.missingDisposition,
+    evidencePath: input.evidencePath ?? null,
+  });
+
+  let lastFailure = "unknown error";
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    try {
+      const created = await deps.createInteraction(request);
+      if (created?.id) {
+        return { kind: "board_interaction", interactionId: created.id };
+      }
+      lastFailure = "interaction create returned no id";
+    } catch (error) {
+      lastFailure = error instanceof Error ? error.message : String(error);
+      deps.onAttemptFailed?.(error, attempt);
+    }
+  }
+  return {
+    kind: "unavailable",
+    failureReason: `${lastFailure} (after ${maxAttempts} attempts)`,
+  };
+}
+
+function waitingPathRow(waitingPath: SuccessfulRunHandoffWaitingPath) {
+  switch (waitingPath.kind) {
+    case "recovery_owner":
+      return keyValueRow(
+        "Board waiting path",
+        `recovery_owner:${waitingPath.ownerAgentId}`,
+      );
+    case "board_interaction":
+      return keyValueRow(
+        "Board waiting path",
+        `issue_thread_interaction:${waitingPath.interactionId}`,
+      );
+    default:
+      return keyValueRow(
+        "Board waiting path",
+        `unavailable:${waitingPath.failureReason}`,
+      );
+  }
+}
+
 export function buildSuccessfulRunHandoffExhaustedNotice(input: {
   issue: NoticeIssue;
   sourceRun: NullableNoticeRun;
@@ -204,6 +418,7 @@ export function buildSuccessfulRunHandoffExhaustedNotice(input: {
   recoveryIssue: NullableNoticeIssue;
   recoveryActionId?: string | null;
   recoveryOwner: NullableNoticeAgent;
+  waitingPath?: SuccessfulRunHandoffWaitingPath | null;
   latestIssueStatus: string;
   latestHandoffRunStatus: string;
   missingDisposition: string;
@@ -228,6 +443,7 @@ export function buildSuccessfulRunHandoffExhaustedNotice(input: {
             input.recoveryOwner
               ? agentLinkRow("Recovery owner", input.recoveryOwner)
               : keyValueRow("Recovery owner", "Board decision required"),
+            ...(input.waitingPath ? [waitingPathRow(input.waitingPath)] : []),
             agentLinkRow("Source assignee", input.sourceAssignee),
             keyValueRow("Suggested action", "inspect the evidence, then retry the original owner, explicitly reassign, or record a valid issue disposition"),
           ],

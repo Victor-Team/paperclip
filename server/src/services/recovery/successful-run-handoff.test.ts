@@ -1,10 +1,15 @@
 import { describe, expect, it } from "vitest";
 import {
   FINISH_SUCCESSFUL_RUN_HANDOFF_REASON,
+  SUCCESSFUL_RUN_HANDOFF_BOARD_DISPOSITION_QUESTION_ID,
   SUCCESSFUL_RUN_HANDOFF_EXHAUSTED_NOTICE_BODY,
+  SUCCESSFUL_RUN_HANDOFF_OPTIONS,
   SUCCESSFUL_RUN_HANDOFF_REQUIRED_NOTICE_BODY,
   SUCCESSFUL_RUN_MISSING_STATE_REASON,
   buildFinishSuccessfulRunHandoffIdempotencyKey,
+  buildSuccessfulRunHandoffBoardDispositionIdempotencyKey,
+  buildSuccessfulRunHandoffBoardDispositionRequest,
+  ensureSuccessfulRunHandoffBoardWaitingPath,
   buildSuccessfulRunHandoffInstruction,
   buildSuccessfulRunHandoffExhaustedNotice,
   buildSuccessfulRunHandoffRequiredNotice,
@@ -609,5 +614,261 @@ describe("successful run handoff decision", () => {
     expect(isSuccessfulRunHandoffRequiredNoticeBody("## Successful run missing issue disposition\n\nold body")).toBe(true);
     expect(isSuccessfulRunHandoffRequiredNoticeBody("## This issue still needs a next step\n\nold body")).toBe(true);
     expect(isSuccessfulRunHandoffRequiredNoticeBody("Unrelated comment")).toBe(false);
+  });
+});
+
+describe("successful run handoff exhausted board waiting path", () => {
+  const exhaustedIssue = {
+    id: "11111111-1111-4111-8111-111111111111",
+    identifier: "PAP-1",
+    title: "Finish backend handoff",
+    status: "blocked",
+  } as any;
+  const quotaSourceRun = {
+    id: "22222222-2222-4222-8222-222222222222",
+    status: "succeeded",
+    agentId: "33333333-3333-4333-8333-333333333333",
+  } as any;
+  const emptyResponseSourceRun = {
+    id: "88888888-8888-4888-8888-888888888888",
+    status: "succeeded",
+    agentId: "33333333-3333-4333-8333-333333333333",
+  } as any;
+  const sourceAssignee = {
+    id: "33333333-3333-4333-8333-333333333333",
+    name: "CodexCoder",
+  } as any;
+  const recoveryActionId = "77777777-7777-4777-8777-777777777777";
+
+  it("creates a first-class board interaction for the provider-quota entry", async () => {
+    const requests: any[] = [];
+    const waitingPath = await ensureSuccessfulRunHandoffBoardWaitingPath(
+      {
+        createInteraction: async (request) => {
+          requests.push(request);
+          return { id: "99999999-9999-4999-8999-999999999999" };
+        },
+      },
+      {
+        issue: exhaustedIssue,
+        sourceRun: quotaSourceRun,
+        sourceAssignee,
+        recoveryActionId,
+        recoveryOwner: null,
+        missingDisposition: "clear_next_step",
+      },
+    );
+
+    expect(waitingPath).toEqual({
+      kind: "board_interaction",
+      interactionId: "99999999-9999-4999-8999-999999999999",
+    });
+    expect(requests).toHaveLength(1);
+    expect(requests[0].kind).toBe("ask_user_questions");
+    expect(requests[0].continuationPolicy).toBe("wake_assignee");
+    expect(requests[0].sourceRunId).toBe(quotaSourceRun.id);
+    expect(requests[0].idempotencyKey).toBe(
+      buildSuccessfulRunHandoffBoardDispositionIdempotencyKey({
+        issueId: exhaustedIssue.id,
+        sourceRunId: quotaSourceRun.id,
+        recoveryActionId,
+      }),
+    );
+    expect(requests[0].payload.questions).toHaveLength(1);
+    expect(requests[0].payload.questions[0].id).toBe(
+      SUCCESSFUL_RUN_HANDOFF_BOARD_DISPOSITION_QUESTION_ID,
+    );
+    expect(requests[0].payload.questions[0].required).toBe(true);
+  });
+
+  it("creates the same first-class waiting path for the exhausted empty_response entry", async () => {
+    const requests: any[] = [];
+    const waitingPath = await ensureSuccessfulRunHandoffBoardWaitingPath(
+      {
+        createInteraction: async (request) => {
+          requests.push(request);
+          return { id: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa" };
+        },
+      },
+      {
+        issue: exhaustedIssue,
+        sourceRun: emptyResponseSourceRun,
+        sourceAssignee,
+        recoveryActionId,
+        recoveryOwner: null,
+        missingDisposition: "clear_next_step",
+      },
+    );
+
+    expect(waitingPath).toEqual({
+      kind: "board_interaction",
+      interactionId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+    });
+    expect(requests).toHaveLength(1);
+    expect(requests[0].kind).toBe("ask_user_questions");
+    expect(requests[0].continuationPolicy).toBe("wake_assignee");
+    // The two entries must not collapse onto one idempotency key, otherwise the
+    // second entry silently reuses the first entry's card and its own source run
+    // never gets a waiting path of its own.
+    expect(requests[0].sourceRunId).toBe(emptyResponseSourceRun.id);
+    expect(requests[0].idempotencyKey).not.toBe(
+      buildSuccessfulRunHandoffBoardDispositionIdempotencyKey({
+        issueId: exhaustedIssue.id,
+        sourceRunId: quotaSourceRun.id,
+        recoveryActionId,
+      }),
+    );
+  });
+
+  it("keeps the named recovery owner instead of asking the board", async () => {
+    let createCalls = 0;
+    const waitingPath = await ensureSuccessfulRunHandoffBoardWaitingPath(
+      {
+        createInteraction: async () => {
+          createCalls += 1;
+          return { id: "should-not-be-used" };
+        },
+      },
+      {
+        issue: exhaustedIssue,
+        sourceRun: quotaSourceRun,
+        sourceAssignee,
+        recoveryActionId,
+        recoveryOwner: {
+          id: "66666666-6666-4666-8666-666666666666",
+          name: "CTO",
+        } as any,
+        missingDisposition: "clear_next_step",
+      },
+    );
+
+    expect(waitingPath).toEqual({
+      kind: "recovery_owner",
+      ownerAgentId: "66666666-6666-4666-8666-666666666666",
+    });
+    expect(createCalls).toBe(0);
+  });
+
+  it("fails closed with a bounded retry and a queryable failure marker", async () => {
+    const attempts: number[] = [];
+    const waitingPath = await ensureSuccessfulRunHandoffBoardWaitingPath(
+      {
+        createInteraction: async () => {
+          throw new Error("interaction store unavailable");
+        },
+        onAttemptFailed: (_error, attempt) => attempts.push(attempt),
+        maxAttempts: 2,
+      },
+      {
+        issue: exhaustedIssue,
+        sourceRun: quotaSourceRun,
+        sourceAssignee,
+        recoveryActionId,
+        recoveryOwner: null,
+        missingDisposition: "clear_next_step",
+      },
+    );
+
+    expect(waitingPath.kind).toBe("unavailable");
+    expect(attempts).toEqual([1, 2]);
+    expect(
+      waitingPath.kind === "unavailable" ? waitingPath.failureReason : "",
+    ).toContain("interaction store unavailable");
+    expect(
+      waitingPath.kind === "unavailable" ? waitingPath.failureReason : "",
+    ).toContain("after 2 attempts");
+  });
+
+  it("records the waiting path object in the exhausted notice metadata", () => {
+    const notice = buildSuccessfulRunHandoffExhaustedNotice({
+      issue: exhaustedIssue,
+      sourceRun: quotaSourceRun,
+      correctiveRun: null,
+      sourceAssignee,
+      recoveryIssue: null,
+      recoveryActionId,
+      recoveryOwner: null,
+      waitingPath: {
+        kind: "board_interaction",
+        interactionId: "99999999-9999-4999-8999-999999999999",
+      },
+      latestIssueStatus: "blocked",
+      latestHandoffRunStatus: "failed",
+      missingDisposition: "clear_next_step",
+    });
+
+    const recoverySection = notice.metadata.sections?.find(
+      (section) => section.title === "Recovery",
+    );
+    const waitingRow = recoverySection?.rows.find(
+      (row) => row.type === "key_value" && row.label === "Board waiting path",
+    );
+    expect(waitingRow).toBeTruthy();
+    expect(waitingRow && "value" in waitingRow ? waitingRow.value : null).toBe(
+      "issue_thread_interaction:99999999-9999-4999-8999-999999999999",
+    );
+  });
+
+  it("records an explicit unavailable marker when the waiting path could not be created", () => {
+    const notice = buildSuccessfulRunHandoffExhaustedNotice({
+      issue: exhaustedIssue,
+      sourceRun: quotaSourceRun,
+      correctiveRun: null,
+      sourceAssignee,
+      recoveryIssue: null,
+      recoveryActionId,
+      recoveryOwner: null,
+      waitingPath: {
+        kind: "unavailable",
+        failureReason: "interaction store unavailable (after 2 attempts)",
+      },
+      latestIssueStatus: "blocked",
+      latestHandoffRunStatus: "failed",
+      missingDisposition: "clear_next_step",
+    });
+
+    const recoverySection = notice.metadata.sections?.find(
+      (section) => section.title === "Recovery",
+    );
+    const waitingRow = recoverySection?.rows.find(
+      (row) => row.type === "key_value" && row.label === "Board waiting path",
+    );
+    expect(waitingRow).toBeTruthy();
+    expect(
+      waitingRow && "value" in waitingRow ? String(waitingRow.value) : "",
+    ).toContain("unavailable:interaction store unavailable");
+  });
+
+  it("writes board-facing copy in Chinese and states the consequence of each option", () => {
+    const request = buildSuccessfulRunHandoffBoardDispositionRequest({
+      issue: exhaustedIssue,
+      sourceRun: quotaSourceRun,
+      sourceAssignee,
+      recoveryActionId,
+      missingDisposition: "clear_next_step",
+      evidencePath: "/home/yuanjian/dev/ANC/交付/TOK-185/期望2-接口证据.md",
+    });
+
+    const hasHan = (value: string) => /[一-鿿]/.test(value);
+    expect(hasHan(String(request.title))).toBe(true);
+    expect(hasHan(String(request.summary))).toBe(true);
+    expect(String(request.summary)).toContain("答了会发生什么");
+    expect(String(request.summary)).toContain("不答会怎样");
+    expect(String(request.summary)).toContain("权限变更");
+    expect(String(request.summary)).toContain(
+      "/home/yuanjian/dev/ANC/交付/TOK-185/期望2-接口证据.md",
+    );
+
+    const options = (request as any).payload.questions[0].options;
+    expect(options.map((option: any) => option.id)).toEqual([
+      ...SUCCESSFUL_RUN_HANDOFF_OPTIONS,
+      "other",
+    ]);
+    for (const option of options) {
+      expect(hasHan(option.label)).toBe(true);
+      expect(hasHan(option.description)).toBe(true);
+    }
+    expect(options.filter((option: any) => option.freeText)).toHaveLength(1);
+    expect((request as any).payload.supersedeOnUserComment).toBe(false);
   });
 });
