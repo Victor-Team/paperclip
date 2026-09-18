@@ -373,9 +373,12 @@ function isProviderQuotaRecovery(latestRun: LatestIssueRun) {
   if (latestRun?.errorCode === "provider_quota") return true;
   if (readRecoveryRunErrorFamily(latestRun) === "provider_quota") return true;
   if (latestRun?.errorCode !== "adapter_failed") return false;
-  return /(?:usage|rate|quota) limit|you(?:'|’)ve hit your (?:\w+ )?limit|quota (?:exceeded|reset)|try again after/i.test(
-    latestRun.error ?? "",
-  );
+  // TOK-206: the escalation path previously kept its own narrower quota
+  // wording here and missed the "exceeded the 5-hour usage quota" family, so
+  // a quota-exhausted continuation escalated as a generic stranded issue
+  // with no blockers and no monitor. Reuse the single quota vocabulary owner
+  // instead of a second, drifting copy.
+  return isProviderQuotaFailureMessage(latestRun.error);
 }
 
 function resolveStrandedRecoveryCause(
@@ -523,8 +526,13 @@ export const PROVIDER_QUOTA_RECOVERY_DEFAULT_BACKOFF_MS = 60 * 60 * 1000;
 // "quota reached" rather than the "usage limit reached" wording the Claude and
 // Codex adapters use. Without those alternatives a 429 turn is classified as a
 // generic adapter failure and loses the quota backoff (TOK-185).
+// TOK-206: `usage quota` (after a hyphenated window like "the 5-hour usage
+// quota") is added because the Fireworks/volcano quota error carries exactly
+// that wording plus its own reset timestamp, and without it the recovery
+// escalation path classified the run as a generic adapter failure and
+// produced a blocker-less dead blocked issue.
 const PROVIDER_QUOTA_ERROR_RE =
-  /(?:you(?:'|’)ve hit your (?:\w+ )?limit|usage limit(?: reached| exceeded)?|provider quota|quota (?:limit )?(?:exceeded|reached)|exceeded (?:your |the )?(?:\w+ ){0,3}quota|resource[_ ]exhausted|model (?:is )?at capacity)/i;
+  /(?:you(?:'|’)ve hit your (?:\w+ )?limit|usage limit(?: reached| exceeded)?|usage quota|provider quota|quota (?:limit )?(?:exceeded|reached)|exceeded (?:your |the )?(?:\w+ ){0,3}quota|resource[_ ]exhausted|model (?:is )?at capacity)/i;
 
 /**
  * Whether an adapter-reported failure message describes a provider quota or
@@ -545,6 +553,75 @@ export type AdapterFailureRecoveryClassification =
   | null;
 
 function parseProviderQuotaClockReset(error: string, now: Date) {
+  // TOK-206: providers that word their quota reset as a full timestamp
+  // ("It will reset at 2026-09-17 16:33:02 +0800 CST.") must parse as one
+  // absolute date-time. The hour-only pattern below would otherwise read
+  // "20" out of the year and produce a wrong retry time, so the absolute
+  // form is matched first. A trailing numeric UTC offset (`+0800`) is
+  // accepted wherever a zone name is.
+  const absoluteMatch = error.match(
+    /(?:try again at|resets?(?:\s+at)?)\s+(\d{4})-(\d{2})-(\d{2})[T ](\d{1,2}):(\d{2})(?::(\d{2}))?(?:\s*(?:([+-]\d{2}):?(\d{2})|\(([^)]+)\)|([A-Z]{2,5})))?/i,
+  );
+  if (absoluteMatch) {
+    const year = Number.parseInt(absoluteMatch[1], 10);
+    const month = Number.parseInt(absoluteMatch[2], 10);
+    const day = Number.parseInt(absoluteMatch[3], 10);
+    const hour = Number.parseInt(absoluteMatch[4], 10);
+    const minute = Number.parseInt(absoluteMatch[5], 10);
+    const second = Number.parseInt(absoluteMatch[6] ?? "0", 10);
+    if (
+      !Number.isInteger(year) ||
+      !Number.isInteger(month) ||
+      month < 1 ||
+      month > 12 ||
+      !Number.isInteger(day) ||
+      day < 1 ||
+      day > 31 ||
+      !Number.isInteger(hour) ||
+      hour < 0 ||
+      hour > 23 ||
+      !Number.isInteger(minute) ||
+      minute < 0 ||
+      minute > 59 ||
+      !Number.isInteger(second) ||
+      second < 0 ||
+      second > 59
+    ) {
+      return null;
+    }
+    if (absoluteMatch[7] !== undefined) {
+      const offsetHours = Number.parseInt(absoluteMatch[7], 10);
+      const offsetMinutes = Number.parseInt(absoluteMatch[8], 10);
+      if (
+        !Number.isInteger(offsetHours) ||
+        Math.abs(offsetHours) > 14 ||
+        !Number.isInteger(offsetMinutes) ||
+        offsetMinutes < 0 ||
+        offsetMinutes > 59
+      ) {
+        return null;
+      }
+      const offsetMs =
+        (offsetHours * 60 + (offsetHours < 0 ? -offsetMinutes : offsetMinutes)) *
+        60 *
+        1000;
+      return new Date(
+        Date.UTC(year, month - 1, day, hour, minute, second) - offsetMs,
+      );
+    }
+    const zone =
+      absoluteMatch[9]?.trim() ?? absoluteMatch[10]?.trim() ?? null;
+    if (!zone) {
+      return new Date(Date.UTC(year, month - 1, day, hour, minute, second));
+    }
+    const parsed = applyWallClockZone(
+      Date.UTC(year, month - 1, day, hour, minute, second),
+      zone,
+    );
+    if (parsed !== null && parsed.getTime() > now.getTime()) return parsed;
+    return null;
+  }
+
   const match = error.match(
     /(?:try again at|resets?(?:\s+at)?)\s+(\d{1,2})(?::(\d{2}))?\s*(?:([ap])\.?\s*m\.?)?(?:\s*\(([^)]+)\)|\s+([A-Z]{2,5}))?/i,
   );
@@ -571,6 +648,31 @@ function parseProviderQuotaClockReset(error: string, now: Date) {
     return retryAt;
   }
 
+  const parsed = applyWallClockZone(
+    Date.UTC(
+      now.getUTCFullYear(),
+      now.getUTCMonth(),
+      now.getUTCDate(),
+      hour,
+      minute,
+    ),
+    timeZone,
+    now,
+  );
+  return parsed;
+}
+
+// Shared wall-clock-to-instant conversion for `parseProviderQuotaClockReset`.
+// `targetDayUtcMs` is the naive UTC interpretation of a local wall-clock
+// time; the result is the instant at which that wall clock reads the target
+// time in `timeZone`. When `now` is provided the day rolls forward when the
+// same-day instant has already passed; otherwise the input is already an
+// absolute date and a past result resolves to null.
+function applyWallClockZone(
+  targetDayUtcMs: number,
+  timeZone: string,
+  now?: Date,
+): Date | null {
   try {
     const wallClock = (date: Date) =>
       Object.fromEntries(
@@ -586,16 +688,16 @@ function parseProviderQuotaClockReset(error: string, now: Date) {
           .formatToParts(date)
           .map((part) => [part.type, part.value]),
       );
-    const nowParts = wallClock(now);
+    const nowParts = wallClock(new Date(now ?? targetDayUtcMs));
     const buildRetryAt = (dayOffset: number) => {
       const targetDay = new Date(
         Date.UTC(
           Number(nowParts.year),
           Number(nowParts.month) - 1,
           Number(nowParts.day) + dayOffset,
-          hour,
-          minute,
-        ),
+          0,
+          0,
+        ) + (targetDayUtcMs % 86_400_000),
       );
       let candidate = targetDay;
       const targetMs = targetDay.getTime();
@@ -614,8 +716,11 @@ function parseProviderQuotaClockReset(error: string, now: Date) {
       }
       return candidate;
     };
-    const sameDay = buildRetryAt(0);
-    return sameDay.getTime() > now.getTime() ? sameDay : buildRetryAt(1);
+    if (now) {
+      const sameDay = buildRetryAt(0);
+      return sameDay.getTime() > now.getTime() ? sameDay : buildRetryAt(1);
+    }
+    return buildRetryAt(0);
   } catch {
     return null;
   }
@@ -2573,6 +2678,17 @@ export function recoveryService(
       if (!Number.isNaN(parsed.getTime()) && parsed.getTime() > now.getTime())
         return parsed;
     }
+    // TOK-206: the provider's own reset timestamp (when the error text
+    // carries one) is the exact earliest-retry moment; falling straight to
+    // the default backoff would park the issue past the real reset (or, for
+    // a reset sooner than the backoff, delay it needlessly).
+    const errorText = [
+      latestRun?.error ?? "",
+      typeof result.errorMessage === "string" ? result.errorMessage : "",
+    ].join("\n");
+    const parsedReset = parseProviderQuotaClockReset(errorText, now);
+    if (parsedReset && parsedReset.getTime() > now.getTime())
+      return parsedReset;
     return new Date(now.getTime() + PROVIDER_QUOTA_RECOVERY_DEFAULT_BACKOFF_MS);
   }
 
@@ -3786,9 +3902,31 @@ export function recoveryService(
       input.issue.companyId,
       input.issue.id,
     );
+    // TOK-206: a `blocked` issue with no blocker edges, no scheduled monitor,
+    // and no unblock descriptor is a permanent dead issue — nothing can ever
+    // wake it again. Recovery must never create that state. When none of the
+    // three first-class liveness paths is available, the escalation still
+    // needs a wakeable owner, so it records a board-owned unblock descriptor
+    // naming the action the board must take. `deliverAgentUnblockNotification`
+    // only routes agent-owned descriptors (an agent wakes on the descriptor),
+    // so the board-owned form relies on the board inbox attention rule for
+    // blocked issues with a human-owned unblockDescriptor (attention.ts),
+    // which is exactly the first-class intervention path this escalation
+    // promises in its notice.
+    const unblockDescriptor =
+      blockerIds.length === 0 && !input.issue.monitorNextCheckAt
+        ? {
+            owner: "board" as const,
+            action:
+              recoveryCause === "provider_quota"
+                ? `Provider usage quota was exhausted. Retry the original assignee after the quota reset, or record a manual resolution. Source run: ${input.latestRun?.id ?? "unknown"}.`
+                : `Automatic recovery could not restore a live execution path. Inspect the run evidence, then retry the original assignee, reassign, or record a manual resolution. Source run: ${input.latestRun?.id ?? "unknown"}.`,
+          }
+        : undefined;
     const updated = await issuesSvc.update(input.issue.id, {
       status: "blocked",
       blockedByIssueIds: blockerIds,
+      ...(unblockDescriptor ? { unblockDescriptor } : {}),
     });
     if (!updated) return null;
     if (isProviderQuotaWait) return updated;
