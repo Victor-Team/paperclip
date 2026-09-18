@@ -288,6 +288,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { formatIssueActivityAction } from "@/lib/activity-format";
 import { copyTextToClipboard } from "../lib/clipboard";
 import { buildIssuePropertiesPanelKey } from "../lib/issue-properties-panel-key";
+import { openSkillPanelState, shouldSuppressTaskPanelUntilPlan } from "../lib/task-side-panel-state";
 import {
   buildAnsweredQuestionsDeliveryText,
   buildIssueThreadInteractionSummary,
@@ -1181,6 +1182,7 @@ function InboxMobileToolbar({
 }
 
 type IssueDetailChatTabProps = {
+  onOpenSkill?: (skillId: string, name: string) => void;
   issueId: string;
   companyId: string;
   projectId: string | null;
@@ -1329,6 +1331,7 @@ type IssueDetailChatTabProps = {
 };
 
 const IssueDetailChatTab = memo(function IssueDetailChatTab({
+  onOpenSkill,
   issueId,
   companyId,
   projectId,
@@ -2315,6 +2318,7 @@ const IssueDetailChatTab = memo(function IssueDetailChatTab({
           <ThreadComponent
             key={conversationMode ? draftKey : issueId}
             {...(!classicTaskInterfaceEnabled ? { creationActivity: resolvedActivity } : {})}
+            onOpenSkill={onOpenSkill}
             initialHistoryPending={!!issueId && (
               initialHistoryPending ||
               commentsInitialLoading ||
@@ -2897,6 +2901,10 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
     requestId: number;
     handled?: boolean;
   } | null>(null);
+  const [openSkill, setOpenSkill] = useState<{ id: string; name: string } | null>(null);
+  const handleSkillOpened = useCallback((skillId: string) => {
+    setOpenSkill((current) => current?.id === skillId ? null : current);
+  }, []);
   const [documentDeepLink, setDocumentDeepLink] = useState<
     (IssuePropertiesDocumentDeepLink & { issueId: string }) | null
   >(null);
@@ -3432,7 +3440,7 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
     staleTime: 0,
     retry: false,
   });
-  const { data: treeControlState, isPending: treeControlStatePending, error: treeControlStateError } = useQuery({
+  const { data: treeControlState, error: treeControlStateError } = useQuery({
     queryKey: ["issues", "tree-control-state", issueId ?? "pending"],
     queryFn: () => issuesApi.getTreeControlState(issueId!),
     enabled: !!issueId,
@@ -3576,14 +3584,26 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
     panelBeforePlanOverrideIssueId === issue?.id;
   const suppressPanelUntilPlan =
     shouldDeferPanelUntilPlan &&
-    !deferredPanelPlanDoc &&
-    !panelBeforePlanOverride;
+    shouldSuppressTaskPanelUntilPlan({
+      deferredPlanAvailable: Boolean(deferredPanelPlanDoc),
+      panelBeforePlanOverride,
+    });
   const openTaskSidePanel = useCallback(() => {
     if (suppressPanelUntilPlan && issue?.id) {
       setPanelBeforePlanOverrideIssueId(issue.id);
     }
     setPanelVisible(true);
   }, [issue?.id, setPanelVisible, suppressPanelUntilPlan]);
+  const handleOpenSkill = useCallback((skillId: string, name: string) => {
+    const next = openSkillPanelState(
+      { panelBeforePlanOverrideIssueId },
+      { id: skillId, name }, issue?.id ?? null, suppressPanelUntilPlan,
+    );
+    setOpenSkill(next.skill);
+    setPanelBeforePlanOverrideIssueId(next.panelBeforePlanOverrideIssueId);
+    setPanelVisible(true);
+    if (isMobile) setMobilePropsOpen(true);
+  }, [isMobile, issue?.id, panelBeforePlanOverrideIssueId, setPanelVisible, suppressPanelUntilPlan]);
   const revealNewArtifact = useCallback(() => {
     if (!issue?.id) return;
     setDocumentDeepLink(null);
@@ -5599,6 +5619,9 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
       checkingMonitorNow: checkIssueMonitorNow.isPending,
       documentDeepLink:
         documentDeepLink?.issueId === panelIssue.id ? documentDeepLink : null,
+      openSkillId: openSkill?.id ?? null,
+      openSkillName: openSkill?.name ?? null,
+      onSkillOpened: handleSkillOpened,
     };
     if (taskChatShellEnabled) {
       openPanel(
@@ -5633,6 +5656,8 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
     issuePanelKey,
     openNewSubIssue,
     openPanel,
+    openSkill,
+    handleSkillOpened,
     panelChildIssues,
     panelIssue,
     suppressPanelUntilPlan,
@@ -7664,6 +7689,7 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
               )}
               {resolvedDetailTab === "chat" ? (
                 <IssueDetailChatTab
+                  onOpenSkill={handleOpenSkill}
                   threadHeader={<>{taskChatThreadHeader}{instanceExperimentalSettings?.enableChatConnectors && <EmailTaskActivity key={issue.id} companyId={issue.companyId} issueId={issue.id} />}</>}
                   issueBrief={
                     // Suppress the seeded-description bubble for the onboarding first
@@ -7808,7 +7834,7 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
                     } : undefined,
                     resumeHref: !activePauseHold.isRoot ? createIssueDetailPath(activePauseHoldRoot?.identifier ?? activePauseHold.rootIssueId) : undefined,
                   } : null}
-                  composerDisabledReason={issue.conversationAgentId && !instanceExperimentalSettings?.enableAgentChat ? "Agent Chat is disabled in Experimental settings." : issueId && treeControlStatePending ? "Checking task status…" : treeControlStateError ? "Couldn’t check whether this task is paused. Refresh to try again." : null}
+                  composerDisabledReason={issue.conversationAgentId && !instanceExperimentalSettings?.enableAgentChat ? "Agent Chat is disabled in Experimental settings." : treeControlStateError ? "Couldn’t check whether this task is paused. Refresh to try again." : null}
                   composerHint={composerHint}
                   queuedCommentReason={queuedCommentReason}
                   onVote={handleCommentVote}
@@ -8095,6 +8121,9 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
                     artifactsOpenRequestId={isMobile && !artifactsOpenRequest?.handled && artifactsOpenRequest?.issueId === issue.id
                       ? artifactsOpenRequest.requestId : undefined}
                     onArtifactsOpened={handleArtifactsOpened}
+                    openSkillId={openSkill?.id ?? null}
+                    openSkillName={openSkill?.name ?? null}
+                    onSkillOpened={handleSkillOpened}
                     documentDeepLink={
                       documentDeepLink?.issueId === issue.id
                         ? documentDeepLink
