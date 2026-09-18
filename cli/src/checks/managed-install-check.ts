@@ -22,7 +22,6 @@ function hasManagedArtifacts(paths: InstallStorePaths): boolean {
     paths.manifestPath,
     paths.markerPath,
     paths.currentPath,
-    paths.shimPath,
   ].some((entry) => fs.existsSync(entry));
   if (persistentArtifacts) return true;
   try {
