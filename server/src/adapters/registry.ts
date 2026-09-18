@@ -86,6 +86,7 @@ import {
 } from "@paperclipai/adapter-grok-local";
 import {
   execute as kimiExecute,
+  listKimiModels,
   listKimiSkills,
   syncKimiSkills,
   testEnvironment as kimiTestEnvironment,
@@ -769,6 +770,7 @@ const kimiLocalAdapter: ServerAdapterModule = {
   sessionCodec: kimiSessionCodec,
   sessionManagement: getAdapterSessionManagement("kimi_local") ?? undefined,
   models: kimiModels,
+  listModels: listKimiModels,
   supportsLocalAgentJwt: true,
   supportsInstructionsBundle: true,
   instructionsPathKey: "instructionsFilePath",

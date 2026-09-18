@@ -68,6 +68,13 @@ export { execute } from "./execute.js";
 export { listKimiSkills, syncKimiSkills } from "./skills.js";
 export { testEnvironment } from "./test.js";
 export {
+  listKimiModels,
+  discoverKimiModels,
+  discoverKimiModelsCached,
+  parseKimiConfigModels,
+  resetKimiModelsCacheForTests,
+} from "./models.js";
+export {
   parseKimiJsonl,
   isKimiSessionUnrecoverableError,
   isKimiTransientNetworkError,
