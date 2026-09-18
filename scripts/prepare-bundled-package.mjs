@@ -178,6 +178,20 @@ export function prepareBundledPackage(sourceDir, destinationDir, { sourceRoot = 
 
   const deployedPackagePath = resolve(destinationDir, "package.json");
   const publishManifest = materializePublishManifest(sourcePackage);
+  // The staged directory is a finished publish artifact: every `files` entry has already
+  // been built or copied above, and it deliberately sits outside the pnpm workspace. Its
+  // lifecycle hooks would re-run those preparation steps -- @paperclipai/server's
+  // `prepack` is `pnpm run prepare:ui-dist && pnpm run build` -- and `pnpm` cannot resolve
+  // workspace: dependencies from here, so `npm pack` on this directory fails with
+  // "workspace packages were not loaded into the resolver". Drop the packaging hooks;
+  // `npm install` below already opts out via --ignore-scripts.
+  if (publishManifest.scripts) {
+    publishManifest.scripts = Object.fromEntries(
+      Object.entries(publishManifest.scripts).filter(
+        ([name]) => !["prepack", "postpack", "prepare"].includes(name),
+      ),
+    );
+  }
   const installManifest = createBundledInstallManifest(publishManifest, bundledDependencies);
   writeFileSync(deployedPackagePath, `${JSON.stringify(installManifest, null, 2)}\n`);
 
