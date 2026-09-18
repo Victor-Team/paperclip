@@ -7,7 +7,32 @@ import { fileURLToPath } from "node:url";
 
 const repoRoot = resolve(fileURLToPath(new URL("..", import.meta.url)));
 
-export function materializePublishManifest(pkg) {
+// Maps every workspace package name to the version declared in its own package.json.
+// The release flow normalises all public packages to one published version
+// (scripts/release.sh: set_public_package_version), so a `workspace:` specifier can
+// safely be rewritten to the packing package's version there. Git installs skip that
+// normalisation and keep each package's source version, so the specifier has to resolve
+// to the *dependency's* real version instead -- otherwise e.g. @paperclipai/plugin-sdk
+// (1.0.0) gets pinned to the server's 0.3.1 and npm fails with ETARGET.
+function readWorkspaceVersions(sourceRoot) {
+  const versions = new Map();
+  try {
+    const manifest = JSON.parse(readFileSync(resolve(sourceRoot, "scripts", "release-package-manifest.json"), "utf8"));
+    for (const entry of manifest) {
+      try {
+        const packageJson = JSON.parse(readFileSync(resolve(sourceRoot, entry.dir, "package.json"), "utf8"));
+        if (packageJson.name && packageJson.version) versions.set(packageJson.name, packageJson.version);
+      } catch {
+        // A package listed in the manifest but absent from the checkout is not fatal here.
+      }
+    }
+  } catch {
+    // No manifest: fall back to the previous behaviour.
+  }
+  return versions;
+}
+
+export function materializePublishManifest(pkg, workspaceVersions = new Map()) {
   const publishConfig = pkg.publishConfig ?? {};
   const publishManifest = { ...pkg };
 
@@ -22,7 +47,7 @@ export function materializePublishManifest(pkg) {
         if (typeof specifier !== "string" || !specifier.startsWith("workspace:")) return [name, specifier];
         const range = specifier.slice("workspace:".length);
         const prefix = range === "^" || range === "~" ? range : "";
-        return [name, `${prefix}${pkg.version}`];
+        return [name, `${prefix}${workspaceVersions.get(name) ?? pkg.version}`];
       }),
     );
   }
@@ -177,7 +202,7 @@ export function prepareBundledPackage(sourceDir, destinationDir, { sourceRoot = 
   }
 
   const deployedPackagePath = resolve(destinationDir, "package.json");
-  const publishManifest = materializePublishManifest(sourcePackage);
+  const publishManifest = materializePublishManifest(sourcePackage, readWorkspaceVersions(sourceRoot));
   // The staged directory is a finished publish artifact: every `files` entry has already
   // been built or copied above, and it deliberately sits outside the pnpm workspace. Its
   // lifecycle hooks would re-run those preparation steps -- @paperclipai/server's
