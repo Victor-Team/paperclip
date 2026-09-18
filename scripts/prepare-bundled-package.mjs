@@ -148,7 +148,17 @@ export function prepareBundledPackage(sourceDir, destinationDir, { sourceRoot = 
   rmSync(destinationDir, { recursive: true, force: true });
   mkdirSync(destinationDir, { recursive: true });
   for (const entry of sourcePackage.files ?? []) {
-    cpSync(resolve(sourceDir, entry), resolve(destinationDir, entry), { recursive: true });
+    const entrySource = resolve(sourceDir, entry);
+    // Some published entries are build outputs that the package generates in its own
+    // `prepack` hook -- `ui-dist` for @paperclipai/server is one. This packaging path
+    // does not run npm lifecycle scripts, so those entries can legitimately be missing
+    // here and the copy below would fail with ENOENT. When the package ships a
+    // `prepare:<entry>` script, run it on demand instead of failing.
+    const generator = sourcePackage.scripts?.[`prepare:${entry}`];
+    if (!existsSync(entrySource) && generator) {
+      execFileSync("pnpm", ["--dir", sourceDir, "run", `prepare:${entry}`], { stdio: "inherit" });
+    }
+    cpSync(entrySource, resolve(destinationDir, entry), { recursive: true });
   }
   for (const entry of ["README.md", "LICENSE", "LICENSE.md"]) {
     const sourcePath = resolve(sourceDir, entry);
