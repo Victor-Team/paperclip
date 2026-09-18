@@ -9,6 +9,10 @@
   "common": {
     "actions": {
       "retry": "Retry"
+    },
+    "language": {
+      "label": "Language",
+      "description": "Choose the display language."
     }
   },
   "search": {

@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { AsciiArtAnimation } from "@/components/AsciiArtAnimation";
 import { PaperclipLoading } from "@/components/AnimatedPaperclipIcon";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { LanguageToggle } from "@/components/LanguageToggle";
 import { PaperclipLockup } from "../components/PaperclipLockup";
 
 type AuthMode = "sign_in" | "sign_up";
@@ -82,7 +83,8 @@ export function AuthPage() {
 
   return (
     <div className="fixed inset-0 flex bg-background">
-      <div className="absolute top-4 right-4 z-10">
+      <div className="absolute top-4 right-4 z-10 flex items-center gap-2">
+        <LanguageToggle />
         <ThemeToggle />
       </div>
       {/* Left half — form */}

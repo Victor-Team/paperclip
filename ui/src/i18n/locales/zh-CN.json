@@ -9,6 +9,10 @@
   "common": {
     "actions": {
       "retry": "重试"
+    },
+    "language": {
+      "label": "语言",
+      "description": "选择界面显示语言。"
     }
   },
   "search": {

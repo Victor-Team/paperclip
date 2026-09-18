@@ -39,6 +39,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { LanguageToggle } from "@/components/LanguageToggle";
 import { Badge } from "@/components/ui/badge";
 import { InlineBanner } from "@/components/InlineBanner";
 import { BuiltInLifecycleChip } from "@/components/BuiltInAgentBadges";
@@ -605,6 +606,16 @@ export function DesignGuide() {
             <ThemeToggle />
             <ThemeToggle variant="menu-action" />
             <ThemeToggle variant="compact-menu-action" />
+          </div>
+        </SubSection>
+      </Section>
+
+      <Section title="Language Toggle">
+        <SubSection title="Variants">
+          <div className="flex max-w-sm flex-col items-start gap-3">
+            <LanguageToggle />
+            <LanguageToggle variant="menu-action" />
+            <LanguageToggle variant="compact-menu-action" />
           </div>
         </SubSection>
       </Section>
