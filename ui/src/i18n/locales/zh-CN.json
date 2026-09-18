@@ -5,5 +5,61 @@
       "description": "通过创建公司开始。",
       "newCompany": "新公司"
     }
+  },
+  "common": {
+    "actions": {
+      "retry": "重试"
+    }
+  },
+  "search": {
+    "scopes": {
+      "all": "全部",
+      "issues": "任务",
+      "comments": "评论",
+      "documents": "文档",
+      "artifacts": "产物",
+      "agents": "智能体",
+      "projects": "项目"
+    },
+    "general": {
+      "search": "搜索",
+      "placeholderSearchtaskscommentsdocuments": "搜索任务、评论、文档、产物、智能体、项目…",
+      "searchQuery": "搜索查询",
+      "clearSearch": "清除搜索",
+      "try": "试试",
+      "or": "或",
+      "typeToSearchOrganization": "键入以搜索公司记忆。",
+      "tasksCommentsPlanDocuments": "任务、评论、方案文档、产物、智能体、项目 — 同一界面，按相关度排序。",
+      "recentSearches": "最近搜索",
+      "identifierLookup": "标识符查找：",
+      "type": "键入",
+      "toJumpStraightTo": "即可直接跳转到任务。",
+      "quotedPhrases": "引号短语：",
+      "wrapAPhraseIn": "将短语用引号括起来，可精确匹配该顺序。",
+      "reopensTheCommandPalette": "会重新打开命令面板，并预填入当前查询。",
+      "couldnTRunThatSearch": "搜索未能执行",
+      "serverReturned": "服务器返回了 {{status}}。",
+      "requestFailed": "请求失败。",
+      "yourInputAndFilters": "您的输入和筛选条件仍会保留，您可以重试，或改用任务筛选视图。",
+      "openTasksFilterView": "打开任务筛选视图",
+      "searchingFor": "正在搜索“{{query}}”…",
+      "noResultsFor": "没有找到“{{query}}”的结果",
+      "weCouldnTFindA": "未能在 {{scope}} 中找到匹配项。请尝试扩大范围或换一种说法重新搜索。",
+      "allScopes": "全部范围",
+      "searchAllScopes": "搜索全部范围",
+      "createTaskFromThis": "根据此查询创建任务",
+      "tryFewerTokensOr": "尝试减少关键词数量，或使用一个更具区分度的词。",
+      "useAnIdentifierShortcut": "可以使用标识符快捷方式，例如",
+      "wrapMultiWordPhrasesIn": "将多词短语用引号括起来。",
+      "updating": "更新中…",
+      "unknownError": "未知错误",
+      "insertOperator": "插入操作符 {{token}}",
+      "resultsOfTotal": "{{shown}} / {{total}} 条结果",
+      "oneResult": "1 条结果",
+      "resultsCount": "{{count}} 条结果",
+      "sortedBy": " · 按 {{sort}} 排序",
+      "filterActiveSingular": " · {{count}} 个筛选条件已启用",
+      "filterActivePlural": " · {{count}} 个筛选条件已启用"
+    }
   }
 }
