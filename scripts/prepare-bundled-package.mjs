@@ -155,8 +155,19 @@ export function prepareBundledPackage(sourceDir, destinationDir, { sourceRoot = 
     // here and the copy below would fail with ENOENT. When the package ships a
     // `prepare:<entry>` script, run it on demand instead of failing.
     const generator = sourcePackage.scripts?.[`prepare:${entry}`];
-    if (!existsSync(entrySource) && generator) {
-      execFileSync("pnpm", ["--dir", sourceDir, "run", `prepare:${entry}`], { stdio: "inherit" });
+    if (!existsSync(entrySource)) {
+      if (generator) {
+        execFileSync("pnpm", ["--dir", sourceDir, "run", `prepare:${entry}`], { stdio: "inherit" });
+      } else {
+        // Other entries are staged by the release script rather than by the package
+        // itself -- `skills` for @paperclipai/server is copied there from the repo root
+        // (see scripts/release.sh: `cp -r "$REPO_ROOT/skills" "$REPO_ROOT/$pkg_dir/skills"`).
+        // Git installs never run release.sh, so mirror that staging step here.
+        const fromRepoRoot = resolve(sourceRoot, entry);
+        if (existsSync(fromRepoRoot)) {
+          cpSync(fromRepoRoot, entrySource, { recursive: true });
+        }
+      }
     }
     cpSync(entrySource, resolve(destinationDir, entry), { recursive: true });
   }
