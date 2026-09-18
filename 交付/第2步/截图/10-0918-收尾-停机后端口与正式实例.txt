@@ -1,0 +1,12 @@
+=== 09-18 重做 · 收尾 时间 2026-09-18T15:54:06-07:00 ===
+停法：kill -TERM -827829   （setsid 建的独立进程组，连内嵌 PG 一起收）
+$ ss -ltn | grep -E "3100|54329|3200|54339|13200"
+LISTEN 0      511         127.0.0.1:3100       0.0.0.0:*          
+LISTEN 0      200         127.0.0.1:54329      0.0.0.0:*          
+LISTEN 0      200         127.0.1.1:54329      0.0.0.0:*          
+残留隔离实例进程数 = 3
+正式实例 health：
+status = ok | processStartedAt = 2026-09-18T15:04:34.127Z
+公司清单：
+公司数 = 14 | 含「ANC 测试公司」= False
+shim: -rwxr-xr-x 1 yuanjian yuanjian 306 2026-09-18 02:21:17.225723732 -0700 /home/yuanjian/.local/bin/paperclipai

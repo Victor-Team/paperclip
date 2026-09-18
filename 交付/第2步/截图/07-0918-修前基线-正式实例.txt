@@ -1,0 +1,16 @@
+=== 09-18 重做 · 修前基线（正式实例）时间 2026-09-18T08:43:12-07:00 ===
+HEAD = 9fcdf5c44ec0a44ba1f763e561d2093c3f781d6d  分支 integration/tok-fixes-on-916
+$ git status --short
+?? "\344\272\244\344\273\230/\347\254\2542\346\255\245/\346\210\252\345\233\276/07-0918-\344\277\256\345\211\215\345\237\272\347\272\277-\346\255\243\345\274\217\345\256\236\344\276\213.txt"
+(以上为空 = 工作树干净，源码全部来自已提交的 HEAD)
+$ curl -s http://127.0.0.1:3100/api/health
+{"status":"ok","version":"0.3.1","serverVersion":"0.3.1","commit":null,"deploymentMode":"local_trusted","deploymentExposure":"private","localAiLoginSupported":true,"authReady":true,"bootstrapStatus":"ready","bootstrapInviteActive":false,"features":{"companyDeletionEnabled":true},"serverInfo":{"processStartedAt":"2026-09-18T15:04:34.127Z","git":{"available":false,"unavailableReason":"git_unavailable"}},"startupRecovery":{"phase":"ready","updatedAt":"2026-09-18T15:04:35.779Z"},"nativeRecovery":{},"databaseBackup":{"enabled":true,"status":"ok","backupDir":"/home/yuanjian/.paperclip/instances/default/data/backups","maxAgeHours":26,"latestBackup":{"name":"paperclip-20260918-071502.sql.gz","path":"/home/yuanjian/.paperclip/instances/default/data/backups/paperclip-20260918-071502.sql.gz","mtime":"2026-09-18T14:15:11.464Z","ageHours":1.5,"sizeBytes":52674669},"lastFailure":null,"warnings":[]}}
+$ curl -s http://127.0.0.1:3100/api/companies | 公司数
+公司数 = 14
+是否出现「ANC 测试公司」= False
+$ ss -ltn | grep -E "3100|54329|3200|54339"
+LISTEN 0      511         127.0.0.1:3100       0.0.0.0:*          
+LISTEN 0      200         127.0.0.1:54329      0.0.0.0:*          
+LISTEN 0      200         127.0.1.1:54329      0.0.0.0:*          
+$ ls -l /home/yuanjian/.local/bin/paperclipai
+-rwxr-xr-x 1 yuanjian yuanjian 306 2026-09-18 02:21:17.225723732 -0700 /home/yuanjian/.local/bin/paperclipai
