@@ -1,0 +1,17 @@
+=== 修后 D：证明 3200 由默认入口 pnpm paperclipai run 启动（非 dev:once） 2026-09-16T02:44:21-07:00 ===
+$ ss -ltnp | grep ":3200 "
+LISTEN 0      511         127.0.0.1:3200       0.0.0.0:*    users:(("node-MainThread",pid=1301718,fd=37))
+
+--- 3200 服务进程向上的进程链（父子逐级）---
+pid=1301718  cmd: /home/linuxbrew/.linuxbrew/Cellar/node/26.6.0/bin/node --require /home/yuanjian/dev/ANC/node_modules/.pnpm/tsx@4.23.12/node_modules/tsx/dist/preflight.cjs --import file:///home/yuanjian/dev/ANC/node_modules/.pnpm/tsx@4.23.12/node_modules/tsx/dist/loader.mjs cli/src/index.ts run 
+pid=1301704  cmd: node cli/node_modules/tsx/dist/cli.mjs cli/src/index.ts run 
+pid=1301701  cmd: sh -c node cli/node_modules/tsx/dist/cli.mjs cli/src/index.ts "run" 
+pid=1301635  cmd: node /home/yuanjian/.local/share/pnpm/store/v11/links/@/pnpm/9.15.4/76695b47ae5d9f8b9ca1c67b8a6e22cc484187e8eea696c8b2d4942620154e98/bin/../node_modules/pnpm/bin/pnpm.cjs paperclipai run 
+
+→ 链条顶端是 'pnpm paperclipai run'，落到 'cli/src/index.ts run'。**不是 scripts/dev-runner.ts**，即第 1 步走的 dev:once 路径未被使用。
+
+--- 内嵌 PostgreSQL（54339）---
+LISTEN 0      200         127.0.0.1:54339      0.0.0.0:*    users:(("postgres",pid=1302119,fd=8))        
+LISTEN 0      200         127.0.1.1:54339      0.0.0.0:*    users:(("postgres",pid=1302119,fd=9))        
+$ tr "\\0" " " < /proc/1302119/cmdline
+/home/yuanjian/dev/ANC/node_modules/.pnpm/@embedded-postgres+linux-x64@18.1.0-beta.16/node_modules/@embedded-postgres/linux-x64/native/bin/postgres -D /home/yuanjian/.paperclip-anc/instances/anc/db -p 54339 

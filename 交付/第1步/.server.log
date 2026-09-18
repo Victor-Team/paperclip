@@ -1,0 +1,659 @@
+START 22:35:51
+[WARN] The "pnpm" field in package.json is no longer read by pnpm. The following keys were ignored: "pnpm.patchedDependencies", "pnpm.overrides". See https://pnpm.io/settings for the new home of each setting.
+
+> paperclip@ paperclipai /home/yuanjian/dev/ANC
+> node cli/node_modules/tsx/dist/cli.mjs cli/src/index.ts "run"
+
+┌   paperclipai run 
+│
+│  Home: /home/yuanjian/.paperclip-anc
+│
+│  Instance: anc
+│
+│  Config: /home/yuanjian/.paperclip-anc/instances/anc/config.json
+│
+◇  Running doctor checks...
+
+██████╗  █████╗ ██████╗ ███████╗██████╗  ██████╗██╗     ██╗██████╗ 
+██╔══██╗██╔══██╗██╔══██╗██╔════╝██╔══██╗██╔════╝██║     ██║██╔══██╗
+██████╔╝███████║██████╔╝█████╗  ██████╔╝██║     ██║     ██║██████╔╝
+██╔═══╝ ██╔══██║██╔═══╝ ██╔══╝  ██╔══██╗██║     ██║     ██║██╔═══╝ 
+██║     ██║  ██║██║     ███████╗██║  ██║╚██████╗███████╗██║██║     
+╚═╝     ╚═╝  ╚═╝╚═╝     ╚══════╝╚═╝  ╚═╝ ╚═════╝╚══════╝╚═╝╚═╝     
+  ───────────────────────────────────────────────────────
+  The app people use to manage AI agents for work
+
+┌   paperclip doctor 
+│
+│  ✓ Config file: Valid config at /home/yuanjian/.paperclip-anc/instances/anc/config.json
+│
+│  ✓ Deployment/auth mode: local_trusted mode is configured for loopback-only access
+│
+│  ✗ Agent JWT secret: PAPERCLIP_AGENT_JWT_SECRET missing from environment and /home/yuanjian/.paperclip-anc/instances/anc/.env
+│
+│    Run with --repair to create /home/yuanjian/.paperclip-anc/instances/anc/.env containing PAPERCLIP_AGENT_JWT_SECRET
+│
+◆  Repaired: Agent JWT secret
+│
+│  ✓ Agent JWT secret: PAPERCLIP_AGENT_JWT_SECRET is set in environment
+│
+│  ! Secrets adapter: Secrets key file does not exist yet: /home/yuanjian/.paperclip-anc/instances/anc/secrets/master.key
+│
+│    Run with --repair to create a local encrypted secrets key file
+│
+◆  Repaired: Secrets adapter
+│
+│  ✓ Secrets adapter: Local encrypted provider configured with key file /home/yuanjian/.paperclip-anc/instances/anc/secrets/master.key
+│
+│  ✓ Storage: Local disk storage is writable: /home/yuanjian/.paperclip-anc/instances/anc/data/storage
+│
+│  ✓ Database: Embedded PostgreSQL configured at /home/yuanjian/.paperclip-anc/instances/anc/db (port 54339)
+│
+│  ✓ LLM provider: No LLM provider configured (optional)
+│
+│  ✓ Log directory: Log directory is writable: /home/yuanjian/.paperclip-anc/instances/anc/logs
+│
+│  ✓ Server port: Port 3200 is available
+│
+│  ✓ Node.js runtime: Node.js 26.6.0
+│
+│  ✗ Managed install manifest: Managed install artifacts exist but /home/yuanjian/.paperclip-anc/cli/install.json is missing
+│
+│    Re-run `paperclipai install`
+│
+│  ✓ Background service: No usable systemd user manager was detected (common in containers and WSL1). Use paperclipai run instead.
+│
+◇  Summary ─────────────╮
+│                       │
+│  11 passed, 1 failed  │
+│                       │
+├───────────────────────╯
+│
+└  Some checks failed. Fix the issues above and re-run doctor.
+
+│
+■  Doctor found blocking issues. Not starting server.
+ ELIFECYCLE  Command failed with exit code 1.
+=== 第二次启动尝试（pnpm dev:once）START 22:37:57 ===
+[WARN] The "pnpm" field in package.json is no longer read by pnpm. The following keys were ignored: "pnpm.patchedDependencies", "pnpm.overrides". See https://pnpm.io/settings for the new home of each setting.
+
+> paperclip@ dev:once /home/yuanjian/dev/ANC
+> pnpm --filter @paperclipai/server exec tsx ../scripts/dev-runner.ts dev
+
+[paperclip] dev mode: local_trusted (default)
+
+> paperclip@ db:migrate /home/yuanjian/dev/ANC
+> pnpm --filter @paperclipai/db migrate
+
+
+> @paperclipai/db@0.3.1 migrate /home/yuanjian/dev/ANC/packages/db
+> pnpm run check:migrations && tsx src/migrate.ts
+
+
+> @paperclipai/db@0.3.1 check:migrations /home/yuanjian/dev/ANC/packages/db
+> tsx src/check-migration-numbering.ts && tsx src/check-migration-safety.ts
+
+Migration safety check passed: 20 historical finding(s) covered by baseline (1 stale baseline id(s) ignored).
+Migrating database via embedded-postgres@54339
+Applying 278 pending migration(s)...
+Migrations complete
+[paperclip] building paperclip runner...
+
+> @paperclipai/paperclip-runner@0.0.0 build:typescript /home/yuanjian/dev/ANC/packages/paperclip-runner
+> pnpm run ensure:eval-build-deps && pnpm run check:protocol-types && node ./node_modules/typescript/bin/tsc --version && node ./node_modules/typescript/bin/tsc -p tsconfig.json && node ./node_modules/typescript/bin/tsc -p tsconfig.surfaces.json && node scripts/build-verified-provider-entrypoints.mjs
+
+
+> @paperclipai/paperclip-runner@0.0.0 ensure:eval-build-deps /home/yuanjian/dev/ANC/packages/paperclip-runner
+> pnpm --filter @paperclipai/paperclip-eval-kernel build
+
+
+> @paperclipai/paperclip-eval-kernel@0.1.0 build /home/yuanjian/dev/ANC/packages/paperclip-eval-kernel
+> tsc -p tsconfig.json
+
+
+> @paperclipai/paperclip-runner@0.0.0 check:protocol-types /home/yuanjian/dev/ANC/packages/paperclip-runner
+> node scripts/generate-protocol-schema-module.mjs --check && node scripts/generate-acpx-sidecar-contract.mjs --check
+
+Generated PRP schema modules match the JSON Schema sources.
+Generated TypeScript/Rust ACPX sidecar contracts match the schema.
+Version 7.0.2
+[paperclip] building plugin sdk...
+
+> @paperclipai/plugin-sdk@1.0.0 build /home/yuanjian/dev/ANC/packages/plugins/sdk
+> pnpm --filter @paperclipai/shared build && tsc
+
+
+> @paperclipai/shared@0.3.1 build /home/yuanjian/dev/ANC/packages/shared
+> tsc
+
+
+> @paperclipai/server@0.3.1 dev /home/yuanjian/dev/ANC/server
+> tsx src/index.ts
+
+[22:38:20] [32mINFO[39m: [36mUsing embedded PostgreSQL because no DATABASE_URL set (dataDir=/home/yuanjian/.paperclip-anc/instances/anc/db, port=54339)[39m
+[22:38:20] [32mINFO[39m: [36mEmbedded PostgreSQL cluster already exists (/home/yuanjian/.paperclip-anc/instances/anc/db/PG_VERSION); skipping init[39m
+[22:38:20] [32mINFO[39m: [36mEmbedded PostgreSQL ready[39m
+[22:38:20] [32mINFO[39m: [36mSetup-token login confidential transport startup assessment[39m [90m{"proxyForwardingEnabled":false,"reason":"no_proxy_allowlist_local_trusted_loopback_only","deploymentMode":"local_trusted"}[39m
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - `__dirname` (vite.config.ts:25:25). Use `import.meta.dirname` instead
+  - import "./src/lib/vite-watch" without a file extension (vite.config.ts:5:41). Add the file extension
+  - import "./src/lib/vite-api-proxy" without a file extension (vite.config.ts:6:32). Add the file extension
+  - import "./src/lib/vite-sw-build-id" without a file extension (vite.config.ts:7:44). Add the file extension
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+`server.hmr.protocol/host/port/path/clientPort/timeout/server` is deprecated. Use `server.ws.*` instead. Note that this option may be set by a plugin. Set VITE_DEPRECATION_TRACE=1 to see where it is called.
+[22:38:21] [32mINFO[39m: [36mplugin job coordinator started — listening to lifecycle events[39m [90m{"service":"plugin-job-coordinator"}[39m
+[22:38:21] [32mINFO[39m: [36mplugin job scheduler started[39m [90m{"service":"plugin-job-scheduler","tickIntervalMs":30000,"maxConcurrentJobs":10}[39m
+[22:38:21] [32mINFO[39m: [36minitializing plugin tool dispatcher[39m [90m{"service":"plugin-tool-dispatcher"}[39m
+[22:38:21] [32mINFO[39m: [36mplugin-dev-watcher: initialized[39m [90m{"service":"plugin-dev-watcher","resolvesInstalledPlugins":true}[39m
+[22:38:21] [32mINFO[39m: [36mServer listener bound on 127.0.0.1:3200; startup recovery in progress[39m
+[22:38:21] [32mINFO[39m: [36mloaded tools from ready plugins[39m [90m{"service":"plugin-tool-dispatcher","readyPlugins":0,"registeredTools":0}[39m
+[22:38:21] [34mDEBUG[39m: [36msubscribed to lifecycle events[39m [90m{"service":"plugin-tool-dispatcher"}[39m
+[22:38:21] [32mINFO[39m: [36mplugin tool dispatcher initialized[39m [90m{"service":"plugin-tool-dispatcher","totalTools":0}[39m
+[22:38:21] [32mINFO[39m: [36mbundled plugin bundle not present; skipping auto-install[39m [90m{"pluginKey":"paperclip.kubernetes-sandbox-provider","pluginPath":"/app/packages/plugins/sandbox-providers/kubernetes"}[39m
+[22:38:21] [32mINFO[39m: [36mplugin-loader: loading all ready plugins[39m [90m{"service":"plugin-loader"}[39m
+[22:38:21] [32mINFO[39m: [36mplugin-loader: no ready plugins to load[39m [90m{"service":"plugin-loader"}[39m
+[22:38:21] [32mINFO[39m: [36mworktree run-execution cutoff state[39m [90m{"state":"disarmed","cutoff":null}[39m
+[22:38:21] [32mINFO[39m: [36mstartup reap of orphaned heartbeat runs complete[39m [90m{"reaped":0,"runIds":[]}[39m
+
+[36m██████╗  █████╗ ██████╗ ███████╗██████╗  ██████╗██╗     ██╗██████╗ [0m
+[36m██╔══██╗██╔══██╗██╔══██╗██╔════╝██╔══██╗██╔════╝██║     ██║██╔══██╗[0m
+[36m██████╔╝███████║██████╔╝█████╗  ██████╔╝██║     ██║     ██║██████╔╝[0m
+[36m██╔═══╝ ██╔══██║██╔═══╝ ██╔══╝  ██╔══██╗██║     ██║     ██║██╔═══╝ [0m
+[36m██║     ██║  ██║██║     ███████╗██║  ██║╚██████╗███████╗██║██║     [0m
+[36m╚═╝     ╚═╝  ╚═╝╚═╝     ╚══════╝╚═╝  ╚═╝ ╚═════╝╚══════╝╚═╝╚═╝     [0m
+[34m  ───────────────────────────────────────────────────────[0m
+[2mMode            [0m [32membedded-postgres[0m  |  [36mvite-dev-middleware[0m
+[2mDeploy          [0m local_trusted (private)
+[2mBind            [0m loopback [2m(127.0.0.1)[0m
+[2mAuth            [0m [32mready[0m
+[2mServer          [0m 3200
+[2mAPI             [0m http://127.0.0.1:3200/api [2m(health: http://127.0.0.1:3200/api/health)[0m
+[2mUI              [0m http://127.0.0.1:3200
+[2mDatabase        [0m /home/yuanjian/.paperclip-anc/instances/anc/db [2m(pg:54339)[0m
+[2mMigrations      [0m already applied
+[2mAgent JWT       [0m [32mset[0m
+[2mHeartbeat       [0m enabled [2m(30000ms)[0m
+[2mDB Backup       [0m enabled [2m(every 60m, keep 7d)[0m
+[2mBackup Dir      [0m /home/yuanjian/.paperclip-anc/instances/anc/data/backups
+[2mConfig          [0m /home/yuanjian/.paperclip-anc/instances/anc/config.json
+[34m  ───────────────────────────────────────────────────────[0m
+
+[22:38:21] [32mINFO[39m: [36mAutomatic database backups enabled[39m [90m{"intervalMinutes":60,"retentionSource":"instance-settings-db","backupDir":"/home/yuanjian/.paperclip-anc/instances/anc/data/backups"}[39m
+[22:38:21] [32mINFO[39m: [36mServer startup recovery complete on 127.0.0.1:3200[39m
+[22:40:00] [32mINFO[39m: [36mGET /get-session 200[39m
+[22:40:00] [32mINFO[39m: [36mGET /favicon.svg 200[39m
+[22:40:00] [32mINFO[39m: [36mGET /instance/settings/experimental 200[39m
+[22:40:00] [32mINFO[39m: [36mGET /adapters 200[39m
+[22:40:00] [32mINFO[39m: [36mGET /fonts/InterVariable.woff2 200[39m
+[22:40:17] [32mINFO[39m: [36mGET /get-session 200[39m
+[22:40:17] [32mINFO[39m: [36mGET /favicon.svg 200[39m
+[22:40:17] [32mINFO[39m: [36mGET /adapters 200[39m
+[22:40:17] [32mINFO[39m: [36mGET /instance/settings/experimental 200[39m
+[22:40:17] [32mINFO[39m: [36mGET /fonts/InterVariable.woff2 200[39m
+[22:40:19] [32mINFO[39m: [36mPOST / 201[39m
+[22:40:20] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/routines 200[39m
+[22:40:20] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/skills 200[39m
+[22:40:37] [32mINFO[39m: [36mGET /get-session 200[39m
+[22:40:37] [32mINFO[39m: [36mGET /favicon.svg 200[39m
+[22:40:37] [32mINFO[39m: [36mGET /adapters 200[39m
+[22:40:37] [32mINFO[39m: [36mGET /instance/settings/experimental 200[39m
+[22:40:37] [32mINFO[39m: [36mGET /fonts/InterVariable.woff2 200[39m
+[22:40:37] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/routines 200[39m
+[22:40:37] [32mINFO[39m: [36mGET /sidebar-preferences/me 200[39m
+[22:40:37] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/projects 200[39m
+[22:40:37] [32mINFO[39m: [36mGET /plugins/ui-contributions 200[39m
+[22:40:37] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/inbox-dismissals 200[39m
+[22:40:37] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/resource-memberships/me 200[39m
+[22:40:37] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/approvals 200[39m
+[22:40:37] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/join-requests 200[39m
+[22:40:37] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/heartbeat-runs 200[39m
+[22:40:37] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/issues 200[39m
+[22:40:37] [34mDEBUG[39m: [36msafe authenticated GET observed[39m [90m{"event":"safe_get_request_observed","route":"GET /api/companies/:companyId/issues","companyId":"709b6d8c-3700-4d12-81af-c414a61e8aca","actorType":"board","actorIdentityHash":"bb8MTFOBwovuZlx1","clientHash":"YpwVX08n9J9Dekik","cacheKeyHash":"f8u2sAM991JNCfFV","queryKeys":["excludeRoutineExecutions","inboxArchivedByUserId","includeBlockedBy","includeBlockedInboxAttention","includeLiveDescendantSummary","includePluginOperations","includeRoutineExecutions","limit","offset","status","touchedByUserId"],"requestCount":1,"durationMs":5,"statusCode":200,"responseBytes":2,"compressedBytes":null,"contentEncoding":null,"cacheStatus":"miss","etagOutcome":"none","referer":"/ANC/dashboard","visibilityHint":"focused"}[39m
+[22:40:37] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/skills 200[39m
+[22:40:37] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/live-runs 200[39m
+[22:40:37] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/projects 200[39m
+[22:40:37] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/agents 200[39m
+[22:40:37] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/activity 200[39m
+[22:40:37] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/issues 200[39m
+[22:40:37] [34mDEBUG[39m: [36msafe authenticated GET observed[39m [90m{"event":"safe_get_request_observed","route":"GET /api/companies/:companyId/issues","companyId":"709b6d8c-3700-4d12-81af-c414a61e8aca","actorType":"board","actorIdentityHash":"bb8MTFOBwovuZlx1","clientHash":"YpwVX08n9J9Dekik","cacheKeyHash":"G8lakfaQsOZ6pLW2","queryKeys":["excludeRoutineExecutions","includeBlockedBy","includeBlockedInboxAttention","includeLiveDescendantSummary","includePluginOperations","includeRoutineExecutions","limit","offset"],"requestCount":1,"durationMs":3,"statusCode":200,"responseBytes":2,"compressedBytes":null,"contentEncoding":null,"cacheStatus":"miss","etagOutcome":"none","referer":"/ANC/dashboard","visibilityHint":"focused"}[39m
+[22:40:37] [32mINFO[39m: [36mGET /instance/settings/general 200[39m
+[22:40:37] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/sidebar-preferences/me 200[39m
+[22:40:37] [33mWARN[39m: [36mAnnouncement feed unavailable; retrying on demand after cooldown[39m
+[22:40:37] [32mINFO[39m: [36mGET /announcements/current 200[39m
+[22:40:37] [32mINFO[39m: [36mGET /announcements/current 200[39m
+[22:40:37] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/user-directory 200[39m
+[22:40:37] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/dashboard 200[39m
+[22:40:37] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/live-runs 200[39m
+[22:41:24] [32mINFO[39m: [36mGET /get-session 200[39m
+[22:41:24] [32mINFO[39m: [36mGET /favicon.svg 200[39m
+[22:41:24] [32mINFO[39m: [36mGET /adapters 200[39m
+[22:41:24] [32mINFO[39m: [36mGET /instance/settings/experimental 200[39m
+[22:41:24] [32mINFO[39m: [36mGET /fonts/InterVariable.woff2 200[39m
+[22:41:24] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/routines 200[39m
+[22:41:24] [32mINFO[39m: [36mGET /sidebar-preferences/me 200[39m
+[22:41:24] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/projects 200[39m
+[22:41:24] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/resource-memberships/me 200[39m
+[22:41:24] [32mINFO[39m: [36mGET /plugins/ui-contributions 200[39m
+[22:41:24] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/inbox-dismissals 200[39m
+[22:41:24] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/skills 200[39m
+[22:41:24] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/join-requests 200[39m
+[22:41:24] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/approvals 200[39m
+[22:41:24] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/heartbeat-runs 200[39m
+[22:41:24] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/live-runs 200[39m
+[22:41:24] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/issues 200[39m
+[22:41:24] [34mDEBUG[39m: [36msafe authenticated GET observed[39m [90m{"event":"safe_get_request_observed","route":"GET /api/companies/:companyId/issues","companyId":"709b6d8c-3700-4d12-81af-c414a61e8aca","actorType":"board","actorIdentityHash":"bb8MTFOBwovuZlx1","clientHash":"YpwVX08n9J9Dekik","cacheKeyHash":"f8u2sAM991JNCfFV","queryKeys":["excludeRoutineExecutions","inboxArchivedByUserId","includeBlockedBy","includeBlockedInboxAttention","includeLiveDescendantSummary","includePluginOperations","includeRoutineExecutions","limit","offset","status","touchedByUserId"],"requestCount":1,"durationMs":4,"statusCode":200,"responseBytes":2,"compressedBytes":null,"contentEncoding":null,"cacheStatus":"miss","etagOutcome":"none","referer":"/ANC/dashboard","visibilityHint":"focused"}[39m
+[22:41:24] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/agents 200[39m
+[22:41:24] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/activity 200[39m
+[22:41:24] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/issues 200[39m
+[22:41:24] [34mDEBUG[39m: [36msafe authenticated GET observed[39m [90m{"event":"safe_get_request_observed","route":"GET /api/companies/:companyId/issues","companyId":"709b6d8c-3700-4d12-81af-c414a61e8aca","actorType":"board","actorIdentityHash":"bb8MTFOBwovuZlx1","clientHash":"YpwVX08n9J9Dekik","cacheKeyHash":"G8lakfaQsOZ6pLW2","queryKeys":["excludeRoutineExecutions","includeBlockedBy","includeBlockedInboxAttention","includeLiveDescendantSummary","includePluginOperations","includeRoutineExecutions","limit","offset"],"requestCount":1,"durationMs":3,"statusCode":200,"responseBytes":2,"compressedBytes":null,"contentEncoding":null,"cacheStatus":"miss","etagOutcome":"none","referer":"/ANC/dashboard","visibilityHint":"focused"}[39m
+[22:41:24] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/projects 200[39m
+[22:41:24] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/dashboard 200[39m
+[22:41:24] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/user-directory 200[39m
+[22:41:24] [32mINFO[39m: [36mGET /announcements/current 200[39m
+[22:41:24] [32mINFO[39m: [36mGET /announcements/current 200[39m
+[22:41:24] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/sidebar-preferences/me 200[39m
+[22:41:24] [32mINFO[39m: [36mGET /instance/settings/general 200[39m
+[22:41:24] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/live-runs 200[39m
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @paperclipai/server@0.3.1 dev: `tsx src/index.ts`
+Command failed with signal "SIGTERM"
+undefined
+/home/yuanjian/dev/ANC/server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 143: tsx ../scripts/dev-runner.ts dev
+ ELIFECYCLE  Command failed with exit code 1.
+[22:43:23] [32mINFO[39m: [36mgraceful heartbeat run drain complete[39m [90m{"signal":"SIGTERM","drain":{"interrupted":0,"interruptedRunIds":[],"retryRunIds":[],"restartSuspendedRunIds":[]}}[39m
+[22:43:23] [32mINFO[39m: [36mplugin job scheduler stopped[39m [90m{"service":"plugin-job-scheduler","activeJobCount":0}[39m
+[22:43:23] [32mINFO[39m: [36mplugin job coordinator stopped[39m [90m{"service":"plugin-job-coordinator"}[39m
+[22:43:23] [32mINFO[39m: [36mStopping embedded PostgreSQL[39m [90m{"signal":"SIGTERM"}[39m
+=== 第三次启动（为补拍 AC-10 证据）START 22:50:38 ===
+[WARN] The "pnpm" field in package.json is no longer read by pnpm. The following keys were ignored: "pnpm.patchedDependencies", "pnpm.overrides". See https://pnpm.io/settings for the new home of each setting.
+
+> paperclip@ dev:once /home/yuanjian/dev/ANC
+> pnpm --filter @paperclipai/server exec tsx ../scripts/dev-runner.ts dev
+
+[paperclip] dev mode: local_trusted (default)
+[paperclip] building paperclip runner...
+
+> @paperclipai/paperclip-runner@0.0.0 build:typescript /home/yuanjian/dev/ANC/packages/paperclip-runner
+> pnpm run ensure:eval-build-deps && pnpm run check:protocol-types && node ./node_modules/typescript/bin/tsc --version && node ./node_modules/typescript/bin/tsc -p tsconfig.json && node ./node_modules/typescript/bin/tsc -p tsconfig.surfaces.json && node scripts/build-verified-provider-entrypoints.mjs
+
+
+> @paperclipai/paperclip-runner@0.0.0 ensure:eval-build-deps /home/yuanjian/dev/ANC/packages/paperclip-runner
+> pnpm --filter @paperclipai/paperclip-eval-kernel build
+
+
+> @paperclipai/paperclip-eval-kernel@0.1.0 build /home/yuanjian/dev/ANC/packages/paperclip-eval-kernel
+> tsc -p tsconfig.json
+
+
+> @paperclipai/paperclip-runner@0.0.0 check:protocol-types /home/yuanjian/dev/ANC/packages/paperclip-runner
+> node scripts/generate-protocol-schema-module.mjs --check && node scripts/generate-acpx-sidecar-contract.mjs --check
+
+Generated PRP schema modules match the JSON Schema sources.
+Generated TypeScript/Rust ACPX sidecar contracts match the schema.
+Version 7.0.2
+[paperclip] building plugin sdk...
+
+> @paperclipai/plugin-sdk@1.0.0 build /home/yuanjian/dev/ANC/packages/plugins/sdk
+> pnpm --filter @paperclipai/shared build && tsc
+
+
+> @paperclipai/shared@0.3.1 build /home/yuanjian/dev/ANC/packages/shared
+> tsc
+
+
+> @paperclipai/server@0.3.1 dev /home/yuanjian/dev/ANC/server
+> tsx src/index.ts
+
+[22:50:49] [32mINFO[39m: [36mUsing embedded PostgreSQL because no DATABASE_URL set (dataDir=/home/yuanjian/.paperclip-anc/instances/anc/db, port=54339)[39m
+[22:50:49] [32mINFO[39m: [36mEmbedded PostgreSQL cluster already exists (/home/yuanjian/.paperclip-anc/instances/anc/db/PG_VERSION); skipping init[39m
+[22:50:49] [32mINFO[39m: [36mEmbedded PostgreSQL ready[39m
+[22:50:49] [32mINFO[39m: [36mSetup-token login confidential transport startup assessment[39m [90m{"proxyForwardingEnabled":false,"reason":"no_proxy_allowlist_local_trusted_loopback_only","deploymentMode":"local_trusted"}[39m
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - `__dirname` (vite.config.ts:25:25). Use `import.meta.dirname` instead
+  - import "./src/lib/vite-watch" without a file extension (vite.config.ts:5:41). Add the file extension
+  - import "./src/lib/vite-api-proxy" without a file extension (vite.config.ts:6:32). Add the file extension
+  - import "./src/lib/vite-sw-build-id" without a file extension (vite.config.ts:7:44). Add the file extension
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+`server.hmr.protocol/host/port/path/clientPort/timeout/server` is deprecated. Use `server.ws.*` instead. Note that this option may be set by a plugin. Set VITE_DEPRECATION_TRACE=1 to see where it is called.
+[22:50:49] [32mINFO[39m: [36mplugin job coordinator started — listening to lifecycle events[39m [90m{"service":"plugin-job-coordinator"}[39m
+[22:50:49] [32mINFO[39m: [36mplugin job scheduler started[39m [90m{"service":"plugin-job-scheduler","tickIntervalMs":30000,"maxConcurrentJobs":10}[39m
+[22:50:49] [32mINFO[39m: [36minitializing plugin tool dispatcher[39m [90m{"service":"plugin-tool-dispatcher"}[39m
+[22:50:49] [32mINFO[39m: [36mplugin-dev-watcher: initialized[39m [90m{"service":"plugin-dev-watcher","resolvesInstalledPlugins":true}[39m
+[22:50:49] [32mINFO[39m: [36mServer listener bound on 127.0.0.1:3200; startup recovery in progress[39m
+[22:50:49] [32mINFO[39m: [36mloaded tools from ready plugins[39m [90m{"service":"plugin-tool-dispatcher","readyPlugins":0,"registeredTools":0}[39m
+[22:50:49] [34mDEBUG[39m: [36msubscribed to lifecycle events[39m [90m{"service":"plugin-tool-dispatcher"}[39m
+[22:50:49] [32mINFO[39m: [36mplugin tool dispatcher initialized[39m [90m{"service":"plugin-tool-dispatcher","totalTools":0}[39m
+[22:50:49] [32mINFO[39m: [36mbundled plugin bundle not present; skipping auto-install[39m [90m{"pluginKey":"paperclip.kubernetes-sandbox-provider","pluginPath":"/app/packages/plugins/sandbox-providers/kubernetes"}[39m
+[22:50:49] [32mINFO[39m: [36mplugin-loader: loading all ready plugins[39m [90m{"service":"plugin-loader"}[39m
+[22:50:49] [32mINFO[39m: [36mplugin-loader: no ready plugins to load[39m [90m{"service":"plugin-loader"}[39m
+[22:50:49] [32mINFO[39m: [36mworktree run-execution cutoff state[39m [90m{"state":"disarmed","cutoff":null}[39m
+[22:50:50] [32mINFO[39m: [36mstartup reap of orphaned heartbeat runs complete[39m [90m{"reaped":0,"runIds":[]}[39m
+
+[36m██████╗  █████╗ ██████╗ ███████╗██████╗  ██████╗██╗     ██╗██████╗ [0m
+[36m██╔══██╗██╔══██╗██╔══██╗██╔════╝██╔══██╗██╔════╝██║     ██║██╔══██╗[0m
+[36m██████╔╝███████║██████╔╝█████╗  ██████╔╝██║     ██║     ██║██████╔╝[0m
+[36m██╔═══╝ ██╔══██║██╔═══╝ ██╔══╝  ██╔══██╗██║     ██║     ██║██╔═══╝ [0m
+[36m██║     ██║  ██║██║     ███████╗██║  ██║╚██████╗███████╗██║██║     [0m
+[36m╚═╝     ╚═╝  ╚═╝╚═╝     ╚══════╝╚═╝  ╚═╝ ╚═════╝╚══════╝╚═╝╚═╝     [0m
+[34m  ───────────────────────────────────────────────────────[0m
+[2mMode            [0m [32membedded-postgres[0m  |  [36mvite-dev-middleware[0m
+[2mDeploy          [0m local_trusted (private)
+[2mBind            [0m loopback [2m(127.0.0.1)[0m
+[2mAuth            [0m [32mready[0m
+[2mServer          [0m 3200
+[2mAPI             [0m http://127.0.0.1:3200/api [2m(health: http://127.0.0.1:3200/api/health)[0m
+[2mUI              [0m http://127.0.0.1:3200
+[2mDatabase        [0m /home/yuanjian/.paperclip-anc/instances/anc/db [2m(pg:54339)[0m
+[2mMigrations      [0m already applied
+[2mAgent JWT       [0m [32mset[0m
+[2mHeartbeat       [0m enabled [2m(30000ms)[0m
+[2mDB Backup       [0m enabled [2m(every 60m, keep 7d)[0m
+[2mBackup Dir      [0m /home/yuanjian/.paperclip-anc/instances/anc/data/backups
+[2mConfig          [0m /home/yuanjian/.paperclip-anc/instances/anc/config.json
+[34m  ───────────────────────────────────────────────────────[0m
+
+[22:50:50] [32mINFO[39m: [36mAutomatic database backups enabled[39m [90m{"intervalMinutes":60,"retentionSource":"instance-settings-db","backupDir":"/home/yuanjian/.paperclip-anc/instances/anc/data/backups"}[39m
+[22:50:50] [32mINFO[39m: [36mServer startup recovery complete on 127.0.0.1:3200[39m
+[22:51:12] [32mINFO[39m: [36mGET /get-session 200[39m
+[22:51:12] [32mINFO[39m: [36mGET /favicon.svg 200[39m
+[22:51:12] [32mINFO[39m: [36mGET /instance/settings/experimental 200[39m
+[22:51:12] [32mINFO[39m: [36mGET /adapters 200[39m
+[22:51:12] [32mINFO[39m: [36mGET /fonts/InterVariable.woff2 200[39m
+[22:51:12] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/routines 200[39m
+[22:51:12] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/projects 200[39m
+[22:51:12] [32mINFO[39m: [36mGET /plugins/ui-contributions 200[39m
+[22:51:12] [32mINFO[39m: [36mGET /sidebar-preferences/me 200[39m
+[22:51:12] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/inbox-dismissals 200[39m
+[22:51:12] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/resource-memberships/me 200[39m
+[22:51:12] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/approvals 200[39m
+[22:51:12] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/join-requests 200[39m
+[22:51:12] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/issues 200[39m
+[22:51:12] [34mDEBUG[39m: [36msafe authenticated GET observed[39m [90m{"event":"safe_get_request_observed","route":"GET /api/companies/:companyId/issues","companyId":"709b6d8c-3700-4d12-81af-c414a61e8aca","actorType":"board","actorIdentityHash":"bb8MTFOBwovuZlx1","clientHash":"YpwVX08n9J9Dekik","cacheKeyHash":"f8u2sAM991JNCfFV","queryKeys":["excludeRoutineExecutions","inboxArchivedByUserId","includeBlockedBy","includeBlockedInboxAttention","includeLiveDescendantSummary","includePluginOperations","includeRoutineExecutions","limit","offset","status","touchedByUserId"],"requestCount":1,"durationMs":5,"statusCode":200,"responseBytes":2,"compressedBytes":null,"contentEncoding":null,"cacheStatus":"miss","etagOutcome":"none","referer":"/ANC/dashboard","visibilityHint":"focused"}[39m
+[22:51:12] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/heartbeat-runs 200[39m
+[22:51:12] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/agents 200[39m
+[22:51:12] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/live-runs 200[39m
+[22:51:12] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/activity 200[39m
+[22:51:12] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/issues 200[39m
+[22:51:12] [34mDEBUG[39m: [36msafe authenticated GET observed[39m [90m{"event":"safe_get_request_observed","route":"GET /api/companies/:companyId/issues","companyId":"709b6d8c-3700-4d12-81af-c414a61e8aca","actorType":"board","actorIdentityHash":"bb8MTFOBwovuZlx1","clientHash":"YpwVX08n9J9Dekik","cacheKeyHash":"G8lakfaQsOZ6pLW2","queryKeys":["excludeRoutineExecutions","includeBlockedBy","includeBlockedInboxAttention","includeLiveDescendantSummary","includePluginOperations","includeRoutineExecutions","limit","offset"],"requestCount":1,"durationMs":4,"statusCode":200,"responseBytes":2,"compressedBytes":null,"contentEncoding":null,"cacheStatus":"miss","etagOutcome":"none","referer":"/ANC/dashboard","visibilityHint":"focused"}[39m
+[22:51:12] [32mINFO[39m: [36mGET /instance/settings/general 200[39m
+[22:51:12] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/projects 200[39m
+[22:51:12] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/sidebar-preferences/me 200[39m
+[22:51:12] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/user-directory 200[39m
+[22:51:12] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/dashboard 200[39m
+[22:51:12] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/skills 200[39m
+[22:51:12] [33mWARN[39m: [36mAnnouncement feed unavailable; retrying on demand after cooldown[39m
+[22:51:12] [32mINFO[39m: [36mGET /announcements/current 200[39m
+[22:51:12] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/live-runs 200[39m
+[22:51:38] [32mINFO[39m: [36mGET /get-session 200[39m
+[22:51:38] [32mINFO[39m: [36mGET /favicon.svg 200[39m
+[22:51:38] [32mINFO[39m: [36mGET /adapters 200[39m
+[22:51:38] [32mINFO[39m: [36mGET /instance/settings/experimental 200[39m
+[22:51:38] [32mINFO[39m: [36mGET /fonts/InterVariable.woff2 200[39m
+[22:51:38] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/routines 200[39m
+[22:51:39] [32mINFO[39m: [36mGET /sidebar-preferences/me 200[39m
+[22:51:39] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/projects 200[39m
+[22:51:39] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/resource-memberships/me 200[39m
+[22:51:39] [32mINFO[39m: [36mGET /plugins/ui-contributions 200[39m
+[22:51:39] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/inbox-dismissals 200[39m
+[22:51:39] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/skills 200[39m
+[22:51:39] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/heartbeat-runs 200[39m
+[22:51:39] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/approvals 200[39m
+[22:51:39] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/live-runs 200[39m
+[22:51:39] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/join-requests 200[39m
+[22:51:39] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/issues 200[39m
+[22:51:39] [34mDEBUG[39m: [36msafe authenticated GET observed[39m [90m{"event":"safe_get_request_observed","route":"GET /api/companies/:companyId/issues","companyId":"709b6d8c-3700-4d12-81af-c414a61e8aca","actorType":"board","actorIdentityHash":"bb8MTFOBwovuZlx1","clientHash":"YpwVX08n9J9Dekik","cacheKeyHash":"f8u2sAM991JNCfFV","queryKeys":["excludeRoutineExecutions","inboxArchivedByUserId","includeBlockedBy","includeBlockedInboxAttention","includeLiveDescendantSummary","includePluginOperations","includeRoutineExecutions","limit","offset","status","touchedByUserId"],"requestCount":1,"durationMs":9,"statusCode":200,"responseBytes":2,"compressedBytes":null,"contentEncoding":null,"cacheStatus":"miss","etagOutcome":"none","referer":"/ANC/dashboard","visibilityHint":"focused"}[39m
+[22:51:39] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/agents 200[39m
+[22:51:39] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/projects 200[39m
+[22:51:39] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/activity 200[39m
+[22:51:39] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/issues 200[39m
+[22:51:39] [34mDEBUG[39m: [36msafe authenticated GET observed[39m [90m{"event":"safe_get_request_observed","route":"GET /api/companies/:companyId/issues","companyId":"709b6d8c-3700-4d12-81af-c414a61e8aca","actorType":"board","actorIdentityHash":"bb8MTFOBwovuZlx1","clientHash":"YpwVX08n9J9Dekik","cacheKeyHash":"G8lakfaQsOZ6pLW2","queryKeys":["excludeRoutineExecutions","includeBlockedBy","includeBlockedInboxAttention","includeLiveDescendantSummary","includePluginOperations","includeRoutineExecutions","limit","offset"],"requestCount":1,"durationMs":3,"statusCode":200,"responseBytes":2,"compressedBytes":null,"contentEncoding":null,"cacheStatus":"miss","etagOutcome":"none","referer":"/ANC/dashboard","visibilityHint":"focused"}[39m
+[22:51:39] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/dashboard 200[39m
+[22:51:39] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/user-directory 200[39m
+[22:51:39] [32mINFO[39m: [36mGET /announcements/current 200[39m
+[22:51:39] [32mINFO[39m: [36mGET /instance/settings/general 200[39m
+[22:51:39] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/sidebar-preferences/me 200[39m
+[22:51:39] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/live-runs 200[39m
+[22:51:55] [32mINFO[39m: [36mGET /ANC/settings 200[39m
+[22:51:57] [32mINFO[39m: [36mGET /fonts/InterVariable.woff2 200[39m
+[22:51:57] [32mINFO[39m: [36mGET /get-session 200[39m
+[22:51:57] [32mINFO[39m: [36mGET /favicon.svg 200[39m
+[22:51:57] [32mINFO[39m: [36mGET /adapters 200[39m
+[22:51:57] [32mINFO[39m: [36mGET /instance/settings/experimental 200[39m
+[22:51:57] [32mINFO[39m: [36mGET /sidebar-preferences/me 200[39m
+[22:51:57] [32mINFO[39m: [36mGET /plugins/ui-contributions 200[39m
+[22:51:57] [32mINFO[39m: [36mGET /instance/settings/general 200[39m
+[22:51:57] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/projects 200[39m
+[22:51:57] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/resource-memberships/me 200[39m
+[22:51:57] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/approvals 200[39m
+[22:51:57] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/inbox-dismissals 200[39m
+[22:51:57] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/join-requests 200[39m
+[22:51:57] [32mINFO[39m: [36mGET /announcements/current 200[39m
+[22:51:57] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/heartbeat-runs 200[39m
+[22:51:57] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/live-runs 200[39m
+[22:51:57] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/sidebar-preferences/me 200[39m
+[22:51:57] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/issues 200[39m
+[22:51:57] [34mDEBUG[39m: [36msafe authenticated GET observed[39m [90m{"event":"safe_get_request_observed","route":"GET /api/companies/:companyId/issues","companyId":"709b6d8c-3700-4d12-81af-c414a61e8aca","actorType":"board","actorIdentityHash":"bb8MTFOBwovuZlx1","clientHash":"YpwVX08n9J9Dekik","cacheKeyHash":"f8u2sAM991JNCfFV","queryKeys":["excludeRoutineExecutions","inboxArchivedByUserId","includeBlockedBy","includeBlockedInboxAttention","includeLiveDescendantSummary","includePluginOperations","includeRoutineExecutions","limit","offset","status","touchedByUserId"],"requestCount":1,"durationMs":5,"statusCode":200,"responseBytes":2,"compressedBytes":null,"contentEncoding":null,"cacheStatus":"miss","etagOutcome":"none","referer":"/ANC/company/settings/instance/general","visibilityHint":"focused"}[39m
+[22:51:57] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/dashboard 200[39m
+[22:51:57] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/routines 200[39m
+[22:51:57] [32mINFO[39m: [36mGET /plugins 200[39m
+[22:51:57] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/sidebar-badges 200[39m
+[22:51:57] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/skills 200[39m
+[22:52:02] [32mINFO[39m: [36mGET /ANC/issues 200[39m
+[22:52:04] [32mINFO[39m: [36mGET /favicon.svg 200[39m
+[22:52:04] [32mINFO[39m: [36mGET /get-session 200[39m
+[22:52:04] [32mINFO[39m: [36mGET /instance/settings/experimental 200[39m
+[22:52:04] [32mINFO[39m: [36mGET /adapters 200[39m
+[22:52:04] [32mINFO[39m: [36mGET /fonts/InterVariable.woff2 200[39m
+[22:52:04] [32mINFO[39m: [36mGET /sidebar-preferences/me 200[39m
+[22:52:04] [32mINFO[39m: [36mGET /plugins/ui-contributions 200[39m
+[22:52:04] [32mINFO[39m: [36mGET /instance/settings/general 200[39m
+[22:52:04] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/projects 200[39m
+[22:52:04] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/approvals 200[39m
+[22:52:04] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/inbox-dismissals 200[39m
+[22:52:04] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/join-requests 200[39m
+[22:52:04] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/resource-memberships/me 200[39m
+[22:52:04] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/heartbeat-runs 200[39m
+[22:52:04] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/live-runs 200[39m
+[22:52:04] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/labels 200[39m
+[22:52:04] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/issues 200[39m
+[22:52:04] [34mDEBUG[39m: [36msafe authenticated GET observed[39m [90m{"event":"safe_get_request_observed","route":"GET /api/companies/:companyId/issues","companyId":"709b6d8c-3700-4d12-81af-c414a61e8aca","actorType":"board","actorIdentityHash":"bb8MTFOBwovuZlx1","clientHash":"YpwVX08n9J9Dekik","cacheKeyHash":"f8u2sAM991JNCfFV","queryKeys":["excludeRoutineExecutions","inboxArchivedByUserId","includeBlockedBy","includeBlockedInboxAttention","includeLiveDescendantSummary","includePluginOperations","includeRoutineExecutions","limit","offset","status","touchedByUserId"],"requestCount":1,"durationMs":5,"statusCode":200,"responseBytes":2,"compressedBytes":null,"contentEncoding":null,"cacheStatus":"miss","etagOutcome":"none","referer":"/ANC/issues","visibilityHint":"focused"}[39m
+[22:52:04] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/user-directory 200[39m
+[22:52:04] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/dashboard 200[39m
+[22:52:04] [32mINFO[39m: [36mGET /announcements/current 200[39m
+[22:52:04] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/projects 200[39m
+[22:52:04] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/agents 200[39m
+[22:52:04] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/sidebar-preferences/me 200[39m
+[22:52:04] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/issues 200[39m
+[22:52:04] [34mDEBUG[39m: [36msafe authenticated GET observed[39m [90m{"event":"safe_get_request_observed","route":"GET /api/companies/:companyId/issues","companyId":"709b6d8c-3700-4d12-81af-c414a61e8aca","actorType":"board","actorIdentityHash":"bb8MTFOBwovuZlx1","clientHash":"YpwVX08n9J9Dekik","cacheKeyHash":"Fsnv4RZb-S7aLVAt","queryKeys":["excludeRoutineExecutions","includeBlockedBy","includeBlockedInboxAttention","includeLiveDescendantSummary","includePluginOperations","includeRoutineExecutions","limit","offset","sortDir","sortField","view"],"requestCount":1,"durationMs":4,"statusCode":200,"responseBytes":2,"compressedBytes":null,"contentEncoding":null,"cacheStatus":"miss","etagOutcome":"fresh","referer":"/ANC/issues","visibilityHint":"focused"}[39m
+[22:52:04] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/routines 200[39m
+[22:52:04] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/skills 200[39m
+[22:52:07] [32mINFO[39m: [36mGET /ANC/org 200[39m
+[22:52:09] [32mINFO[39m: [36mGET /favicon.svg 200[39m
+[22:52:09] [32mINFO[39m: [36mGET /get-session 200[39m
+[22:52:09] [32mINFO[39m: [36mGET /adapters 200[39m
+[22:52:09] [32mINFO[39m: [36mGET /instance/settings/experimental 200[39m
+[22:52:09] [32mINFO[39m: [36mGET /fonts/InterVariable.woff2 200[39m
+[22:52:09] [32mINFO[39m: [36mGET /sidebar-preferences/me 200[39m
+[22:52:09] [32mINFO[39m: [36mGET /plugins/ui-contributions 200[39m
+[22:52:09] [32mINFO[39m: [36mGET /instance/settings/general 200[39m
+[22:52:09] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/projects 200[39m
+[22:52:09] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/approvals 200[39m
+[22:52:09] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/resource-memberships/me 200[39m
+[22:52:09] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/join-requests 200[39m
+[22:52:09] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/inbox-dismissals 200[39m
+[22:52:09] [32mINFO[39m: [36mGET /announcements/current 200[39m
+[22:52:09] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/heartbeat-runs 200[39m
+[22:52:09] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/sidebar-preferences/me 200[39m
+[22:52:09] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/live-runs 200[39m
+[22:52:09] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/issues 200[39m
+[22:52:09] [34mDEBUG[39m: [36msafe authenticated GET observed[39m [90m{"event":"safe_get_request_observed","route":"GET /api/companies/:companyId/issues","companyId":"709b6d8c-3700-4d12-81af-c414a61e8aca","actorType":"board","actorIdentityHash":"bb8MTFOBwovuZlx1","clientHash":"YpwVX08n9J9Dekik","cacheKeyHash":"f8u2sAM991JNCfFV","queryKeys":["excludeRoutineExecutions","inboxArchivedByUserId","includeBlockedBy","includeBlockedInboxAttention","includeLiveDescendantSummary","includePluginOperations","includeRoutineExecutions","limit","offset","status","touchedByUserId"],"requestCount":1,"durationMs":6,"statusCode":200,"responseBytes":2,"compressedBytes":null,"contentEncoding":null,"cacheStatus":"miss","etagOutcome":"none","referer":"/ANC/agents/all","visibilityHint":"focused"}[39m
+[22:52:09] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/dashboard 200[39m
+[22:52:09] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/routines 200[39m
+[22:52:09] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/agents 200[39m
+[22:52:09] [32mINFO[39m: [36mGET /instance/settings 200[39m
+[22:52:09] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/skills 200[39m
+[22:52:12] [32mINFO[39m: [36mGET /ANC/company 200[39m
+[22:52:14] [32mINFO[39m: [36mGET /get-session 200[39m
+[22:52:14] [32mINFO[39m: [36mGET /favicon.svg 200[39m
+[22:52:14] [32mINFO[39m: [36mGET /adapters 200[39m
+[22:52:14] [32mINFO[39m: [36mGET /instance/settings/experimental 200[39m
+[22:52:14] [32mINFO[39m: [36mGET /fonts/InterVariable.woff2 200[39m
+[22:52:14] [32mINFO[39m: [36mGET /plugins/ui-contributions 200[39m
+[22:52:14] [32mINFO[39m: [36mGET /sidebar-preferences/me 200[39m
+[22:52:14] [32mINFO[39m: [36mGET /instance/settings/general 200[39m
+[22:52:14] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/projects 200[39m
+[22:52:14] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/resource-memberships/me 200[39m
+[22:52:14] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/approvals 200[39m
+[22:52:14] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/inbox-dismissals 200[39m
+[22:52:14] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/join-requests 200[39m
+[22:52:14] [32mINFO[39m: [36mGET /announcements/current 200[39m
+[22:52:14] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/heartbeat-runs 200[39m
+[22:52:14] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/live-runs 200[39m
+[22:52:14] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/sidebar-preferences/me 200[39m
+[22:52:14] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/issues 200[39m
+[22:52:14] [34mDEBUG[39m: [36msafe authenticated GET observed[39m [90m{"event":"safe_get_request_observed","route":"GET /api/companies/:companyId/issues","companyId":"709b6d8c-3700-4d12-81af-c414a61e8aca","actorType":"board","actorIdentityHash":"bb8MTFOBwovuZlx1","clientHash":"YpwVX08n9J9Dekik","cacheKeyHash":"f8u2sAM991JNCfFV","queryKeys":["excludeRoutineExecutions","inboxArchivedByUserId","includeBlockedBy","includeBlockedInboxAttention","includeLiveDescendantSummary","includePluginOperations","includeRoutineExecutions","limit","offset","status","touchedByUserId"],"requestCount":1,"durationMs":6,"statusCode":200,"responseBytes":2,"compressedBytes":null,"contentEncoding":null,"cacheStatus":"miss","etagOutcome":"none","referer":"/ANC/company","visibilityHint":"focused"}[39m
+[22:52:14] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/dashboard 200[39m
+[22:52:14] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/routines 200[39m
+[22:52:14] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/skills 200[39m
+[22:52:26] [32mINFO[39m: [36mGET /ANC/company/settings 200[39m
+[22:52:28] [32mINFO[39m: [36mGET /fonts/InterVariable.woff2 200[39m
+[22:52:28] [32mINFO[39m: [36mGET /get-session 200[39m
+[22:52:28] [32mINFO[39m: [36mGET /adapters 200[39m
+[22:52:28] [32mINFO[39m: [36mGET /instance/settings/experimental 200[39m
+[22:52:28] [32mINFO[39m: [36mGET /favicon.svg 200[39m
+[22:52:28] [32mINFO[39m: [36mGET /plugins 200[39m
+[22:52:28] [32mINFO[39m: [36mGET /plugins/ui-contributions 200[39m
+[22:52:28] [32mINFO[39m: [36mGET /instance/settings/general 200[39m
+[22:52:28] [32mINFO[39m: [36mGET /announcements/current 200[39m
+[22:52:28] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/sidebar-preferences/me 200[39m
+[22:52:28] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/routines 200[39m
+[22:52:28] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/sidebar-badges 200[39m
+[22:52:29] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/skills 200[39m
+[22:52:32] [32mINFO[39m: [36mGET /ANC/dashboard 200[39m
+[22:52:34] [32mINFO[39m: [36mGET /get-session 200[39m
+[22:52:34] [32mINFO[39m: [36mGET /favicon.svg 200[39m
+[22:52:34] [32mINFO[39m: [36mGET /adapters 200[39m
+[22:52:34] [32mINFO[39m: [36mGET /instance/settings/experimental 200[39m
+[22:52:34] [32mINFO[39m: [36mGET /fonts/InterVariable.woff2 200[39m
+[22:52:34] [32mINFO[39m: [36mGET /plugins/ui-contributions 200[39m
+[22:52:34] [32mINFO[39m: [36mGET /sidebar-preferences/me 200[39m
+[22:52:34] [32mINFO[39m: [36mGET /instance/settings/general 200[39m
+[22:52:34] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/join-requests 200[39m
+[22:52:34] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/projects 200[39m
+[22:52:34] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/approvals 200[39m
+[22:52:34] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/inbox-dismissals 200[39m
+[22:52:34] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/resource-memberships/me 200[39m
+[22:52:34] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/heartbeat-runs 200[39m
+[22:52:34] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/agents 200[39m
+[22:52:34] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/live-runs 200[39m
+[22:52:34] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/activity 200[39m
+[22:52:34] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/issues 200[39m
+[22:52:34] [34mDEBUG[39m: [36msafe authenticated GET observed[39m [90m{"event":"safe_get_request_observed","route":"GET /api/companies/:companyId/issues","companyId":"709b6d8c-3700-4d12-81af-c414a61e8aca","actorType":"board","actorIdentityHash":"bb8MTFOBwovuZlx1","clientHash":"YpwVX08n9J9Dekik","cacheKeyHash":"f8u2sAM991JNCfFV","queryKeys":["excludeRoutineExecutions","inboxArchivedByUserId","includeBlockedBy","includeBlockedInboxAttention","includeLiveDescendantSummary","includePluginOperations","includeRoutineExecutions","limit","offset","status","touchedByUserId"],"requestCount":1,"durationMs":5,"statusCode":200,"responseBytes":2,"compressedBytes":null,"contentEncoding":null,"cacheStatus":"miss","etagOutcome":"none","referer":"/ANC/dashboard","visibilityHint":"focused"}[39m
+[22:52:34] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/dashboard 200[39m
+[22:52:34] [32mINFO[39m: [36mGET /announcements/current 200[39m
+[22:52:34] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/projects 200[39m
+[22:52:34] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/sidebar-preferences/me 200[39m
+[22:52:34] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/issues 200[39m
+[22:52:34] [34mDEBUG[39m: [36msafe authenticated GET observed[39m [90m{"event":"safe_get_request_observed","route":"GET /api/companies/:companyId/issues","companyId":"709b6d8c-3700-4d12-81af-c414a61e8aca","actorType":"board","actorIdentityHash":"bb8MTFOBwovuZlx1","clientHash":"YpwVX08n9J9Dekik","cacheKeyHash":"G8lakfaQsOZ6pLW2","queryKeys":["excludeRoutineExecutions","includeBlockedBy","includeBlockedInboxAttention","includeLiveDescendantSummary","includePluginOperations","includeRoutineExecutions","limit","offset"],"requestCount":1,"durationMs":4,"statusCode":200,"responseBytes":2,"compressedBytes":null,"contentEncoding":null,"cacheStatus":"miss","etagOutcome":"none","referer":"/ANC/dashboard","visibilityHint":"focused"}[39m
+[22:52:34] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/user-directory 200[39m
+[22:52:34] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/routines 200[39m
+[22:52:34] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/live-runs 200[39m
+[22:52:34] [32mINFO[39m: [36mGET /companies/709b6d8c-3700-4d12-81af-c414a61e8aca/skills 200[39m
+[22:52:56] [32mINFO[39m: [36mgraceful heartbeat run drain complete[39m [90m{"signal":"SIGTERM","drain":{"interrupted":0,"interruptedRunIds":[],"retryRunIds":[],"restartSuspendedRunIds":[]}}[39m
+[22:52:56] [32mINFO[39m: [36mplugin job scheduler stopped[39m [90m{"service":"plugin-job-scheduler","activeJobCount":0}[39m
+[22:52:56] [32mINFO[39m: [36mplugin job coordinator stopped[39m [90m{"service":"plugin-job-coordinator"}[39m
+[22:52:56] [32mINFO[39m: [36mStopping embedded PostgreSQL[39m [90m{"signal":"SIGTERM"}[39m
+=== 第四次启动：dev:once + 仅交接包规定的三个变量（去掉 PAPERCLIP_CONFIG）START 23:14:37 ===
+[WARN] The "pnpm" field in package.json is no longer read by pnpm. The following keys were ignored: "pnpm.patchedDependencies", "pnpm.overrides". See https://pnpm.io/settings for the new home of each setting.
+
+> paperclip@ dev:once /home/yuanjian/dev/ANC
+> pnpm --filter @paperclipai/server exec tsx ../scripts/dev-runner.ts dev
+
+[paperclip] dev mode: local_trusted (default)
+[paperclip] building paperclip runner...
+
+> @paperclipai/paperclip-runner@0.0.0 build:typescript /home/yuanjian/dev/ANC/packages/paperclip-runner
+> pnpm run ensure:eval-build-deps && pnpm run check:protocol-types && node ./node_modules/typescript/bin/tsc --version && node ./node_modules/typescript/bin/tsc -p tsconfig.json && node ./node_modules/typescript/bin/tsc -p tsconfig.surfaces.json && node scripts/build-verified-provider-entrypoints.mjs
+
+
+> @paperclipai/paperclip-runner@0.0.0 ensure:eval-build-deps /home/yuanjian/dev/ANC/packages/paperclip-runner
+> pnpm --filter @paperclipai/paperclip-eval-kernel build
+
+
+> @paperclipai/paperclip-eval-kernel@0.1.0 build /home/yuanjian/dev/ANC/packages/paperclip-eval-kernel
+> tsc -p tsconfig.json
+
+
+> @paperclipai/paperclip-runner@0.0.0 check:protocol-types /home/yuanjian/dev/ANC/packages/paperclip-runner
+> node scripts/generate-protocol-schema-module.mjs --check && node scripts/generate-acpx-sidecar-contract.mjs --check
+
+Generated PRP schema modules match the JSON Schema sources.
+Generated TypeScript/Rust ACPX sidecar contracts match the schema.
+Version 7.0.2
+[paperclip] building plugin sdk...
+
+> @paperclipai/plugin-sdk@1.0.0 build /home/yuanjian/dev/ANC/packages/plugins/sdk
+> pnpm --filter @paperclipai/shared build && tsc
+
+
+> @paperclipai/shared@0.3.1 build /home/yuanjian/dev/ANC/packages/shared
+> tsc
+
+
+> @paperclipai/server@0.3.1 dev /home/yuanjian/dev/ANC/server
+> tsx src/index.ts
+
+[23:14:49] [32mINFO[39m: [36mUsing embedded PostgreSQL because no DATABASE_URL set (dataDir=/home/yuanjian/.paperclip-anc/instances/anc/db, port=54339)[39m
+[23:14:49] [32mINFO[39m: [36mEmbedded PostgreSQL cluster already exists (/home/yuanjian/.paperclip-anc/instances/anc/db/PG_VERSION); skipping init[39m
+[23:14:49] [32mINFO[39m: [36mEmbedded PostgreSQL ready[39m
+[23:14:49] [32mINFO[39m: [36mSetup-token login confidential transport startup assessment[39m [90m{"proxyForwardingEnabled":false,"reason":"no_proxy_allowlist_local_trusted_loopback_only","deploymentMode":"local_trusted"}[39m
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - `__dirname` (vite.config.ts:25:25). Use `import.meta.dirname` instead
+  - import "./src/lib/vite-watch" without a file extension (vite.config.ts:5:41). Add the file extension
+  - import "./src/lib/vite-api-proxy" without a file extension (vite.config.ts:6:32). Add the file extension
+  - import "./src/lib/vite-sw-build-id" without a file extension (vite.config.ts:7:44). Add the file extension
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+`server.hmr.protocol/host/port/path/clientPort/timeout/server` is deprecated. Use `server.ws.*` instead. Note that this option may be set by a plugin. Set VITE_DEPRECATION_TRACE=1 to see where it is called.
+[23:14:49] [32mINFO[39m: [36mplugin job coordinator started — listening to lifecycle events[39m [90m{"service":"plugin-job-coordinator"}[39m
+[23:14:49] [32mINFO[39m: [36mplugin job scheduler started[39m [90m{"service":"plugin-job-scheduler","tickIntervalMs":30000,"maxConcurrentJobs":10}[39m
+[23:14:49] [32mINFO[39m: [36minitializing plugin tool dispatcher[39m [90m{"service":"plugin-tool-dispatcher"}[39m
+[23:14:49] [32mINFO[39m: [36mplugin-dev-watcher: initialized[39m [90m{"service":"plugin-dev-watcher","resolvesInstalledPlugins":true}[39m
+[23:14:49] [32mINFO[39m: [36mServer listener bound on 127.0.0.1:3200; startup recovery in progress[39m
+[23:14:49] [32mINFO[39m: [36mbundled plugin bundle not present; skipping auto-install[39m [90m{"pluginKey":"paperclip.kubernetes-sandbox-provider","pluginPath":"/app/packages/plugins/sandbox-providers/kubernetes"}[39m
+[23:14:49] [32mINFO[39m: [36mplugin-loader: loading all ready plugins[39m [90m{"service":"plugin-loader"}[39m
+[23:14:49] [32mINFO[39m: [36mloaded tools from ready plugins[39m [90m{"service":"plugin-tool-dispatcher","readyPlugins":0,"registeredTools":0}[39m
+[23:14:49] [34mDEBUG[39m: [36msubscribed to lifecycle events[39m [90m{"service":"plugin-tool-dispatcher"}[39m
+[23:14:49] [32mINFO[39m: [36mplugin tool dispatcher initialized[39m [90m{"service":"plugin-tool-dispatcher","totalTools":0}[39m
+[23:14:50] [32mINFO[39m: [36mplugin-loader: no ready plugins to load[39m [90m{"service":"plugin-loader"}[39m
+[23:14:50] [32mINFO[39m: [36mworktree run-execution cutoff state[39m [90m{"state":"disarmed","cutoff":null}[39m
+[23:14:50] [32mINFO[39m: [36mstartup reap of orphaned heartbeat runs complete[39m [90m{"reaped":0,"runIds":[]}[39m
+
+[36m██████╗  █████╗ ██████╗ ███████╗██████╗  ██████╗██╗     ██╗██████╗ [0m
+[36m██╔══██╗██╔══██╗██╔══██╗██╔════╝██╔══██╗██╔════╝██║     ██║██╔══██╗[0m
+[36m██████╔╝███████║██████╔╝█████╗  ██████╔╝██║     ██║     ██║██████╔╝[0m
+[36m██╔═══╝ ██╔══██║██╔═══╝ ██╔══╝  ██╔══██╗██║     ██║     ██║██╔═══╝ [0m
+[36m██║     ██║  ██║██║     ███████╗██║  ██║╚██████╗███████╗██║██║     [0m
+[36m╚═╝     ╚═╝  ╚═╝╚═╝     ╚══════╝╚═╝  ╚═╝ ╚═════╝╚══════╝╚═╝╚═╝     [0m
+[34m  ───────────────────────────────────────────────────────[0m
+[2mMode            [0m [32membedded-postgres[0m  |  [36mvite-dev-middleware[0m
+[2mDeploy          [0m local_trusted (private)
+[2mBind            [0m loopback [2m(127.0.0.1)[0m
+[2mAuth            [0m [32mready[0m
+[2mServer          [0m 3200
+[2mAPI             [0m http://127.0.0.1:3200/api [2m(health: http://127.0.0.1:3200/api/health)[0m
+[2mUI              [0m http://127.0.0.1:3200
+[2mDatabase        [0m /home/yuanjian/.paperclip-anc/instances/anc/db [2m(pg:54339)[0m
+[2mMigrations      [0m already applied
+[2mAgent JWT       [0m [32mset[0m
+[2mHeartbeat       [0m enabled [2m(30000ms)[0m
+[2mDB Backup       [0m enabled [2m(every 60m, keep 7d)[0m
+[2mBackup Dir      [0m /home/yuanjian/.paperclip-anc/instances/anc/data/backups
+[2mConfig          [0m /home/yuanjian/.paperclip-anc/instances/anc/config.json
+[34m  ───────────────────────────────────────────────────────[0m
+
+[23:14:50] [32mINFO[39m: [36mAutomatic database backups enabled[39m [90m{"intervalMinutes":60,"retentionSource":"instance-settings-db","backupDir":"/home/yuanjian/.paperclip-anc/instances/anc/data/backups"}[39m
+[23:14:50] [32mINFO[39m: [36mServer startup recovery complete on 127.0.0.1:3200[39m
+[23:15:10] [32mINFO[39m: [36mgraceful heartbeat run drain complete[39m [90m{"signal":"SIGTERM","drain":{"interrupted":0,"interruptedRunIds":[],"retryRunIds":[],"restartSuspendedRunIds":[]}}[39m
+[23:15:10] [32mINFO[39m: [36mplugin job scheduler stopped[39m [90m{"service":"plugin-job-scheduler","activeJobCount":0}[39m
+[23:15:10] [32mINFO[39m: [36mplugin job coordinator stopped[39m [90m{"service":"plugin-job-coordinator"}[39m
+[23:15:10] [32mINFO[39m: [36mStopping embedded PostgreSQL[39m [90m{"signal":"SIGTERM"}[39m

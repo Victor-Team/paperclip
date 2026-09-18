@@ -1,0 +1,110 @@
+[WARN] The "pnpm" field in package.json is no longer read by pnpm. The following keys were ignored: "pnpm.patchedDependencies", "pnpm.overrides". See https://pnpm.io/settings for the new home of each setting.
+
+> paperclip@ paperclipai /home/yuanjian/dev/ANC
+> node cli/node_modules/tsx/dist/cli.mjs cli/src/index.ts "run"
+
+┌   paperclipai run 
+│
+│  Home: /home/yuanjian/.paperclip-anc
+│
+│  Instance: anc
+│
+│  Config: /home/yuanjian/.paperclip-anc/instances/anc/config.json
+│
+◇  Running doctor checks...
+
+██████╗  █████╗ ██████╗ ███████╗██████╗  ██████╗██╗     ██╗██████╗ 
+██╔══██╗██╔══██╗██╔══██╗██╔════╝██╔══██╗██╔════╝██║     ██║██╔══██╗
+██████╔╝███████║██████╔╝█████╗  ██████╔╝██║     ██║     ██║██████╔╝
+██╔═══╝ ██╔══██║██╔═══╝ ██╔══╝  ██╔══██╗██║     ██║     ██║██╔═══╝ 
+██║     ██║  ██║██║     ███████╗██║  ██║╚██████╗███████╗██║██║     
+╚═╝     ╚═╝  ╚═╝╚═╝     ╚══════╝╚═╝  ╚═╝ ╚═════╝╚══════╝╚═╝╚═╝     
+  ───────────────────────────────────────────────────────
+  The app people use to manage AI agents for work
+
+┌   paperclip doctor 
+│
+│  ✓ Config file: Valid config at /home/yuanjian/.paperclip-anc/instances/anc/config.json
+│
+│  ✓ Deployment/auth mode: local_trusted mode is configured for loopback-only access
+│
+│  ✓ Agent JWT secret: PAPERCLIP_AGENT_JWT_SECRET is set in environment
+│
+│  ✓ Secrets adapter: Local encrypted provider configured with key file /home/yuanjian/.paperclip-anc/instances/anc/secrets/master.key
+│
+│  ✓ Storage: Local disk storage is writable: /home/yuanjian/.paperclip-anc/instances/anc/data/storage
+│
+│  ✓ Database: Embedded PostgreSQL configured at /home/yuanjian/.paperclip-anc/instances/anc/db (port 54339)
+│
+│  ✓ LLM provider: No LLM provider configured (optional)
+│
+│  ✓ Log directory: Log directory is writable: /home/yuanjian/.paperclip-anc/instances/anc/logs
+│
+│  ✓ Server port: Port 3200 is available
+│
+│  ✓ Node.js runtime: Node.js 26.6.0
+│
+│  ✓ Managed install: Not present (optional for npx, global npm, and source-checkout usage)
+│
+│  ✓ Background service: No usable systemd user manager was detected (common in containers and WSL1). Use paperclipai run instead.
+│
+◇  Summary ───╮
+│             │
+│  12 passed  │
+│             │
+├─────────────╯
+│
+└  All checks passed!
+
+│
+◇  Starting Paperclip server...
+[02:43:47] INFO: Using embedded PostgreSQL because no DATABASE_URL set (dataDir=/home/yuanjian/.paperclip-anc/instances/anc/db, port=54339)
+[02:43:47] INFO: Embedded PostgreSQL cluster already exists (/home/yuanjian/.paperclip-anc/instances/anc/db/PG_VERSION); skipping init
+[02:43:47] INFO: Embedded PostgreSQL ready
+[02:43:47] INFO: Setup-token login confidential transport startup assessment {"proxyForwardingEnabled":false,"reason":"no_proxy_allowlist_local_trusted_loopback_only","deploymentMode":"local_trusted"}
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - `__dirname` (vite.config.ts:25:25). Use `import.meta.dirname` instead
+  - import "./src/lib/vite-watch" without a file extension (vite.config.ts:5:41). Add the file extension
+  - import "./src/lib/vite-api-proxy" without a file extension (vite.config.ts:6:32). Add the file extension
+  - import "./src/lib/vite-sw-build-id" without a file extension (vite.config.ts:7:44). Add the file extension
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+`server.hmr.protocol/host/port/path/clientPort/timeout/server` is deprecated. Use `server.ws.*` instead. Note that this option may be set by a plugin. Set VITE_DEPRECATION_TRACE=1 to see where it is called.
+[02:43:47] INFO: plugin job coordinator started — listening to lifecycle events {"service":"plugin-job-coordinator"}
+[02:43:47] INFO: plugin job scheduler started {"service":"plugin-job-scheduler","tickIntervalMs":30000,"maxConcurrentJobs":10}
+[02:43:47] INFO: initializing plugin tool dispatcher {"service":"plugin-tool-dispatcher"}
+[02:43:47] INFO: plugin-dev-watcher: initialized {"service":"plugin-dev-watcher","resolvesInstalledPlugins":true}
+[02:43:47] INFO: Server listener bound on 127.0.0.1:3200; startup recovery in progress
+[02:43:47] INFO: loaded tools from ready plugins {"service":"plugin-tool-dispatcher","readyPlugins":0,"registeredTools":0}
+[02:43:47] DEBUG: subscribed to lifecycle events {"service":"plugin-tool-dispatcher"}
+[02:43:47] INFO: plugin tool dispatcher initialized {"service":"plugin-tool-dispatcher","totalTools":0}
+[02:43:47] INFO: bundled plugin bundle not present; skipping auto-install {"pluginKey":"paperclip.kubernetes-sandbox-provider","pluginPath":"/app/packages/plugins/sandbox-providers/kubernetes"}
+[02:43:47] INFO: plugin-loader: loading all ready plugins {"service":"plugin-loader"}
+[02:43:50] INFO: plugin-loader: no ready plugins to load {"service":"plugin-loader"}
+[02:43:50] INFO: worktree run-execution cutoff state {"state":"disarmed","cutoff":null}
+[02:43:51] INFO: startup reap of orphaned heartbeat runs complete {"reaped":0,"runIds":[]}
+
+██████╗  █████╗ ██████╗ ███████╗██████╗  ██████╗██╗     ██╗██████╗ 
+██╔══██╗██╔══██╗██╔══██╗██╔════╝██╔══██╗██╔════╝██║     ██║██╔══██╗
+██████╔╝███████║██████╔╝█████╗  ██████╔╝██║     ██║     ██║██████╔╝
+██╔═══╝ ██╔══██║██╔═══╝ ██╔══╝  ██╔══██╗██║     ██║     ██║██╔═══╝ 
+██║     ██║  ██║██║     ███████╗██║  ██║╚██████╗███████╗██║██║     
+╚═╝     ╚═╝  ╚═╝╚═╝     ╚══════╝╚═╝  ╚═╝ ╚═════╝╚══════╝╚═╝╚═╝     
+  ───────────────────────────────────────────────────────
+Mode             embedded-postgres  |  vite-dev-middleware
+Deploy           local_trusted (private)
+Bind             loopback (127.0.0.1)
+Auth             ready
+Server           3200
+API              http://127.0.0.1:3200/api (health: http://127.0.0.1:3200/api/health)
+UI               http://127.0.0.1:3200
+Database         /home/yuanjian/.paperclip-anc/instances/anc/db (pg:54339)
+Migrations       already applied
+Agent JWT        set
+Heartbeat        enabled (30000ms)
+DB Backup        enabled (every 60m, keep 7d)
+Backup Dir       /home/yuanjian/.paperclip-anc/instances/anc/data/backups
+Config           /home/yuanjian/.paperclip-anc/instances/anc/config.json
+  ───────────────────────────────────────────────────────
+
+[02:43:51] INFO: Automatic database backups enabled {"intervalMinutes":60,"retentionSource":"instance-settings-db","backupDir":"/home/yuanjian/.paperclip-anc/instances/anc/data/backups"}
+[02:43:51] INFO: Server startup recovery complete on 127.0.0.1:3200

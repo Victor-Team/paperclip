@@ -1,0 +1,9 @@
+
+ RUN  v4.1.11 /home/yuanjian/dev/ANC/server
+
+
+ Test Files  2 passed (2)
+      Tests  23 passed (23)
+   Start at  08:15:09
+   Duration  4.27s (transform 2.78s, setup 71ms, import 4.00s, tests 9ms, environment 0ms)
+

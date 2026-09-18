@@ -1,0 +1,13 @@
+=== 单元测试（现有用例，未新增） 2026-09-16T02:43:32-07:00 ===
+$ pnpm --filter paperclipai exec vitest run src/__tests__/managed-install-check.test.ts
+[WARN] The "pnpm" field in package.json is no longer read by pnpm. The following keys were ignored: "pnpm.patchedDependencies", "pnpm.overrides". See https://pnpm.io/settings for the new home of each setting.
+
+ RUN  v4.1.11 /home/yuanjian/dev/ANC/cli
+
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  02:43:33
+   Duration  148ms (transform 36ms, setup 0ms, import 47ms, tests 5ms, environment 0ms)
+
+EXIT=0

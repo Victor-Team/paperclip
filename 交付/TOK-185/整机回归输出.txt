@@ -1,0 +1,11 @@
+
+ RUN  v4.1.11 /home/yuanjian/dev/ANC/server
+
+[08:15:29] [33mWARN[39m: [36mrun failure report has no task id, skipping Sentry report[39m [90m{"runId":"2148912b-2399-4a5e-a250-3f62206cdd81"}[39m
+[08:15:29] [33mWARN[39m: [36mrun failure report has no task id, skipping Sentry report[39m [90m{"runId":"af30457d-1d74-41d1-8bdf-3f53c2a1722c"}[39m
+
+ Test Files  1 passed (1)
+      Tests  44 passed (44)
+   Start at  08:15:18
+   Duration  21.16s (transform 4.94s, setup 42ms, import 7.84s, tests 13.18s, environment 0ms)
+

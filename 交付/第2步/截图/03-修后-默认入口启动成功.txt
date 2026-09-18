@@ -1,0 +1,64 @@
+=== 修后 C：默认入口整机启动证据（时间 2026-09-16T02:44:08-07:00） ===
+启动命令（与修前基线 B 逐字相同，只多了 setsid + 后台重定向）：
+setsid env -i HOME=/home/yuanjian USER=yuanjian SHELL=/bin/bash LANG=C.UTF-8 TERM=dumb \
+  PATH="/home/linuxbrew/.linuxbrew/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
+  PAPERCLIP_HOME=/home/yuanjian/.paperclip-anc PAPERCLIP_INSTANCE_ID=anc PORT=3200 \
+  bash -c 'cd /home/yuanjian/dev/ANC && exec pnpm paperclipai run' > <log> 2>&1 &
+
+--- ① doctor 结果（修后）---
+Summary ── 12 passed ──  /  All checks passed!  /  未出现 'Not starting server'
+Managed install: Not present (optional for npx, global npm, and source-checkout usage)   ← 修前此处为 ✗ Managed install manifest
+
+--- ② ss -ltn（四端口同时在听）---
+$ ss -ltn | grep -E "3100|54329|3200|54339"
+LISTEN 0      511         127.0.0.1:13200      0.0.0.0:*          
+LISTEN 0      511         127.0.0.1:3200       0.0.0.0:*          
+LISTEN 0      511         127.0.0.1:3100       0.0.0.0:*          
+LISTEN 0      200         127.0.0.1:54329      0.0.0.0:*          
+LISTEN 0      200         127.0.0.1:54339      0.0.0.0:*          
+LISTEN 0      200         127.0.1.1:54329      0.0.0.0:*          
+LISTEN 0      200         127.0.1.1:54339      0.0.0.0:*          
+
+--- ③ 隔离实例 health ---
+$ curl -s http://127.0.0.1:3200/api/health
+{"status":"ok","version":"0.3.1","serverVersion":"0.3.1","commit":"bd51f157e9aade37f2f4602eda238fe51405a0c2","deploymentMode":"local_trusted","deploymentExposure":"private","localAiLoginSupported":true,"authReady":true,"bootstrapStatus":"ready","bootstrapInviteActive":false,"features":{"companyDeletionEnabled":true},"serverInfo":{"processStartedAt":"2026-09-16T09:43:45.652Z","git":{"available":true,"fullSha":"bd51f157e9aade37f2f4602eda238fe51405a0c2","shortSha":"bd51f157e","branchName":"master","subject":"fix(ci): make the Runner Rust cache key independent of the image toolchain (#13500)","committedAt":"2026-09-16T00:24:22.000Z","localChanges":{"available":true,"hasLocalChanges":true,"stagedFileCount":0,"unstagedFileCount":1,"untrackedFileCount":1}}},"startupRecovery":{"phase":"ready","updatedAt":"2026-09-16T09:43:51.149Z"},"nativeRecovery":{},"databaseBackup":{"enabled":true,"status":"warning","backupDir":"/home/yuanjian/.paperclip-anc/instances/anc/data/backups","maxAgeHours":26,"latestBackup":null,"lastFailure":null,"warnings":[{"code":"database_backup_missing","message":"No .sql.gz database backups found in /home/yuanjian/.paperclip-anc/instances/anc/data/backups."}]},"warnings":[{"code":"database_backup_missing","message":"No .sql.gz database backups found in /home/yuanjian/.paperclip-anc/instances/anc/data/backups."}]}
+
+--- ④ 正式实例 health（仍 ok）---
+$ curl -s http://127.0.0.1:3100/api/health
+{"status":"ok","version":"2026.831.1","serverVersion":"2026.831.1","commit":null,"deploymentMode":"local_trusted","deploymentExposure":"private","authReady":true,"bootstrapStatus":"ready","bootstrapInviteActive":false,"features":{"companyDeletionEnabled":true},"serverInfo":{"processStartedAt":"2026-09-15T03:40:52.174Z","git":{"available":false,"unavailableReason":"git_unavailable"}},"databaseBackup":{"enabled":true,"status":"ok","backupDir":"/home/yuanjian/.paperclip/instances/default/data/backups","maxAgeHours":26,"latestBackup":{"name":"paperclip-20260915-074649.sql.gz","path":"/home/yuanjian/.paperclip/instances/default/data/backups/paperclip-20260915-074649.sql.gz","mtime":"2026-09-15T14:46:56.206Z","ageHours":19,"sizeBytes":40929659},"lastFailure":null,"warnings":[]}}
+
+--- ⑤ 正式实例公司清单（与修前基线比对）---
+公司数 = 14
+ 1. 编制干跑-沙盒
+ 2. 词元共振 Token Resonance
+ 3. 编制干跑-沙盒
+ 4. 词元共振 -战略部
+ 5. 方向发现
+ 6. 编制探针P1
+ 7. 编制干跑-沙盒
+ 8. 编制干跑-沙盒
+ 9. 获客增长公司
+ 10. 获客增长
+ 11. 并发验证
+ 12. 编制干跑-沙盒
+ 13. 编制干跑-沙盒
+ 14. 编制干跑-沙盒
+是否出现「ANC 测试公司」= false
+
+--- ⑥ 3200 服务进程的环境（只有三变量，无第四个 PAPERCLIP_*）---
+server pid = 1301718
+PAPERCLIP_HOME=/home/yuanjian/.paperclip-anc
+PAPERCLIP_INSTANCE_ID=anc
+PORT=3200
+
+--- ⑦ 3200 服务进程 fd 指向正式实例目录的条数（应为 0）---
+0
+
+--- ⑧ 正式实例 shim 未被改动（只读对照）---
+$ ls -l /home/yuanjian/.local/bin/paperclipai
+-rwxr-xr-x 1 yuanjian yuanjian 202 Aug 31 05:12 /home/yuanjian/.local/bin/paperclipai
+$ cat /home/yuanjian/.local/bin/paperclipai
+#!/bin/sh
+# paperclipai managed install shim v1
+set -eu
+exec '/home/linuxbrew/.linuxbrew/Cellar/node/26.6.0/bin/node' '/home/yuanjian/.paperclip/cli/current/node_modules/paperclipai/dist/index.js' "$@"

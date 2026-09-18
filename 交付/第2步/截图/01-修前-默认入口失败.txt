@@ -1,0 +1,73 @@
+=== 修前基线 B：默认入口复现（时间 2026-09-16T02:43:19-07:00） ===
+$ env -i HOME=/home/yuanjian USER=yuanjian SHELL=/bin/bash LANG=C.UTF-8 TERM=dumb \
+    PATH="/home/linuxbrew/.linuxbrew/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
+    PAPERCLIP_HOME=/home/yuanjian/.paperclip-anc PAPERCLIP_INSTANCE_ID=anc PORT=3200 \
+    bash -c 'cd /home/yuanjian/dev/ANC && pnpm paperclipai run'
+--- 输出 ---
+[WARN] The "pnpm" field in package.json is no longer read by pnpm. The following keys were ignored: "pnpm.patchedDependencies", "pnpm.overrides". See https://pnpm.io/settings for the new home of each setting.
+
+> paperclip@ paperclipai /home/yuanjian/dev/ANC
+> node cli/node_modules/tsx/dist/cli.mjs cli/src/index.ts "run"
+
+┌   paperclipai run 
+│
+│  Home: /home/yuanjian/.paperclip-anc
+│
+│  Instance: anc
+│
+│  Config: /home/yuanjian/.paperclip-anc/instances/anc/config.json
+│
+◇  Running doctor checks...
+
+██████╗  █████╗ ██████╗ ███████╗██████╗  ██████╗██╗     ██╗██████╗ 
+██╔══██╗██╔══██╗██╔══██╗██╔════╝██╔══██╗██╔════╝██║     ██║██╔══██╗
+██████╔╝███████║██████╔╝█████╗  ██████╔╝██║     ██║     ██║██████╔╝
+██╔═══╝ ██╔══██║██╔═══╝ ██╔══╝  ██╔══██╗██║     ██║     ██║██╔═══╝ 
+██║     ██║  ██║██║     ███████╗██║  ██║╚██████╗███████╗██║██║     
+╚═╝     ╚═╝  ╚═╝╚═╝     ╚══════╝╚═╝  ╚═╝ ╚═════╝╚══════╝╚═╝╚═╝     
+  ───────────────────────────────────────────────────────
+  The app people use to manage AI agents for work
+
+┌   paperclip doctor 
+│
+│  ✓ Config file: Valid config at /home/yuanjian/.paperclip-anc/instances/anc/config.json
+│
+│  ✓ Deployment/auth mode: local_trusted mode is configured for loopback-only access
+│
+│  ✓ Agent JWT secret: PAPERCLIP_AGENT_JWT_SECRET is set in environment
+│
+│  ✓ Secrets adapter: Local encrypted provider configured with key file /home/yuanjian/.paperclip-anc/instances/anc/secrets/master.key
+│
+│  ✓ Storage: Local disk storage is writable: /home/yuanjian/.paperclip-anc/instances/anc/data/storage
+│
+│  ✓ Database: Embedded PostgreSQL configured at /home/yuanjian/.paperclip-anc/instances/anc/db (port 54339)
+│
+│  ✓ LLM provider: No LLM provider configured (optional)
+│
+│  ✓ Log directory: Log directory is writable: /home/yuanjian/.paperclip-anc/instances/anc/logs
+│
+│  ✓ Server port: Port 3200 is available
+│
+│  ✓ Node.js runtime: Node.js 26.6.0
+│
+│  ✗ Managed install manifest: Managed install artifacts exist but /home/yuanjian/.paperclip-anc/cli/install.json is missing
+│
+│    Re-run `paperclipai install`
+│
+│  ✓ Background service: No usable systemd user manager was detected (common in containers and WSL1). Use paperclipai run instead.
+│
+◇  Summary ─────────────╮
+│                       │
+│  11 passed, 1 failed  │
+│                       │
+├───────────────────────╯
+│
+└  Some checks failed. Fix the issues above and re-run doctor.
+
+│
+■  Doctor found blocking issues. Not starting server.
+ ELIFECYCLE  Command failed with exit code 1.
+DEFAULT_ENTRY_EXIT=1
+--- 失败后端口 ---
+3200/54339 监听数 = 0
+3100/54329 监听数 = 3
