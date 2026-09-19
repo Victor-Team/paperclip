@@ -1024,6 +1024,10 @@ export function recoveryService(
     ) => Promise<typeof heartbeatRuns.$inferSelect | null>;
     liveRunExecutions?: Readonly<{ has(id: string): boolean }>;
     beforeOrphanedRunTerminalWrite?: (runId: string) => Promise<void>;
+    /** Settle the agent row after the backstop ends a run the agent itself never finalized. */
+    afterOrphanedRunTerminalized?: (
+      run: typeof heartbeatRuns.$inferSelect,
+    ) => Promise<void>;
   },
 ) {
   const issuesSvc = issueService(db);
@@ -5904,6 +5908,18 @@ export function recoveryService(
       },
       "terminalized orphaned running heartbeat run in stale-lock sweep",
     );
+    // The run's own lifecycle normally moves the agent off "running"; an
+    // orphaned run never reaches that code, so without this the agent keeps
+    // showing "running" with nothing executing. Best-effort, like the audit
+    // event above: a failure must not keep the sweep from clearing the lock.
+    try {
+      await deps.afterOrphanedRunTerminalized?.(updated);
+    } catch (error) {
+      logger.error(
+        { err: error, runId: run.id, agentId: run.agentId },
+        "failed to settle agent status after terminalizing orphaned run",
+      );
+    }
     return { terminalized: true, status: updated.status };
   }
 

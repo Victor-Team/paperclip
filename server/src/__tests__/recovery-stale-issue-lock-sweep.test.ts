@@ -381,6 +381,36 @@ describeEmbeddedPostgres("recovery sweepStaleIssueLocks", () => {
     expect(mockTelemetryClient.track).not.toHaveBeenCalled();
   });
 
+  it("moves the agent off running when the backstop terminalizes its only live run", async () => {
+    const { companyId, agentId, runningRunId } = await seed();
+    await db.update(agents).set({ status: "running" }).where(eq(agents.id, agentId));
+    await db
+      .update(heartbeatRuns)
+      .set({ processPid: 2_000_000_000 })
+      .where(eq(heartbeatRuns.id, runningRunId));
+    await db.insert(issues).values({
+      id: randomUUID(),
+      companyId,
+      title: "Orphaned run leaves agent status running",
+      status: "in_progress",
+      priority: "high",
+      assigneeAgentId: agentId,
+      checkoutRunId: runningRunId,
+      executionRunId: runningRunId,
+      executionLockedAt: new Date(),
+    });
+
+    const result = await heartbeatService(db).sweepStaleIssueLocks();
+
+    expect(result.terminalizedRunIds).toEqual([runningRunId]);
+    const agent = await db
+      .select({ status: agents.status })
+      .from(agents)
+      .where(eq(agents.id, agentId))
+      .then((rows) => rows[0]);
+    expect(agent?.status).toBe("idle");
+  });
+
   it("preserves a process-less native run while same-run resumption owns its retry", async () => {
     const { companyId, agentId, runningRunId } = await seed();
     const issueId = randomUUID();

@@ -9451,6 +9451,19 @@ export function heartbeatService(
       const result = await scheduleBoundedRetryForRun(run, agent);
       return result.outcome === "scheduled" ? result.run : null;
     },
+    afterOrphanedRunTerminalized: async (run) => {
+      if (
+        run.status === "succeeded" ||
+        run.status === "cancelled" ||
+        run.status === "interrupted"
+      ) {
+        // A backstop cleanup is not a heartbeat the agent completed, so it
+        // must not count as the agent's first heartbeat.
+        await finalizeAgentStatus(run.agentId, run.status, run.error, {
+          wasFirstHeartbeat: false,
+        });
+      }
+    },
   });
   const runDispatch = createRunDispatch(db);
 
