@@ -65,5 +65,45 @@
       "filterActiveSingular": " · {{count}} 个筛选条件已启用",
       "filterActivePlural": " · {{count}} 个筛选条件已启用"
     }
+  },
+  "dashboard": {
+    "general": {
+      "dashboard": "仪表盘",
+      "welcomeMessage": "欢迎使用 Paperclip。设置您的第一家公司和第一个智能体，即可开始使用。",
+      "getStarted": "开始使用",
+      "createOrSelectCompany": "创建或选择一家公司以查看仪表盘。",
+      "importedAgentsPausedSingular": "{{count}} 个导入的智能体已暂停，不会运行。",
+      "importedAgentsPausedPlural": "{{count}} 个导入的智能体已暂停，不会运行。",
+      "resumeAll": "全部恢复",
+      "resuming": "正在恢复…",
+      "agentsFromAnOrganization": "通过公司导入的智能体出于安全考虑默认处于暂停状态。请恢复它们，已分配的任务才能开始执行。",
+      "titleAllagentsinthis": "本公司的所有智能体均已暂停——任何任务都不会运行。",
+      "reviewAgents": "查看智能体",
+      "resumeAtLeastOne": "至少恢复一个智能体，已分配的任务才能开始执行。",
+      "youHaveNoAgents": "您还没有智能体。",
+      "createOneHere": "在此创建",
+      "activeBudgetIncidentSingular": "{{count}} 起活跃预算事件",
+      "activeBudgetIncidentPlural": "{{count}} 起活跃预算事件",
+      "budgetIncidentSummary": "{{agents}} 个智能体已暂停 · {{projects}} 个项目已暂停 · {{approvals}} 个待处理预算审批",
+      "openBudgets": "查看预算",
+      "labelAgentsenabled": "已启用智能体",
+      "agentsBreakdown": "{{running}} 个运行中，{{paused}} 个已暂停，{{errors}} 个出错",
+      "labelTasksinprogress": "进行中的任务",
+      "tasksBreakdown": "{{open}} 个未结，{{blocked}} 个已阻塞",
+      "labelMonthspend": "本月支出",
+      "budgetUtilization": "已使用 {{budget}} 预算的 {{percent}}%",
+      "unlimitedBudget": "预算不限",
+      "labelPendingapprovals": "待处理审批",
+      "budgetOverridesAwaiting": "{{count}} 项预算超额审批等待董事会审查",
+      "awaitingBoardReview": "等待董事会审查",
+      "titleRunactivity": "运行动态",
+      "last14Days": "过去 14 天",
+      "titleTasksbypriority": "按优先级统计任务",
+      "titleTasksbystatus": "按状态统计任务",
+      "titleSuccessrate": "成功率",
+      "recentActivity": "最近活动",
+      "recentTasks": "最近任务",
+      "noTasksYet": "暂无任务。"
+    }
   }
 }
