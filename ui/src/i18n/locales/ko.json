@@ -105,5 +105,12 @@
       "recentTasks": "Recent Tasks",
       "noTasksYet": "No tasks yet."
     }
+  },
+  "issues": {
+    "general": {
+      "tasks": "Tasks",
+      "selectAnOrganizationToViewTasks": "Select an organization to view tasks.",
+      "selectACompanyToViewTasks": "Select a company to view tasks."
+    }
   }
 }

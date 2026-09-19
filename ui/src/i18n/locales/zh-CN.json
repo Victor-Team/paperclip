@@ -105,5 +105,12 @@
       "recentTasks": "最近任务",
       "noTasksYet": "暂无任务。"
     }
+  },
+  "issues": {
+    "general": {
+      "tasks": "任务",
+      "selectAnOrganizationToViewTasks": "请选择公司以查看任务。",
+      "selectACompanyToViewTasks": "请选择公司以查看任务。"
+    }
   }
 }
