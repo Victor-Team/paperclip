@@ -1148,9 +1148,38 @@ async function startServerWithDatabaseTeardown(
       });
     heartbeatSchedulerInFlight.add(tracked);
   };
+  // Shutdown waits for the scheduler's in-flight sweeps, but it must not wait
+  // forever. A sweep that never settles (a provider teardown wedged on a slow
+  // file system, a database call with no deadline) used to hang the whole
+  // shutdown: the signal handler had already told systemd `STOPPING=1`, so
+  // systemd stopped logging and simply waited out `TimeoutStopSec` (5 min) and
+  // then SIGKILLed the process group — taking every live agent run, and its
+  // embedded Postgres, down with it. That is how three restarts on 2026-09-18
+  // turned into killed runs.
+  //
+  // The cap is well under `TimeoutStopSec` so the rest of the shutdown (HTTP
+  // drain, run snapshot, Postgres stop) still gets its turn. Abandoning a sweep
+  // is safe: every sweep is idempotent and re-runs on the next boot, and the
+  // startup pending-cleanup sweep re-reads its rows from the database.
+  const HEARTBEAT_SCHEDULER_IDLE_WAIT_MS = 45_000;
   const waitForHeartbeatSchedulerIdle = async () => {
+    const deadline = Date.now() + HEARTBEAT_SCHEDULER_IDLE_WAIT_MS;
     while (heartbeatSchedulerInFlight.size > 0) {
-      await Promise.allSettled([...heartbeatSchedulerInFlight]);
+      const remaining = deadline - Date.now();
+      if (remaining <= 0) {
+        logger.warn(
+          {
+            abandonedSweeps: heartbeatSchedulerInFlight.size,
+            waitedMs: HEARTBEAT_SCHEDULER_IDLE_WAIT_MS,
+          },
+          "scheduler did not go idle before the shutdown cap; abandoning in-flight sweeps and continuing shutdown",
+        );
+        return;
+      }
+      await Promise.race([
+        Promise.allSettled([...heartbeatSchedulerInFlight]),
+        new Promise((resolve) => setTimeout(resolve, remaining).unref?.()),
+      ]);
     }
   };
   const executionControlSweepsInFlight = new Set<string>();
