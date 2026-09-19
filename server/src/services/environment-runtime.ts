@@ -1120,6 +1120,22 @@ function createLocalEnvironmentDriver(db: Db): EnvironmentRuntimeDriver {
       return await environmentsSvc.releaseLease(input.lease.id, input.status);
     },
 
+    // The local driver runs commands on the host file system and never acquires
+    // a provider-side sandbox: every lease it issues carries a null
+    // `providerLeaseId`. An orphaned `pending_cleanup` lease therefore has no
+    // remote resource left to tear down, so the retry is a no-op that reports
+    // completion and lets the sweep release the lease.
+    //
+    // Without this method the dispatcher throws "does not support orphan
+    // sandbox teardown" on every sweep. The sweep catches it, records
+    // `cleanupStatus: "failed"`, and the lease stays `pending_cleanup` forever.
+    // `getConversationOwnershipBlocker` reads exactly those two fields, so the
+    // stranded lease also blocks its issue permanently — the run can never be
+    // continued even though its process is long gone.
+    async retryPendingSandboxTeardown() {
+      return null;
+    },
+
     async realizeWorkspace(input) {
       const record = buildWorkspaceRealizationRecordFromDriverInput({
         environment: input.environment,
