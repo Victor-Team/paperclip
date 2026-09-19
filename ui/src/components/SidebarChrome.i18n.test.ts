@@ -12,8 +12,13 @@ const files = [
   "Layout.production.tsx",
   "MobileBottomNav.tsx",
   "SidebarSection.tsx",
+  "ThemeToggle.tsx",
+  "BreadcrumbBar.tsx",
+  "BreadcrumbBar.production.tsx",
+  "SidebarShell.tsx",
+  "SidebarShell.production.tsx",
 ];
-const keyPattern = /"((?:sidebaraccountmenu|sidebarcompanymenu|companyswitcher|layout|mobilebottomnav|sidebarsection)\.general\.\w+)"/g;
+const keyPattern = /"((?:sidebaraccountmenu|sidebarcompanymenu|companyswitcher|layout|mobilebottomnav|sidebarsection|themetoggle|breadcrumbbar|sidebarshell)\.general\.\w+)"/g;
 const usedKeys = [
   ...new Set(
     files.flatMap((file) => {
@@ -44,6 +49,9 @@ describe("Sidebar chrome i18n wiring", () => {
     );
     expect(i18n.t("sidebarsection.general.collapseSection", { label: "Work" })).toBe("Collapse Work");
     expect(i18n.t("layout.general.archivedCompany", { name: "ANC" })).toBe("ANC is archived");
+    expect(i18n.t("themetoggle.general.switchToDark")).toBe("Switch to dark mode");
+    expect(i18n.t("breadcrumbbar.general.openSidebar")).toBe("Open sidebar");
+    expect(i18n.t("sidebarshell.general.resizeSidebar")).toBe("Resize sidebar");
   });
 
   it("fills interpolated values in Chinese and uses 公司 for the tenant entity", async () => {
@@ -55,5 +63,9 @@ describe("Sidebar chrome i18n wiring", () => {
     expect(i18n.t("companyswitcher.general.manageOrganizations")).toBe("管理公司");
     expect(i18n.t("sidebarsection.general.collapseSection", { label: "工作" })).toBe("折叠工作");
     expect(i18n.t("layout.general.switchedTo", { name: "ANC" })).toBe("已切换到 ANC。");
+    expect(i18n.t("themetoggle.general.switchToDark")).toBe("切换到深色模式");
+    expect(i18n.t("themetoggle.general.switchToLight")).toBe("切换到浅色模式");
+    expect(i18n.t("breadcrumbbar.general.openSidebar")).toBe("打开侧边栏");
+    expect(i18n.t("sidebarshell.general.resizeSidebar")).toBe("调整侧边栏宽度");
   });
 });

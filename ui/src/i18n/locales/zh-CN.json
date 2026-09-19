@@ -233,5 +233,22 @@
       "collapseSection": "折叠{{label}}",
       "expandSection": "展开{{label}}"
     }
+  },
+  "themetoggle": {
+    "general": {
+      "switchToLight": "切换到浅色模式",
+      "switchToDark": "切换到深色模式",
+      "toggleDescription": "切换应用外观。"
+    }
+  },
+  "breadcrumbbar": {
+    "general": {
+      "openSidebar": "打开侧边栏"
+    }
+  },
+  "sidebarshell": {
+    "general": {
+      "resizeSidebar": "调整侧边栏宽度"
+    }
   }
 }

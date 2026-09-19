@@ -233,5 +233,22 @@
       "collapseSection": "Collapse {{label}}",
       "expandSection": "Expand {{label}}"
     }
+  },
+  "themetoggle": {
+    "general": {
+      "switchToLight": "Switch to light mode",
+      "switchToDark": "Switch to dark mode",
+      "toggleDescription": "Toggle the app appearance."
+    }
+  },
+  "breadcrumbbar": {
+    "general": {
+      "openSidebar": "Open sidebar"
+    }
+  },
+  "sidebarshell": {
+    "general": {
+      "resizeSidebar": "Resize sidebar"
+    }
   }
 }
