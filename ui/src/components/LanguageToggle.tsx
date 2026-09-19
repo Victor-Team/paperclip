@@ -63,7 +63,7 @@ export function LanguageToggle({ className, variant = "icon", onAfterChange }: L
           <Languages className="size-4" />
         </span>
         <span className="min-w-0 flex-1 truncate">{label}</span>
-        {select("max-w-[8rem] shrink-0")}
+        {select("max-w-32 shrink-0")}
       </label>
     );
   }
