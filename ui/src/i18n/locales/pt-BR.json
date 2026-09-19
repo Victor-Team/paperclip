@@ -112,5 +112,46 @@
       "selectAnOrganizationToViewTasks": "Select an organization to view tasks.",
       "selectACompanyToViewTasks": "Select a company to view tasks."
     }
+  },
+  "sidebar": {
+    "general": {
+      "newTask": "New Task",
+      "labelSearch": "Search",
+      "labelDashboard": "Dashboard",
+      "labelInbox": "Inbox",
+      "unread": "unread",
+      "labelDecisions": "Decisions",
+      "decisions": "decisions",
+      "labelStatus": "Status",
+      "beta": "beta",
+      "labelConferenceroom": "Conference Room",
+      "labelWork": "Work",
+      "labelTasks": "Tasks",
+      "labelProjects": "Projects",
+      "labelRoutines": "Routines",
+      "labelArtifacts": "Artifacts",
+      "labelCases": "Cases",
+      "labelPipelines": "Pipelines",
+      "labelGoals": "Goals",
+      "labelWorkspaces": "Workspaces",
+      "sectionOrg": "Org",
+      "labelOrg": "Org",
+      "labelAgents": "Agents",
+      "labelSkills": "Skills",
+      "labelConnectors": "Connectors",
+      "labelAudit": "Audit",
+      "labelOrganization": "Organization",
+      "labelTimeline": "Timeline",
+      "labelCosts": "Costs",
+      "labelActivity": "Activity",
+      "labelSettings": "Settings",
+      "labelCompany": "Company"
+    }
+  },
+  "sidebarnavitem": {
+    "general": {
+      "live": "{{liveCount}} live",
+      "attentionNeeded": "attention needed"
+    }
   }
 }

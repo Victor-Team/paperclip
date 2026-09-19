@@ -112,5 +112,46 @@
       "selectAnOrganizationToViewTasks": "请选择公司以查看任务。",
       "selectACompanyToViewTasks": "请选择公司以查看任务。"
     }
+  },
+  "sidebar": {
+    "general": {
+      "newTask": "新建任务",
+      "labelSearch": "搜索",
+      "labelDashboard": "仪表盘",
+      "labelInbox": "收件箱",
+      "unread": "未读",
+      "labelDecisions": "决策",
+      "decisions": "决策",
+      "labelStatus": "状态",
+      "beta": "公测",
+      "labelConferenceroom": "会议室",
+      "labelWork": "工作",
+      "labelTasks": "任务",
+      "labelProjects": "项目",
+      "labelRoutines": "例程",
+      "labelArtifacts": "产物",
+      "labelCases": "案例",
+      "labelPipelines": "流水线",
+      "labelGoals": "目标",
+      "labelWorkspaces": "工作区",
+      "sectionOrg": "公司",
+      "labelOrg": "组织",
+      "labelAgents": "智能体",
+      "labelSkills": "技能",
+      "labelConnectors": "连接器",
+      "labelAudit": "审计",
+      "labelOrganization": "公司",
+      "labelTimeline": "时间线",
+      "labelCosts": "成本",
+      "labelActivity": "动态",
+      "labelSettings": "设置",
+      "labelCompany": "公司"
+    }
+  },
+  "sidebarnavitem": {
+    "general": {
+      "live": "{{liveCount}} 运行中",
+      "attentionNeeded": "需要关注"
+    }
   }
 }
