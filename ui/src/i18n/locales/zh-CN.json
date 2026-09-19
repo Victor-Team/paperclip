@@ -153,5 +153,85 @@
       "live": "{{liveCount}} 个运行中",
       "attentionNeeded": "需要关注"
     }
+  },
+  "sidebaraccountmenu": {
+    "general": {
+      "board": "董事会",
+      "signedIn": "已登录",
+      "localWorkspaceBoard": "本地工作区董事会",
+      "openAccountMenu": "打开账号菜单",
+      "labelSettings": "设置",
+      "labelViewprofile": "查看个人资料",
+      "descriptionOpenyouractivitytask": "查看你的活动、任务和用量台账。",
+      "labelEditprofile": "编辑个人资料",
+      "descriptionUpdateyourdisplayname": "更新你的显示名称和头像。",
+      "labelDocumentation": "开发文档",
+      "descriptionOpenpaperclipdocsin": "在新标签页中打开 Paperclip 文档。",
+      "signOut": "退出登录",
+      "signingOut": "正在退出…",
+      "endThisBrowserSession": "结束当前浏览器会话。",
+      "shareFeedback": "分享反馈"
+    }
+  },
+  "sidebarcompanymenu": {
+    "general": {
+      "nounOrganization": "公司",
+      "nounCompany": "公司",
+      "openSwitcherNamed": "打开 {{name}} {{noun}}切换器",
+      "openSwitcher": "打开{{noun}}切换器",
+      "selectNoun": "选择{{noun}}",
+      "organizations": "公司",
+      "done": "完成",
+      "edit": "编辑",
+      "reorder": "调整 {{name}} 的顺序",
+      "loadingOrganizations": "正在加载公司…",
+      "couldNotLoadOrganizations": "无法加载公司",
+      "couldnTLoadOrganizations": "无法加载公司",
+      "couldnTLoadCompanies": "无法加载公司",
+      "noOrganizations": "暂无公司",
+      "noCompanies": "暂无公司",
+      "tryAgain": "重试",
+      "createOrganization": "创建公司",
+      "invitePeople": "邀请成员",
+      "invitePeopleTo": "邀请成员加入 {{name}}",
+      "signOut": "退出登录",
+      "signingOut": "正在退出…"
+    }
+  },
+  "companyswitcher": {
+    "general": {
+      "selectOrganization": "选择公司",
+      "organizations": "公司",
+      "couldnTLoadOrganizations": "无法加载公司",
+      "tryAgain": "重试",
+      "noOrganizations": "暂无公司",
+      "settings": "设置",
+      "manageOrganizations": "管理公司"
+    }
+  },
+  "layout": {
+    "general": {
+      "skipToMainContent": "跳转到主要内容",
+      "closeSidebar": "关闭侧边栏",
+      "archivedCompany": "{{name}} 已归档",
+      "switchedTo": "已切换到 {{name}}。"
+    }
+  },
+  "mobilebottomnav": {
+    "general": {
+      "home": "首页",
+      "tasks": "任务",
+      "newTask": "新建任务",
+      "agents": "智能体",
+      "inbox": "收件箱",
+      "mobileNavigation": "移动端导航"
+    }
+  },
+  "sidebarsection": {
+    "general": {
+      "sectionActions": "{{label}}操作菜单",
+      "collapseSection": "折叠{{label}}",
+      "expandSection": "展开{{label}}"
+    }
   }
 }

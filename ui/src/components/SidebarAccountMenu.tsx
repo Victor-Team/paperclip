@@ -23,6 +23,7 @@ import { cn, SIDEBAR_RAIL_HIDDEN_LABEL } from "../lib/utils";
 import { ThemeToggle } from "./ThemeToggle";
 import { LanguageToggle } from "./LanguageToggle";
 import { SidebarServerInfo } from "./SidebarServerInfo";
+import { useTranslation } from "@/i18n";
 
 const PROFILE_SETTINGS_PATH = "/company/settings/instance/profile";
 const DOCS_URL = "https://docs.paperclip.ing/";
@@ -114,6 +115,7 @@ export function SidebarAccountMenu({
   onOpenChange,
   forceExpanded = false,
 }: SidebarAccountMenuProps) {
+  const { t } = useTranslation();
   const isCloud = Boolean(useCloudInstance());
   const [internalOpen, setInternalOpen] = useState(false);
   const { isMobile, setSidebarOpen, collapsed, peeking } = useSidebar();
@@ -128,9 +130,9 @@ export function SidebarAccountMenu({
 
   const signOutMutation = useSignOut({ onSignedOut: closeNavigationChrome });
 
-  const displayName = session?.user.name?.trim() || "Board";
+  const displayName = session?.user.name?.trim() || t("sidebaraccountmenu.general.board");
   const secondaryLabel =
-    session?.user.email?.trim() || (deploymentMode === "authenticated" ? "Signed in" : "Local workspace board");
+    session?.user.email?.trim() || (deploymentMode === "authenticated" ? t("sidebaraccountmenu.general.signedIn") : t("sidebaraccountmenu.general.localWorkspaceBoard"));
   const initials = deriveInitials(displayName);
   const profileHref = `/u/${deriveUserSlug(session?.user.name, session?.user.email, session?.user.id)}`;
 
@@ -154,7 +156,7 @@ export function SidebarAccountMenu({
                 "flex min-w-0 items-center gap-2.5 rounded-lg text-left text-(length:--text-compact) font-medium text-foreground/80 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
                 rail ? "w-full px-3 py-2" : "flex-1 px-2 py-1.5",
               )}
-              aria-label="Open account menu"
+              aria-label={t("sidebaraccountmenu.general.openAccountMenu")}
             >
               <Avatar size="sm">
                 {session?.user.image ? <AvatarImage src={session.user.image} alt={displayName} /> : null}
@@ -186,25 +188,25 @@ export function SidebarAccountMenu({
 
             <div className="flex flex-1 flex-col gap-0.5 border-t border-border px-2.5 pb-2.5 pt-2">
               <MenuAction
-                label="Settings"
+                label={t("sidebaraccountmenu.general.labelSettings")}
                 icon={Settings}
                 href="/company/settings"
                 onClick={closeNavigationChrome}
               />
               <MenuAction
-                label="View profile"
+                label={t("sidebaraccountmenu.general.labelViewprofile")}
                 icon={UserRound}
                 href={profileHref}
                 onClick={closeNavigationChrome}
               />
               <MenuAction
-                label="Edit profile"
+                label={t("sidebaraccountmenu.general.labelEditprofile")}
                 icon={UserRoundPen}
                 href={PROFILE_SETTINGS_PATH}
                 onClick={closeNavigationChrome}
               />
               <MenuAction
-                label="Documentation"
+                label={t("sidebaraccountmenu.general.labelDocumentation")}
                 icon={BookOpen}
                 href={DOCS_URL}
                 external
@@ -226,7 +228,7 @@ export function SidebarAccountMenu({
                     <LogOut className="size-4" />
                   </span>
                   <span className="min-w-0 flex-1 truncate">
-                    {signOutMutation.isPending ? "Signing out..." : "Sign out"}
+                    {signOutMutation.isPending ? t("sidebaraccountmenu.general.signingOut") : t("sidebaraccountmenu.general.signOut")}
                   </span>
                 </button>
               ) : null}
@@ -241,13 +243,13 @@ export function SidebarAccountMenu({
                 href={FEEDBACK_URL}
                 target="_blank"
                 rel="noreferrer"
-                aria-label="Share feedback"
+                aria-label={t("sidebaraccountmenu.general.shareFeedback")}
                 className="flex size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground/50 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
                 <Flag className="h-4 w-4" aria-hidden="true" />
               </a>
             </TooltipTrigger>
-            <TooltipContent side="top">Share feedback</TooltipContent>
+            <TooltipContent side="top">{t("sidebaraccountmenu.general.shareFeedback")}</TooltipContent>
           </Tooltip>
         ) : null}
       </div>

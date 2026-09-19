@@ -153,5 +153,85 @@
       "live": "{{liveCount}} live",
       "attentionNeeded": "attention needed"
     }
+  },
+  "sidebaraccountmenu": {
+    "general": {
+      "board": "Board",
+      "signedIn": "Signed in",
+      "localWorkspaceBoard": "Local workspace board",
+      "openAccountMenu": "Open account menu",
+      "labelSettings": "Settings",
+      "labelViewprofile": "View profile",
+      "descriptionOpenyouractivitytask": "Open your activity, task, and usage ledger.",
+      "labelEditprofile": "Edit profile",
+      "descriptionUpdateyourdisplayname": "Update your display name and avatar.",
+      "labelDocumentation": "Documentation",
+      "descriptionOpenpaperclipdocsin": "Open Paperclip docs in a new tab.",
+      "signOut": "Sign out",
+      "signingOut": "Signing out...",
+      "endThisBrowserSession": "End this browser session.",
+      "shareFeedback": "Share feedback"
+    }
+  },
+  "sidebarcompanymenu": {
+    "general": {
+      "nounOrganization": "organization",
+      "nounCompany": "company",
+      "openSwitcherNamed": "Open {{name}} {{noun}} switcher",
+      "openSwitcher": "Open {{noun}} switcher",
+      "selectNoun": "Select {{noun}}",
+      "organizations": "Organizations",
+      "done": "Done",
+      "edit": "Edit",
+      "reorder": "Reorder {{name}}",
+      "loadingOrganizations": "Loading organizations...",
+      "couldNotLoadOrganizations": "Could not load organizations",
+      "couldnTLoadOrganizations": "Couldn't load organizations",
+      "couldnTLoadCompanies": "Couldn't load companies",
+      "noOrganizations": "No organizations",
+      "noCompanies": "No companies",
+      "tryAgain": "Try again",
+      "createOrganization": "Create organization",
+      "invitePeople": "Invite people",
+      "invitePeopleTo": "Invite people to {{name}}",
+      "signOut": "Sign out",
+      "signingOut": "Signing out..."
+    }
+  },
+  "companyswitcher": {
+    "general": {
+      "selectOrganization": "Select organization",
+      "organizations": "Organizations",
+      "couldnTLoadOrganizations": "Couldn't load organizations",
+      "tryAgain": "Try again",
+      "noOrganizations": "No organizations",
+      "settings": "Settings",
+      "manageOrganizations": "Manage Organizations"
+    }
+  },
+  "layout": {
+    "general": {
+      "skipToMainContent": "Skip to Main Content",
+      "closeSidebar": "Close sidebar",
+      "archivedCompany": "{{name}} is archived",
+      "switchedTo": "Switched to {{name}}."
+    }
+  },
+  "mobilebottomnav": {
+    "general": {
+      "home": "Home",
+      "tasks": "Tasks",
+      "newTask": "New Task",
+      "agents": "Agents",
+      "inbox": "Inbox",
+      "mobileNavigation": "Mobile navigation"
+    }
+  },
+  "sidebarsection": {
+    "general": {
+      "sectionActions": "{{label}} actions",
+      "collapseSection": "Collapse {{label}}",
+      "expandSection": "Expand {{label}}"
+    }
   }
 }
