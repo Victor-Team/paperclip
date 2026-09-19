@@ -33,7 +33,7 @@ describe("Sidebar i18n wiring", () => {
 
   it("fills the live-run count in Chinese and separates the Org section from the /org link", async () => {
     await i18n.changeLanguage("zh-CN");
-    expect(i18n.t("sidebarnavitem.general.live", { liveCount: 3 })).toBe("3 运行中");
+    expect(i18n.t("sidebarnavitem.general.live", { liveCount: 3 })).toBe("3 个运行中");
     expect(i18n.t("sidebar.general.sectionOrg")).toBe("公司");
     expect(i18n.t("sidebar.general.labelOrg")).toBe("组织");
   });

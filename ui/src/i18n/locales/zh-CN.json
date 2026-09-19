@@ -150,7 +150,7 @@
   },
   "sidebarnavitem": {
     "general": {
-      "live": "{{liveCount}} 运行中",
+      "live": "{{liveCount}} 个运行中",
       "attentionNeeded": "需要关注"
     }
   }
