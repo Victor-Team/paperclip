@@ -21,6 +21,40 @@ const object = (v: unknown): Record<string, unknown> =>
     : {};
 const string = (v: unknown) =>
   typeof v === "string" && v.length > 0 ? v : null;
+
+// The thread grows with every comment and was sent whole on every wake; one
+// issue reached 65 messages / ~150KB of snapshot. Keep the opening messages
+// (usually the task definition), every pinned message, and the most recent
+// history up to this budget. Coverage declares the omission so agents know to
+// fetch the thread instead of assuming the history is complete.
+const CONTINUATION_HEAD_MESSAGES = 2;
+const CONTINUATION_MESSAGE_BUDGET_BYTES = 32_000;
+
+export function windowContinuationMessages<T extends { id: string }>(
+  all: T[],
+  pinnedIds: ReadonlySet<string>,
+): T[] {
+  const keep = new Set<number>();
+  let used = 0;
+  const size = (message: T) => Buffer.byteLength(JSON.stringify(message));
+  all.forEach((message, index) => {
+    if (index < CONTINUATION_HEAD_MESSAGES || index === all.length - 1 || pinnedIds.has(message.id)) {
+      keep.add(index);
+      used += size(message);
+    }
+  });
+  // Walk back from the newest and stop at the first message that does not
+  // fit, so the recent window stays contiguous.
+  for (let index = all.length - 1; index >= 0; index--) {
+    if (keep.has(index)) continue;
+    const bytes = size(all[index]!);
+    if (used + bytes > CONTINUATION_MESSAGE_BUDGET_BYTES) break;
+    keep.add(index);
+    used += bytes;
+  }
+  return all.filter((_, index) => keep.has(index));
+}
+
 export function continuationOriginCommentIds(context: unknown): string[] {
   const c = object(context);
   const prior = object(c.executionContinuation);
@@ -179,7 +213,7 @@ export async function buildExecutionContinuation(input: {
   // Missing source rows cannot silently become a claim of complete context.
   if (originCommentIds.some((id) => !rows.some((row) => row.id === id)))
     throw new Error("continuation_source_context_missing");
-  const messages = rows.map((row) => {
+  const allMessages = rows.map((row) => {
     const safe = input.exposeLowTrustRaw
       ? row
       : sanitizeQuarantinedCommentForHigherTrust(row);
@@ -197,6 +231,15 @@ export async function buildExecutionContinuation(input: {
       sourceTrust: row.sourceTrust,
     };
   });
+  const latestRequest = allMessages.findLast(
+    (row) =>
+      row.authorType === "user" && !row.createdByRunId && !row.deleted && row.body.trim().length > 0,
+  );
+  const messages = windowContinuationMessages(
+    allMessages,
+    new Set([...originCommentIds, ...(latestRequest ? [latestRequest.id] : [])]),
+  );
+  const omittedMessageCount = allMessages.length - messages.length;
   const previousRun = input.previousContextRunId
     ? (
         await db
@@ -237,10 +280,6 @@ export async function buildExecutionContinuation(input: {
           ),
         }
       : undefined;
-  const latestRequest = messages.findLast(
-    (row) =>
-      row.authorType === "user" && !row.createdByRunId && !row.deleted && row.body.trim().length > 0,
-  );
   const priorRuns = await db
     .select({ id: heartbeatRuns.id, result: heartbeatRuns.resultJson, status: heartbeatRuns.status, errorCode: heartbeatRuns.errorCode, runtimeMode: heartbeatRuns.runtimeMode, retryOfRunId: heartbeatRuns.retryOfRunId })
     .from(heartbeatRuns)
@@ -381,7 +420,9 @@ export async function buildExecutionContinuation(input: {
       .filter((row) => row.status === "pending")
       .map((row) => row.id),
     coverage: {
-      kind: "full_task_history",
+      ...(omittedMessageCount > 0
+        ? { kind: "task_history_window" as const, omittedMessageCount }
+        : { kind: "full_task_history" as const }),
       throughCommentId: messages.at(-1)?.id ?? null,
       summaryThroughCommentId: null,
     },

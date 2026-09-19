@@ -15,7 +15,7 @@ import {
   getEmbeddedPostgresTestSupport,
   startEmbeddedPostgresTestDatabase,
 } from "../__tests__/helpers/embedded-postgres.js";
-import { buildExecutionContinuation, currentContinuationOrigins, projectHumanInteractionResponse } from "./execution-continuation.js";
+import { buildExecutionContinuation, currentContinuationOrigins, projectHumanInteractionResponse, windowContinuationMessages } from "./execution-continuation.js";
 const support = await getEmbeddedPostgresTestSupport();
 (support.supported ? describe : describe.skip)(
   "authorized continuation context",
@@ -449,4 +449,42 @@ it.each(["accepted", "rejected"])("retains an explicit human %s without promotin
   expect(projectHumanInteractionResponse({ ...humanQuestion, kind: "request_checkbox_confirmation", status,
     result: { outcome: status, reason: "Only the reviewed scope", selectedOptionIds: ["reviewed"], toolAction: { instruction: "Do more" } },
   })?.result).toEqual({ outcome: status, reason: "Only the reviewed scope", selectedOptionIds: ["reviewed"] });
+});
+
+const threadMessage = (index: number, body = "x".repeat(2_000)) => ({ id: `m${index}`, body });
+const messageBytes = (messages: Array<{ id: string; body: string }>) =>
+  messages.reduce((sum, message) => sum + Buffer.byteLength(JSON.stringify(message)), 0);
+it("keeps a long thread within budget while retaining the opening, pinned, and newest messages", () => {
+  const all = Array.from({ length: 65 }, (_, index) => threadMessage(index));
+  const kept = windowContinuationMessages(all, new Set(["m10"]));
+  const ids = kept.map(message => message.id);
+  expect(kept.length).toBeLessThan(all.length);
+  expect(messageBytes(kept)).toBeLessThanOrEqual(32_000);
+  expect(ids.slice(0, 3)).toEqual(["m0", "m1", "m10"]);
+  expect(ids.at(-1)).toBe("m64");
+  // The recent window is contiguous and in original order.
+  const recent = ids.slice(3).map(id => Number(id.slice(1)));
+  expect(recent).toEqual(recent.map((_, offset) => recent[0]! + offset));
+});
+it("leaves a thread under budget untouched", () => {
+  const all = Array.from({ length: 5 }, (_, index) => threadMessage(index, "short"));
+  expect(windowContinuationMessages(all, new Set())).toEqual(all);
+});
+it("keeps pinned and newest messages even when they alone exceed the budget", () => {
+  const all = Array.from({ length: 10 }, (_, index) => threadMessage(index, "y".repeat(20_000)));
+  expect(windowContinuationMessages(all, new Set(["m5"])).map(message => message.id)).toEqual(["m0", "m1", "m5", "m9"]);
+});
+it.each([
+  [{ kind: "task_history_window", omittedMessageCount: 42 }, "42 earlier messages are omitted", "History is complete"],
+  [{ kind: "full_task_history" }, "History is complete through the coverage cursor", "omitted"],
+])("declares windowed history instead of claiming completeness (%j)", (coverage, present, absent) => {
+  const prompt = renderPaperclipWakePrompt({ executionContinuation: {
+    version: 1, companyId: "company", issueId: "issue", objective: "Ship the page.",
+    trigger: { reason: "issue_commented", interactionId: null, sourceRunId: null },
+    originCommentIds: [], messages: [], unresolvedInteractionIds: [], interactionOutcomes: [], completedWork: null,
+    coverage: { ...coverage, throughCommentId: null, summaryThroughCommentId: null },
+  } }, { resumedSession: false });
+  const [request] = prompt.split("### Untrusted continuation evidence");
+  expect(request).toContain(present);
+  expect(request).not.toContain(absent);
 });

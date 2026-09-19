@@ -55,8 +55,10 @@ export interface ExecutionContinuationEnvelope {
   }>;
   unresolvedInteractionIds: string[];
   coverage: {
-    kind: "full_task_history" | "task_history_delta";
+    kind: "full_task_history" | "task_history_window" | "task_history_delta";
     baseRunId?: string;
+    /** Set with `task_history_window`: earlier messages left out of `messages`. */
+    omittedMessageCount?: number;
     throughCommentId: string | null;
     summaryThroughCommentId: null;
   };
