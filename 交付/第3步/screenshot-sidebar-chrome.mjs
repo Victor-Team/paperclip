@@ -79,7 +79,7 @@ for (const lng of ["en", "zh"]) {
   {
     const { ctx, page } = await openPage(lng, { width: 390, height: 844 });
     await shot(page, `${prefix}${lng}-mobile-bottom-nav`, `nav=${JSON.stringify(await page.evaluate(() => [...document.querySelectorAll("nav[aria-label]")].map((n) => n.getAttribute("aria-label") + ": " + n.innerText.replace(/\n+/g, " | "))))}`);
-    await page.locator('button[aria-label="Open sidebar"]').first().click();
+    await page.locator('button[aria-label="Open sidebar"], button[aria-label="打开侧边栏"]').first().click();
     await page.waitForTimeout(700);
     await shot(page, `${prefix}${lng}-mobile-drawer`);
     await page.locator("button[aria-label]").evaluateAll((els) => {
