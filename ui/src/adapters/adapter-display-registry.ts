@@ -17,6 +17,7 @@ import {
   Cpu,
 } from "lucide-react";
 import { OpenCodeLogoIcon } from "@/components/OpenCodeLogoIcon";
+import { t } from "@/i18n";
 
 // ---------------------------------------------------------------------------
 // Type suffix parsing
@@ -29,12 +30,19 @@ import { OpenCodeLogoIcon } from "@/components/OpenCodeLogoIcon";
 // `adapterDisplayMap` have final labels and never get a derived suffix.
 const STRIPPED_TYPE_SUFFIXES = ["_local", "_gateway"] as const;
 
-const DISPLAY_SUFFIXES: Record<string, string> = {
-  _gateway: "gateway",
-};
+// Uses the module-level `t` (not the `useTranslation` hook): this registry is
+// called from 15+ non-component call sites; see `ui/src/lib/timeAgo.ts` for
+// the same pattern. Known gap: `ui/src/components/agent-config-primitives.tsx`
+// caches `getAdapterLabels()` in a module-level constant at import time, so
+// that one cached snapshot does not retranslate on a live language switch.
+function displaySuffixes(): Record<string, string> {
+  return {
+    _gateway: t("adapterdisplayregistry.general.suffixGateway"),
+  };
+}
 
 function getTypeSuffix(type: string): string | null {
-  for (const [suffix, mode] of Object.entries(DISPLAY_SUFFIXES)) {
+  for (const [suffix, mode] of Object.entries(displaySuffixes())) {
     if (type.endsWith(suffix)) return mode;
   }
   return null;
@@ -59,100 +67,102 @@ export interface AdapterDisplayInfo {
   hideFromVisualSelection?: boolean;
 }
 
-const adapterDisplayMap: Record<string, AdapterDisplayInfo> = {
-  acpx_local: {
-    label: "ACPX (retired)",
-    description: "Retired standalone ACPX adapter",
-    icon: Bot,
-    comingSoon: true,
-    disabledLabel: "Use Claude Code or Codex with the ACP engine",
-    hideFromVisualSelection: true,
-  },
-  claude_local: {
-    label: "Claude Code",
-    description: "Claude Code CLI harness",
-    icon: Sparkles,
-    recommended: true,
-  },
-  codex_local: {
-    label: "Codex",
-    description: "Codex CLI harness",
-    icon: Code,
-    recommended: true,
-  },
-  paperclip_runner: {
-    label: "Paperclip Runner",
-    description: "Experimental Rust runner with a Codex provider",
-    icon: Cpu,
-    experimental: true,
-  },
-  gemini_local: {
-    label: "Gemini CLI",
-    description: "Gemini CLI harness",
-    icon: Gem,
-  },
-  grok_local: {
-    label: "Grok Build",
-    description: "Grok Build harness",
-    icon: Bot,
-  },
-  kimi_local: {
-    label: "Kimi Code",
-    description: "Kimi Code CLI harness",
-    icon: Moon,
-  },
-  hermes_gateway: {
-    label: "Hermes Gateway",
-    description: "Remote Hermes API server",
-    icon: Bot,
-    hideFromVisualSelection: true,
-  },
-  hermes_local: {
-    label: "Hermes",
-    description: "Hermes harness",
-    icon: Bot,
-  },
-  opencode_local: {
-    label: "OpenCode",
-    description: "OpenCode multi-provider harness",
-    icon: OpenCodeLogoIcon,
-  },
-  pi_local: {
-    label: "Pi",
-    description: "Pi harness",
-    icon: Terminal,
-  },
-  cursor: {
-    label: "Cursor",
-    description: "Cursor CLI harness",
-    icon: MousePointer2,
-  },
-  cursor_cloud: {
-    label: "Cursor Cloud",
-    description: "Managed remote Cursor agent",
-    icon: MousePointer2,
-  },
-  openclaw_gateway: {
-    label: "OpenClaw Gateway",
-    description: "External gateway adapter",
-    icon: Bot,
-    comingSoon: true,
-    disabledLabel: "Invite external agents from the add-agent modal",
-    hideFromVisualSelection: true,
-  },
-  process: {
-    label: "Process",
-    description: "Internal process adapter",
-    icon: Cpu,
-    comingSoon: true,
-  },
-  http: {
-    label: "HTTP",
-    description: "Internal HTTP adapter",
-    icon: Cpu,
-    comingSoon: true,
-  },
-};
+function adapterDisplayMap(): Record<string, AdapterDisplayInfo> {
+  return {
+    acpx_local: {
+      label: t("adapterdisplayregistry.general.acpxRetired"),
+      description: t("adapterdisplayregistry.general.retiredStandaloneAcpxAdapter"),
+      icon: Bot,
+      comingSoon: true,
+      disabledLabel: t("adapterdisplayregistry.general.useClaudeCodeOrCodexWith"),
+      hideFromVisualSelection: true,
+    },
+    claude_local: {
+      label: t("adapterdisplayregistry.general.claudeCode"),
+      description: t("adapterdisplayregistry.general.claudeCodeCliHarness"),
+      icon: Sparkles,
+      recommended: true,
+    },
+    codex_local: {
+      label: t("adapterdisplayregistry.general.codex"),
+      description: t("adapterdisplayregistry.general.codexCliHarness"),
+      icon: Code,
+      recommended: true,
+    },
+    paperclip_runner: {
+      label: t("adapterdisplayregistry.general.paperclipRunner"),
+      description: t("adapterdisplayregistry.general.experimentalRustRunnerWith"),
+      icon: Cpu,
+      experimental: true,
+    },
+    gemini_local: {
+      label: t("adapterdisplayregistry.general.geminiCli"),
+      description: t("adapterdisplayregistry.general.geminiCliHarness"),
+      icon: Gem,
+    },
+    grok_local: {
+      label: t("adapterdisplayregistry.general.grokBuild"),
+      description: t("adapterdisplayregistry.general.grokBuildHarness"),
+      icon: Bot,
+    },
+    kimi_local: {
+      label: t("adapterdisplayregistry.general.kimiCode"),
+      description: t("adapterdisplayregistry.general.kimiCodeCliHarness"),
+      icon: Moon,
+    },
+    hermes_gateway: {
+      label: t("adapterdisplayregistry.general.hermesGateway"),
+      description: t("adapterdisplayregistry.general.remoteHermesApiServer"),
+      icon: Bot,
+      hideFromVisualSelection: true,
+    },
+    hermes_local: {
+      label: t("adapterdisplayregistry.general.hermes"),
+      description: t("adapterdisplayregistry.general.hermesHarness"),
+      icon: Bot,
+    },
+    opencode_local: {
+      label: t("adapterdisplayregistry.general.opencode"),
+      description: t("adapterdisplayregistry.general.opencodeMultiProviderHarness"),
+      icon: OpenCodeLogoIcon,
+    },
+    pi_local: {
+      label: t("adapterdisplayregistry.general.pi"),
+      description: t("adapterdisplayregistry.general.piHarness"),
+      icon: Terminal,
+    },
+    cursor: {
+      label: t("adapterdisplayregistry.general.cursor"),
+      description: t("adapterdisplayregistry.general.cursorCliHarness"),
+      icon: MousePointer2,
+    },
+    cursor_cloud: {
+      label: t("adapterdisplayregistry.general.cursorCloud"),
+      description: t("adapterdisplayregistry.general.managedRemoteCursorAgent"),
+      icon: MousePointer2,
+    },
+    openclaw_gateway: {
+      label: t("adapterdisplayregistry.general.openclawGateway"),
+      description: t("adapterdisplayregistry.general.externalGatewayAdapter"),
+      icon: Bot,
+      comingSoon: true,
+      disabledLabel: t("adapterdisplayregistry.general.inviteExternalAgentsFrom"),
+      hideFromVisualSelection: true,
+    },
+    process: {
+      label: t("adapterdisplayregistry.general.process"),
+      description: t("adapterdisplayregistry.general.internalProcessAdapter"),
+      icon: Cpu,
+      comingSoon: true,
+    },
+    http: {
+      label: t("adapterdisplayregistry.general.http"),
+      description: t("adapterdisplayregistry.general.internalHttpAdapter"),
+      icon: Cpu,
+      comingSoon: true,
+    },
+  };
+}
 
 // ---------------------------------------------------------------------------
 // Public API
@@ -174,32 +184,34 @@ export function getAdapterLabel(type: string): string {
   // Known labels are final — only unknown (plugin) types get a derived
   // suffix, so labels like "OpenClaw Gateway" don't become
   // "OpenClaw Gateway (gateway)".
-  const known = adapterDisplayMap[type];
+  const known = adapterDisplayMap()[type];
   if (known) return known.label;
   return withSuffix(humanizeType(type), getTypeSuffix(type));
 }
 
 export function getAdapterLabels(): Record<string, string> {
   const labels: Record<string, string> = {};
-  for (const [type, info] of Object.entries(adapterDisplayMap)) {
+  for (const [type, info] of Object.entries(adapterDisplayMap())) {
     labels[type] = info.label;
   }
   return labels;
 }
 
 export function getAdapterDisplay(type: string): AdapterDisplayInfo {
-  const known = adapterDisplayMap[type];
+  const known = adapterDisplayMap()[type];
   if (known) return known;
 
   const suffix = getTypeSuffix(type);
   const label = withSuffix(humanizeType(type), suffix);
   return {
     label,
-    description: suffix ? `External ${suffix} adapter` : "External adapter",
+    description: suffix
+      ? t("adapterdisplayregistry.general.externalAdapterWithSuffix", { suffix })
+      : t("adapterdisplayregistry.general.externalAdapterPlain"),
     icon: Cpu,
   };
 }
 
 export function isKnownAdapterType(type: string): boolean {
-  return type in adapterDisplayMap;
+  return type in adapterDisplayMap();
 }

@@ -734,5 +734,122 @@
       "signOutOfThis": "Sign out of this Paperclip instance. You will be redirected to the login page.",
       "signingOut": "Signing out..."
     }
+  },
+  "companysettingsnav": {
+    "general": {
+      "general": "General",
+      "export": "Export",
+      "import": "Import",
+      "members": "Members",
+      "secrets": "Secrets",
+      "profile": "Profile",
+      "environments": "Environments",
+      "access": "Access",
+      "experimental": "Experimental",
+      "plugins": "Plugins",
+      "adapters": "Adapters"
+    }
+  },
+  "companysettingssidebar": {
+    "general": {
+      "settings": "Settings",
+      "backToApp": "Back to app",
+      "general": "General",
+      "profile": "Profile",
+      "members": "Members",
+      "secrets": "Secrets",
+      "environments": "Environments",
+      "access": "Access",
+      "export": "Export",
+      "import": "Import",
+      "experimental": "Experimental",
+      "plugins": "Plugins",
+      "adapters": "Adapters"
+    }
+  },
+  "interactiongovernancepanel": {
+    "general": {
+      "kindSuggestTasks": "Suggested tasks",
+      "kindAskUserQuestions": "Ask user questions",
+      "kindRequestConfirmation": "Confirmations",
+      "kindRequestCheckboxConfirmation": "Checkbox confirmations",
+      "kindRequestItemVerdicts": "Item verdicts",
+      "kindConnectionIntent": "Connection requests",
+      "interactionGovernance": "Interaction governance",
+      "paragraphIntro": "Thread interactions are open by default:",
+      "anyone": "Anyone",
+      "paragraphAfterAnyone": "in the organization — the board or any agent, including the one that asked — can respond. Narrow a kind only when you need to.",
+      "defaultPolicy": "Default policy",
+      "paragraphAfterDefaultPolicy": "is the audience new cards get when the requester does not ask for one;",
+      "cap": "Cap",
+      "paragraphAfterCap": "narrows every request of that kind and can never widen one. Tool-approval confirmations always stay",
+      "humanOnly": "Human only",
+      "kind": "Kind",
+      "unsetLabelDefaultPolicy": "Anyone (default)",
+      "unsetLabelCap": "No cap",
+      "unsetEffectDefaultPolicy": "New cards are open — the board or any agent can respond, including the one that asked.",
+      "unsetEffectCap": "A request keeps whatever audience it asks for.",
+      "defaultPolicyEffectNotCreator": "New cards exclude the agent that created them, so the answer comes from someone else.",
+      "defaultPolicyEffectHumanOnly": "New cards wait for a person on the board. Agents are turned away.",
+      "capEffectNotCreator": "Even a card that asks for Anyone is narrowed to exclude its creator.",
+      "capEffectHumanOnly": "Every card of this kind waits for a person, whatever it asked for.",
+      "ariaLabelDefaultFor": "Default resolver audience for {{kind}}",
+      "ariaLabelCapFor": "Resolver cap for {{kind}}"
+    }
+  },
+  "modebadge": {
+    "general": {
+      "localTrusted": "Local trusted",
+      "authenticatedPrivate": "Authenticated private",
+      "authenticatedPublic": "Authenticated public"
+    }
+  },
+  "adapterdisplayregistry": {
+    "general": {
+      "suffixGateway": "gateway",
+      "acpxRetired": "ACPX (retired)",
+      "retiredStandaloneAcpxAdapter": "Retired standalone ACPX adapter",
+      "useClaudeCodeOrCodexWith": "Use Claude Code or Codex with the ACP engine",
+      "claudeCode": "Claude Code",
+      "claudeCodeCliHarness": "Claude Code CLI harness",
+      "codex": "Codex",
+      "codexCliHarness": "Codex CLI harness",
+      "paperclipRunner": "Paperclip Runner",
+      "experimentalRustRunnerWith": "Experimental Rust runner with a Codex provider",
+      "geminiCli": "Gemini CLI",
+      "geminiCliHarness": "Gemini CLI harness",
+      "grokBuild": "Grok Build",
+      "grokBuildHarness": "Grok Build harness",
+      "kimiCode": "Kimi Code",
+      "kimiCodeCliHarness": "Kimi Code CLI harness",
+      "hermesGateway": "Hermes Gateway",
+      "remoteHermesApiServer": "Remote Hermes API server",
+      "hermes": "Hermes",
+      "hermesHarness": "Hermes harness",
+      "opencode": "OpenCode",
+      "opencodeMultiProviderHarness": "OpenCode multi-provider harness",
+      "pi": "Pi",
+      "piHarness": "Pi harness",
+      "cursor": "Cursor",
+      "cursorCliHarness": "Cursor CLI harness",
+      "cursorCloud": "Cursor Cloud",
+      "managedRemoteCursorAgent": "Managed remote Cursor agent",
+      "openclawGateway": "OpenClaw Gateway",
+      "externalGatewayAdapter": "External gateway adapter",
+      "inviteExternalAgentsFrom": "Invite external agents from the add-agent modal",
+      "process": "Process",
+      "internalProcessAdapter": "Internal process adapter",
+      "http": "HTTP",
+      "internalHttpAdapter": "Internal HTTP adapter",
+      "externalAdapterWithSuffix": "External {{suffix}} adapter",
+      "externalAdapterPlain": "External adapter"
+    }
+  },
+  "taskdategroups": {
+    "general": {
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "earlier": "Earlier"
+    }
   }
 }

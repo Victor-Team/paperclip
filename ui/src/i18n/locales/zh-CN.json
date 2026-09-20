@@ -734,5 +734,122 @@
       "signOutOfThis": "退出登录当前 Paperclip 实例，系统将跳转到登录页面。",
       "signingOut": "正在退出登录…"
     }
+  },
+  "companysettingsnav": {
+    "general": {
+      "general": "常规",
+      "export": "导出",
+      "import": "导入",
+      "members": "成员",
+      "secrets": "机密",
+      "profile": "个人资料",
+      "environments": "环境",
+      "access": "访问权限",
+      "experimental": "实验性功能",
+      "plugins": "插件",
+      "adapters": "适配器"
+    }
+  },
+  "companysettingssidebar": {
+    "general": {
+      "settings": "设置",
+      "backToApp": "返回应用",
+      "general": "常规",
+      "profile": "个人资料",
+      "members": "成员",
+      "secrets": "机密",
+      "environments": "环境",
+      "access": "访问权限",
+      "export": "导出",
+      "import": "导入",
+      "experimental": "实验性功能",
+      "plugins": "插件",
+      "adapters": "适配器"
+    }
+  },
+  "interactiongovernancepanel": {
+    "general": {
+      "kindSuggestTasks": "建议任务",
+      "kindAskUserQuestions": "向用户提问",
+      "kindRequestConfirmation": "确认请求",
+      "kindRequestCheckboxConfirmation": "复选框确认",
+      "kindRequestItemVerdicts": "条目裁定",
+      "kindConnectionIntent": "连接请求",
+      "interactionGovernance": "交互治理",
+      "paragraphIntro": "线程交互默认是开放的：",
+      "anyone": "任何人",
+      "paragraphAfterAnyone": "在本公司内——董事会或任何智能体，包括发起请求的那一个——都可以回应。只有在需要时才收窄某一类。",
+      "defaultPolicy": "默认策略",
+      "paragraphAfterDefaultPolicy": "是请求方未指定受众时，新卡片获得的默认受众；",
+      "cap": "上限",
+      "paragraphAfterCap": "会收窄该类别的每一个请求，且永远不会放宽。工具审批确认始终保持",
+      "humanOnly": "仅限真人",
+      "kind": "类别",
+      "unsetLabelDefaultPolicy": "任何人（默认）",
+      "unsetLabelCap": "无上限",
+      "unsetEffectDefaultPolicy": "新卡片是开放的——董事会或任何智能体都可以回应，包括发起请求的那一个。",
+      "unsetEffectCap": "请求保留它自己所要求的受众。",
+      "defaultPolicyEffectNotCreator": "新卡片会排除创建它的智能体，因此回应者另有其人。",
+      "defaultPolicyEffectHumanOnly": "新卡片会等待董事会中的真人处理，智能体会被拒绝。",
+      "capEffectNotCreator": "即使卡片要求「任何人」，也会被收窄为排除其创建者。",
+      "capEffectHumanOnly": "无论该类别的卡片原本要求什么受众，都会等待真人处理。",
+      "ariaLabelDefaultFor": "{{kind}}的默认解决受众",
+      "ariaLabelCapFor": "{{kind}}的解决上限"
+    }
+  },
+  "modebadge": {
+    "general": {
+      "localTrusted": "本地信任",
+      "authenticatedPrivate": "已认证（私有）",
+      "authenticatedPublic": "已认证（公开）"
+    }
+  },
+  "adapterdisplayregistry": {
+    "general": {
+      "suffixGateway": "网关",
+      "acpxRetired": "ACPX（已停用）",
+      "retiredStandaloneAcpxAdapter": "已停用的独立 ACPX 适配器",
+      "useClaudeCodeOrCodexWith": "改用接入 ACP 引擎的 Claude Code 或 Codex",
+      "claudeCode": "Claude Code",
+      "claudeCodeCliHarness": "Claude Code 命令行工具",
+      "codex": "Codex",
+      "codexCliHarness": "Codex 命令行工具",
+      "paperclipRunner": "Paperclip Runner",
+      "experimentalRustRunnerWith": "基于 Rust 的实验性运行器，使用 Codex 提供商",
+      "geminiCli": "Gemini CLI",
+      "geminiCliHarness": "Gemini CLI 命令行工具",
+      "grokBuild": "Grok Build",
+      "grokBuildHarness": "Grok Build 命令行工具",
+      "kimiCode": "Kimi Code",
+      "kimiCodeCliHarness": "Kimi Code 命令行工具",
+      "hermesGateway": "Hermes 网关",
+      "remoteHermesApiServer": "远程 Hermes API 服务端",
+      "hermes": "Hermes",
+      "hermesHarness": "Hermes 命令行工具",
+      "opencode": "OpenCode",
+      "opencodeMultiProviderHarness": "OpenCode 多提供商命令行工具",
+      "pi": "Pi",
+      "piHarness": "Pi 命令行工具",
+      "cursor": "Cursor",
+      "cursorCliHarness": "Cursor 命令行工具",
+      "cursorCloud": "Cursor Cloud",
+      "managedRemoteCursorAgent": "托管的远程 Cursor 智能体",
+      "openclawGateway": "OpenClaw 网关",
+      "externalGatewayAdapter": "外部网关适配器",
+      "inviteExternalAgentsFrom": "请通过新建智能体弹窗邀请外部智能体",
+      "process": "Process",
+      "internalProcessAdapter": "内部进程适配器",
+      "http": "HTTP",
+      "internalHttpAdapter": "内部 HTTP 适配器",
+      "externalAdapterWithSuffix": "外部{{suffix}}适配器",
+      "externalAdapterPlain": "外部适配器"
+    }
+  },
+  "taskdategroups": {
+    "general": {
+      "today": "今天",
+      "yesterday": "昨天",
+      "earlier": "更早"
+    }
   }
 }
