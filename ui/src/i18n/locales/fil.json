@@ -1156,5 +1156,45 @@
       "done": "Done",
       "andNMore": "and {{count}} more"
     }
+  },
+  "instanceaccess": {
+    "general": {
+      "settings": "Settings",
+      "instanceSettings": "Instance settings",
+      "access": "Access",
+      "organizationAccessUpdated": "Organization access updated",
+      "instanceRoleUpdated": "Instance role updated",
+      "loadingInstanceAccess": "Loading instance access…",
+      "instanceAdminAccessRequired": "Instance admin access is required to manage users.",
+      "failedToLoadUsers": "Failed to load users.",
+      "failedToLoadOrganizations": "Failed to load organizations. Try again before changing access.",
+      "tryAgain": "Try again",
+      "instanceAccess": "Instance Access",
+      "searchUsersManageInstanceAdm": "Search users, manage instance-admin status, and control which organizations they can access.",
+      "searchUsers": "Search users",
+      "placeholderSearchbynameor": "Search by name or email",
+      "activeOrganizationMemberships_one": "{{count}} active organization membership",
+      "activeOrganizationMemberships_other": "{{count}} active organization memberships",
+      "selectAUserTo": "Select a user to inspect instance access.",
+      "loadingUserAccess": "Loading user access…",
+      "failedToLoadUserAccess": "Failed to load user access.",
+      "removeInstanceAdmin": "Remove instance admin",
+      "promoteToInstanceAdmin": "Promote to instance admin",
+      "organizationAccess": "Organization access",
+      "toggleOrganizationMembership": "Toggle organization membership for this user. New access defaults to an active operator membership.",
+      "saving": "Saving…",
+      "saveOrganizationAccess": "Save organization access",
+      "currentMemberships": "Current memberships",
+      "unset": "unset",
+      "roleOwner": "owner",
+      "roleAdmin": "admin",
+      "roleOperator": "operator",
+      "roleViewer": "viewer",
+      "statusPending": "pending",
+      "statusActive": "active",
+      "statusSuspended": "suspended",
+      "statusArchived": "archived",
+      "noUserSelected": "No user selected"
+    }
   }
 }

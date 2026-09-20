@@ -1156,5 +1156,45 @@
       "done": "完成",
       "andNMore": "还有 {{count}} 个"
     }
+  },
+  "instanceaccess": {
+    "general": {
+      "settings": "设置",
+      "instanceSettings": "实例设置",
+      "access": "访问权限",
+      "organizationAccessUpdated": "公司访问权限已更新",
+      "instanceRoleUpdated": "实例角色已更新",
+      "loadingInstanceAccess": "正在加载实例访问权限…",
+      "instanceAdminAccessRequired": "管理用户需要实例管理员权限。",
+      "failedToLoadUsers": "无法加载用户。",
+      "failedToLoadOrganizations": "无法加载公司。更改访问权限前请重试。",
+      "tryAgain": "重试",
+      "instanceAccess": "实例访问权限",
+      "searchUsersManageInstanceAdm": "搜索用户、管理实例管理员身份，并控制他们可访问的公司。",
+      "searchUsers": "搜索用户",
+      "placeholderSearchbynameor": "按姓名或电子邮箱搜索",
+      "activeOrganizationMemberships_one": "{{count}} 个活跃公司成员关系",
+      "activeOrganizationMemberships_other": "{{count}} 个活跃公司成员关系",
+      "selectAUserTo": "选择一位用户以查看实例访问权限。",
+      "loadingUserAccess": "正在加载用户访问权限…",
+      "failedToLoadUserAccess": "无法加载用户访问权限。",
+      "removeInstanceAdmin": "移除实例管理员",
+      "promoteToInstanceAdmin": "提升为实例管理员",
+      "organizationAccess": "公司访问权限",
+      "toggleOrganizationMembership": "切换该用户的公司成员关系。新访问权限默认授予活跃的操作员成员资格。",
+      "saving": "正在保存…",
+      "saveOrganizationAccess": "保存公司访问权限",
+      "currentMemberships": "当前成员关系",
+      "unset": "未设置",
+      "roleOwner": "所有者",
+      "roleAdmin": "管理员",
+      "roleOperator": "操作员",
+      "roleViewer": "查看者",
+      "statusPending": "待处理",
+      "statusActive": "活跃",
+      "statusSuspended": "已停用",
+      "statusArchived": "已归档",
+      "noUserSelected": "未选择用户"
+    }
   }
 }
