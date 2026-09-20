@@ -1196,5 +1196,27 @@
       "statusArchived": "已归档",
       "noUserSelected": "未选择用户"
     }
+  },
+  "projects": {
+    "general": {
+      "projects": "项目",
+      "name": "名称",
+      "updated": "已更新",
+      "created": "创建时间",
+      "targetDate": "目标日期",
+      "titleSort": "排序",
+      "sort": "排序：{{label}}",
+      "addProject": "添加项目",
+      "selectAnOrganizationTo": "请选择公司以查看项目。",
+      "noProjectsYet": "还没有项目。",
+      "myProjects": "我的项目",
+      "otherProjects": "其他项目",
+      "asc": "升序",
+      "desc": "降序",
+      "projectCount_one": "{{count}} 个项目",
+      "projectCount_other": "{{count}} 个项目",
+      "taskCount_one": "{{count}} 个任务",
+      "taskCount_other": "{{count}} 个任务"
+    }
   }
 }

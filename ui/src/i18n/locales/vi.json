@@ -1196,5 +1196,27 @@
       "statusArchived": "archived",
       "noUserSelected": "No user selected"
     }
+  },
+  "projects": {
+    "general": {
+      "projects": "Projects",
+      "name": "Name",
+      "updated": "Updated",
+      "created": "Created",
+      "targetDate": "Target date",
+      "titleSort": "Sort",
+      "sort": "Sort: {{label}}",
+      "addProject": "Add Project",
+      "selectAnOrganizationTo": "Select an organization to view projects.",
+      "noProjectsYet": "No projects yet.",
+      "myProjects": "My Projects",
+      "otherProjects": "Other Projects",
+      "asc": "Asc",
+      "desc": "Desc",
+      "projectCount_one": "{{count}} project",
+      "projectCount_other": "{{count}} projects",
+      "taskCount_one": "{{count}} task",
+      "taskCount_other": "{{count}} tasks"
+    }
   }
 }
