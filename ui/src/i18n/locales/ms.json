@@ -1089,5 +1089,72 @@
       "statusUpgradePending": "upgrade_pending",
       "statusUninstalled": "uninstalled"
     }
+  },
+  "profilesettings": {
+    "general": {
+      "settings": "Settings",
+      "profile": "Profile",
+      "loadingProfile": "Loading profile...",
+      "failedToLoadProfile": "Failed to load profile.",
+      "failedToUpdateProfile": "Failed to update profile.",
+      "selectAnOrganizationBefore": "Select an organization before uploading a profile avatar.",
+      "failedToUploadAvatar": "Failed to upload avatar.",
+      "failedToRemoveAvatar": "Failed to remove avatar.",
+      "controlHowYourAccount": "Control how your account appears in the sidebar and other board surfaces.",
+      "changePhoto": "Change photo",
+      "uploadPhoto": "Upload photo",
+      "remove": "Remove",
+      "clickTheAvatarTo": "Click the avatar to upload a new image.",
+      "storedInPaperclipFile": "Stored in Paperclip file storage for {{name}}.",
+      "selectAnOrganizationTo": "Select an organization to upload an avatar into Paperclip storage.",
+      "noEmail": "No email",
+      "displayName": "Display name",
+      "shownInTheSidebar": "Shown in the sidebar account footer and comment author surfaces.",
+      "email": "Email",
+      "emailIsManagedBy": "Email is managed by your auth session and is read-only here.",
+      "saving": "Saving...",
+      "saveProfile": "Save profile"
+    }
+  },
+  "inboxagentpolicycontrol": {
+    "general": {
+      "anyOfMyAgents": "Any of my agents",
+      "letAnyAgentYou": "Let any agent you manage archive tasks out of your inbox.",
+      "onlyChosenAgents": "Only chosen agents",
+      "restrictInboxTidyingTo": "Restrict inbox tidying to the agents you pick below.",
+      "off": "Off",
+      "agentsCanNeverArchive": "Agents can never archive tasks from your inbox.",
+      "failedToLoadInbox": "Failed to load inbox agent policy.",
+      "loadingInboxAgentPolicy": "Loading inbox agent policy…",
+      "letAgentsTidyMy": "Let agents tidy my inbox",
+      "chooseWhetherTheAgents": "Choose whether the agents you manage may archive tasks out of your inbox on your behalf. You can undo any archive, and every agent archive is attributed in the task's properties.",
+      "inboxAgentArchivingPolicy": "Inbox agent archiving policy",
+      "agentsAllowedToTidy": "Agents allowed to tidy my inbox",
+      "selectAgents": "Select agents",
+      "agentSelected": "{{count}} agent selected",
+      "agentsSelected": "{{count}} agents selected",
+      "youDonTManageAny": "You don’t manage any agents yet.",
+      "failedToSaveInbox": "Failed to save inbox agent policy.",
+      "saved": "Saved",
+      "saving": "Saving…"
+    }
+  },
+  "agentmultiselect": {
+    "general": {
+      "selectAgentEllipsis": "Select agent…",
+      "noAgentsYet": "No agents yet.",
+      "placeholderFilteragents": "Filter agents",
+      "noMatches": "No matches.",
+      "selectAgent": "Select {{name}}",
+      "selectAgents": "Select agents",
+      "agentSelected": "{{count}} agent selected",
+      "agentsSelected": "{{count}} agents selected",
+      "allowAgent": "Allow {{name}}",
+      "noAgentsSelected": "No agents selected",
+      "nSelected": "{{count}} selected",
+      "saving": "Saving…",
+      "done": "Done",
+      "andNMore": "and {{count}} more"
+    }
   }
 }

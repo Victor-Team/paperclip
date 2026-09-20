@@ -1089,5 +1089,72 @@
       "statusUpgradePending": "待升级",
       "statusUninstalled": "已卸载"
     }
+  },
+  "profilesettings": {
+    "general": {
+      "settings": "设置",
+      "profile": "个人资料",
+      "loadingProfile": "正在加载个人资料…",
+      "failedToLoadProfile": "无法加载个人资料。",
+      "failedToUpdateProfile": "无法更新个人资料。",
+      "selectAnOrganizationBefore": "请先选择公司，再上传个人资料头像。",
+      "failedToUploadAvatar": "无法上传头像。",
+      "failedToRemoveAvatar": "无法移除头像。",
+      "controlHowYourAccount": "控制你的账号在侧栏和其他看板界面中的显示方式。",
+      "changePhoto": "更换照片",
+      "uploadPhoto": "上传照片",
+      "remove": "移除",
+      "clickTheAvatarTo": "点击头像以上传新图片。",
+      "storedInPaperclipFile": "保存在 Paperclip 文件存储中，所属公司为 {{name}}。",
+      "selectAnOrganizationTo": "请选择公司，以便将头像上传到 Paperclip 存储。",
+      "noEmail": "无电子邮箱",
+      "displayName": "显示名称",
+      "shownInTheSidebar": "显示在侧栏账号页脚和评论作者区域。",
+      "email": "电子邮箱",
+      "emailIsManagedBy": "电子邮箱由登录会话管理，此处只读。",
+      "saving": "正在保存…",
+      "saveProfile": "保存个人资料"
+    }
+  },
+  "inboxagentpolicycontrol": {
+    "general": {
+      "anyOfMyAgents": "我的任一智能体",
+      "letAnyAgentYou": "允许你管理的任一智能体将任务从收件箱中归档。",
+      "onlyChosenAgents": "仅所选智能体",
+      "restrictInboxTidyingTo": "仅限下方所选智能体整理收件箱。",
+      "off": "关闭",
+      "agentsCanNeverArchive": "智能体永远不能从你的收件箱归档任务。",
+      "failedToLoadInbox": "无法加载收件箱智能体策略。",
+      "loadingInboxAgentPolicy": "正在加载收件箱智能体策略…",
+      "letAgentsTidyMy": "允许智能体整理我的收件箱",
+      "chooseWhetherTheAgents": "选择你管理的智能体是否可以代你将任务从收件箱中归档。你可以撤销任何归档，每次智能体归档都会记录在任务属性中。",
+      "inboxAgentArchivingPolicy": "收件箱智能体归档策略",
+      "agentsAllowedToTidy": "允许整理我的收件箱的智能体",
+      "selectAgents": "选择智能体",
+      "agentSelected": "已选择 {{count}} 个智能体",
+      "agentsSelected": "已选择 {{count}} 个智能体",
+      "youDonTManageAny": "你还没有管理任何智能体。",
+      "failedToSaveInbox": "无法保存收件箱智能体策略。",
+      "saved": "已保存",
+      "saving": "正在保存…"
+    }
+  },
+  "agentmultiselect": {
+    "general": {
+      "selectAgentEllipsis": "选择智能体…",
+      "noAgentsYet": "暂无智能体。",
+      "placeholderFilteragents": "筛选智能体",
+      "noMatches": "无匹配项。",
+      "selectAgent": "选择 {{name}}",
+      "selectAgents": "选择智能体",
+      "agentSelected": "已选择 {{count}} 个智能体",
+      "agentsSelected": "已选择 {{count}} 个智能体",
+      "allowAgent": "允许 {{name}}",
+      "noAgentsSelected": "未选择智能体",
+      "nSelected": "已选 {{count}} 个",
+      "saving": "正在保存…",
+      "done": "完成",
+      "andNMore": "还有 {{count}} 个"
+    }
   }
 }

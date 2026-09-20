@@ -3,6 +3,7 @@
 import { flushSync } from "react-dom";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { i18n } from "@/i18n";
 import { AgentMultiSelect, AgentSelect } from "./AgentMultiSelect";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -40,7 +41,8 @@ describe("AgentMultiSelect", () => {
     root = null;
   });
 
-  afterEach(() => {
+  afterEach(async () => {
+    await i18n.changeLanguage("en");
     if (root) {
       act(() => {
         root?.unmount();
@@ -171,5 +173,72 @@ describe("AgentMultiSelect", () => {
     await flush();
 
     expect(onSave).toHaveBeenCalledWith(new Set(agents.map((agent) => agent.id)));
+  });
+
+  it("retranslates default copy live and keeps a caller triggerLabel as-is", async () => {
+    const agents = [
+      { id: "agent-1", name: "Alpha", title: "Engineer" },
+      { id: "agent-2", name: "Bravo", title: "Researcher" },
+    ];
+
+    await i18n.changeLanguage("en");
+    root = createRoot(container);
+    act(() => {
+      root?.render(
+        <AgentMultiSelect agents={agents} selectedAgentIds={new Set()} onChange={vi.fn()} />,
+      );
+    });
+    expect(container.textContent).toBe("Select agents");
+
+    act(() => {
+      container.querySelector("button")?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    });
+    await flush();
+    expect(document.body.querySelector('input[placeholder="Filter agents"]')).not.toBeNull();
+    expect(document.body.textContent).toContain("No agents selected");
+    expect(document.body.textContent).toContain("Done");
+
+    await act(async () => {
+      await i18n.changeLanguage("zh-CN");
+    });
+    await flush();
+    expect(container.textContent).toContain("选择智能体");
+    expect(container.textContent).not.toContain("Select agents");
+    expect(document.body.querySelector('input[placeholder="筛选智能体"]')).not.toBeNull();
+    expect(document.body.textContent).toContain("未选择智能体");
+    expect(document.body.textContent).toContain("完成");
+    expect(document.body.textContent).toContain("Alpha");
+    expect(document.body.textContent).toContain("Engineer");
+    expect(document.body.textContent).not.toContain("No agents selected");
+    expect(document.body.textContent).not.toContain("Done");
+
+    act(() => {
+      root?.unmount();
+    });
+    document.body.innerHTML = "";
+    container = document.createElement("div");
+    document.body.appendChild(container);
+    root = createRoot(container);
+    await i18n.changeLanguage("zh-CN");
+    act(() => {
+      root?.render(
+        <AgentMultiSelect
+          agents={[]}
+          selectedAgentIds={new Set()}
+          onChange={vi.fn()}
+          triggerLabel="Keep me"
+          emptyMessage="Keep empty"
+        />,
+      );
+    });
+    expect(container.textContent).toContain("Keep me");
+    expect(container.textContent).not.toContain("选择智能体");
+
+    act(() => {
+      container.querySelector("button")?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    });
+    await flush();
+    expect(document.body.textContent).toContain("Keep empty");
+    expect(document.body.textContent).not.toContain("暂无智能体。");
   });
 });

@@ -5,6 +5,7 @@ import { createRoot } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { InboxAgentPolicy } from "@paperclipai/shared";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { i18n } from "@/i18n";
 import { InboxAgentPolicyControl } from "./InboxAgentPolicyControl";
 
 const mockAgentsApi = vi.hoisted(() => ({ list: vi.fn() }));
@@ -93,7 +94,8 @@ describe("InboxAgentPolicyControl", () => {
     );
   });
 
-  afterEach(() => {
+  afterEach(async () => {
+    await i18n.changeLanguage("en");
     document.body.innerHTML = "";
     vi.clearAllMocks();
   });
@@ -205,6 +207,43 @@ describe("InboxAgentPolicyControl", () => {
     expect(mockInboxAgentPolicyApi.updateMine).toHaveBeenCalledWith("company-1", {
       mode: "disabled",
       allowedAgentIds: [],
+    });
+
+    act(() => root.unmount());
+  });
+
+  it("rebuilds MODE_OPTIONS from the live translator instead of a module snapshot", async () => {
+    await i18n.changeLanguage("en");
+    const root = render(container);
+    await flush();
+
+    await waitForAssertion(() => {
+      expect(optionByTitle(container, "Any of my agents")).toBeTruthy();
+      expect(optionByTitle(container, "Only chosen agents")).toBeTruthy();
+      expect(optionByTitle(container, "Off")).toBeTruthy();
+    });
+
+    await act(async () => optionByTitle(container, "Only chosen agents")!.click());
+    await flush();
+    await waitForAssertion(() => {
+      expect(container.textContent).toContain("Select agents");
+      expect(container.textContent).toContain("Agents allowed to tidy my inbox");
+    });
+
+    await act(async () => {
+      await i18n.changeLanguage("zh-CN");
+    });
+    await flush();
+
+    await waitForAssertion(() => {
+      expect(optionByTitle(container, "我的任一智能体")).toBeTruthy();
+      expect(optionByTitle(container, "仅所选智能体")).toBeTruthy();
+      expect(optionByTitle(container, "关闭")).toBeTruthy();
+      expect(container.textContent).toContain("选择智能体");
+      expect(container.textContent).toContain("允许整理我的收件箱的智能体");
+      expect(container.textContent).not.toContain("Any of my agents");
+      expect(container.textContent).not.toContain("Only chosen agents");
+      expect(container.textContent).not.toContain("Select agents");
     });
 
     act(() => root.unmount());
