@@ -5,15 +5,6 @@ import {
   TooltipContent,
 } from "@/components/ui/tooltip";
 import { ToggleSwitch } from "@/components/ui/toggle-switch";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { HelpCircle, ChevronDown, ChevronRight } from "lucide-react";
 import { cn } from "../lib/utils";
 import { AGENT_ROLE_LABELS } from "@paperclipai/shared";
@@ -392,74 +383,6 @@ export function DraftNumberInput({
       }}
       {...props}
     />
-  );
-}
-
-/**
- * "Choose" button that opens a dialog explaining the user must manually
- * type the path due to browser security limitations.
- */
-export function ChoosePathButton() {
-  const [open, setOpen] = useState(false);
-  return (
-    <>
-      <button
-        type="button"
-        className="inline-flex items-center rounded-md border border-border px-2 py-0.5 text-xs text-muted-foreground hover:bg-accent/50 transition-colors shrink-0"
-        onClick={() => setOpen(true)}
-      >
-        {t("agentconfigprimitives.general.choose")}
-      </button>
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{t("agentconfigprimitives.general.specifyPathManually")}</DialogTitle>
-            <DialogDescription>
-              {t("agentconfigprimitives.general.browserSecurityBlocksApps")}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 text-sm">
-            <section className="space-y-1.5">
-              <p className="font-medium">{t("agentconfigprimitives.general.macosFinder")}</p>
-              <ol className="list-decimal space-y-1 pl-5 text-muted-foreground">
-                <li>{t("agentconfigprimitives.general.findTheFolderInFinder")}</li>
-                <li>{t("agentconfigprimitives.general.hold")} <kbd>Option</kbd> {t("agentconfigprimitives.general.andRightClickTheFolder")}</li>
-                <li>{t("agentconfigprimitives.general.clickCopyFolderName")}</li>
-                <li>{t("agentconfigprimitives.general.pasteTheResultInto")}</li>
-              </ol>
-              <p className="rounded-md bg-muted px-2 py-1 font-mono text-xs">
-                /Users/yourname/Documents/project
-              </p>
-            </section>
-            <section className="space-y-1.5">
-              <p className="font-medium">{t("agentconfigprimitives.general.windowsFileExplorer")}</p>
-              <ol className="list-decimal space-y-1 pl-5 text-muted-foreground">
-                <li>{t("agentconfigprimitives.general.findTheFolderInExplorer")}</li>
-                <li>{t("agentconfigprimitives.general.hold")} <kbd>Shift</kbd> {t("agentconfigprimitives.general.andRightClickTheFolder")}</li>
-                <li>{t("agentconfigprimitives.general.clickCopyAsPath")}</li>
-                <li>{t("agentconfigprimitives.general.pasteTheResultInto")}</li>
-              </ol>
-              <p className="rounded-md bg-muted px-2 py-1 font-mono text-xs">
-                C:\Users\yourname\Documents\project
-              </p>
-            </section>
-            <section className="space-y-1.5">
-              <p className="font-medium">{t("agentconfigprimitives.general.terminalFallbackMacosLinux")}</p>
-              <ol className="list-decimal space-y-1 pl-5 text-muted-foreground">
-                <li>{t("agentconfigprimitives.general.run")} <code>cd /path/to/folder</code>.</li>
-                <li>{t("agentconfigprimitives.general.run")} <code>pwd</code>.</li>
-                <li>{t("agentconfigprimitives.general.copyTheOutputAnd")}</li>
-              </ol>
-            </section>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setOpen(false)}>
-              {t("agentconfigprimitives.general.ok")}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </>
   );
 }
 

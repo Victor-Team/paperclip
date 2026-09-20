@@ -37,13 +37,10 @@ describe("agent-config-primitives i18n wiring", () => {
     expect(adapterLabels.hermes_gateway).toBe("Hermes 网关");
   });
 
-  it("translates the manual-path dialog copy", async () => {
-    await i18n.changeLanguage("zh-CN");
-    expect(i18n.t("agentconfigprimitives.general.choose")).toBe("选择");
-    expect(i18n.t("agentconfigprimitives.general.specifyPathManually")).toBe("手动输入路径");
-    expect(i18n.t("agentconfigprimitives.general.ok")).toBe("确定");
-    // Keyboard key names stay in English, matching Chinese OS documentation
-    // convention (macOS/Windows key names are not translated).
-    expect(i18n.t("agentconfigprimitives.general.hold")).toBe("按住");
+  it("drops the unused ChoosePathButton keys after the dead export was removed", async () => {
+    await i18n.changeLanguage("en");
+    expect(i18n.exists("agentconfigprimitives.general.choose")).toBe(false);
+    expect(i18n.exists("agentconfigprimitives.general.specifyPathManually")).toBe(false);
+    expect(i18n.exists("agentconfigprimitives.general.ok")).toBe(false);
   });
 });
