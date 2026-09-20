@@ -17,56 +17,75 @@ import { Button } from "@/components/ui/button";
 import { HelpCircle, ChevronDown, ChevronRight } from "lucide-react";
 import { cn } from "../lib/utils";
 import { AGENT_ROLE_LABELS } from "@paperclipai/shared";
-
-/* ---- Help text for (?) tooltips ---- */
-export const help: Record<string, string> = {
-  name: "Display name for this agent.",
-  title: "Job title shown in the org chart.",
-  role: "Organizational role. Determines position and capabilities.",
-  reportsTo: "The agent this one reports to in the org hierarchy.",
-  capabilities: "Describes what this agent can do. Shown in the org chart and used for task routing.",
-  adapterType: "How this agent runs: local CLI (Claude/Codex/OpenCode), OpenClaw Gateway, spawned process, or generic HTTP webhook.",
-  cwd: "Deprecated legacy working directory fallback for local adapters. Existing agents may still carry this value, but new configurations should use project workspaces instead.",
-  promptTemplate: "Sent on every heartbeat. Keep this small and dynamic. Use it for current-task framing, not large static instructions. Supports {{ agent.id }}, {{ agent.name }}, {{ agent.role }} and other template variables.",
-  model: "Override the default model used by the adapter.",
-  thinkingEffort: "Control model reasoning depth. Supported values vary by adapter/model.",
-  chrome: "Enable Claude's Chrome integration by passing --chrome.",
-  dangerouslySkipPermissions: "Run unattended by auto-approving adapter permission prompts when supported.",
-  dangerouslyBypassSandbox: "Run Codex without sandbox restrictions. Required for filesystem/network access.",
-  search: "Enable Codex web search capability during runs.",
-  fastMode: "Enable Codex Fast mode. This burns credits/tokens much faster and is supported on GPT-6 Astra, GPT-5.6, GPT-5.5, GPT-5.4, and manual Codex model IDs.",
-  workspaceStrategy: "How Paperclip should realize an execution workspace for this agent. Keep project_primary for normal cwd execution, or use git_worktree for issue-scoped isolated checkouts.",
-  workspaceBaseRef: "Base git ref used when creating a worktree branch. Leave blank to use the resolved workspace ref or HEAD.",
-  workspaceBranchTemplate: "Template for naming derived branches. Supports {{issue.identifier}}, {{issue.title}}, {{agent.name}}, {{project.id}}, {{workspace.repoRef}}, and {{slug}}.",
-  worktreeParentDir: "Directory where derived worktrees should be created. Absolute, ~-prefixed, and repo-relative paths are supported.",
-  runtimeServicesJson: "Optional workspace runtime service definitions. Use this for shared app servers, workers, or other long-lived companion processes attached to the workspace.",
-  maxTurnsPerRun: "Maximum number of agentic turns (tool calls) per heartbeat run.",
-  command: "The command to execute (e.g. node, python).",
-  localCommand: "Override the path to the CLI command you want the adapter to call (e.g. /usr/local/bin/claude, codex, opencode).",
-  args: "Command-line arguments, comma-separated.",
-  extraArgs: "Extra CLI arguments for local adapters, comma-separated.",
-  envVars: "Environment variables injected into the adapter process. Use plain values or secret references.",
-  secretAccess:
-    "Secrets this agent can reach. Env-var bindings are injected at run start; API-access bindings are fetched on demand via the run-bound agent API and never written to the environment.",
-  bootstrapPrompt: "Only sent when Paperclip starts a fresh session. Use this for stable setup guidance that should not be repeated on every heartbeat.",
-  payloadTemplateJson: "Optional JSON merged into remote adapter request payloads before Paperclip adds its standard wake and workspace fields.",
-  webhookUrl: "The URL that receives POST requests when the agent is invoked.",
-  heartbeatInterval: "Run this agent automatically on a timer. Useful for periodic tasks like checking for new work.",
-  intervalSec: "Seconds between automatic heartbeat invocations.",
-  timeoutSec: "Maximum seconds a run can take before being terminated. 0 means no timeout.",
-  graceSec: "Seconds to wait after sending interrupt before force-killing the process.",
-  wakeOnDemand: "Allow this agent to be woken by assignments, API calls, UI actions, or automated systems.",
-  cooldownSec: "Minimum seconds between consecutive heartbeat runs.",
-  maxConcurrentRuns: "Maximum number of heartbeat runs that can execute simultaneously for this agent.",
-  maxTurnContinuationEnabled: "Automatically queue bounded continuation runs when an adapter stops because its per-run turn cap was exhausted.",
-  maxTurnContinuationMaxAttempts: "Maximum automatic continuations after one max-turn stop. This is separate from max turns per run.",
-  maxTurnContinuationDelaySec: "Seconds to wait before starting each max-turn continuation.",
-  budgetMonthlyCents: "Monthly spending limit in cents. 0 means no limit.",
-};
-
+import { t } from "@/i18n";
 import { getAdapterLabels } from "../adapters/adapter-display-registry";
 
-export const adapterLabels = getAdapterLabels();
+/* ---- Help text for (?) tooltips ---- */
+// Uses the module-level `t` (not the `useTranslation` hook): `help` is a plain
+// object consumed via `help.xxx` property access from 4 other files
+// (AgentConfigForm.tsx, AgentDetail.tsx, AgentDetail.production.tsx,
+// CompanyImport.tsx via the re-exported `help`), so a Proxy below resolves
+// each property through this function on every access instead of freezing a
+// translated snapshot at import time. Same reasoning as `adapterLabels` below.
+function helpText(): Record<string, string> {
+  return {
+    name: t("agentconfigprimitives.general.name"),
+    title: t("agentconfigprimitives.general.jobTitleShownIn"),
+    role: t("agentconfigprimitives.general.role"),
+    reportsTo: t("agentconfigprimitives.general.reportsTo"),
+    capabilities: t("agentconfigprimitives.general.capabilities"),
+    adapterType: t("agentconfigprimitives.general.adapterType"),
+    cwd: t("agentconfigprimitives.general.cwd"),
+    promptTemplate: t("agentconfigprimitives.general.promptTemplate"),
+    model: t("agentconfigprimitives.general.model"),
+    thinkingEffort: t("agentconfigprimitives.general.thinkingEffort"),
+    chrome: t("agentconfigprimitives.general.chrome"),
+    dangerouslySkipPermissions: t("agentconfigprimitives.general.dangerouslySkipPermissions"),
+    dangerouslyBypassSandbox: t("agentconfigprimitives.general.dangerouslyBypassSandbox"),
+    search: t("agentconfigprimitives.general.search"),
+    fastMode: t("agentconfigprimitives.general.fastMode"),
+    workspaceStrategy: t("agentconfigprimitives.general.workspaceStrategy"),
+    workspaceBaseRef: t("agentconfigprimitives.general.workspaceBaseRef"),
+    workspaceBranchTemplate: t("agentconfigprimitives.general.workspaceBranchTemplate"),
+    worktreeParentDir: t("agentconfigprimitives.general.worktreeParentDir"),
+    runtimeServicesJson: t("agentconfigprimitives.general.runtimeServicesJson"),
+    maxTurnsPerRun: t("agentconfigprimitives.general.maxTurnsPerRun"),
+    command: t("agentconfigprimitives.general.command"),
+    localCommand: t("agentconfigprimitives.general.localCommand"),
+    args: t("agentconfigprimitives.general.args"),
+    extraArgs: t("agentconfigprimitives.general.extraArgs"),
+    envVars: t("agentconfigprimitives.general.envVars"),
+    secretAccess: t("agentconfigprimitives.general.secretAccess"),
+    bootstrapPrompt: t("agentconfigprimitives.general.bootstrapPrompt"),
+    payloadTemplateJson: t("agentconfigprimitives.general.payloadTemplateJson"),
+    webhookUrl: t("agentconfigprimitives.general.webhookUrl"),
+    heartbeatInterval: t("agentconfigprimitives.general.heartbeatInterval"),
+    intervalSec: t("agentconfigprimitives.general.intervalSec"),
+    timeoutSec: t("agentconfigprimitives.general.timeoutSec"),
+    graceSec: t("agentconfigprimitives.general.graceSec"),
+    wakeOnDemand: t("agentconfigprimitives.general.wakeOnDemand"),
+    cooldownSec: t("agentconfigprimitives.general.cooldownSec"),
+    maxConcurrentRuns: t("agentconfigprimitives.general.maxConcurrentRuns"),
+    maxTurnContinuationEnabled: t("agentconfigprimitives.general.maxTurnContinuationEnabled"),
+    maxTurnContinuationMaxAttempts: t("agentconfigprimitives.general.maxTurnContinuationMaxAttempts"),
+    maxTurnContinuationDelaySec: t("agentconfigprimitives.general.maxTurnContinuationDelaySec"),
+    budgetMonthlyCents: t("agentconfigprimitives.general.budgetMonthlyCents"),
+  };
+}
+
+export const help: Record<string, string> = new Proxy({} as Record<string, string>, {
+  get: (_target, prop: string) => helpText()[prop],
+});
+
+// Same live-Proxy reasoning as `help` above: `adapterLabels` is consumed via
+// `adapterLabels[type]` property access from AgentConfigForm.tsx,
+// CompanyImport.tsx, AgentSkillsTab.tsx, AgentDetail.tsx and
+// AgentDetail.production.tsx. Fixes the snapshot-at-import-time gap batch 12
+// flagged: a plain `const adapterLabels = getAdapterLabels()` froze the
+// English labels forever because it only ran once, at module load.
+export const adapterLabels: Record<string, string> = new Proxy({} as Record<string, string>, {
+  get: (_target, prop: string) => getAdapterLabels()[prop],
+});
 
 export const roleLabels = AGENT_ROLE_LABELS as Record<string, string>;
 
@@ -389,54 +408,53 @@ export function ChoosePathButton() {
         className="inline-flex items-center rounded-md border border-border px-2 py-0.5 text-xs text-muted-foreground hover:bg-accent/50 transition-colors shrink-0"
         onClick={() => setOpen(true)}
       >
-        Choose
+        {t("agentconfigprimitives.general.choose")}
       </button>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Specify path manually</DialogTitle>
+            <DialogTitle>{t("agentconfigprimitives.general.specifyPathManually")}</DialogTitle>
             <DialogDescription>
-              Browser security blocks apps from reading full local paths via a file picker.
-              Copy the absolute path and paste it into the input.
+              {t("agentconfigprimitives.general.browserSecurityBlocksApps")}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 text-sm">
             <section className="space-y-1.5">
-              <p className="font-medium">macOS (Finder)</p>
+              <p className="font-medium">{t("agentconfigprimitives.general.macosFinder")}</p>
               <ol className="list-decimal space-y-1 pl-5 text-muted-foreground">
-                <li>Find the folder in Finder.</li>
-                <li>Hold <kbd>Option</kbd> and right-click the folder.</li>
-                <li>Click "Copy &lt;folder name&gt; as Pathname".</li>
-                <li>Paste the result into the path input.</li>
+                <li>{t("agentconfigprimitives.general.findTheFolderInFinder")}</li>
+                <li>{t("agentconfigprimitives.general.hold")} <kbd>Option</kbd> {t("agentconfigprimitives.general.andRightClickTheFolder")}</li>
+                <li>{t("agentconfigprimitives.general.clickCopyFolderName")}</li>
+                <li>{t("agentconfigprimitives.general.pasteTheResultInto")}</li>
               </ol>
               <p className="rounded-md bg-muted px-2 py-1 font-mono text-xs">
                 /Users/yourname/Documents/project
               </p>
             </section>
             <section className="space-y-1.5">
-              <p className="font-medium">Windows (File Explorer)</p>
+              <p className="font-medium">{t("agentconfigprimitives.general.windowsFileExplorer")}</p>
               <ol className="list-decimal space-y-1 pl-5 text-muted-foreground">
-                <li>Find the folder in File Explorer.</li>
-                <li>Hold <kbd>Shift</kbd> and right-click the folder.</li>
-                <li>Click "Copy as path".</li>
-                <li>Paste the result into the path input.</li>
+                <li>{t("agentconfigprimitives.general.findTheFolderInExplorer")}</li>
+                <li>{t("agentconfigprimitives.general.hold")} <kbd>Shift</kbd> {t("agentconfigprimitives.general.andRightClickTheFolder")}</li>
+                <li>{t("agentconfigprimitives.general.clickCopyAsPath")}</li>
+                <li>{t("agentconfigprimitives.general.pasteTheResultInto")}</li>
               </ol>
               <p className="rounded-md bg-muted px-2 py-1 font-mono text-xs">
                 C:\Users\yourname\Documents\project
               </p>
             </section>
             <section className="space-y-1.5">
-              <p className="font-medium">Terminal fallback (macOS/Linux)</p>
+              <p className="font-medium">{t("agentconfigprimitives.general.terminalFallbackMacosLinux")}</p>
               <ol className="list-decimal space-y-1 pl-5 text-muted-foreground">
-                <li>Run <code>cd /path/to/folder</code>.</li>
-                <li>Run <code>pwd</code>.</li>
-                <li>Copy the output and paste it into the path input.</li>
+                <li>{t("agentconfigprimitives.general.run")} <code>cd /path/to/folder</code>.</li>
+                <li>{t("agentconfigprimitives.general.run")} <code>pwd</code>.</li>
+                <li>{t("agentconfigprimitives.general.copyTheOutputAnd")}</li>
               </ol>
             </section>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setOpen(false)}>
-              OK
+              {t("agentconfigprimitives.general.ok")}
             </Button>
           </DialogFooter>
         </DialogContent>

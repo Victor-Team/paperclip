@@ -1,11 +1,12 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import type { AttentionItem, AttentionResolverAudience } from "@paperclipai/shared";
+import { i18n } from "../i18n";
 import type { RequestConfirmationInteraction } from "./issue-thread-interactions";
 import {
   DEFAULT_RESOLVER_POLICY,
-  RESOLVER_POLICY_CHOICES,
   describeAttentionResolverAudience,
   describeInteractionAudience,
+  getResolverPolicyChoices,
   resolverPolicyEffect,
   resolverPolicyLabel,
 } from "./interaction-audience";
@@ -41,13 +42,14 @@ function confirmation(
 describe("resolver policy vocabulary", () => {
   it("defaults to the open audience", () => {
     expect(DEFAULT_RESOLVER_POLICY).toBe("anyone");
-    expect(RESOLVER_POLICY_CHOICES[0]).toMatchObject({ value: "anyone", isDefault: true });
-    expect(RESOLVER_POLICY_CHOICES.map((choice) => choice.value)).toEqual([
+    const choices = getResolverPolicyChoices();
+    expect(choices[0]).toMatchObject({ value: "anyone", isDefault: true });
+    expect(choices.map((choice) => choice.value)).toEqual([
       "anyone",
       "not_creator",
       "human_only",
     ]);
-    expect(RESOLVER_POLICY_CHOICES.filter((choice) => choice.isDefault)).toHaveLength(1);
+    expect(choices.filter((choice) => choice.isDefault)).toHaveLength(1);
   });
 
   it("labels each canonical policy in plain language", () => {
@@ -63,7 +65,7 @@ describe("resolver policy vocabulary", () => {
   });
 
   it("previews an effect for every choice without naming a raw policy value", () => {
-    for (const choice of RESOLVER_POLICY_CHOICES) {
+    for (const choice of getResolverPolicyChoices()) {
       expect(choice.effect.length).toBeGreaterThan(0);
       expect(choice.effect).not.toContain(choice.value);
     }
@@ -342,5 +344,40 @@ describe("describeAttentionResolverAudience", () => {
     expect(describeAttentionResolverAudience(attentionItem(null))).toBeNull();
     expect(describeAttentionResolverAudience({ sourceKind: "issue_thread_interaction" })).toBeNull();
     expect(describeAttentionResolverAudience(attentionItem(attentionAudience(), "approval"))).toBeNull();
+  });
+});
+
+describe("resolver policy vocabulary in Chinese", () => {
+  afterEach(async () => {
+    await i18n.changeLanguage("en");
+  });
+
+  it("translates the plain-language labels and effects live, not from a frozen snapshot", async () => {
+    await i18n.changeLanguage("zh-CN");
+    expect(resolverPolicyLabel("anyone")).toBe("任何人");
+    expect(resolverPolicyLabel("not_creator")).toBe("除创建者外的任何人");
+    expect(resolverPolicyLabel("human_only")).toBe("仅限真人");
+    expect(resolverPolicyEffect("human_only")).toBe("只有董事会成员可以回应，智能体会被拒绝。");
+  });
+
+  it("interpolates the named addressee into the Chinese summary sentence", async () => {
+    await i18n.changeLanguage("zh-CN");
+    const audience = describeInteractionAudience({
+      interaction: confirmation({ addresseeAgentId: "agent-release" }),
+      addresseeLabel: "ReleaseBot",
+    });
+    expect(audience.summary).toBe("只有 ReleaseBot 或董事会成员可以回应。");
+  });
+
+  it("translates the company-cap narrowing note using the Chinese policy labels", async () => {
+    await i18n.changeLanguage("zh-CN");
+    const audience = describeInteractionAudience({
+      interaction: confirmation({
+        requestedResolverPolicy: "anyone",
+        effectiveResolverPolicy: "human_only",
+        effectiveResolverPolicySource: "company_cap",
+      }),
+    });
+    expect(audience.narrowedNote).toBe("公司交互治理策略将此范围从 任何人 收窄为 仅限真人。");
   });
 });
