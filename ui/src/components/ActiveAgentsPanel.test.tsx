@@ -254,7 +254,7 @@ describe("ActiveAgentsPanel", () => {
     ]);
     expect(headers.every((header) => header.querySelector("svg") === null)).toBe(true);
     expect(container.querySelector(".status-chip")).toBeNull();
-    expect(container.querySelectorAll('[aria-label="Task in review"]')).toHaveLength(7);
+    expect(container.querySelectorAll('[aria-label="Task In Review"]')).toHaveLength(7);
     expect(container.querySelectorAll(".motion-safe\\:animate-spin")).toHaveLength(0);
     expect(container.querySelector('a[aria-label="Agent 0 — Running. View run"]')?.getAttribute("href"))
       .toBe("/agents/agent-0/runs/run-0");

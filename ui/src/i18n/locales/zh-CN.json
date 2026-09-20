@@ -15,6 +15,20 @@
     "language": {
       "label": "语言",
       "description": "选择界面显示语言。"
+    },
+    "status": {
+      "done": "已完成",
+      "blocked": "已阻塞",
+      "inProgress": "进行中",
+      "failed": "失败"
+    },
+    "timeago": {
+      "justNow": "刚刚",
+      "minutes": "{{count}} 分钟前",
+      "hours": "{{count}} 小时前",
+      "days": "{{count}} 天前",
+      "weeks": "{{count}} 周前",
+      "months": "{{count}} 个月前"
     }
   },
   "search": {
@@ -336,6 +350,71 @@
       "untrackedCount": "{{count}} 个未跟踪",
       "localChangesPresent": "有本地改动",
       "localChangesPresentDetail": "有本地改动（{{detail}}）"
+    }
+  },
+  "activeagentspanel": {
+    "general": {
+      "titleAgents": "智能体",
+      "noRecentRuns": "暂无近期智能体运行记录。",
+      "moreRunsSingular": "还有 {{count}} 条更多运行记录",
+      "moreRunsPlural": "还有 {{count}} 条更多运行记录",
+      "viewAllRuns": "查看全部运行记录",
+      "timestampFinished": "{{time}}完成",
+      "timestampStarted": "{{time}}开始",
+      "timestampQueued": "{{time}}加入队列",
+      "scheduledHeartbeat": "定时心跳",
+      "noLinkedTask": "无关联任务",
+      "taskUnavailable": "任务不可用",
+      "loadingTask": "正在加载任务…",
+      "ariaViewRun": "{{agentName}} — {{statusLabel}}。查看运行",
+      "taskStatusTitle": "任务状态：{{status}}"
+    },
+    "status": {
+      "running": "运行中",
+      "queued": "排队中",
+      "succeeded": "成功",
+      "timedOut": "已超时",
+      "cancelled": "已取消",
+      "interrupted": "已中断",
+      "todo": "待办",
+      "inReview": "审查中",
+      "backlog": "待办列表"
+    }
+  },
+  "activitycharts": {
+    "general": {
+      "noRunsYet": "暂无运行记录",
+      "succeeded": "成功",
+      "recovered": "已恢复",
+      "other": "其他",
+      "noTasks": "暂无任务",
+      "tooltipRunHeaderSingular": "{{date}}：{{count}} 次运行",
+      "tooltipRunHeaderPlural": "{{date}}：{{count}} 次运行",
+      "tooltipSucceededLine": "  成功：{{count}}",
+      "tooltipRecoveredLine": "  已恢复：{{count}}（重试成功）",
+      "tooltipFailedLine": "  失败：{{count}}",
+      "tooltipOtherLine": "  其他：{{count}}",
+      "tooltipIssuesCount": "{{date}}：{{count}} 个工单",
+      "tooltipSuccessRate": "{{date}}：{{percent}}%（{{succeeded}}/{{total}}）"
+    },
+    "status": {
+      "todo": "待办",
+      "inReview": "审查中",
+      "cancelled": "已取消",
+      "backlog": "待办列表"
+    },
+    "priority": {
+      "critical": "严重",
+      "high": "高",
+      "medium": "中",
+      "low": "低"
+    }
+  },
+  "activityrow": {
+    "general": {
+      "actorSystem": "系统",
+      "actorBoard": "董事会",
+      "actorUnknown": "未知"
     }
   }
 }

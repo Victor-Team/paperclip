@@ -15,6 +15,20 @@
     "language": {
       "label": "Language",
       "description": "Choose the display language."
+    },
+    "status": {
+      "done": "Done",
+      "blocked": "Blocked",
+      "inProgress": "In Progress",
+      "failed": "Failed"
+    },
+    "timeago": {
+      "justNow": "just now",
+      "minutes": "{{count}}m ago",
+      "hours": "{{count}}h ago",
+      "days": "{{count}}d ago",
+      "weeks": "{{count}}w ago",
+      "months": "{{count}}mo ago"
     }
   },
   "search": {
@@ -336,6 +350,71 @@
       "untrackedCount": "{{count}} untracked",
       "localChangesPresent": "Local changes present",
       "localChangesPresentDetail": "Local changes present ({{detail}})"
+    }
+  },
+  "activeagentspanel": {
+    "general": {
+      "titleAgents": "Agents",
+      "noRecentRuns": "No recent agent runs.",
+      "moreRunsSingular": "{{count}} more active/recent run",
+      "moreRunsPlural": "{{count}} more active/recent runs",
+      "viewAllRuns": "View all runs",
+      "timestampFinished": "Finished {{time}}",
+      "timestampStarted": "Started {{time}}",
+      "timestampQueued": "Queued {{time}}",
+      "scheduledHeartbeat": "Scheduled heartbeat",
+      "noLinkedTask": "No linked task",
+      "taskUnavailable": "Task unavailable",
+      "loadingTask": "Loading task…",
+      "ariaViewRun": "{{agentName}} — {{statusLabel}}. View run",
+      "taskStatusTitle": "Task {{status}}"
+    },
+    "status": {
+      "running": "Running",
+      "queued": "Queued",
+      "succeeded": "Succeeded",
+      "timedOut": "Timed out",
+      "cancelled": "Cancelled",
+      "interrupted": "Interrupted",
+      "todo": "To Do",
+      "inReview": "In Review",
+      "backlog": "Backlog"
+    }
+  },
+  "activitycharts": {
+    "general": {
+      "noRunsYet": "No runs yet",
+      "succeeded": "Succeeded",
+      "recovered": "Recovered",
+      "other": "Other",
+      "noTasks": "No tasks",
+      "tooltipRunHeaderSingular": "{{date}}: {{count}} run",
+      "tooltipRunHeaderPlural": "{{date}}: {{count}} runs",
+      "tooltipSucceededLine": "  succeeded: {{count}}",
+      "tooltipRecoveredLine": "  recovered: {{count}} (retry succeeded)",
+      "tooltipFailedLine": "  failed: {{count}}",
+      "tooltipOtherLine": "  other: {{count}}",
+      "tooltipIssuesCount": "{{date}}: {{count}} issues",
+      "tooltipSuccessRate": "{{date}}: {{percent}}% ({{succeeded}}/{{total}})"
+    },
+    "status": {
+      "todo": "To Do",
+      "inReview": "In Review",
+      "cancelled": "Cancelled",
+      "backlog": "Backlog"
+    },
+    "priority": {
+      "critical": "Critical",
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
+    }
+  },
+  "activityrow": {
+    "general": {
+      "actorSystem": "System",
+      "actorBoard": "Board",
+      "actorUnknown": "Unknown"
     }
   }
 }
