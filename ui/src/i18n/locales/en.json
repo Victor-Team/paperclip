@@ -318,5 +318,24 @@
       "builtinAgentNeedsSetup": "Built-in agent needs setup",
       "builtinAgentPendingApproval": "Built-in agent pending approval"
     }
+  },
+  "sidebarserverinfo": {
+    "general": {
+      "server": "Server",
+      "lastRestarted": "Last restarted",
+      "runningCommit": "Running commit",
+      "checkoutState": "Checkout state",
+      "unavailable": "Unavailable",
+      "loading": "Loading...",
+      "healthUnavailable": "Health unavailable",
+      "commitUnavailable": "Commit unavailable",
+      "changeStatusUnavailable": "Change status unavailable",
+      "cleanCheckout": "Clean checkout",
+      "stagedCount": "{{count}} staged",
+      "unstagedCount": "{{count}} unstaged",
+      "untrackedCount": "{{count}} untracked",
+      "localChangesPresent": "Local changes present",
+      "localChangesPresentDetail": "Local changes present ({{detail}})"
+    }
   }
 }

@@ -318,5 +318,24 @@
       "builtinAgentNeedsSetup": "内置智能体需要配置",
       "builtinAgentPendingApproval": "内置智能体待批准"
     }
+  },
+  "sidebarserverinfo": {
+    "general": {
+      "server": "服务器",
+      "lastRestarted": "上次重启",
+      "runningCommit": "运行中提交",
+      "checkoutState": "检出状态",
+      "unavailable": "不可用",
+      "loading": "加载中...",
+      "healthUnavailable": "健康状态不可用",
+      "commitUnavailable": "提交信息不可用",
+      "changeStatusUnavailable": "改动状态不可用",
+      "cleanCheckout": "无本地改动",
+      "stagedCount": "{{count}} 个已暂存",
+      "unstagedCount": "{{count}} 个未暂存",
+      "untrackedCount": "{{count}} 个未跟踪",
+      "localChangesPresent": "有本地改动",
+      "localChangesPresentDetail": "有本地改动（{{detail}}）"
+    }
   }
 }
