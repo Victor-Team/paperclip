@@ -416,5 +416,93 @@
       "actorBoard": "董事会",
       "actorUnknown": "未知"
     }
+  },
+  "issuefilterspopover": {
+    "general": {
+      "filters": "筛选",
+      "clear": "清除",
+      "category": "分类",
+      "approvalStatus": "审批状态",
+      "quickFilters": "快捷筛选",
+      "status": "状态",
+      "priority": "优先级",
+      "responsible": "经办人",
+      "labelResponsible": "经办人",
+      "noResponsible": "无经办人",
+      "me": "我",
+      "creator": "创建者",
+      "placeholderSearchcreators": "搜索创建者...",
+      "noCreatorsMatch": "没有匹配的创建者。",
+      "removeCreatorAriaLabel": "移除创建者 {{label}}",
+      "project": "项目",
+      "labelProjects": "项目",
+      "labels": "标签",
+      "labelLabels": "标签",
+      "workspace": "工作区",
+      "labelWorkspaces": "工作区",
+      "externalObjectStatus": "外部对象状态",
+      "visibility": "可见性",
+      "liveRunsOnly": "仅显示实时运行",
+      "hideRoutineRuns": "隐藏例程运行",
+      "searchPlaceholder": "搜索{{label}}...",
+      "searchAriaLabel": "搜索{{label}}",
+      "filterButtonLabel": "筛选",
+      "filterButtonLabelWithCount": "筛选：{{count}}"
+    },
+    "quickFilters": {
+      "all": "全部",
+      "active": "活跃",
+      "backlog": "待办列表",
+      "done": "已完成"
+    },
+    "status": {
+      "todo": "待办",
+      "inProgress": "进行中",
+      "inReview": "审查中",
+      "blocked": "已阻塞",
+      "done": "已完成",
+      "cancelled": "已取消",
+      "backlog": "待办列表"
+    },
+    "priority": {
+      "critical": "严重",
+      "high": "高",
+      "medium": "中",
+      "low": "低"
+    },
+    "externalObject": {
+      "anyFailed": "任意失败",
+      "anyWaiting": "任意等待中",
+      "anyRunning": "任意运行中",
+      "authRequired": "需要授权",
+      "unreachable": "无法访问",
+      "stale": "已过期",
+      "noExternalObjects": "无外部对象"
+    },
+    "inboxCategory": {
+      "allCategories": "全部分类",
+      "myRecentTasks": "我最近的任务",
+      "joinRequests": "加入请求",
+      "approvals": "审批",
+      "failedRuns": "失败的运行",
+      "alerts": "提醒"
+    },
+    "inboxApproval": {
+      "allApprovalStatuses": "全部审批状态",
+      "needsAction": "待处理",
+      "resolved": "已解决"
+    }
+  },
+  "issuerow": {
+    "general": {
+      "archive": "归档",
+      "markAsRead": "标记为已读",
+      "titleBlockedbyparkedwork": "因搁置工作而受阻——至少一个已分配的阻塞项处于待办列表中，不会唤醒其经办人。",
+      "blockedByParkedWork": "因搁置工作而受阻",
+      "open": "打开 {{identifier}}：{{title}}",
+      "recoveryStatusTitle": "{{label}} — {{detail}}。打开源任务以处理。",
+      "recoveryStatusTitleNoDetail": "{{label}} — 打开源任务以处理。",
+      "recoveryStatusAriaLabel": "{{label}} — {{detail}}"
+    }
   }
 }

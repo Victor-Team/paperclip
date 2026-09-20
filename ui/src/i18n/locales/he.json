@@ -416,5 +416,93 @@
       "actorBoard": "Board",
       "actorUnknown": "Unknown"
     }
+  },
+  "issuefilterspopover": {
+    "general": {
+      "filters": "Filters",
+      "clear": "Clear",
+      "category": "Category",
+      "approvalStatus": "Approval status",
+      "quickFilters": "Quick filters",
+      "status": "Status",
+      "priority": "Priority",
+      "responsible": "Responsible",
+      "labelResponsible": "Responsible",
+      "noResponsible": "No responsible",
+      "me": "Me",
+      "creator": "Creator",
+      "placeholderSearchcreators": "Search creators...",
+      "noCreatorsMatch": "No creators match.",
+      "removeCreatorAriaLabel": "Remove creator {{label}}",
+      "project": "Project",
+      "labelProjects": "Projects",
+      "labels": "Labels",
+      "labelLabels": "Labels",
+      "workspace": "Workspace",
+      "labelWorkspaces": "Workspaces",
+      "externalObjectStatus": "External object status",
+      "visibility": "Visibility",
+      "liveRunsOnly": "Live runs only",
+      "hideRoutineRuns": "Hide routine runs",
+      "searchPlaceholder": "Search {{label}}...",
+      "searchAriaLabel": "Search {{label}}",
+      "filterButtonLabel": "Filter",
+      "filterButtonLabelWithCount": "Filters: {{count}}"
+    },
+    "quickFilters": {
+      "all": "All",
+      "active": "Active",
+      "backlog": "Backlog",
+      "done": "Done"
+    },
+    "status": {
+      "todo": "To Do",
+      "inProgress": "In Progress",
+      "inReview": "In Review",
+      "blocked": "Blocked",
+      "done": "Done",
+      "cancelled": "Cancelled",
+      "backlog": "Backlog"
+    },
+    "priority": {
+      "critical": "Critical",
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
+    },
+    "externalObject": {
+      "anyFailed": "Any failed",
+      "anyWaiting": "Any waiting",
+      "anyRunning": "Any running",
+      "authRequired": "Auth required",
+      "unreachable": "Unreachable",
+      "stale": "Stale",
+      "noExternalObjects": "No external objects"
+    },
+    "inboxCategory": {
+      "allCategories": "All categories",
+      "myRecentTasks": "My recent tasks",
+      "joinRequests": "Join requests",
+      "approvals": "Approvals",
+      "failedRuns": "Failed runs",
+      "alerts": "Alerts"
+    },
+    "inboxApproval": {
+      "allApprovalStatuses": "All approval statuses",
+      "needsAction": "Needs action",
+      "resolved": "Resolved"
+    }
+  },
+  "issuerow": {
+    "general": {
+      "archive": "Archive",
+      "markAsRead": "Mark as read",
+      "titleBlockedbyparkedwork": "Blocked by parked work — at least one assigned blocker is in backlog and will not wake its assignee.",
+      "blockedByParkedWork": "Blocked by parked work",
+      "open": "Open {{identifier}}: {{title}}",
+      "recoveryStatusTitle": "{{label}} — {{detail}}. Open the source task to act.",
+      "recoveryStatusTitleNoDetail": "{{label}} — open the source task to act.",
+      "recoveryStatusAriaLabel": "{{label}} — {{detail}}"
+    }
   }
 }
