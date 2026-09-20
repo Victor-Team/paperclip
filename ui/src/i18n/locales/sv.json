@@ -940,5 +940,29 @@
       "legacyRestrictionNote": "Created before Anyone became the default, so it stays restricted. A new card would be open.",
       "addressedLabel": "Addressed"
     }
+  },
+  "pathinstructionsmodal": {
+    "general": {
+      "macos": "macOS",
+      "windows": "Windows",
+      "linux": "Linux",
+      "howToGetA": "How to get a full path",
+      "pasteTheAbsolutePath": "Paste the absolute path (e.g.",
+      "intoTheInput": ") into the input field.",
+      "choose": "Choose",
+      "macStepOpenFinder": "Open Finder and navigate to the folder.",
+      "macStepRightClick": "Right-click (or Control-click) the folder.",
+      "macStepHoldOption": "Hold the Option (⌥) key — \"Copy\" changes to \"Copy as Pathname\".",
+      "macStepClickCopy": "Click \"Copy as Pathname\", then paste here.",
+      "macTip": "You can also open Terminal, type cd, drag the folder into the terminal window, and press Enter. Then type pwd to see the full path.",
+      "windowsStepOpenExplorer": "Open File Explorer and navigate to the folder.",
+      "windowsStepClickAddressBar": "Click in the address bar at the top — the full path will appear.",
+      "windowsStepCopyPath": "Copy the path, then paste here.",
+      "windowsTip": "Alternatively, hold Shift and right-click the folder, then select \"Copy as path\".",
+      "linuxStepOpenTerminal": "Open a terminal and navigate to the directory with cd.",
+      "linuxStepRunPwd": "Run pwd to print the full path.",
+      "linuxStepCopyOutput": "Copy the output and paste here.",
+      "linuxTip": "In most file managers, Ctrl+L reveals the full path in the address bar."
+    }
   }
 }

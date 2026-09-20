@@ -940,5 +940,29 @@
       "legacyRestrictionNote": "该卡片创建于“任何人都可回应”成为默认设置之前，因此仍保持受限；新建的卡片将是开放的。",
       "addressedLabel": "已指定"
     }
+  },
+  "pathinstructionsmodal": {
+    "general": {
+      "macos": "macOS",
+      "windows": "Windows",
+      "linux": "Linux",
+      "howToGetA": "如何获取完整路径",
+      "pasteTheAbsolutePath": "将绝对路径（例如",
+      "intoTheInput": "）粘贴到输入框中。",
+      "choose": "选择",
+      "macStepOpenFinder": "打开 Finder 并进入该文件夹。",
+      "macStepRightClick": "右键点击（或按住 Control 再点击）该文件夹。",
+      "macStepHoldOption": "按住 Option (⌥) 键——「拷贝」会变成「拷贝为路径名」。",
+      "macStepClickCopy": "点击「拷贝为路径名」，然后粘贴到此处。",
+      "macTip": "也可以打开终端，输入 cd，把文件夹拖进终端窗口，然后按 Enter。再输入 pwd 即可看到完整路径。",
+      "windowsStepOpenExplorer": "打开文件资源管理器并进入该文件夹。",
+      "windowsStepClickAddressBar": "点击顶部的地址栏，完整路径就会显示出来。",
+      "windowsStepCopyPath": "复制该路径，然后粘贴到此处。",
+      "windowsTip": "也可以按住 Shift 并右键点击该文件夹，然后选择「复制为路径」。",
+      "linuxStepOpenTerminal": "打开终端并用 cd 进入该目录。",
+      "linuxStepRunPwd": "运行 pwd 以打印完整路径。",
+      "linuxStepCopyOutput": "复制输出内容并粘贴到此处。",
+      "linuxTip": "在大多数文件管理器中，按 Ctrl+L 可在地址栏显示完整路径。"
+    }
   }
 }
