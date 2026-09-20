@@ -8,7 +8,9 @@
   },
   "common": {
     "actions": {
-      "retry": "重试"
+      "retry": "重试",
+      "cancel": "取消",
+      "save": "保存"
     },
     "language": {
       "label": "语言",
@@ -249,6 +251,72 @@
   "sidebarshell": {
     "general": {
       "resizeSidebar": "调整侧边栏宽度"
+    }
+  },
+  "sidebarrecenttasks": {
+    "general": {
+      "taskRenamed": "任务已重命名",
+      "taskRenameFailed": "任务重命名失败",
+      "unableToRenameThisTask": "无法重命名此任务。",
+      "taskArchivedFromInbox": "任务已从收件箱归档",
+      "taskArchiveFailed": "任务归档失败",
+      "unableToArchiveThisTask": "无法从收件箱归档此任务。",
+      "taskRestarted": "任务已重新启动",
+      "pausedByParentTask": "此任务由父任务暂停，请从暂停根任务处重启。",
+      "taskPaused": "任务已暂停",
+      "taskPauseUpdateFailed": "任务暂停状态更新失败",
+      "unableToPauseOrRestart": "无法暂停或重启此任务。",
+      "labelRecenttasks": "最近任务",
+      "moreActionsFor": "{{title}} 的更多操作",
+      "rename": "重命名",
+      "archive": "归档",
+      "pauseRestart": "暂停/重启",
+      "renameTask": "重命名任务",
+      "chooseAShortClear": "为此任务选择一个简短明确的名称。",
+      "taskName": "任务名称",
+      "saving": "保存中…"
+    }
+  },
+  "sidebarstarredprojects": {
+    "general": {
+      "starredProjects": "已加星标项目",
+      "titleProjectpausedbybudget": "项目因超出预算已暂停",
+      "openActionsFor": "打开 {{name}} 的操作菜单",
+      "removeFromStarred": "取消星标",
+      "leaveProject": "退出项目"
+    }
+  },
+  "sidebaragents": {
+    "general": {
+      "top": "顶部",
+      "alphabetical": "按字母排序",
+      "recent": "最近",
+      "invalidReportingChain": "无效的汇报链路",
+      "titleAgentpausedbybudget": "智能体因预算超额已暂停",
+      "openActionsFor": "打开 {{name}} 的操作菜单",
+      "removeFromStarred": "取消星标",
+      "starAgent": "加星标",
+      "editAgent": "编辑智能体",
+      "wasPausedByBudgetLimits": "智能体因预算限制已暂停",
+      "invalidOrgChain": "无效的汇报链路",
+      "updating": "更新中…",
+      "budgetPaused": "预算已暂停",
+      "resumeAgent": "恢复智能体",
+      "pauseAgent": "暂停智能体",
+      "leaving": "退出中…",
+      "leaveAgent": "退出智能体",
+      "agentPaused": "智能体已暂停",
+      "agentResumed": "智能体已恢复",
+      "couldNotPauseAgent": "无法暂停智能体",
+      "couldNotResumeAgent": "无法恢复智能体",
+      "labelAgents": "智能体",
+      "newAgent": "新建智能体",
+      "agentsSectionActions": "智能体操作菜单",
+      "browseAgents": "浏览智能体",
+      "agentSort": "智能体排序",
+      "seeAllAgents": "查看全部智能体",
+      "builtinAgentNeedsSetup": "内置智能体需要配置",
+      "builtinAgentPendingApproval": "内置智能体待批准"
     }
   }
 }

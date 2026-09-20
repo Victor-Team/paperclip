@@ -8,7 +8,9 @@
   },
   "common": {
     "actions": {
-      "retry": "Retry"
+      "retry": "Retry",
+      "cancel": "Cancel",
+      "save": "Save"
     },
     "language": {
       "label": "Language",
@@ -249,6 +251,72 @@
   "sidebarshell": {
     "general": {
       "resizeSidebar": "Resize sidebar"
+    }
+  },
+  "sidebarrecenttasks": {
+    "general": {
+      "taskRenamed": "Task renamed",
+      "taskRenameFailed": "Task rename failed",
+      "unableToRenameThisTask": "Unable to rename this task.",
+      "taskArchivedFromInbox": "Task archived from inbox",
+      "taskArchiveFailed": "Task archive failed",
+      "unableToArchiveThisTask": "Unable to archive this task from the inbox.",
+      "taskRestarted": "Task restarted",
+      "pausedByParentTask": "This task is paused by a parent task. Restart it from the pause root.",
+      "taskPaused": "Task paused",
+      "taskPauseUpdateFailed": "Task pause update failed",
+      "unableToPauseOrRestart": "Unable to pause or restart this task.",
+      "labelRecenttasks": "Recent Tasks",
+      "moreActionsFor": "More actions for {{title}}",
+      "rename": "Rename",
+      "archive": "Archive",
+      "pauseRestart": "Pause/Restart",
+      "renameTask": "Rename task",
+      "chooseAShortClear": "Choose a short, clear name for this task.",
+      "taskName": "Task name",
+      "saving": "Saving..."
+    }
+  },
+  "sidebarstarredprojects": {
+    "general": {
+      "starredProjects": "Starred projects",
+      "titleProjectpausedbybudget": "Project paused by budget",
+      "openActionsFor": "Open actions for {{name}}",
+      "removeFromStarred": "Remove from starred",
+      "leaveProject": "Leave project"
+    }
+  },
+  "sidebaragents": {
+    "general": {
+      "top": "Top",
+      "alphabetical": "Alphabetical",
+      "recent": "Recent",
+      "invalidReportingChain": "Invalid reporting chain",
+      "titleAgentpausedbybudget": "Agent paused by budget",
+      "openActionsFor": "Open actions for {{name}}",
+      "removeFromStarred": "Remove from starred",
+      "starAgent": "Star agent",
+      "editAgent": "Edit agent",
+      "wasPausedByBudgetLimits": "Agent was paused by budget limits",
+      "invalidOrgChain": "Invalid org chain",
+      "updating": "Updating...",
+      "budgetPaused": "Budget paused",
+      "resumeAgent": "Resume agent",
+      "pauseAgent": "Pause agent",
+      "leaving": "Leaving...",
+      "leaveAgent": "Leave agent",
+      "agentPaused": "Agent paused",
+      "agentResumed": "Agent resumed",
+      "couldNotPauseAgent": "Could not pause agent",
+      "couldNotResumeAgent": "Could not resume agent",
+      "labelAgents": "Agents",
+      "newAgent": "New agent",
+      "agentsSectionActions": "Agents section actions",
+      "browseAgents": "Browse agents",
+      "agentSort": "Agent sort",
+      "seeAllAgents": "See all agents",
+      "builtinAgentNeedsSetup": "Built-in agent needs setup",
+      "builtinAgentPendingApproval": "Built-in agent pending approval"
     }
   }
 }
