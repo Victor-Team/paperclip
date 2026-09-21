@@ -1218,5 +1218,28 @@
       "taskCount_one": "{{count}} task",
       "taskCount_other": "{{count}} tasks"
     }
+  },
+  "companies": {
+    "general": {
+      "organizations": "Organizations",
+      "newOrganization": "New Organization",
+      "loadingOrganizations": "Loading organizations...",
+      "rename": "Rename",
+      "unarchive": "Unarchive",
+      "deleteOrganization": "Delete Organization",
+      "unlimitedBudget": "Unlimited budget",
+      "createdAt": "Created {{time}}",
+      "deleteConfirm": "Delete this organization and all its data? This cannot be undone.",
+      "deleting": "Deleting…",
+      "delete": "Delete",
+      "moreActions": "More actions",
+      "statusActive": "Active",
+      "statusPaused": "Paused",
+      "statusArchived": "Archived",
+      "agentCount_one": "{{count}} agent",
+      "agentCount_other": "{{count}} agents",
+      "taskCount_one": "{{count}} task",
+      "taskCount_other": "{{count}} tasks"
+    }
   }
 }

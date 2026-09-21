@@ -1218,5 +1218,28 @@
       "taskCount_one": "{{count}} 个任务",
       "taskCount_other": "{{count}} 个任务"
     }
+  },
+  "companies": {
+    "general": {
+      "organizations": "公司",
+      "newOrganization": "新建公司",
+      "loadingOrganizations": "正在加载公司…",
+      "rename": "重命名",
+      "unarchive": "解除归档",
+      "deleteOrganization": "删除公司",
+      "unlimitedBudget": "预算不限",
+      "createdAt": "创建于 {{time}}",
+      "deleteConfirm": "删除这家公司及其全部数据？此操作无法撤销。",
+      "deleting": "正在删除…",
+      "delete": "删除",
+      "moreActions": "更多操作",
+      "statusActive": "活跃",
+      "statusPaused": "已暂停",
+      "statusArchived": "已归档",
+      "agentCount_one": "{{count}} 个智能体",
+      "agentCount_other": "{{count}} 个智能体",
+      "taskCount_one": "{{count}} 个任务",
+      "taskCount_other": "{{count}} 个任务"
+    }
   }
 }
