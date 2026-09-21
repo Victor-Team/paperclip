@@ -1241,5 +1241,50 @@
       "taskCount_one": "{{count}} 个任务",
       "taskCount_other": "{{count}} 个任务"
     }
+  },
+  "artifacts": {
+    "general": {
+      "all": "全部",
+      "images": "图片",
+      "videos": "视频",
+      "documents": "文档",
+      "text": "文本",
+      "files": "文件",
+      "none": "无",
+      "task": "任务",
+      "parentTask": "父任务",
+      "artifacts": "产物",
+      "selectOrganization": "请选择一家公司以查看产物。",
+      "placeholderSearchartifacts": "搜索产物…",
+      "searchArtifacts": "搜索产物",
+      "clearArtifactSearch": "清除产物搜索",
+      "titleGroupartifacts": "产物分组",
+      "groupArtifactsCurrent": "产物分组（当前：{{label}}）",
+      "groupBy": "分组依据",
+      "filterArtifactsByType": "按类型筛选产物",
+      "allStacks": "全部堆栈",
+      "emptyStacksSearch": "没有匹配此搜索的产物堆栈。",
+      "emptyStacks": "还没有产物堆栈。",
+      "emptySearch": "没有匹配此搜索的产物。",
+      "emptyStackFilters": "此堆栈中没有匹配当前筛选条件的产物。",
+      "emptyAll": "还没有产物。附在工单上的输出会显示在这里。",
+      "emptyKind": "还没有此类型的产物。",
+      "loadingMore": "正在加载更多产物…",
+      "updating": "正在更新产物…"
+    },
+    "artifactcard": {
+      "labelImage": "图片",
+      "labelDocument": "文档",
+      "labelText": "文本",
+      "labelFile": "文件",
+      "titleOpenfileinnew": "在新标签页打开文件",
+      "titleDownloadfile": "下载文件",
+      "lastEdited": "最后编辑于 {{date}}"
+    },
+    "artifactgroupcard": {
+      "count_one": "{{count}} 个产物",
+      "count_other": "{{count}} 个产物",
+      "updated": "已更新 {{date}}"
+    }
   }
 }

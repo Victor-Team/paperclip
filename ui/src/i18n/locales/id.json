@@ -1241,5 +1241,50 @@
       "taskCount_one": "{{count}} task",
       "taskCount_other": "{{count}} tasks"
     }
+  },
+  "artifacts": {
+    "general": {
+      "all": "All",
+      "images": "Images",
+      "videos": "Videos",
+      "documents": "Documents",
+      "text": "Text",
+      "files": "Files",
+      "none": "None",
+      "task": "Task",
+      "parentTask": "Parent task",
+      "artifacts": "Artifacts",
+      "selectOrganization": "Select an organization to view artifacts.",
+      "placeholderSearchartifacts": "Search artifacts...",
+      "searchArtifacts": "Search artifacts",
+      "clearArtifactSearch": "Clear artifact search",
+      "titleGroupartifacts": "Group artifacts",
+      "groupArtifactsCurrent": "Group artifacts (currently {{label}})",
+      "groupBy": "Group by",
+      "filterArtifactsByType": "Filter artifacts by type",
+      "allStacks": "All stacks",
+      "emptyStacksSearch": "No artifact stacks match this search.",
+      "emptyStacks": "No artifact stacks yet.",
+      "emptySearch": "No artifacts match this search.",
+      "emptyStackFilters": "No artifacts in this stack match the current filters.",
+      "emptyAll": "No artifacts yet. Outputs attached to issues will appear here.",
+      "emptyKind": "No artifacts of this type yet.",
+      "loadingMore": "Loading more artifacts...",
+      "updating": "Updating artifacts..."
+    },
+    "artifactcard": {
+      "labelImage": "Image",
+      "labelDocument": "Document",
+      "labelText": "Text",
+      "labelFile": "File",
+      "titleOpenfileinnew": "Open file in new tab",
+      "titleDownloadfile": "Download file",
+      "lastEdited": "Last edited {{date}}"
+    },
+    "artifactgroupcard": {
+      "count_one": "{{count}} artifact",
+      "count_other": "{{count}} artifacts",
+      "updated": "Updated {{date}}"
+    }
   }
 }

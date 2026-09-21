@@ -4,7 +4,8 @@ import type { ReactNode } from "react";
 import { flushSync } from "react-dom";
 import { createRoot } from "react-dom/client";
 import { renderToStaticMarkup } from "react-dom/server";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { i18n } from "@/i18n";
 
 vi.mock("@/lib/router", () => ({
   Link: ({
@@ -23,7 +24,7 @@ vi.mock("@/lib/router", () => ({
   ),
 }));
 
-import { ArtifactCard } from "./ArtifactCard";
+import { ArtifactCard, formatArtifactDate } from "./ArtifactCard";
 import type { CompanyArtifact } from "@/api/artifacts";
 
 function makeArtifact(overrides: Partial<CompanyArtifact> = {}): CompanyArtifact {
@@ -49,6 +50,14 @@ function makeArtifact(overrides: Partial<CompanyArtifact> = {}): CompanyArtifact
 }
 
 describe("ArtifactCard", () => {
+  beforeEach(async () => {
+    await i18n.changeLanguage("en");
+  });
+
+  afterEach(async () => {
+    await i18n.changeLanguage("en");
+  });
+
   it("renders an image preview with cover image and links to the issue anchor", () => {
     const markup = renderToStaticMarkup(<ArtifactCard artifact={makeArtifact()} />);
     expect(markup).toContain('href="/issues/PAP-10306#attachment-art-1"');
@@ -243,5 +252,45 @@ describe("ArtifactCard", () => {
     expect(markup).toContain("Last edited Jun 1, 2026");
     expect(markup).not.toContain('aria-label="Download file"');
     expect(markup).not.toContain('aria-label="Open file in new tab"');
+  });
+
+  it("retranslates last-edited date and file action names on a live Chinese switch", async () => {
+    const updatedAt = new Date(2026, 5, 1, 12, 0, 0, 0).toISOString();
+    const container = document.createElement("div");
+    document.body.appendChild(container);
+    const root = createRoot(container);
+
+    flushSync(() => {
+      root.render(
+        <ArtifactCard
+          artifact={makeArtifact({
+            title: "Hero shot",
+            updatedAt,
+            createdByAgent: { id: "agent-1", name: "ClaudeCoder" },
+          })}
+        />,
+      );
+    });
+
+    expect(container.textContent).toContain("Hero shot");
+    expect(container.textContent).toContain("Last edited Jun 1, 2026");
+    expect(container.textContent).toContain("ClaudeCoder");
+    expect(container.querySelector('[aria-label="Open file in new tab"]')).not.toBeNull();
+    expect(container.querySelector('[aria-label="Download file"]')).not.toBeNull();
+
+    await i18n.changeLanguage("zh-CN");
+
+    const zhDate = formatArtifactDate(updatedAt, "zh-CN");
+    expect(container.textContent).toContain("Hero shot");
+    expect(container.textContent).toContain(`最后编辑于 ${zhDate}`);
+    expect(container.textContent).not.toContain("Last edited");
+    expect(container.textContent).toContain("ClaudeCoder");
+    expect(container.querySelector('[aria-label="在新标签页打开文件"]')).not.toBeNull();
+    expect(container.querySelector('[aria-label="下载文件"]')).not.toBeNull();
+    expect(container.querySelector('[aria-label="Open file in new tab"]')).toBeNull();
+    expect(container.querySelector('[aria-label="Download file"]')).toBeNull();
+
+    flushSync(() => root.unmount());
+    container.remove();
   });
 });

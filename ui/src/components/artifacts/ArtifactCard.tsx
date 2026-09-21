@@ -2,7 +2,17 @@ import { type SyntheticEvent, useEffect, useRef, useState } from "react";
 import { Download, ExternalLink, Paperclip, Play } from "lucide-react";
 import type { CompanyArtifact } from "@/api/artifacts";
 import { Link } from "@/lib/router";
-import { cn, formatDate } from "@/lib/utils";
+import { useTranslation } from "@/i18n";
+import { cn } from "@/lib/utils";
+
+export function formatArtifactDate(value: Date | string, language: string): string {
+  const locale = language.toLowerCase().startsWith("zh") ? "zh-CN" : "en-US";
+  return new Date(value).toLocaleDateString(locale, {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+}
 
 interface ArtifactCardProps {
   artifact: CompanyArtifact;
@@ -33,9 +43,10 @@ function PlaceholderPreview({ label }: { label?: string }) {
 }
 
 function ImagePreview({ artifact }: { artifact: CompanyArtifact }) {
+  const { t } = useTranslation();
   const [errored, setErrored] = useState(false);
   if (errored || !artifact.contentPath) {
-    return <PlaceholderPreview label="Image" />;
+    return <PlaceholderPreview label={t("artifacts.artifactcard.labelImage")} />;
   }
   return (
     <PreviewFrame>
@@ -132,9 +143,18 @@ function VideoPreview({ artifact }: { artifact: CompanyArtifact }) {
 }
 
 function TextPreview({ artifact }: { artifact: CompanyArtifact }) {
+  const { t } = useTranslation();
   const preview = artifact.previewText?.trim();
   if (!preview) {
-    return <PlaceholderPreview label={artifact.source === "document" ? "Document" : "Text"} />;
+    return (
+      <PlaceholderPreview
+        label={
+          artifact.source === "document"
+            ? t("artifacts.artifactcard.labelDocument")
+            : t("artifacts.artifactcard.labelText")
+        }
+      />
+    );
   }
   return (
     <PreviewFrame className="bg-card">
@@ -148,6 +168,11 @@ function TextPreview({ artifact }: { artifact: CompanyArtifact }) {
   );
 }
 
+function FilePreviewPlaceholder() {
+  const { t } = useTranslation();
+  return <PlaceholderPreview label={t("artifacts.artifactcard.labelFile")} />;
+}
+
 export function ArtifactPreview({ artifact }: { artifact: CompanyArtifact }) {
   switch (artifact.mediaKind) {
     case "image":
@@ -158,7 +183,7 @@ export function ArtifactPreview({ artifact }: { artifact: CompanyArtifact }) {
     case "document":
       return <TextPreview artifact={artifact} />;
     case "file":
-      return <PlaceholderPreview label="File" />;
+      return <FilePreviewPlaceholder />;
     case "empty":
     default:
       return <PlaceholderPreview />;
@@ -191,6 +216,7 @@ function SecondaryAction({
 }
 
 export function ArtifactCard({ artifact }: ArtifactCardProps) {
+  const { t, i18n } = useTranslation();
   return (
     <Link
       // design-allow(card-pattern): navigation <Link> card; Card renders a div and would break anchor semantics (C5a Run 3)
@@ -212,12 +238,12 @@ export function ArtifactCard({ artifact }: ArtifactCardProps) {
           </h3>
           <div className="flex shrink-0 items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
             {artifact.openPath ? (
-              <SecondaryAction href={artifact.openPath} title="Open file in new tab">
+              <SecondaryAction href={artifact.openPath} title={t("artifacts.artifactcard.titleOpenfileinnew")}>
                 <ExternalLink className="h-3.5 w-3.5" />
               </SecondaryAction>
             ) : null}
             {artifact.downloadPath ? (
-              <SecondaryAction href={artifact.downloadPath} download title="Download file">
+              <SecondaryAction href={artifact.downloadPath} download title={t("artifacts.artifactcard.titleDownloadfile")}>
                 <Download className="h-3.5 w-3.5" />
               </SecondaryAction>
             ) : null}
@@ -225,7 +251,11 @@ export function ArtifactCard({ artifact }: ArtifactCardProps) {
         </div>
 
         <div className="mt-0.5 flex items-center gap-1.5 text-(length:--text-micro) text-muted-foreground/65">
-          <span>Last edited {formatDate(artifact.updatedAt)}</span>
+          <span>
+            {t("artifacts.artifactcard.lastEdited", {
+              date: formatArtifactDate(artifact.updatedAt, i18n.language),
+            })}
+          </span>
           {artifact.createdByAgent ? (
             <>
               <span className="text-muted-foreground/50">·</span>

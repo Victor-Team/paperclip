@@ -5,6 +5,7 @@ import { createRoot } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MemoryRouter } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { i18n } from "@/i18n";
 import { Artifacts } from "./Artifacts";
 import type { CompanyArtifact, CompanyArtifactGroup } from "../api/artifacts";
 
@@ -156,7 +157,7 @@ describe("Artifacts page", () => {
   let container: HTMLDivElement;
   let originalIntersectionObserver: typeof IntersectionObserver | undefined;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     container = document.createElement("div");
     document.body.appendChild(container);
     breadcrumbState.setBreadcrumbs.mockReset();
@@ -164,11 +165,14 @@ describe("Artifacts page", () => {
     latestObserverCallback = null;
     originalIntersectionObserver = window.IntersectionObserver;
     window.IntersectionObserver = MockIntersectionObserver as unknown as typeof IntersectionObserver;
+    companyState.selectedCompanyId = "company-1";
+    await i18n.changeLanguage("en");
   });
 
-  afterEach(() => {
+  afterEach(async () => {
     window.IntersectionObserver = originalIntersectionObserver as typeof IntersectionObserver;
     container.remove();
+    await i18n.changeLanguage("en");
   });
 
   it("requests task-grouped artifact stacks by default", async () => {
@@ -424,6 +428,90 @@ describe("Artifacts page", () => {
 
     flushSync(() => {
       root.unmount();
+    });
+  });
+
+  it("retranslates chrome, group menu, and type filters on a live Chinese switch", async () => {
+    artifactsApiMock.list.mockResolvedValue({
+      artifacts: [],
+      groups: [sampleGroup({ count: 3 })],
+      nextCursor: null,
+    });
+
+    const { root } = renderArtifacts(container);
+
+    await waitForAssertion(() => {
+      expect(breadcrumbState.setBreadcrumbs).toHaveBeenCalledWith([{ label: "Artifacts" }]);
+      expect(container.querySelector('input[aria-label="Search artifacts"]')).not.toBeNull();
+      expect(container.textContent).toContain("Group by");
+      expect(container.textContent).toContain("None");
+      expect(container.textContent).toContain("Task");
+      expect(container.textContent).toContain("Parent task");
+      expect(
+        [...container.querySelectorAll('[role="tab"]')].some((element) => element.textContent === "All"),
+      ).toBe(true);
+      expect(
+        [...container.querySelectorAll('[role="tab"]')].some((element) => element.textContent === "Images"),
+      ).toBe(true);
+      expect(container.textContent).toContain("3 artifacts");
+      expect(container.textContent).toContain("PAP-42");
+      expect(container.textContent).toContain("Ship launch");
+    });
+
+    await i18n.changeLanguage("zh-CN");
+
+    await waitForAssertion(() => {
+      expect(breadcrumbState.setBreadcrumbs).toHaveBeenCalledWith([{ label: "产物" }]);
+      expect(container.querySelector('input[aria-label="搜索产物"]')).not.toBeNull();
+      expect(container.querySelector('input[placeholder="搜索产物…"]')).not.toBeNull();
+      expect(container.textContent).toContain("分组依据");
+      expect(container.textContent).toContain("无");
+      expect(container.textContent).toContain("任务");
+      expect(container.textContent).toContain("父任务");
+      expect(
+        [...container.querySelectorAll('[role="tab"]')].some((element) => element.textContent === "全部"),
+      ).toBe(true);
+      expect(
+        [...container.querySelectorAll('[role="tab"]')].some((element) => element.textContent === "图片"),
+      ).toBe(true);
+      expect(
+        [...container.querySelectorAll('[role="tab"]')].some((element) => element.textContent === "视频"),
+      ).toBe(true);
+      expect(
+        [...container.querySelectorAll('[role="tab"]')].some((element) => element.textContent === "文档"),
+      ).toBe(true);
+      expect(
+        [...container.querySelectorAll('[role="tab"]')].some((element) => element.textContent === "文本"),
+      ).toBe(true);
+      expect(
+        [...container.querySelectorAll('[role="tab"]')].some((element) => element.textContent === "文件"),
+      ).toBe(true);
+      expect(container.textContent).toContain("3 个产物");
+      expect(container.textContent).not.toContain("3 artifacts");
+      expect(container.textContent).toContain("PAP-42");
+      expect(container.textContent).toContain("Ship launch");
+      const groupControl = container.querySelector('[data-testid="artifact-group-control"]') as HTMLElement;
+      expect(groupControl.getAttribute("aria-label")).toContain("产物分组（当前：任务）");
+    });
+
+    flushSync(() => {
+      root.unmount();
+    });
+    container.innerHTML = "";
+
+    artifactsApiMock.list.mockResolvedValue({
+      artifacts: [sampleArtifact({ title: "Stacked Artifact" })],
+      selectedGroup: sampleGroup(),
+      nextCursor: null,
+    });
+    const stacked = renderArtifacts(container, ["/artifacts?groupBy=task&groupIssueId=issue-1"]);
+    await waitForAssertion(() => {
+      expect(container.querySelector('[data-testid="artifact-stack-back"]')?.textContent).toContain("全部堆栈");
+      expect(container.textContent).toContain("Stacked Artifact");
+      expect(container.textContent).toContain("PAP-42");
+    });
+    flushSync(() => {
+      stacked.root.unmount();
     });
   });
 });
