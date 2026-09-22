@@ -317,6 +317,22 @@ event. These pages run signed out:
 session response arrives is not captured. The gate opens only after the
 session query resolves.
 
+### Environment attribution
+
+Set `SENTRY_ENVIRONMENT` to the deployment environment, such as `staging`
+or `production`. The server SDK reads this value from its process environment.
+The authenticated session sends the same value in `sentryEnvironment`, and
+`SentryGate` passes it to the browser SDK. This is runtime configuration, so the
+same built image can report correctly in different environments. It does not
+infer an environment from the page URL or include a tenant identifier.
+
+When the variable is absent or empty, the session sends `null` and the browser
+keeps the SDK's default environment. The field is optional in the session
+schema so a newer browser can still read a response from an older server.
+A session refetch that changes the environment closes and restarts monitoring;
+signing out still closes it. The browser release continues to identify the
+loaded bundle, even if the server has since deployed another version.
+
 ### Privacy settings
 
 The feature uses built-in Sentry options only.
@@ -375,7 +391,23 @@ sends, so an operator can read what the feature does before turning it on.
 Each Sentry integration name below is verified against the default
 integration list of `@sentry/node@10.71.0` and `@sentry/browser@10.71.0`.
 
-**Server attribute this feature sets**
+**Release attribution**
+
+The server sets `release` to the full source commit from its build metadata.
+An explicit `SENTRY_RELEASE` overrides that default. If neither is available,
+the server leaves the release unset.
+
+The browser also sets `release`, using the full `PAPERCLIP_BUILD_COMMIT`
+supplied when its bundle is built, or the checkout commit for source and npm
+builds. The server reads its packaged build stamp when no deployment marker
+is present. Docker passes the same commit to both
+application builds. A cached browser bundle keeps its own release after a
+server deployment, so its errors are attributed to the code actually loaded.
+Browser builds without a valid full commit leave the release unset. The
+browser does not read a release from the current server, page URL, or session.
+These fields contain build identifiers; they add no tenant or user identity.
+
+**Server identity**
 
 - `server_name` — every server event carries the host name of the process.
   The `@sentry/node` client already sets this value by default when the
@@ -447,6 +479,18 @@ integration list of `@sentry/node@10.71.0` and `@sentry/browser@10.71.0`.
 
 - A Zod validation error, which answers 400.
 - Each `HttpError` below status 500, such as 401, 403, 404, 409, and 422.
+- A remote app's recognized OAuth sign-in challenge. Connecting an app or
+  refreshing its catalog returns 422 with `oauth_challenge` and the existing
+  setup/reconnect links. Other upstream failures still return 502 and are
+  reported, including an unexplained upstream HTTP 400.
+- Expired OAuth credentials without a refresh token, or a rejected refresh token
+  that requires reauthorization. Discovery and health checks return 422 with
+  `oauth_refresh_missing` or `oauth_reauthorization_required` and the existing
+  reconnect instructions. Unexpected refresh failures remain reportable.
+- Slack's explicit response that its app has not enabled MCP access. Discovery
+  and health checks return 422 with `slack_mcp_access_disabled` and setup
+  instructions. This requires Slack's exact MCP endpoint and known error;
+  other HTTP 400 responses remain reportable.
 - A performance trace and a profile, because `tracesSampleRate` is 0.
 
 ### Operator responsibilities
