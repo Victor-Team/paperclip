@@ -204,7 +204,14 @@ export async function deliverReconciledExecutions(
     .where(
       and(
         eq(issueRecoveryActions.status, "resolved"),
-        sql`${issueRecoveryActions.evidence}->>'continuationDelivery' = 'pending'`,
+        or(
+          sql`${issueRecoveryActions.evidence}->>'continuationDelivery' = 'pending'`,
+          and(
+            sql`${issueRecoveryActions.evidence}->'automaticRecovery'->>'policy' = 'preserve_without_replay_v1'`,
+            sql`${issueRecoveryActions.evidence}->'automaticRecovery'->>'replay' = 'blocked'`,
+            sql`${issueRecoveryActions.evidence}->'automaticRecovery'->>'actionOutcome' = 'unknown'`,
+          ),
+        ),
       ),
     )
     .limit(25);
@@ -212,14 +219,35 @@ export async function deliverReconciledExecutions(
     try {
       const decision = action.evidence.executionReconciliation as
         ExecutionReconciliation | undefined;
-      if (!decision || !action.returnOwnerAgentId) continue;
-      const pendingDecision = and(
-        eq(issueRecoveryActions.companyId, action.companyId),
-        eq(issueRecoveryActions.id, action.id),
-        eq(issueRecoveryActions.status, "resolved"),
-        sql`${issueRecoveryActions.evidence}->>'continuationDelivery' = 'pending'`,
-        sql`${issueRecoveryActions.evidence}->'executionReconciliation' = ${JSON.stringify(decision)}::jsonb`,
-      );
+      const automaticRecovery = action.evidence.automaticRecovery;
+      const automaticSourceRunId =
+        automaticRecovery && typeof automaticRecovery === "object"
+          ? (automaticRecovery as Record<string, unknown>).runId
+          : null;
+      const recoveryOnly =
+        typeof automaticSourceRunId === "string" &&
+        (automaticRecovery as Record<string, unknown>).policy ===
+          "preserve_without_replay_v1" &&
+        (automaticRecovery as Record<string, unknown>).replay === "blocked" &&
+        (automaticRecovery as Record<string, unknown>).actionOutcome === "unknown";
+      if ((!decision && !recoveryOnly) || !action.returnOwnerAgentId) continue;
+      const sourceRunId = recoveryOnly ? automaticSourceRunId : decision!.runId;
+      const pendingDecision = recoveryOnly
+        ? and(
+            eq(issueRecoveryActions.companyId, action.companyId),
+            eq(issueRecoveryActions.id, action.id),
+            eq(issueRecoveryActions.status, "resolved"),
+            sql`${issueRecoveryActions.evidence}->'automaticRecovery'->>'policy' = 'preserve_without_replay_v1'`,
+            sql`${issueRecoveryActions.evidence}->'automaticRecovery'->>'replay' = 'blocked'`,
+            sql`${issueRecoveryActions.evidence}->'automaticRecovery'->>'runId' = ${sourceRunId}`,
+          )
+        : and(
+            eq(issueRecoveryActions.companyId, action.companyId),
+            eq(issueRecoveryActions.id, action.id),
+            eq(issueRecoveryActions.status, "resolved"),
+            sql`${issueRecoveryActions.evidence}->>'continuationDelivery' = 'pending'`,
+            sql`${issueRecoveryActions.evidence}->'executionReconciliation' = ${JSON.stringify(decision)}::jsonb`,
+          );
       const [task] = await db
         .select()
         .from(issues)
@@ -237,7 +265,9 @@ export async function deliverReconciledExecutions(
         await db
           .update(issueRecoveryActions)
           .set({
-            evidence: sql`${issueRecoveryActions.evidence} || '{"continuationDelivery":"invalidated"}'::jsonb`,
+            evidence: recoveryOnly
+              ? sql`jsonb_set(${issueRecoveryActions.evidence}, '{automaticRecovery,replay}', '"invalidated"'::jsonb)`
+              : sql`${issueRecoveryActions.evidence} || '{"continuationDelivery":"invalidated"}'::jsonb`,
           })
           .where(pendingDecision);
         continue;
@@ -245,8 +275,12 @@ export async function deliverReconciledExecutions(
       const run = await wake(action.returnOwnerAgentId, {
         source: "automation",
         triggerDetail: "system",
-        reason: "issue_recovery_action_restored",
-        idempotencyKey: `execution-reconciliation:${action.id}`,
+        reason: recoveryOnly
+          ? "issue_recovery_only_continuation"
+          : "issue_recovery_action_restored",
+        idempotencyKey: recoveryOnly
+          ? `execution-recovery-only:${action.id}`
+          : `execution-reconciliation:${action.id}`,
         payload: { issueId: task.id, recoveryActionId: action.id },
         requestedByActorType: "system",
         requestedByActorId: "execution-recovery",
@@ -254,42 +288,48 @@ export async function deliverReconciledExecutions(
           issueId: task.id,
           taskId: task.id,
           recoveryActionId: action.id,
-          previousRunId: decision.runId,
-          retryOfRunId: decision.runId,
+          previousRunId: sourceRunId,
+          retryOfRunId: sourceRunId,
           forceFreshSession: true,
-          wakeReason: "issue_recovery_action_restored",
-          source: "execution.reconciled",
+          wakeReason: recoveryOnly
+            ? "issue_recovery_only_continuation"
+            : "issue_recovery_action_restored",
+          source: recoveryOnly
+            ? "execution.recovery_only"
+            : "execution.reconciled",
         },
       });
       if (run)
         await db.transaction(async (tx) => {
           await tx
             .update(heartbeatRuns)
-            .set({ retryOfRunId: decision.runId })
+            .set({ retryOfRunId: sourceRunId })
             .where(
               and(
                 eq(heartbeatRuns.companyId, action.companyId),
                 eq(heartbeatRuns.id, run.id),
                 eq(heartbeatRuns.agentId, action.returnOwnerAgentId!),
                 sql`${heartbeatRuns.contextSnapshot}->>'recoveryActionId' = ${action.id}`,
-                sql`${heartbeatRuns.contextSnapshot}->>'previousRunId' = ${decision.runId}`,
+                sql`${heartbeatRuns.contextSnapshot}->>'previousRunId' = ${sourceRunId}`,
               ),
             );
           await tx
             .update(issueRecoveryActions)
             .set({
-              evidence: sql`${issueRecoveryActions.evidence} || ${JSON.stringify(
-                {
-                  continuationDelivery: "delivered",
-                  continuationRunId: run.id,
-                },
-              )}::jsonb`,
+              evidence: recoveryOnly
+                ? sql`jsonb_set(jsonb_set(${issueRecoveryActions.evidence}, '{automaticRecovery,replay}', '"recovery_only_delivered"'::jsonb), '{automaticRecovery,recoveryOnlyContinuationRunId}', ${JSON.stringify(run.id)}::jsonb)`
+                : sql`${issueRecoveryActions.evidence} || ${JSON.stringify(
+                    {
+                      continuationDelivery: "delivered",
+                      continuationRunId: run.id,
+                    },
+                  )}::jsonb`,
             })
             .where(pendingDecision);
         });
-    } catch {
+    } catch (err) {
       logger.warn(
-        { recoveryActionId: action.id },
+        { err, recoveryActionId: action.id },
         "Reconciled execution continuation remains pending for retry",
       );
     }
