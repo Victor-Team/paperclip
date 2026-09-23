@@ -1895,6 +1895,87 @@ describeEmbeddedPostgres("issue recovery actions", () => {
     expect(await getExecutionBlocker(db, companyId, sourceIssueId)).toBeNull();
   });
 
+  it("skips a recovery-only wake unless its requester is the system", async () => {
+    const { companyId, coderId, sourceIssueId } = await seedCompany();
+    const responsibleUserId = randomUUID();
+    await db.insert(authUsers).values({
+      id: responsibleUserId,
+      name: "Recovery operator",
+      email: `${responsibleUserId}@example.test`,
+      emailVerified: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+    await db
+      .update(companies)
+      .set({ defaultResponsibleUserId: responsibleUserId })
+      .where(eq(companies.id, companyId));
+    await db
+      .update(agents)
+      .set({ runtimeConfig: { heartbeat: { maxConcurrentRuns: 1 } } })
+      .where(eq(agents.id, coderId));
+    const previousRunId = randomUUID();
+    await seedHeartbeatRun({
+      companyId,
+      agentId: coderId,
+      runId: previousRunId,
+      issueId: sourceIssueId,
+      status: "failed",
+    });
+    await db.update(issues).set({ status: "blocked" }).where(eq(issues.id, sourceIssueId));
+    const [action] = await db.insert(issueRecoveryActions).values({
+      companyId,
+      sourceIssueId,
+      kind: "active_run_watchdog",
+      status: "resolved",
+      outcome: "blocked",
+      ownerType: "system",
+      returnOwnerAgentId: coderId,
+      cause: "uncertain_external_action",
+      fingerprint: previousRunId,
+      nextAction: "Preserve work without replaying the unknown action.",
+      evidence: {
+        automaticRecovery: {
+          policy: "preserve_without_replay_v1",
+          runId: previousRunId,
+          replay: "blocked",
+          actionOutcome: "unknown",
+        },
+      },
+    }).returning();
+    const heartbeat = heartbeatService(db, { runtimeEnv: {} });
+
+    const run = await heartbeat.wakeup(coderId, {
+      source: "automation",
+      triggerDetail: "system",
+      reason: "issue_recovery_only_continuation",
+      idempotencyKey: `execution-recovery-only:${action!.id}`,
+      payload: { issueId: sourceIssueId, recoveryActionId: action!.id },
+      requestedByActorType: "agent",
+      requestedByActorId: "execution-recovery",
+      contextSnapshot: {
+        issueId: sourceIssueId,
+        taskId: sourceIssueId,
+        recoveryActionId: action!.id,
+        previousRunId,
+        retryOfRunId: previousRunId,
+        forceFreshSession: true,
+        wakeReason: "issue_recovery_only_continuation",
+        source: "execution.recovery_only",
+      },
+    });
+
+    expect(run).toBeNull();
+    const wakes = await db
+      .select()
+      .from(agentWakeupRequests)
+      .where(eq(agentWakeupRequests.idempotencyKey, `execution-recovery-only:${action!.id}`));
+    expect(wakes).toHaveLength(0);
+    expect(await getExecutionBlocker(db, companyId, sourceIssueId)).toMatchObject({
+      recoveryActionId: action!.id,
+    });
+  });
+
   it.each(["owner", "status", "decision"] as const)(
     "rechecks the current reconciliation %s after the sweep read",
     async (changed) => {

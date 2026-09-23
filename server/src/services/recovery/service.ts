@@ -2697,6 +2697,24 @@ export function recoveryService(
     return new Date(now.getTime() + PROVIDER_QUOTA_RECOVERY_DEFAULT_BACKOFF_MS);
   }
 
+  async function resolvePersistedRetryOfRunId(input: {
+    companyId: string;
+    runId: string | null | undefined;
+  }) {
+    if (!input.runId) return null;
+    const [sourceRun] = await db
+      .select({ id: heartbeatRuns.id })
+      .from(heartbeatRuns)
+      .where(
+        and(
+          eq(heartbeatRuns.companyId, input.companyId),
+          eq(heartbeatRuns.id, input.runId),
+        ),
+      )
+      .limit(1);
+    return sourceRun?.id ?? null;
+  }
+
   async function ensureProviderQuotaWaitRecoveryMonitor(input: {
     issue: typeof issues.$inferSelect;
     latestRun: LatestIssueRun;
@@ -2721,6 +2739,10 @@ export function recoveryService(
 
     const now = new Date();
     const retryAt = readProviderQuotaRetryAt(input.latestRun, now);
+    const retryOfRunId = await resolvePersistedRetryOfRunId({
+      companyId: input.issue.companyId,
+      runId: input.latestRun?.id,
+    });
     return db.transaction(async (tx) => {
       const wakeup = await tx
         .insert(agentWakeupRequests)
@@ -2756,6 +2778,7 @@ export function recoveryService(
           triggerDetail: "system",
           status: "scheduled_retry",
           wakeupRequestId: wakeup.id,
+          retryOfRunId,
           scheduledRetryAt: retryAt,
           scheduledRetryAttempt: 1,
           scheduledRetryReason: "provider_quota_recovery",
@@ -2825,6 +2848,10 @@ export function recoveryService(
     const retryReason = isProviderQuota
       ? "provider_quota_recovery"
       : "stranded_liveness_recovery";
+    const retryOfRunId = await resolvePersistedRetryOfRunId({
+      companyId: input.issue.companyId,
+      runId: input.latestRun?.id,
+    });
 
     return db.transaction(async (tx) => {
       const wakeup = await tx
@@ -2860,6 +2887,7 @@ export function recoveryService(
           triggerDetail: "system",
           status: "scheduled_retry",
           wakeupRequestId: wakeup.id,
+          retryOfRunId,
           scheduledRetryAt: retryAt,
           scheduledRetryAttempt: 1,
           scheduledRetryReason: retryReason,

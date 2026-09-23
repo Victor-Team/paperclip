@@ -97,6 +97,7 @@ describeEmbeddedPostgres("issue scheduled retry routes", () => {
     agentStatus?: "active" | "paused";
     retryStatus?: "scheduled_retry" | "queued" | "running";
     issueStatus?: "in_progress" | "todo" | "done" | "cancelled";
+    retryReason?: "transient_failure" | "provider_quota_recovery" | "stranded_liveness_recovery";
   } = {}) {
     const companyId = randomUUID();
     const agentId = randomUUID();
@@ -107,6 +108,7 @@ describeEmbeddedPostgres("issue scheduled retry routes", () => {
     const issuePrefix = `T${companyId.replace(/-/g, "").slice(0, 6).toUpperCase()}`;
     const now = new Date("2026-05-06T18:00:00.000Z");
     const scheduledRetryAt = new Date("2026-05-06T19:00:00.000Z");
+    const retryReason = input.retryReason ?? "transient_failure";
 
     await db.insert(companies).values({
       id: companyId,
@@ -153,7 +155,7 @@ describeEmbeddedPostgres("issue scheduled retry routes", () => {
       agentId,
       source: "automation",
       triggerDetail: "system",
-      reason: "bounded_transient_heartbeat_retry",
+      reason: retryReason,
       payload: {
         issueId,
         retryOfRunId: sourceRunId,
@@ -172,14 +174,14 @@ describeEmbeddedPostgres("issue scheduled retry routes", () => {
       retryOfRunId: sourceRunId,
       scheduledRetryAt,
       scheduledRetryAttempt: 2,
-      scheduledRetryReason: "transient_failure",
+      scheduledRetryReason: retryReason,
       contextSnapshot: {
         issueId,
-        wakeReason: "bounded_transient_heartbeat_retry",
+        wakeReason: retryReason,
         retryOfRunId: sourceRunId,
         scheduledRetryAt: scheduledRetryAt.toISOString(),
         scheduledRetryAttempt: 2,
-        retryReason: "transient_failure",
+        retryReason,
       },
       updatedAt: now,
       createdAt: now,
@@ -303,6 +305,32 @@ describeEmbeddedPostgres("issue scheduled retry routes", () => {
     expect(retryRuns).toHaveLength(1);
     expect(retryRuns[0]).toMatchObject({ id: retryRunId, status: "queued" });
   });
+
+  it.each([
+    "provider_quota_recovery",
+    "stranded_liveness_recovery",
+  ] as const)(
+    "finds the %s self-healing retry by source-run lineage for retry-now",
+    async (retryReason) => {
+      const { companyId, issueId, retryRunId, sourceRunId } = await seedIssueWithRetry({
+        retryReason,
+      });
+
+      const res = await request(createApp(boardActor(companyId)))
+        .post(`/api/issues/${issueId}/scheduled-retry/retry-now`)
+        .send({});
+
+      expect(res.status, JSON.stringify(res.body)).toBe(200);
+      expect(res.body).toMatchObject({
+        outcome: "promoted",
+        scheduledRetry: {
+          runId: retryRunId,
+          retryOfRunId: sourceRunId,
+          scheduledRetryReason: retryReason,
+        },
+      });
+    },
+  );
 
   it("returns a clear no-op response when there is no scheduled retry", async () => {
     const companyId = randomUUID();
