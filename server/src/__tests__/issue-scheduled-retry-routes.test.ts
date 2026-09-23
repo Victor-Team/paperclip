@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import express from "express";
 import request from "supertest";
 import { and, eq } from "drizzle-orm";
-import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import {
   activityLog,
   agents,
@@ -22,6 +22,7 @@ import {
 } from "./helpers/embedded-postgres.js";
 import { errorHandler } from "../middleware/index.js";
 import { issueRoutes } from "../routes/issues.js";
+import { recoveryService } from "../services/recovery/service.js";
 
 const embeddedPostgresSupport = await getEmbeddedPostgresTestSupport();
 const describeEmbeddedPostgres = embeddedPostgresSupport.supported ? describe : describe.skip;
@@ -207,6 +208,63 @@ describeEmbeddedPostgres("issue scheduled retry routes", () => {
     return { companyId, agentId, issueId, sourceRunId, retryRunId, scheduledRetryAt };
   }
 
+  async function seedIssueForProductionRecovery() {
+    const companyId = randomUUID();
+    const agentId = randomUUID();
+    const issueId = randomUUID();
+    const sourceRunId = randomUUID();
+    const issuePrefix = `R${companyId.replace(/-/g, "").slice(0, 6).toUpperCase()}`;
+    const now = new Date("2026-05-06T18:00:00.000Z");
+
+    await db.insert(companies).values({
+      id: companyId,
+      name: "Paperclip",
+      issuePrefix,
+      requireBoardApprovalForNewAgents: false,
+    });
+    await db.insert(agents).values({
+      id: agentId,
+      companyId,
+      name: "RecoveryCoder",
+      role: "engineer",
+      status: "active",
+      adapterType: "codex_local",
+      adapterConfig: {},
+      runtimeConfig: { heartbeat: { wakeOnDemand: true, maxConcurrentRuns: 1 } },
+      permissions: {},
+    });
+    await db.insert(issues).values({
+      id: issueId,
+      companyId,
+      title: "Recoverable issue",
+      status: "in_progress",
+      priority: "medium",
+      assigneeAgentId: agentId,
+      issueNumber: 1,
+      identifier: `${issuePrefix}-1`,
+    });
+    await db.insert(heartbeatRuns).values({
+      id: sourceRunId,
+      companyId,
+      agentId,
+      invocationSource: "assignment",
+      triggerDetail: "system",
+      status: "failed",
+      error: "transient upstream error",
+      errorCode: "adapter_failed",
+      finishedAt: now,
+      contextSnapshot: { issueId, wakeReason: "issue_assigned" },
+      updatedAt: now,
+      createdAt: now,
+    });
+    const [issue] = await db.select().from(issues).where(eq(issues.id, issueId));
+    const [sourceRun] = await db
+      .select()
+      .from(heartbeatRuns)
+      .where(eq(heartbeatRuns.id, sourceRunId));
+    return { companyId, agentId, issueId, sourceRunId, issue: issue!, sourceRun: sourceRun! };
+  }
+
   it("surfaces the current scheduled retry in the issue read model", async () => {
     const { companyId, issueId, agentId, sourceRunId, retryRunId, scheduledRetryAt } = await seedIssueWithRetry();
 
@@ -307,13 +365,43 @@ describeEmbeddedPostgres("issue scheduled retry routes", () => {
   });
 
   it.each([
-    "provider_quota_recovery",
-    "stranded_liveness_recovery",
-  ] as const)(
-    "finds the %s self-healing retry by source-run lineage for retry-now",
-    async (retryReason) => {
-      const { companyId, issueId, retryRunId, sourceRunId } = await seedIssueWithRetry({
-        retryReason,
+    {
+      recoveryCause: "provider_quota" as const,
+      retryReason: "provider_quota_recovery",
+    },
+    {
+      recoveryCause: "stranded_assigned_issue" as const,
+      retryReason: "stranded_liveness_recovery",
+    },
+  ])(
+    "creates and promotes the $retryReason retry through the production recovery path",
+    async ({ recoveryCause, retryReason }) => {
+      const { companyId, issueId, agentId, sourceRunId, issue, sourceRun } =
+        await seedIssueForProductionRecovery();
+      const recovery = recoveryService(db, {
+        enqueueWakeup: vi.fn(async () => null),
+      });
+
+      await recovery.escalateStrandedAssignedIssue({
+        issue,
+        previousStatus: "in_progress",
+        latestRun: sourceRun,
+        recoveryCause,
+      });
+
+      const [scheduledRun] = await db
+        .select()
+        .from(heartbeatRuns)
+        .where(
+          and(
+            eq(heartbeatRuns.companyId, companyId),
+            eq(heartbeatRuns.agentId, agentId),
+            eq(heartbeatRuns.status, "scheduled_retry"),
+          ),
+        );
+      expect(scheduledRun).toMatchObject({
+        retryOfRunId: sourceRunId,
+        scheduledRetryReason: retryReason,
       });
 
       const res = await request(createApp(boardActor(companyId)))
@@ -324,7 +412,7 @@ describeEmbeddedPostgres("issue scheduled retry routes", () => {
       expect(res.body).toMatchObject({
         outcome: "promoted",
         scheduledRetry: {
-          runId: retryRunId,
+          runId: scheduledRun!.id,
           retryOfRunId: sourceRunId,
           scheduledRetryReason: retryReason,
         },
