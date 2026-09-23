@@ -43,8 +43,8 @@ function readableSource(source: string) {
   return source.replaceAll("_", " ");
 }
 
-function routineRunTitle(run: RoutineRunSummary) {
-  return run.linkedIssue?.title ?? run.trigger?.label ?? "Routine run";
+function routineRunTitle(run: RoutineRunSummary, t: (key: string) => string) {
+  return run.linkedIssue?.title ?? run.trigger?.label ?? t("auditruns.general.routinerun");
 }
 
 function RoutineScopedRuns({
@@ -76,7 +76,7 @@ function RoutineScopedRuns({
   }
 
   if (runs.length === 0) {
-    return <EmptyState icon={Activity} message="No routine runs yet." />;
+    return <EmptyState icon={Activity} message={t("auditruns.general.noroutinerunsyet")} />;
   }
 
   return (
@@ -92,7 +92,7 @@ function RoutineScopedRuns({
             <>
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="font-medium text-foreground">{routineRunTitle(run)}</span>
+                  <span className="font-medium text-foreground">{routineRunTitle(run, t)}</span>
                   <StatusBadge status={run.status} />
                 </div>
                 <p className="mt-1 truncate text-sm text-muted-foreground">
@@ -260,7 +260,7 @@ export function AuditRuns({ companyId, routineId }: { companyId: string; routine
       ) : visibleRuns.length === 0 ? (
         <EmptyState
           icon={agentId !== ALL || status !== ALL ? CircleDotDashed : Activity}
-          message={agentId !== ALL || status !== ALL ? "No runs match these filters." : "No runs yet."}
+          message={agentId !== ALL || status !== ALL ? t("auditruns.general.norunsmatchthesefilters") : t("auditruns.general.norunsyet")}
         />
       ) : (
         <ul className="divide-y divide-border border-y border-border" aria-label={t("auditruns.general.recentruns")}>
@@ -277,7 +277,7 @@ export function AuditRuns({ companyId, routineId }: { companyId: string; routine
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
                       <span className="font-medium text-foreground">
-                        {agent?.name ?? "Unknown agent"}
+                        {agent?.name ?? t("auditruns.general.unknownagent")}
                       </span>
                       <span className="font-mono text-(length:--text-micro) text-muted-foreground">
                         {run.id.slice(0, 8)}
@@ -285,7 +285,7 @@ export function AuditRuns({ companyId, routineId }: { companyId: string; routine
                       <StatusBadge status={run.status} />
                     </div>
                     <p className="mt-1 truncate text-sm text-muted-foreground">
-                      {summary ?? `${readableSource(run.invocationSource)} run`}
+                      {summary ?? t("auditruns.general.sourcerun", { source: readableSource(run.invocationSource) })}
                     </p>
                   </div>
                   <div className="flex shrink-0 items-center gap-2 text-xs text-muted-foreground sm:justify-end">

@@ -1,16 +1,23 @@
 export type AuditSection = "activity" | "runs" | "costs" | "budgets" | "timeline";
 
-export const AUDIT_SECTIONS: ReadonlyArray<{
+const AUDIT_SECTION_ROUTES: ReadonlyArray<{
   value: AuditSection;
   label: string;
   href: string;
 }> = [
-  { value: "activity", label: "Activity", href: "/activity" },
-  { value: "runs", label: "Runs", href: "/activity/runs" },
-  { value: "costs", label: "Costs", href: "/activity/costs" },
-  { value: "budgets", label: "Budgets", href: "/activity/budgets" },
-  { value: "timeline", label: "Timeline", href: "/activity/timeline" },
+  { value: "activity", label: "activity", href: "/activity" },
+  { value: "runs", label: "runs", href: "/activity/runs" },
+  { value: "costs", label: "costs", href: "/activity/costs" },
+  { value: "budgets", label: "budgets", href: "/activity/budgets" },
+  { value: "timeline", label: "timeline", href: "/activity/timeline" },
 ];
+
+export function auditSections(t: (key: string) => string) {
+  return AUDIT_SECTION_ROUTES.map((section) => ({
+    ...section,
+    label: t(`auditnavigation.sections.${section.label}`),
+  }));
+}
 
 export interface AuditLinkScope {
   mode?: "all" | "agents";
@@ -21,7 +28,7 @@ export interface AuditLinkScope {
 }
 
 export function auditSectionHref(section: AuditSection, scope: AuditLinkScope = {}) {
-  const base = AUDIT_SECTIONS.find((candidate) => candidate.value === section)?.href ?? "/activity";
+  const base = AUDIT_SECTION_ROUTES.find((candidate) => candidate.value === section)?.href ?? "/activity";
   const search = new URLSearchParams();
   if (scope.mode === "agents") search.set("mode", "agents");
   if (scope.agentId) search.set("agentId", scope.agentId);

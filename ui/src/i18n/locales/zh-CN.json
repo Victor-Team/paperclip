@@ -1364,6 +1364,7 @@
       "thetask": "该任务",
       "document": "文档",
       "onbehalfof": "代表",
+      "onbehalfofuser": "代表 {{user}}",
       "viewrun": "查看运行",
       "agentauditisapaperclipenterpriseview": "智能体审计是 Paperclip Enterprise 视图",
       "theagentauditloggivesyoua": "智能体审计日志提供智能体全部操作的可搜索、可导出记录，包括每条评论、任务变更、审批和运行，并列出每项操作的负责人。请联系管理员授予你",
@@ -1398,7 +1399,32 @@
       "clearfilters1": "清除筛选条件",
       "loading2": "加载中…",
       "loadmore": "加载更多",
-      "recordedbypaperclipentriescantbe": "Recorded by Paperclip — entries can't be edited. Sensitive values are never stored."
+      "recordedbypaperclipentriescantbe": "由 Paperclip 记录，条目不可编辑，且不会存储敏感信息。",
+      "user": "用户",
+      "plugin": "插件",
+      "system": "系统",
+      "auser": "一名用户",
+      "auditexported": "审计已导出",
+      "yourcsvdownloadhasstarted": "CSV 下载已开始。",
+      "exportfailed": "导出失败",
+      "couldnotexporttheauditlog": "无法导出审计日志。"
+    },
+    "filters": {
+      "allactions": "全部操作",
+      "tasks": "任务",
+      "agents": "智能体",
+      "runs": "运行",
+      "approvals": "审批",
+      "projects": "项目",
+      "goals": "目标",
+      "tools": "工具",
+      "costs": "成本",
+      "company": "公司",
+      "allentities": "全部实体",
+      "task": "任务",
+      "agent": "智能体",
+      "project": "项目",
+      "goal": "目标"
     }
   },
   "auditfeed": {
@@ -1407,6 +1433,7 @@
       "theconnection": "该连接",
       "document": "文档",
       "onbehalfof": "代表",
+      "onbehalfofuser": "代表 {{user}}",
       "viewrun": "查看运行",
       "agentauditisapaperclipenterpriseview": "智能体审计是 Paperclip Enterprise 视图",
       "theagentauditloggivesyoua": "智能体审计日志提供智能体全部操作的可搜索、可导出记录，包括每条评论、任务变更、审批和运行，并列出每项操作的负责人。请联系管理员授予你",
@@ -1418,8 +1445,8 @@
       "activityscope": "活动范围",
       "activity1": "活动",
       "agentactions": "智能体操作",
-      "scopedtooneagent": "Scoped to one agent",
-      "entity": "entity",
+      "scopedtooneagent": "限定为一个智能体",
+      "entity": "实体",
       "agent": "智能体",
       "agent2": "智能体",
       "allagents": "全部智能体",
@@ -1447,16 +1474,48 @@
       "assoonasyouragentsstartdoing": "智能体开始工作后，其操作会显示在这里。",
       "assoonasanyoneinyourorganization": "组织中的任何人执行操作后，都会显示在这里。",
       "clearfilters7": "清除筛选条件",
-      "auditactivity": "Audit activity",
+      "auditactivity": "审计活动",
       "loading8": "加载中…",
       "loadmore": "加载更多",
-      "recordedbypaperclipentriescantbe": "Recorded by Paperclip — entries can't be edited. Sensitive values are never stored."
+      "recordedbypaperclipentriescantbe": "由 Paperclip 记录，条目不可编辑，且不会存储敏感信息。",
+      "user": "用户",
+      "plugin": "插件",
+      "system": "系统",
+      "auser": "一名用户",
+      "auditexported": "审计已导出",
+      "yourcsvdownloadhasstarted": "CSV 下载已开始。",
+      "exportfailed": "导出失败",
+      "couldnotexporttheauditlog": "无法导出审计日志。",
+      "scopedtorun": "限定为运行 {{runId}}",
+      "scopedto": "限定为 {{entity}}",
+      "agentactionsrequiresauditaccess": "智能体操作需要审计访问权限"
+    },
+    "filters": {
+      "allactions": "全部操作",
+      "tasks": "任务",
+      "agents": "智能体",
+      "runs": "运行",
+      "approvals": "审批",
+      "projects": "项目",
+      "goals": "目标",
+      "appstools": "应用与工具",
+      "costs": "成本",
+      "organization": "组织",
+      "allentities": "全部实体",
+      "task": "任务",
+      "agent": "智能体",
+      "run": "运行",
+      "routine": "例行任务",
+      "project": "项目",
+      "goal": "目标",
+      "connection": "连接"
     }
   },
   "audithub": {
     "general": {
-      "audit": "Audit",
-      "reviewwhathappenedinspectagentrunsand": "查看发生了什么，检查智能体运行，并了解组织的成本和预算控制。"
+      "audit": "审计",
+      "reviewwhathappenedinspectagentrunsand": "查看发生了什么，检查智能体运行，并了解组织的成本和预算控制。",
+      "selectanorganizationtoviewaudit": "请选择一个组织以查看审计信息。"
     }
   },
   "auditruns": {
@@ -1482,7 +1541,13 @@
       "tryagain4": "重试",
       "recentruns": "最近运行",
       "showingthe5": "显示最近",
-      "mostrecentruns": "个运行。"
+      "mostrecentruns": "个运行。",
+      "routinerun": "例行运行",
+      "noroutinerunsyet": "尚无例行运行。",
+      "norunsmatchthesefilters": "没有运行符合这些筛选条件。",
+      "norunsyet": "尚无运行。",
+      "unknownagent": "未知智能体",
+      "sourcerun": "{{source}} 运行"
     }
   },
   "routineauditactivity": {
@@ -1490,7 +1555,29 @@
       "loadingroutineactivity": "正在加载例行活动…",
       "failedtoloadroutineactivity": "无法加载例行活动。",
       "tryagain": "重试",
-      "routineactivity": "例行活动"
+      "routineactivity": "例行活动",
+      "noroutineactivityyet": "尚无例行活动。"
+    }
+  },
+  "auditnavigation": {
+    "sections": {
+      "activity": "活动",
+      "runs": "运行",
+      "costs": "成本",
+      "budgets": "预算",
+      "timeline": "时间线"
+    }
+  },
+  "companyactivity": {
+    "general": {
+      "activity": "活动",
+      "selectanorganizationtoviewactivity": "请选择一个组织以查看活动。"
+    }
+  },
+  "companyactivityproduction": {
+    "general": {
+      "activity": "活动",
+      "selectacompanytoviewactivity": "请选择一个公司以查看活动。"
     }
   }
 }

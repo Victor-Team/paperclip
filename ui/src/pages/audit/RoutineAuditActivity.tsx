@@ -50,7 +50,7 @@ export function RoutineAuditActivity({
 
   const events = activity.data ?? [];
   if (events.length === 0) {
-    return <EmptyState icon={Activity} message="No routine activity yet." />;
+    return <EmptyState icon={Activity} message={t("routineauditactivity.general.noroutineactivityyet")} />;
   }
 
   return (

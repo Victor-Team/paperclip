@@ -31,27 +31,27 @@ const PAGE_SIZE = 50;
 const ALL = "__all";
 
 /** Action-domain prefixes offered in the filter (server does a prefix match). */
-const ACTION_DOMAINS: { value: string; label: string }[] = [
-  { value: ALL, label: "All actions" },
-  { value: "issue.", label: "Tasks" },
-  { value: "agent.", label: "Agents" },
-  { value: "heartbeat.", label: "Runs" },
-  { value: "approval.", label: "Approvals" },
-  { value: "project.", label: "Projects" },
-  { value: "goal.", label: "Goals" },
-  { value: "tool_gateway.", label: "Tools" },
-  { value: "cost.", label: "Costs" },
-  { value: "company.", label: "Company" },
+const actionDomains = (t: (key: string) => string): { value: string; label: string }[] => [
+  { value: ALL, label: t("auditfeedproduction.filters.allactions") },
+  { value: "issue.", label: t("auditfeedproduction.filters.tasks") },
+  { value: "agent.", label: t("auditfeedproduction.filters.agents") },
+  { value: "heartbeat.", label: t("auditfeedproduction.filters.runs") },
+  { value: "approval.", label: t("auditfeedproduction.filters.approvals") },
+  { value: "project.", label: t("auditfeedproduction.filters.projects") },
+  { value: "goal.", label: t("auditfeedproduction.filters.goals") },
+  { value: "tool_gateway.", label: t("auditfeedproduction.filters.tools") },
+  { value: "cost.", label: t("auditfeedproduction.filters.costs") },
+  { value: "company.", label: t("auditfeedproduction.filters.company") },
 ];
 
 /** Entity types offered in the filter (server does an exact match). */
-const ENTITY_TYPES: { value: string; label: string }[] = [
-  { value: ALL, label: "All entities" },
-  { value: "issue", label: "Task" },
-  { value: "agent", label: "Agent" },
-  { value: "project", label: "Project" },
-  { value: "goal", label: "Goal" },
-  { value: "company", label: "Company" },
+const entityTypes = (t: (key: string) => string): { value: string; label: string }[] => [
+  { value: ALL, label: t("auditfeedproduction.filters.allentities") },
+  { value: "issue", label: t("auditfeedproduction.filters.task") },
+  { value: "agent", label: t("auditfeedproduction.filters.agent") },
+  { value: "project", label: t("auditfeedproduction.filters.project") },
+  { value: "goal", label: t("auditfeedproduction.filters.goal") },
+  { value: "company", label: t("auditfeedproduction.filters.company") },
 ];
 
 /**
@@ -101,6 +101,7 @@ function AuditActor({
   agentMap: Map<string, Agent>;
   userProfileMap: Map<string, CompanyUserProfile>;
 }) {
+  const { t } = useTranslation();
   // Agent names are company-readable through the same authorization-filtered
   // directory used by this page. The basic audit tier strips privileged
   // attribution (`agentId`) but retains the acting principal (`actorId`), so
@@ -123,7 +124,7 @@ function AuditActor({
     const profile = userProfileMap.get(record.actorId);
     return (
       <Identity
-        name={profile?.label ?? "User"}
+        name={profile?.label ?? t("auditfeedproduction.general.user")}
         avatarUrl={profile?.image ?? null}
         size="sm"
         className="font-medium text-foreground"
@@ -134,12 +135,12 @@ function AuditActor({
   // deleted or authorization-filtered agents that are absent from the directory.
   const label =
     record.actorType === "plugin"
-      ? "Plugin"
+      ? t("auditfeedproduction.general.plugin")
       : record.actorType === "agent"
-        ? "Agent"
+        ? t("auditfeedproduction.general.agent")
         : record.actorType === "user"
-          ? "User"
-          : "System";
+          ? t("auditfeedproduction.general.user")
+          : t("auditfeedproduction.general.system");
   return <Identity name={label} size="sm" className="font-medium text-foreground" />;
 }
 
@@ -186,7 +187,7 @@ function AuditRow({
     record.responsibleUserId
       && !(record.actorType === "user" && record.actorId === record.responsibleUserId),
   );
-  const responsibleLabel = responsible?.label ?? (record.responsibleUserId ? "a user" : null);
+  const responsibleLabel = responsible?.label ?? (record.responsibleUserId ? t("auditfeedproduction.general.auser") : null);
   const excerpt = record.entity.comment?.excerpt?.trim();
   // Show the document key only when it isn't already the linked entity node.
   const documentKey = record.entity.issue && record.entity.document ? record.entity.document.key : null;
@@ -213,7 +214,7 @@ function AuditRow({
           <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
             {showOnBehalf && responsibleLabel ? (
               <span className="inline-flex items-center rounded-full bg-muted px-2 py-0.5">
-                {t("auditfeedproduction.general.onbehalfof")}{responsibleLabel}
+                {t("auditfeedproduction.general.onbehalfofuser", { user: responsibleLabel })}
               </span>
             ) : null}
             {record.runId && record.agentId ? (
@@ -274,6 +275,8 @@ export function AuditFeed({
   const [dateTo, setDateTo] = useState<string>("");
   const [exporting, setExporting] = useState(false);
   const [downgradeRecoveryAttempted, setDowngradeRecoveryAttempted] = useState(false);
+  const actionDomainOptions = useMemo(() => actionDomains(t), [t]);
+  const entityTypeOptions = useMemo(() => entityTypes(t), [t]);
 
   const agents = useQuery({
     queryKey: queryKeys.agents.list(companyId),
@@ -445,11 +448,11 @@ export function AuditFeed({
       // Browsers may read blob URLs lazily after click(), so keep the URL alive
       // long enough for the download to start.
       window.setTimeout(() => URL.revokeObjectURL(url), 5_000);
-      pushToast({ title: "Audit exported", body: "Your CSV download has started.", tone: "success" });
+      pushToast({ title: t("auditfeedproduction.general.auditexported"), body: t("auditfeedproduction.general.yourcsvdownloadhasstarted"), tone: "success" });
     } catch (error) {
       pushToast({
-        title: "Export failed",
-        body: error instanceof Error ? error.message : "Could not export the audit log.",
+        title: t("auditfeedproduction.general.exportfailed"),
+        body: error instanceof Error ? error.message : t("auditfeedproduction.general.couldnotexporttheauditlog"),
         tone: "error",
       });
     } finally {
@@ -521,7 +524,7 @@ export function AuditFeed({
               <SelectValue placeholder={t("auditfeedproduction.general.action")} />
             </SelectTrigger>
             <SelectContent>
-              {ACTION_DOMAINS.map((d) => (
+              {actionDomainOptions.map((d) => (
                 <SelectItem key={d.value} value={d.value}>
                   {d.label}
                 </SelectItem>
@@ -533,7 +536,7 @@ export function AuditFeed({
               <SelectValue placeholder={t("auditfeedproduction.general.entity")} />
             </SelectTrigger>
             <SelectContent>
-              {ENTITY_TYPES.map((e) => (
+                {entityTypeOptions.map((e) => (
                 <SelectItem key={e.value} value={e.value}>
                   {e.label}
                 </SelectItem>

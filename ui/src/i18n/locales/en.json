@@ -1364,6 +1364,7 @@
       "thetask": "the task",
       "document": "Document",
       "onbehalfof": "on behalf of",
+      "onbehalfofuser": "on behalf of {{user}}",
       "viewrun": "View run",
       "agentauditisapaperclipenterpriseview": "Agent audit is a Paperclip Enterprise view",
       "theagentauditloggivesyoua": "The agent audit log gives you a searchable, exportable record of everything your agents\n            did — every comment, task change, approval, and run — with the responsible person for\n            each action. Ask an administrator to grant you the",
@@ -1398,7 +1399,13 @@
       "clearfilters1": "Clear filters",
       "loading2": "Loading…",
       "loadmore": "Load more",
-      "recordedbypaperclipentriescantbe": "Recorded by Paperclip — entries can't be edited. Sensitive values are never stored."
+      "recordedbypaperclipentriescantbe": "Recorded by Paperclip — entries can't be edited. Sensitive values are never stored.",
+      "user": "User", "plugin": "Plugin", "system": "System", "auser": "a user",
+      "auditexported": "Audit exported", "yourcsvdownloadhasstarted": "Your CSV download has started.", "exportfailed": "Export failed", "couldnotexporttheauditlog": "Could not export the audit log."
+    },
+    "filters": {
+      "allactions": "All actions", "tasks": "Tasks", "agents": "Agents", "runs": "Runs", "approvals": "Approvals", "projects": "Projects", "goals": "Goals", "tools": "Tools", "costs": "Costs", "company": "Company",
+      "allentities": "All entities", "task": "Task", "agent": "Agent", "project": "Project", "goal": "Goal"
     }
   },
   "auditfeed": {
@@ -1407,6 +1414,7 @@
       "theconnection": "the connection",
       "document": "Document",
       "onbehalfof": "on behalf of",
+      "onbehalfofuser": "on behalf of {{user}}",
       "viewrun": "View run",
       "agentauditisapaperclipenterpriseview": "Agent audit is a Paperclip Enterprise view",
       "theagentauditloggivesyoua": "The agent audit log gives you a searchable, exportable record of everything your agents\n            did — every comment, task change, approval, and run — with the responsible person for\n            each action. Ask an administrator to grant you the",
@@ -1450,13 +1458,21 @@
       "auditactivity": "Audit activity",
       "loading8": "Loading…",
       "loadmore": "Load more",
-      "recordedbypaperclipentriescantbe": "Recorded by Paperclip — entries can't be edited. Sensitive values are never stored."
+      "recordedbypaperclipentriescantbe": "Recorded by Paperclip — entries can't be edited. Sensitive values are never stored.",
+      "user": "User", "plugin": "Plugin", "system": "System", "auser": "a user",
+      "auditexported": "Audit exported", "yourcsvdownloadhasstarted": "Your CSV download has started.", "exportfailed": "Export failed", "couldnotexporttheauditlog": "Could not export the audit log.",
+      "scopedtorun": "Scoped to run {{runId}}", "scopedto": "Scoped to {{entity}}", "agentactionsrequiresauditaccess": "Agent Actions requires audit access"
+    },
+    "filters": {
+      "allactions": "All actions", "tasks": "Tasks", "agents": "Agents", "runs": "Runs", "approvals": "Approvals", "projects": "Projects", "goals": "Goals", "appstools": "Apps & tools", "costs": "Costs", "organization": "Organization",
+      "allentities": "All entities", "task": "Task", "agent": "Agent", "run": "Run", "routine": "Routine", "project": "Project", "goal": "Goal", "connection": "Connection"
     }
   },
   "audithub": {
     "general": {
       "audit": "Audit",
-      "reviewwhathappenedinspectagentrunsand": "Review what happened, inspect agent runs, and understand the costs and budget controls\n          behind your organization."
+      "reviewwhathappenedinspectagentrunsand": "Review what happened, inspect agent runs, and understand the costs and budget controls\n          behind your organization.",
+      "selectanorganizationtoviewaudit": "Select an organization to view Audit."
     }
   },
   "auditruns": {
@@ -1482,7 +1498,8 @@
       "tryagain4": "Try again",
       "recentruns": "Recent runs",
       "showingthe5": "Showing the",
-      "mostrecentruns": "most recent runs."
+      "mostrecentruns": "most recent runs.",
+      "routinerun": "Routine run", "noroutinerunsyet": "No routine runs yet.", "norunsmatchthesefilters": "No runs match these filters.", "norunsyet": "No runs yet.", "unknownagent": "Unknown agent", "sourcerun": "{{source}} run"
     }
   },
   "routineauditactivity": {
@@ -1490,7 +1507,16 @@
       "loadingroutineactivity": "Loading routine activity…",
       "failedtoloadroutineactivity": "Failed to load routine activity.",
       "tryagain": "Try again",
-      "routineactivity": "Routine activity"
+      "routineactivity": "Routine activity", "noroutineactivityyet": "No routine activity yet."
     }
+  },
+  "auditnavigation": {
+    "sections": { "activity": "Activity", "runs": "Runs", "costs": "Costs", "budgets": "Budgets", "timeline": "Timeline" }
+  },
+  "companyactivity": {
+    "general": { "activity": "Activity", "selectanorganizationtoviewactivity": "Select an organization to view activity." }
+  },
+  "companyactivityproduction": {
+    "general": { "activity": "Activity", "selectacompanytoviewactivity": "Select a company to view activity." }
   }
 }

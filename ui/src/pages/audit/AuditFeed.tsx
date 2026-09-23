@@ -31,30 +31,30 @@ const PAGE_SIZE = 50;
 const ALL = "__all";
 
 /** Action-domain prefixes offered in the filter (server does a prefix match). */
-const ACTION_DOMAINS: { value: string; label: string }[] = [
-  { value: ALL, label: "All actions" },
-  { value: "issue.", label: "Tasks" },
-  { value: "agent.", label: "Agents" },
-  { value: "heartbeat.", label: "Runs" },
-  { value: "approval.", label: "Approvals" },
-  { value: "project.", label: "Projects" },
-  { value: "goal.", label: "Goals" },
-  { value: "tool_", label: "Apps & tools" },
-  { value: "cost.", label: "Costs" },
-  { value: "company.", label: "Organization" },
+const actionDomains = (t: (key: string) => string): { value: string; label: string }[] => [
+  { value: ALL, label: t("auditfeed.filters.allactions") },
+  { value: "issue.", label: t("auditfeed.filters.tasks") },
+  { value: "agent.", label: t("auditfeed.filters.agents") },
+  { value: "heartbeat.", label: t("auditfeed.filters.runs") },
+  { value: "approval.", label: t("auditfeed.filters.approvals") },
+  { value: "project.", label: t("auditfeed.filters.projects") },
+  { value: "goal.", label: t("auditfeed.filters.goals") },
+  { value: "tool_", label: t("auditfeed.filters.appstools") },
+  { value: "cost.", label: t("auditfeed.filters.costs") },
+  { value: "company.", label: t("auditfeed.filters.organization") },
 ];
 
 /** Entity types offered in the filter (server does an exact match). */
-const ENTITY_TYPES: { value: string; label: string }[] = [
-  { value: ALL, label: "All entities" },
-  { value: "issue", label: "Task" },
-  { value: "agent", label: "Agent" },
-  { value: "heartbeat_run", label: "Run" },
-  { value: "routine", label: "Routine" },
-  { value: "project", label: "Project" },
-  { value: "goal", label: "Goal" },
-  { value: "company", label: "Organization" },
-  { value: "tool_connection", label: "Connection" },
+const entityTypes = (t: (key: string) => string): { value: string; label: string }[] => [
+  { value: ALL, label: t("auditfeed.filters.allentities") },
+  { value: "issue", label: t("auditfeed.filters.task") },
+  { value: "agent", label: t("auditfeed.filters.agent") },
+  { value: "heartbeat_run", label: t("auditfeed.filters.run") },
+  { value: "routine", label: t("auditfeed.filters.routine") },
+  { value: "project", label: t("auditfeed.filters.project") },
+  { value: "goal", label: t("auditfeed.filters.goal") },
+  { value: "company", label: t("auditfeed.filters.organization") },
+  { value: "tool_connection", label: t("auditfeed.filters.connection") },
 ];
 
 /**
@@ -111,6 +111,7 @@ function AuditActor({
   agentMap: Map<string, Agent>;
   userProfileMap: Map<string, CompanyUserProfile>;
 }) {
+  const { t } = useTranslation();
   // Agent names are company-readable through the same authorization-filtered
   // directory used by this page. The basic audit tier strips privileged
   // attribution (`agentId`) but retains the acting principal (`actorId`), so
@@ -133,7 +134,7 @@ function AuditActor({
     const profile = userProfileMap.get(record.actorId);
     return (
       <Identity
-        name={profile?.label ?? "User"}
+        name={profile?.label ?? t("auditfeed.general.user")}
         avatarUrl={profile?.image ?? null}
         size="sm"
         className="font-medium text-foreground"
@@ -144,12 +145,12 @@ function AuditActor({
   // deleted or authorization-filtered agents that are absent from the directory.
   const label =
     record.actorType === "plugin"
-      ? "Plugin"
+      ? t("auditfeed.general.plugin")
       : record.actorType === "agent"
-        ? "Agent"
+        ? t("auditfeed.general.agent")
         : record.actorType === "user"
-          ? "User"
-          : "System";
+          ? t("auditfeed.general.user")
+          : t("auditfeed.general.system");
   return <Identity name={label} size="sm" className="font-medium text-foreground" />;
 }
 
@@ -207,7 +208,7 @@ function AuditRow({
     record.responsibleUserId
       && !(record.actorType === "user" && record.actorId === record.responsibleUserId),
   );
-  const responsibleLabel = responsible?.label ?? (record.responsibleUserId ? "a user" : null);
+  const responsibleLabel = responsible?.label ?? (record.responsibleUserId ? t("auditfeed.general.auser") : null);
   const excerpt = record.entity.comment?.excerpt?.trim();
   // Show the document key only when it isn't already the linked entity node.
   const documentKey = record.entity.issue && record.entity.document ? record.entity.document.key : null;
@@ -234,7 +235,7 @@ function AuditRow({
           <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
             {showOnBehalf && responsibleLabel ? (
               <span className="inline-flex items-center rounded-full bg-muted px-2 py-0.5">
-                {t("auditfeed.general.onbehalfof")}{responsibleLabel}
+                {t("auditfeed.general.onbehalfofuser", { user: responsibleLabel })}
               </span>
             ) : null}
             {record.runId && record.agentId ? (
@@ -304,6 +305,8 @@ export function AuditFeed({
   const [dateTo, setDateTo] = useState<string>("");
   const [exporting, setExporting] = useState(false);
   const [downgradeRecoveryAttempted, setDowngradeRecoveryAttempted] = useState(false);
+  const actionDomainOptions = useMemo(() => actionDomains(t), [t]);
+  const entityTypeOptions = useMemo(() => entityTypes(t), [t]);
 
   const agents = useQuery({
     queryKey: queryKeys.agents.list(companyId),
@@ -480,11 +483,11 @@ export function AuditFeed({
       // Browsers may read blob URLs lazily after click(), so keep the URL alive
       // long enough for the download to start.
       window.setTimeout(() => URL.revokeObjectURL(url), 5_000);
-      pushToast({ title: "Audit exported", body: "Your CSV download has started.", tone: "success" });
+      pushToast({ title: t("auditfeed.general.auditexported"), body: t("auditfeed.general.yourcsvdownloadhasstarted"), tone: "success" });
     } catch (error) {
       pushToast({
-        title: "Export failed",
-        body: error instanceof Error ? error.message : "Could not export the audit log.",
+        title: t("auditfeed.general.exportfailed"),
+        body: error instanceof Error ? error.message : t("auditfeed.general.couldnotexporttheauditlog"),
         tone: "error",
       });
     } finally {
@@ -518,7 +521,7 @@ export function AuditFeed({
             <TabsTrigger
               value="agents"
               disabled={accessTier === "basic"}
-              title={accessTier === "basic" ? "Agent Actions requires audit access" : undefined}
+              title={accessTier === "basic" ? t("auditfeed.general.agentactionsrequiresauditaccess") : undefined}
             >
               {t("auditfeed.general.agentactions")}</TabsTrigger>
           </TabsList>
@@ -528,10 +531,10 @@ export function AuditFeed({
       {hasLockedScope ? (
         <div className="border-y border-border px-1 py-2 text-xs text-muted-foreground">
           {lockedRunId
-            ? `Scoped to run ${lockedRunId.slice(0, 8)}`
+            ? t("auditfeed.general.scopedtorun", { runId: lockedRunId.slice(0, 8) })
             : lockedAgentId
               ? t("auditfeed.general.scopedtooneagent")
-              : `Scoped to ${lockedEntity?.label ?? lockedEntity?.type ?? t("auditfeed.general.entity")}`}
+              : t("auditfeed.general.scopedto", { entity: lockedEntity?.label ?? lockedEntity?.type ?? t("auditfeed.general.entity") })}
         </div>
       ) : null}
 
@@ -580,7 +583,7 @@ export function AuditFeed({
               <SelectValue placeholder={t("auditfeed.general.action4")} />
             </SelectTrigger>
             <SelectContent>
-              {ACTION_DOMAINS.map((d) => (
+              {actionDomainOptions.map((d) => (
                 <SelectItem key={d.value} value={d.value}>
                   {d.label}
                 </SelectItem>
@@ -596,7 +599,7 @@ export function AuditFeed({
                 <SelectValue placeholder={t("auditfeed.general.entity6")} />
               </SelectTrigger>
               <SelectContent>
-                {ENTITY_TYPES.map((e) => (
+                {entityTypeOptions.map((e) => (
                   <SelectItem key={e.value} value={e.value}>
                     {e.label}
                   </SelectItem>
