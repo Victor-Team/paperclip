@@ -1297,6 +1297,8 @@ describeEmbeddedPostgres("heartbeat orphaned process recovery", () => {
     kind?: string;
     previousOwnerAgentId?: string | null;
     returnOwnerAgentId?: string | null;
+    ownerType?: "board" | "system";
+    expectedStatus?: "blocked" | "in_progress";
   }) {
     const action = await waitForValue(async () =>
       db
@@ -1321,7 +1323,7 @@ describeEmbeddedPostgres("heartbeat orphaned process recovery", () => {
       recoveryIssueId: null,
       kind: input.kind ?? "stranded_assigned_issue",
       status: "active",
-      ownerType: "board",
+      ownerType: input.ownerType ?? "board",
       ownerAgentId: null,
       previousOwnerAgentId: input.previousOwnerAgentId ?? input.agentId,
       returnOwnerAgentId: input.returnOwnerAgentId ?? input.agentId,
@@ -1334,9 +1336,13 @@ describeEmbeddedPostgres("heartbeat orphaned process recovery", () => {
       previousStatus: input.previousStatus,
       latestRunId: input.runId,
       retryReason: input.retryReason ?? null,
-      routingPolicy: "board_escalation_no_takeover_v1",
+      ...(input.ownerType === "system"
+        ? {}
+        : { routingPolicy: "board_escalation_no_takeover_v1" }),
     });
-    if (input.cause === "execution_review_participant_recovery") {
+    if (input.ownerType === "system") {
+      expect(action.nextAction).toContain("Board operator");
+    } else if (input.cause === "execution_review_participant_recovery") {
       expect(action.nextAction).toContain("failed review participant path");
     } else if (input.cause === "process_lost") {
       expect(action.nextAction).toContain(
@@ -1375,7 +1381,7 @@ describeEmbeddedPostgres("heartbeat orphaned process recovery", () => {
       .from(issues)
       .where(eq(issues.id, input.issueId))
       .then((rows) => rows[0] ?? null);
-    expect(sourceIssue?.status).toBe("blocked");
+    expect(sourceIssue?.status).toBe(input.expectedStatus ?? "blocked");
 
     return action;
   }
@@ -13229,7 +13235,7 @@ describeEmbeddedPostgres("heartbeat orphaned process recovery", () => {
     expect(runs).toHaveLength(1);
   });
 
-  it("blocks stranded in-progress work after a productive continuation retry was already used", async () => {
+  it("keeps stranded in-progress work schedulable after a productive continuation retry was already used", async () => {
     const { companyId, agentId, issueId, runId } =
       await seedStrandedIssueFixture({
         status: "in_progress",
@@ -13250,7 +13256,8 @@ describeEmbeddedPostgres("heartbeat orphaned process recovery", () => {
       .from(issues)
       .where(eq(issues.id, issueId))
       .then((rows) => rows[0] ?? null);
-    expect(issue?.status).toBe("blocked");
+    expect(issue?.status).toBe("in_progress");
+    expect(issue?.unblockDescriptor).toBeNull();
 
     const recoveryAction = await expectSourceScopedStrandedRecoveryAction({
       companyId,
@@ -13259,29 +13266,36 @@ describeEmbeddedPostgres("heartbeat orphaned process recovery", () => {
       runId,
       previousStatus: "in_progress",
       retryReason: "issue_continuation_needed",
+      ownerType: "system",
+      expectedStatus: "in_progress",
+    });
+    expect(recoveryAction.ownerType).toBe("system");
+    expect(recoveryAction.wakePolicy).toMatchObject({
+      type: "scheduled_retry",
+      retryAgentId: agentId,
+    });
+
+    const scheduledRetries = await db
+      .select()
+      .from(heartbeatRuns)
+      .where(
+        and(
+          eq(heartbeatRuns.companyId, companyId),
+          eq(heartbeatRuns.agentId, agentId),
+          eq(heartbeatRuns.status, "scheduled_retry"),
+        ),
+      );
+    expect(scheduledRetries).toHaveLength(1);
+    expect(scheduledRetries[0]).toMatchObject({
+      scheduledRetryReason: "stranded_liveness_recovery",
+      contextSnapshot: expect.objectContaining({ issueId }),
     });
 
     const comments = await db
       .select()
       .from(issueComments)
       .where(eq(issueComments.issueId, issueId));
-    expect(comments).toHaveLength(1);
-    expect(comments[0]?.body).toContain("automatically retried continuation");
-    expect(comments[0]?.body).toContain("still has no live execution path");
-    expect(
-      noticeMetadataReferencesRecoveryAction(
-        comments[0]?.metadata,
-        recoveryAction.id,
-      ),
-    ).toBe(true);
-    expect(
-      commentMetadataRows(comments[0]).some(
-        (row) =>
-          row.type === "key_value" &&
-          row.label === "Recovery owner" &&
-          row.value === "Board decision required",
-      ),
-    ).toBe(true);
+    expect(comments).toHaveLength(0);
   });
 
   async function seedNativePassiveBoardResponse(
