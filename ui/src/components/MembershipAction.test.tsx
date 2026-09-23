@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { flushSync } from "react-dom";
 import { createRoot } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { i18n } from "@/i18n";
 import { MembershipAction } from "./MembershipAction";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -21,7 +22,8 @@ describe("MembershipAction", () => {
   let container: HTMLDivElement;
   let root: ReturnType<typeof createRoot> | null;
 
-  beforeEach(() => {
+  beforeEach(async () => {
+    await i18n.changeLanguage("en");
     container = document.createElement("div");
     document.body.appendChild(container);
     root = null;
@@ -36,6 +38,7 @@ describe("MembershipAction", () => {
     }
     container.remove();
     document.body.innerHTML = "";
+    await i18n.changeLanguage("en");
   });
 
   async function renderAction(element: ReactNode) {
@@ -117,5 +120,65 @@ describe("MembershipAction", () => {
     expect(button().getAttribute("aria-busy")).toBe("true");
     expect(button().disabled).toBe(true);
     expect(button().textContent).toContain("Joining...");
+  });
+
+  it("retranslates join, leave, and pending copy without translating the resource name", async () => {
+    const onJoin = vi.fn();
+    const onLeave = vi.fn();
+    await renderAction(
+      <>
+        <MembershipAction state="left" resourceName="Growth 项目" onJoin={onJoin} onLeave={onLeave} />
+        <MembershipAction state="joined" resourceName="Growth 项目" onJoin={onJoin} onLeave={onLeave} />
+        <MembershipAction
+          state="left"
+          pending
+          pendingState="joined"
+          resourceName="Growth 项目"
+          onJoin={onJoin}
+          onLeave={onLeave}
+        />
+        <MembershipAction
+          state="joined"
+          pending
+          pendingState="left"
+          resourceName="Growth 项目"
+          onJoin={onJoin}
+          onLeave={onLeave}
+        />
+      </>,
+    );
+
+    const labels = () => Array.from(container.querySelectorAll("button")).map((el) => ({
+      text: el.textContent,
+      aria: el.getAttribute("aria-label"),
+    }));
+    expect(labels()).toEqual([
+      { text: expect.stringContaining("Join"), aria: "Join Growth 项目" },
+      { text: expect.stringContaining("Leave"), aria: "Leave Growth 项目" },
+      { text: expect.stringContaining("Joining..."), aria: "Join Growth 项目" },
+      { text: expect.stringContaining("Leaving..."), aria: "Leave Growth 项目" },
+    ]);
+
+    await act(async () => {
+      await i18n.changeLanguage("zh-CN");
+    });
+
+    expect(labels()).toEqual([
+      { text: expect.stringContaining("加入"), aria: "加入 Growth 项目" },
+      { text: expect.stringContaining("退出"), aria: "退出 Growth 项目" },
+      { text: expect.stringContaining("加入中…"), aria: "加入 Growth 项目" },
+      { text: expect.stringContaining("退出中…"), aria: "退出 Growth 项目" },
+    ]);
+    expect(container.querySelector("button")?.getAttribute("aria-label")).toContain("Growth 项目");
+    expect(container.textContent).not.toContain("Growth 项目");
+    expect(container.textContent).not.toContain("Join");
+    expect(container.textContent).not.toContain("Leave");
+
+    const joinButton = container.querySelector("button");
+    await act(async () => {
+      joinButton?.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }));
+    });
+    expect(onJoin).toHaveBeenCalledTimes(1);
+    expect(onLeave).not.toHaveBeenCalled();
   });
 });

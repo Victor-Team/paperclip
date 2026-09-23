@@ -1,4 +1,5 @@
 import type { CSSProperties } from "react";
+import { useTranslation } from "@/i18n";
 import { cn } from "../lib/utils";
 import {
   statusBadge,
@@ -10,6 +11,74 @@ import {
   taskStatusVarDefault,
 } from "../lib/status-colors";
 import { StatusGlyph } from "./StatusGlyph";
+
+/** Known StatusBadge statuses. Values are i18n keys, never translated text. */
+const STATUS_BADGE_LABEL_KEYS: Record<string, string> = {
+  active: "statusbadge.general.active",
+  running: "statusbadge.general.running",
+  scheduled_retry: "statusbadge.general.scheduledRetry",
+  paused: "statusbadge.general.paused",
+  idle: "statusbadge.general.idle",
+  archived: "statusbadge.general.archived",
+  planned: "statusbadge.general.planned",
+  achieved: "statusbadge.general.achieved",
+  completed: "statusbadge.general.completed",
+  failed: "statusbadge.general.failed",
+  timed_out: "statusbadge.general.timedOut",
+  succeeded: "statusbadge.general.succeeded",
+  ok: "statusbadge.general.ok",
+  warning: "statusbadge.general.warning",
+  error: "statusbadge.general.error",
+  info: "statusbadge.general.info",
+  terminated: "statusbadge.general.terminated",
+  pending: "statusbadge.general.pending",
+  queued: "statusbadge.general.queued",
+  pending_approval: "statusbadge.general.pendingApproval",
+  revision_requested: "statusbadge.general.revisionRequested",
+  approved: "statusbadge.general.approved",
+  rejected: "statusbadge.general.rejected",
+  draft: "statusbadge.general.draft",
+  backlog: "statusbadge.general.backlog",
+  todo: "statusbadge.general.todo",
+  in_progress: "statusbadge.general.inProgress",
+  in_review: "statusbadge.general.inReview",
+  blocked: "statusbadge.general.blocked",
+  done: "statusbadge.general.done",
+  cancelled: "statusbadge.general.cancelled",
+  allowed: "statusbadge.general.allowed",
+  denied: "statusbadge.general.denied",
+  block: "statusbadge.general.block",
+  "require-approval": "statusbadge.general.requireApproval",
+  redacted: "statusbadge.general.redacted",
+  "rate-limit": "statusbadge.general.rateLimit",
+  deferred: "statusbadge.general.deferred",
+  hidden: "statusbadge.general.hidden",
+  quarantined: "statusbadge.general.quarantined",
+  "runtime-error": "statusbadge.general.runtimeError",
+  healthy: "statusbadge.general.healthy",
+  degraded: "statusbadge.general.degraded",
+  unchecked: "statusbadge.general.unchecked",
+};
+
+/** Issue chips keep sentence-case English, so they do not share the lowercase keys. */
+const ISSUE_STATUS_LABEL_KEYS: Record<string, string> = {
+  backlog: "statusbadge.general.issueBacklog",
+  todo: "statusbadge.general.issueTodo",
+  in_progress: "statusbadge.general.issueInProgress",
+  in_review: "statusbadge.general.issueInReview",
+  done: "statusbadge.general.issueDone",
+  blocked: "statusbadge.general.issueBlocked",
+  cancelled: "statusbadge.general.issueCancelled",
+};
+
+/** Agent chips. `active` keeps the idle display alias and only the label is translated. */
+const AGENT_STATUS_LABEL_KEYS: Record<string, string> = {
+  idle: "statusbadge.general.idle",
+  active: "statusbadge.general.idle",
+  running: "statusbadge.general.running",
+  paused: "statusbadge.general.paused",
+  error: "statusbadge.general.error",
+};
 
 /** Inline `--sc` local var pointing a status helper at a base-hue CSS var. */
 function scStyle(cssVar: string): CSSProperties {
@@ -28,6 +97,9 @@ function sentenceCaseStatus(status: string): string {
 // design-allow(pill-pattern): DECISION-SHEET.md C8 - status badges keep the bespoke WCAG-tuned
 // .status-chip color-mix mechanic and do not wrap the Badge primitive.
 export function StatusBadge({ status, label }: { status: string; label?: string }) {
+  const { t } = useTranslation();
+  const key = STATUS_BADGE_LABEL_KEYS[status];
+  const text = label ?? (key ? t(key) : status.replace(/[_-]/g, " "));
   return (
     <span
       className={cn(
@@ -35,7 +107,7 @@ export function StatusBadge({ status, label }: { status: string; label?: string 
         statusBadge[status] ?? statusBadgeDefault
       )}
     >
-      {label ?? status.replace(/[_-]/g, " ")}
+      {text}
     </span>
   );
 }
@@ -46,14 +118,17 @@ export function StatusBadge({ status, label }: { status: string; label?: string 
  * renders as "idle" (alias for dead code).
  */
 export function AgentStatusBadge({ status }: { status: string }) {
+  const { t } = useTranslation();
   const cssVar = agentStatusVar[status] ?? agentStatusVarDefault;
-  const label = status === "active" ? "idle" : status;
+  const displayStatus = status === "active" ? "idle" : status;
+  const key = AGENT_STATUS_LABEL_KEYS[status];
+  const label = key ? t(key) : displayStatus.replace(/_/g, " ");
   return (
     <span
       className="status-chip inline-flex items-center rounded-full border px-3 py-1 text-xs font-medium leading-none whitespace-nowrap shrink-0"
       style={scStyle(cssVar)}
     >
-      {label.replace(/_/g, " ")}
+      {label}
     </span>
   );
 }
@@ -84,7 +159,10 @@ export function AgentStatusCapsule({ status }: { status: string }) {
  * unaffected.
  */
 export function IssueStatusBadge({ status }: { status: string }) {
+  const { t } = useTranslation();
   const cssVar = taskStatusVar[status] ?? taskStatusVarDefault;
+  const key = ISSUE_STATUS_LABEL_KEYS[status];
+  const label = key ? t(key) : sentenceCaseStatus(status);
   return (
     <span
       className={cn(
@@ -94,7 +172,7 @@ export function IssueStatusBadge({ status }: { status: string }) {
       style={scStyle(cssVar)}
     >
       <StatusGlyph status={status} size="sm" />
-      {sentenceCaseStatus(status)}
+      {label}
     </span>
   );
 }

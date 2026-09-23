@@ -1286,5 +1286,77 @@
       "count_other": "{{count}} artifacts",
       "updated": "Updated {{date}}"
     }
+  },
+  "statusbadge": {
+    "general": {
+      "active": "active",
+      "running": "running",
+      "scheduledRetry": "scheduled retry",
+      "paused": "paused",
+      "idle": "idle",
+      "archived": "archived",
+      "planned": "planned",
+      "achieved": "achieved",
+      "completed": "completed",
+      "failed": "failed",
+      "timedOut": "timed out",
+      "succeeded": "succeeded",
+      "ok": "ok",
+      "warning": "warning",
+      "error": "error",
+      "info": "info",
+      "terminated": "terminated",
+      "pending": "pending",
+      "queued": "queued",
+      "pendingApproval": "pending approval",
+      "revisionRequested": "revision requested",
+      "approved": "approved",
+      "rejected": "rejected",
+      "draft": "draft",
+      "backlog": "backlog",
+      "todo": "todo",
+      "inProgress": "in progress",
+      "inReview": "in review",
+      "blocked": "blocked",
+      "done": "done",
+      "cancelled": "cancelled",
+      "allowed": "allowed",
+      "denied": "denied",
+      "block": "block",
+      "requireApproval": "require approval",
+      "redacted": "redacted",
+      "rateLimit": "rate limit",
+      "deferred": "deferred",
+      "hidden": "hidden",
+      "quarantined": "quarantined",
+      "runtimeError": "runtime error",
+      "healthy": "healthy",
+      "degraded": "degraded",
+      "unchecked": "unchecked",
+      "issueBacklog": "Backlog",
+      "issueTodo": "Todo",
+      "issueInProgress": "In progress",
+      "issueInReview": "In review",
+      "issueDone": "Done",
+      "issueBlocked": "Blocked",
+      "issueCancelled": "Cancelled"
+    }
+  },
+  "membershipaction": {
+    "general": {
+      "join": "Join",
+      "leave": "Leave",
+      "joining": "Joining...",
+      "leaving": "Leaving...",
+      "joinResource": "Join {{resourceName}}",
+      "leaveResource": "Leave {{resourceName}}"
+    }
+  },
+  "startoggle": {
+    "general": {
+      "starResource": "Star {{resourceName}}",
+      "unstarResource": "Unstar {{resourceName}}",
+      "retry": "Couldn't save — retry"
+    }
   }
 }

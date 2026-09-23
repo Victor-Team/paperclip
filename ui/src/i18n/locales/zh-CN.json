@@ -1286,5 +1286,77 @@
       "count_other": "{{count}} 个产物",
       "updated": "已更新 {{date}}"
     }
+  },
+  "statusbadge": {
+    "general": {
+      "active": "活跃",
+      "running": "运行中",
+      "scheduledRetry": "已安排重试",
+      "paused": "已暂停",
+      "idle": "空闲",
+      "archived": "已归档",
+      "planned": "已计划",
+      "achieved": "已达成",
+      "completed": "已完成",
+      "failed": "失败",
+      "timedOut": "已超时",
+      "succeeded": "成功",
+      "ok": "正常",
+      "warning": "警告",
+      "error": "错误",
+      "info": "信息",
+      "terminated": "已终止",
+      "pending": "待处理",
+      "queued": "排队中",
+      "pendingApproval": "待审批",
+      "revisionRequested": "待修订",
+      "approved": "已批准",
+      "rejected": "已拒绝",
+      "draft": "草稿",
+      "backlog": "待办列表",
+      "todo": "待办",
+      "inProgress": "进行中",
+      "inReview": "审查中",
+      "blocked": "已阻塞",
+      "done": "已完成",
+      "cancelled": "已取消",
+      "allowed": "已允许",
+      "denied": "已禁止",
+      "block": "阻止",
+      "requireApproval": "需要审批",
+      "redacted": "已脱敏",
+      "rateLimit": "已限流",
+      "deferred": "已推迟",
+      "hidden": "已隐藏",
+      "quarantined": "已隔离",
+      "runtimeError": "运行时错误",
+      "healthy": "健康",
+      "degraded": "已降级",
+      "unchecked": "未检查",
+      "issueBacklog": "待办列表",
+      "issueTodo": "待办",
+      "issueInProgress": "进行中",
+      "issueInReview": "审查中",
+      "issueDone": "已完成",
+      "issueBlocked": "已阻塞",
+      "issueCancelled": "已取消"
+    }
+  },
+  "membershipaction": {
+    "general": {
+      "join": "加入",
+      "leave": "退出",
+      "joining": "加入中…",
+      "leaving": "退出中…",
+      "joinResource": "加入 {{resourceName}}",
+      "leaveResource": "退出 {{resourceName}}"
+    }
+  },
+  "startoggle": {
+    "general": {
+      "starResource": "为 {{resourceName}} 加星标",
+      "unstarResource": "取消 {{resourceName}} 的星标",
+      "retry": "未能保存，请重试"
+    }
   }
 }

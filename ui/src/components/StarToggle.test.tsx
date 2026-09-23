@@ -3,6 +3,7 @@
 import { flushSync } from "react-dom";
 import { createRoot } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { i18n } from "@/i18n";
 import { StarToggle } from "./StarToggle";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -20,7 +21,8 @@ describe("StarToggle", () => {
   let container: HTMLDivElement;
   let root: ReturnType<typeof createRoot> | null;
 
-  beforeEach(() => {
+  beforeEach(async () => {
+    await i18n.changeLanguage("en");
     container = document.createElement("div");
     document.body.appendChild(container);
     root = null;
@@ -32,6 +34,7 @@ describe("StarToggle", () => {
     }
     container.remove();
     document.body.innerHTML = "";
+    await i18n.changeLanguage("en");
     vi.clearAllMocks();
   });
 
@@ -117,5 +120,40 @@ describe("StarToggle", () => {
     expect(btn?.getAttribute("data-size")).toBe("icon-sm");
     expect(btn?.getAttribute("aria-label")).toBe("Unstar Alpha");
     expect(btn?.querySelector("svg")?.getAttribute("class")).toContain("fill-amber-500");
+  });
+
+  it("retranslates star, unstar, and the retry title without translating the resource name", async () => {
+    const onToggle = vi.fn();
+    await render(
+      <>
+        <StarToggle starred={false} resourceName="Alpha 项目" onToggle={onToggle} />
+        <StarToggle starred resourceName="Alpha 项目" onToggle={onToggle} />
+        <StarToggle starred size="button" error resourceName="Alpha 项目" onToggle={onToggle} />
+      </>,
+    );
+
+    const buttons = () => Array.from(container.querySelectorAll("button"));
+    expect(buttons()[0]?.getAttribute("aria-label")).toBe("Star Alpha 项目");
+    expect(buttons()[1]?.getAttribute("aria-label")).toBe("Unstar Alpha 项目");
+    expect(buttons()[2]?.getAttribute("aria-label")).toBe("Unstar Alpha 项目");
+    expect(buttons()[2]?.getAttribute("title")).toBe("Couldn't save — retry");
+    expect(buttons()[2]?.textContent).toBe("");
+
+    await act(async () => {
+      await i18n.changeLanguage("zh-CN");
+    });
+
+    expect(buttons()[0]?.getAttribute("aria-label")).toBe("为 Alpha 项目 加星标");
+    expect(buttons()[1]?.getAttribute("aria-label")).toBe("取消 Alpha 项目 的星标");
+    expect(buttons()[2]?.getAttribute("title")).toBe("未能保存，请重试");
+    expect(buttons()[0]?.textContent).not.toContain("Alpha 项目");
+    expect(buttons()[2]?.querySelector("svg")?.getAttribute("class")).toContain("text-red-500");
+    expect(buttons()[2]?.querySelector("svg")?.getAttribute("class")).not.toContain("fill-amber-500");
+
+    await act(async () => {
+      buttons()[0]?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    });
+    expect(onToggle).toHaveBeenCalledTimes(1);
+    expect(onToggle).toHaveBeenCalledWith(true);
   });
 });
