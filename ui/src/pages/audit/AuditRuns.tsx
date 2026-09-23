@@ -18,6 +18,7 @@ import {
 import { queryKeys } from "@/lib/queryKeys";
 import { Link, useSearchParams } from "@/lib/router";
 import { relativeTime } from "@/lib/utils";
+import { useTranslation } from "@/i18n";
 
 const ALL = "__all";
 const RUN_LIMIT = 200;
@@ -57,11 +58,11 @@ function RoutineScopedRuns({
   error: Error | null;
   onRetry: () => void;
 }) {
+  const { t } = useTranslation();
   if (isLoading) {
     return (
       <div className="border-y border-border py-14 text-center text-sm text-muted-foreground">
-        Loading routine runs…
-      </div>
+        {t("auditruns.general.loadingroutineruns")}</div>
     );
   }
 
@@ -69,7 +70,7 @@ function RoutineScopedRuns({
     return (
       <div className="flex flex-col items-center gap-3 border-y border-border py-14 text-center">
         <p className="text-sm text-muted-foreground">{error.message}</p>
-        <Button variant="outline" size="sm" onClick={onRetry}>Try again</Button>
+        <Button variant="outline" size="sm" onClick={onRetry}>{t("auditruns.general.tryagain")}</Button>
       </div>
     );
   }
@@ -81,12 +82,11 @@ function RoutineScopedRuns({
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-lg font-semibold text-foreground">Routine runs</h2>
+        <h2 className="text-lg font-semibold text-foreground">{t("auditruns.general.routineruns")}</h2>
         <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-          Executions created by this routine, newest first.
-        </p>
+          {t("auditruns.general.executionscreatedbythisroutinenewestfirst")}</p>
       </div>
-      <ul className="divide-y divide-border border-y border-border" aria-label="Routine runs">
+      <ul className="divide-y divide-border border-y border-border" aria-label={t("auditruns.general.routineruns1")}>
         {runs.map((run) => {
           const content = (
             <>
@@ -121,12 +121,13 @@ function RoutineScopedRuns({
           );
         })}
       </ul>
-      <p className="text-xs text-muted-foreground">Showing the {RUN_LIMIT} most recent routine runs.</p>
+      <p className="text-xs text-muted-foreground">{t("auditruns.general.showingthe")}{RUN_LIMIT} {t("auditruns.general.mostrecentroutineruns")}</p>
     </div>
   );
 }
 
 export function AuditRuns({ companyId, routineId }: { companyId: string; routineId?: string }) {
+  const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
   const agentId = searchParams.get("agentId") ?? ALL;
   const status = searchParams.get("runStatus") ?? ALL;
@@ -201,22 +202,20 @@ export function AuditRuns({ companyId, routineId }: { companyId: string; routine
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-lg font-semibold text-foreground">Runs</h2>
+        <h2 className="text-lg font-semibold text-foreground">{t("auditruns.general.runs")}</h2>
         <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-          Recent agent executions across the organization. Open a run to inspect its transcript,
-          output, and task context.
-        </p>
+          {t("auditruns.general.recentagentexecutionsacrosstheorganizationopen")}</p>
       </div>
 
       <div className="flex flex-wrap items-end gap-3 border-y border-border py-3">
         <label className="grid gap-1 text-(length:--text-micro) font-medium text-muted-foreground">
-          <span>Agent</span>
+          <span>{t("auditruns.general.agent")}</span>
           <Select value={agentId} onValueChange={(value) => updateFilter("agentId", value)}>
             <SelectTrigger className="w-48">
-              <SelectValue placeholder="All agents" />
+              <SelectValue placeholder={t("auditruns.general.allagents")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value={ALL}>All agents</SelectItem>
+              <SelectItem value={ALL}>{t("auditruns.general.allagents2")}</SelectItem>
               {(agents.data ?? []).map((agent) => (
                 <SelectItem key={agent.id} value={agent.id}>
                   {agent.name}
@@ -226,13 +225,13 @@ export function AuditRuns({ companyId, routineId }: { companyId: string; routine
           </Select>
         </label>
         <label className="grid gap-1 text-(length:--text-micro) font-medium text-muted-foreground">
-          <span>Status</span>
+          <span>{t("auditruns.general.status")}</span>
           <Select value={status} onValueChange={(value) => updateFilter("runStatus", value)}>
             <SelectTrigger className="w-40">
-              <SelectValue placeholder="All statuses" />
+              <SelectValue placeholder={t("auditruns.general.allstatuses")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value={ALL}>All statuses</SelectItem>
+              <SelectItem value={ALL}>{t("auditruns.general.allstatuses3")}</SelectItem>
               {statuses.map((value) => (
                 <SelectItem key={value} value={value}>
                   {readableSource(value)}
@@ -243,23 +242,20 @@ export function AuditRuns({ companyId, routineId }: { companyId: string; routine
         </label>
         {agentId !== ALL || status !== ALL ? (
           <Button variant="ghost" size="sm" onClick={clearFilters}>
-            Clear filters
-          </Button>
+            {t("auditruns.general.clearfilters")}</Button>
         ) : null}
       </div>
 
       {runs.isLoading ? (
         <div className="border-y border-border py-14 text-center text-sm text-muted-foreground">
-          Loading runs…
-        </div>
+          {t("auditruns.general.loadingruns")}</div>
       ) : runs.error ? (
         <div className="flex flex-col items-center gap-3 border-y border-border py-14 text-center">
           <p className="text-sm text-muted-foreground">
-            {runs.error instanceof Error ? runs.error.message : "Failed to load runs."}
+            {runs.error instanceof Error ? runs.error.message : t("auditruns.general.failedtoloadruns")}
           </p>
           <Button variant="outline" size="sm" onClick={() => runs.refetch()}>
-            Try again
-          </Button>
+            {t("auditruns.general.tryagain4")}</Button>
         </div>
       ) : visibleRuns.length === 0 ? (
         <EmptyState
@@ -267,7 +263,7 @@ export function AuditRuns({ companyId, routineId }: { companyId: string; routine
           message={agentId !== ALL || status !== ALL ? "No runs match these filters." : "No runs yet."}
         />
       ) : (
-        <ul className="divide-y divide-border border-y border-border" aria-label="Recent runs">
+        <ul className="divide-y divide-border border-y border-border" aria-label={t("auditruns.general.recentruns")}>
           {visibleRuns.map((run) => {
             const agent = agentById.get(run.agentId);
             const summary = runSummary(run);
@@ -306,7 +302,7 @@ export function AuditRuns({ companyId, routineId }: { companyId: string; routine
         </ul>
       )}
 
-      <p className="text-xs text-muted-foreground">Showing the {RUN_LIMIT} most recent runs.</p>
+      <p className="text-xs text-muted-foreground">{t("auditruns.general.showingthe5")}{RUN_LIMIT} {t("auditruns.general.mostrecentruns")}</p>
     </div>
   );
 }
