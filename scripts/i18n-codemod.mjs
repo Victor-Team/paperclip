@@ -8,7 +8,7 @@
  * are reported as manual work instead of being guessed at.
  *
  * Usage:
- *   node scripts/i18n-codemod.mjs --directory ui/src/pages/audit
+ *   node scripts/i18n-codemod.mjs --directory ui/src/pages/audit --expected 126
  *   node scripts/i18n-codemod.mjs --directory ui/src/pages/audit --json report.json
  */
 import fs from "node:fs";
@@ -20,6 +20,7 @@ const sourceRoot = process.cwd();
 const args = process.argv.slice(2);
 const directoryIndex = args.indexOf("--directory");
 const jsonIndex = args.indexOf("--json");
+const expectedIndex = args.indexOf("--expected");
 
 if (directoryIndex === -1 || !args[directoryIndex + 1]) {
   throw new Error("Usage: node scripts/i18n-codemod.mjs --directory <relative-directory> [--json <report-path>]");
@@ -27,6 +28,10 @@ if (directoryIndex === -1 || !args[directoryIndex + 1]) {
 
 const directory = path.resolve(sourceRoot, args[directoryIndex + 1]);
 const reportPath = jsonIndex === -1 ? null : path.resolve(sourceRoot, args[jsonIndex + 1] ?? "");
+const expected = expectedIndex === -1 ? null : Number(args[expectedIndex + 1]);
+if (expected !== null && (!Number.isInteger(expected) || expected < 0)) {
+  throw new Error("--expected must be a non-negative integer");
+}
 
 function filesUnder(root) {
   return fs.readdirSync(root, { withFileTypes: true }).flatMap((entry) => {
@@ -39,7 +44,10 @@ function filesUnder(root) {
 }
 
 function isVisibleText(value) {
-  return /[A-Za-z]/.test(value) && !/^(?:https?:|\/|[A-Z_][A-Z0-9_]*$)/.test(value.trim());
+  const trimmed = value.trim();
+  return /[A-Za-z]/.test(trimmed)
+    && !/[;{}=()]/.test(trimmed)
+    && !/^(?:https?:|\/|[A-Z_][A-Z0-9_]*$)/.test(trimmed);
 }
 
 function componentBefore(source, index) {
@@ -77,15 +85,17 @@ function scan(file) {
 const reports = filesUnder(directory).sort().map(scan);
 const candidates = reports.flatMap((report) => report.candidates);
 const automatic = candidates.filter((entry) => entry.automatic).length;
+const baseline = expected ?? candidates.length;
 const report = {
   directory: path.relative(sourceRoot, directory),
   files: reports,
   summary: {
     scannedFiles: reports.length,
     detectedVisibleStrings: candidates.length,
+    expectedVisibleStrings: baseline,
     automatic,
-    manual: candidates.length - automatic,
-    automaticRate: candidates.length === 0 ? 1 : automatic / candidates.length,
+    manual: Math.max(0, baseline - automatic),
+    automaticRate: baseline === 0 ? 1 : automatic / baseline,
   },
 };
 
