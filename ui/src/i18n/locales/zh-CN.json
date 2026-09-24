@@ -4677,6 +4677,34 @@
       "creategateway": "创建网关"
     }
   },
+  "gatewayactivitypanel": {
+    "general": {
+      "allowed": "已允许",
+      "blocked": "已阻止",
+      "askedfirst": "先询问",
+      "waiting": "等待中",
+      "failed": "失败",
+      "recorded": "已记录",
+      "client": "客户端",
+      "app": "应用",
+      "toolcall": "工具调用",
+      "activitysummary": "{{actor}} 在 {{app}} 中使用了 {{tool}}",
+      "tool": "工具",
+      "callstatus": "调用状态",
+      "decision": "决策",
+      "reason": "原因",
+      "duration": "时长",
+      "invocationid": "调用 ID",
+      "errorcode": "错误代码",
+      "error": "错误",
+      "argumentsredacted": "参数（已脱敏）",
+      "resultredacted": "结果（已脱敏）",
+      "description": "显示此网关过去 30 天的调用。展开行即可检查其工具、已脱敏参数、结果和决策。",
+      "nocalls": "此网关尚无调用。",
+      "loading": "正在加载…",
+      "loadmore": "加载更多"
+    }
+  },
   "appstoolspanel": {
     "general": {
       "theseappsgothroughthisgatewaythe": "这些应用通过此网关。绑定的配置",

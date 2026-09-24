@@ -4677,6 +4677,34 @@
       "creategateway": "Create gateway"
     }
   },
+  "gatewayactivitypanel": {
+    "general": {
+      "allowed": "Allowed",
+      "blocked": "Blocked",
+      "askedfirst": "Asked first",
+      "waiting": "Waiting",
+      "failed": "Failed",
+      "recorded": "Recorded",
+      "client": "Client",
+      "app": "App",
+      "toolcall": "Tool call",
+      "activitysummary": "{{actor}} used {{tool}} in {{app}}",
+      "tool": "Tool",
+      "callstatus": "Call status",
+      "decision": "Decision",
+      "reason": "Reason",
+      "duration": "Duration",
+      "invocationid": "Invocation ID",
+      "errorcode": "Error code",
+      "error": "Error",
+      "argumentsredacted": "Arguments (redacted)",
+      "resultredacted": "Result (redacted)",
+      "description": "Calls through this gateway from the last 30 days. Open a row to inspect its tool, redacted arguments, result, and decision.",
+      "nocalls": "No calls have gone through this gateway yet.",
+      "loading": "Loading…",
+      "loadmore": "Load more"
+    }
+  },
   "appstoolspanel": {
     "general": {
       "theseappsgothroughthisgatewaythe": "These apps go through this gateway. The bound profile",
