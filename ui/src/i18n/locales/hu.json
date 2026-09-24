@@ -2667,6 +2667,7 @@
   "foldercontrols": {
     "general": {
       "folders": "Folders",
+      "foldersfor": "{{itemLabelPlural}} folders",
       "newfolder": "New folder",
       "system": "System",
       "rename": "Rename",
@@ -2705,7 +2706,9 @@
       "selected": "selected",
       "moveto8": "Move to...",
       "deselectall": "Deselect all",
-      "done": "Done"
+      "done": "Done",
+      "folderactionsfor": "Folder actions for {{folderName}}",
+      "usefoldercolor": "Use folder color {{color}}"
     }
   },
   "skillfoldertree": {
@@ -2718,6 +2721,7 @@
       "organization": "Organization",
       "noorganizationfoldersyet": "No organization folders yet.",
       "projects": "Projects",
+      "bundled": "Bundled",
       "system": "System",
       "unfiled": "Unfiled",
       "tags": "Tags",
@@ -2747,7 +2751,11 @@
       "movehere": "Move here",
       "foldername": "Folder name",
       "cancel8": "Cancel",
-      "add": "Add"
+      "add": "Add",
+      "newfolderin": "New {{label}} folder",
+      "collapsefolder": "Collapse folder",
+      "expandfolder": "Expand folder",
+      "folderactionsfor": "Folder actions for {{folderName}}"
     }
   },
   "issueproperties": {

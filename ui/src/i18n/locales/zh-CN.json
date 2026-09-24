@@ -2667,6 +2667,7 @@
   "foldercontrols": {
     "general": {
       "folders": "文件夹",
+      "foldersfor": "{{itemLabelPlural}} 文件夹",
       "newfolder": "新建文件夹",
       "system": "系统",
       "rename": "重命名",
@@ -2705,7 +2706,9 @@
       "selected": "已选中",
       "moveto8": "移至...",
       "deselectall": "取消全选",
-      "done": "完成"
+      "done": "完成",
+      "folderactionsfor": "{{folderName}} 的文件夹操作",
+      "usefoldercolor": "使用文件夹颜色 {{color}}"
     }
   },
   "skillfoldertree": {
@@ -2718,6 +2721,7 @@
       "organization": "组织",
       "noorganizationfoldersyet": "暂无组织文件夹。",
       "projects": "项目",
+      "bundled": "内置",
       "system": "系统",
       "unfiled": "未归档",
       "tags": "标签",
@@ -2747,7 +2751,11 @@
       "movehere": "移至此处",
       "foldername": "文件夹名称",
       "cancel8": "取消",
-      "add": "添加"
+      "add": "添加",
+      "newfolderin": "在{{label}}中新建文件夹",
+      "collapsefolder": "折叠文件夹",
+      "expandfolder": "展开文件夹",
+      "folderactionsfor": "{{folderName}} 的文件夹操作"
     }
   },
   "issueproperties": {

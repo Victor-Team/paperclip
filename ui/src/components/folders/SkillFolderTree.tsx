@@ -287,7 +287,7 @@ export function SkillFolderRail({
               expanded={expanded}
               renamingId={renamingId}
               renameDraft={renameDraft}
-              rootLabel="My Skills"
+              rootLabel={t("skillfoldertree.general.myskills")}
               rootIcon={<User className="h-3.5 w-3.5" />}
               onToggle={toggle}
               onSelect={onSelect}
@@ -348,7 +348,7 @@ export function SkillFolderRail({
               expanded={expanded}
               renamingId={renamingId}
               renameDraft={renameDraft}
-              rootLabel="Projects"
+              rootLabel={t("skillfoldertree.general.projects")}
               rootIcon={<Boxes className="h-3.5 w-3.5" />}
               onToggle={toggle}
               onSelect={onSelect}
@@ -382,7 +382,7 @@ export function SkillFolderRail({
               expanded={expanded}
               renamingId={renamingId}
               renameDraft={renameDraft}
-              rootLabel="Bundled"
+              rootLabel={t("skillfoldertree.general.bundled")}
               rootIcon={<Boxes className="h-3.5 w-3.5" />}
               onToggle={toggle}
               onSelect={onSelect}
@@ -469,6 +469,7 @@ export function SkillFolderRail({
 }
 
 function RailHeading({ label, onCreate }: { label: string; onCreate: () => void }) {
+  const { t } = useTranslation();
   return (
     <div className="group/heading flex items-center justify-between px-2 pb-0.5 pt-3">
       <span className="text-(length:--text-micro) font-medium uppercase tracking-wide text-muted-foreground">
@@ -477,7 +478,7 @@ function RailHeading({ label, onCreate }: { label: string; onCreate: () => void 
       <button
         type="button"
         onClick={onCreate}
-        title={`New ${label.toLowerCase()} folder`}
+        title={t("skillfoldertree.general.newfolderin", { label: label.toLowerCase() })}
         className="opacity-0 transition-opacity group-hover/heading:opacity-100"
       >
         <Plus className="h-3 w-3 text-muted-foreground" />
@@ -582,7 +583,7 @@ function TreeBranch({
       >
         <button
           type="button"
-          aria-label={isOpen ? "Collapse folder" : "Expand folder"}
+          aria-label={isOpen ? t("skillfoldertree.general.collapsefolder") : t("skillfoldertree.general.expandfolder")}
           className={cn(
             "flex h-6 w-4 items-center justify-center text-muted-foreground",
             children.length === 0 && "invisible",
@@ -631,7 +632,7 @@ function TreeBranch({
                 variant="ghost"
                 size="icon-sm"
                 className="h-6 w-6 opacity-0 group-hover:opacity-100 data-[state=open]:opacity-100"
-                aria-label={`Folder actions for ${label}`}
+                aria-label={t("skillfoldertree.general.folderactionsfor", { folderName: label })}
               >
                 <MoreHorizontal className="h-3.5 w-3.5" />
               </Button>
@@ -730,7 +731,7 @@ export function FolderBreadcrumb({
       ) : null}
       {trail.map((folder, index) => {
         const isLast = index === trail.length - 1;
-        const label = index === 0 ? reservedRootLabel(folder) : folder.name;
+        const label = index === 0 ? reservedRootLabel(folder, t) : folder.name;
         return (
           <span key={folder.id} className="inline-flex items-center gap-1">
             <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/60" />
@@ -793,7 +794,7 @@ export function FolderTiles({
               <FolderSwatch color={node.folder.color} className="h-3.5 w-3.5" />
             )}
             <span className="min-w-0 flex-1 truncate text-sm font-medium text-foreground">
-              {reservedRootLabel(node.folder)}
+              {reservedRootLabel(node.folder, t)}
             </span>
             <span className="text-xs text-muted-foreground">{node.folder.itemCount}</span>
           </button>
@@ -856,8 +857,10 @@ export function MoveToFolderDialog({
   const previewPath = chosen === undefined
     ? null
     : chosen === null
-      ? "Unfiled"
-      : chosenFolder?.path ?? null;
+      ? t("skillfoldertree.general.unfiled6")
+      : chosenFolder
+        ? skillFolderDisplayPath(model, chosenFolder.id, t)
+        : null;
 
   async function submitNewFolder() {
     const name = newName.trim();
@@ -902,7 +905,7 @@ export function MoveToFolderDialog({
           ) : (
             <FolderSwatch color={folder.color} />
           )}
-          <span className="min-w-0 flex-1 truncate">{reservedRootLabel(folder)}</span>
+          <span className="min-w-0 flex-1 truncate">{reservedRootLabel(folder, t)}</span>
           {isCurrent ? <span className="text-xs text-muted-foreground">{t("skillfoldertree.general.current")}</span> : null}
           {bundled ? <span className="text-xs text-muted-foreground">{t("skillfoldertree.general.readonly")}</span> : null}
           {isChosen ? <Check className="h-3.5 w-3.5" /> : null}

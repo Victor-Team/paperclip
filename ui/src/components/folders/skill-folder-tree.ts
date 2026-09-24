@@ -19,6 +19,7 @@ export interface FolderTreeNode {
 }
 
 export type ReservedRootKey = "my" | "projects" | "bundled";
+export type FolderLabelTranslator = (key: string) => string;
 
 export interface SkillFolderTreeModel {
   /** "My Skills" reserved root, or null when it hasn't been provisioned yet. */
@@ -145,14 +146,17 @@ export function folderBreadcrumbTrail(
 }
 
 /** Human label for a reserved root, used when composing breadcrumb prefixes. */
-export function reservedRootLabel(folder: Pick<FolderListItem, "systemKey" | "name">): string {
+export function reservedRootLabel(
+  folder: Pick<FolderListItem, "systemKey" | "name">,
+  translate?: FolderLabelTranslator,
+): string {
   switch (folder.systemKey) {
     case "my":
-      return "My Skills";
+      return translate?.("skillfoldertree.general.myskills") ?? "My Skills";
     case "projects":
-      return "Projects";
+      return translate?.("skillfoldertree.general.projects") ?? "Projects";
     case "bundled":
-      return "Bundled";
+      return translate?.("skillfoldertree.general.bundled") ?? "Bundled";
     default:
       return folder.name;
   }
@@ -162,12 +166,13 @@ export function reservedRootLabel(folder: Pick<FolderListItem, "systemKey" | "na
 export function skillFolderDisplayPath(
   model: SkillFolderTreeModel,
   folderId: string | null | undefined,
+  translate?: FolderLabelTranslator,
 ): string | null {
   if (!folderId) return null;
   const trail = folderBreadcrumbTrail(model, folderId);
   if (trail.length === 0) return null;
-  const labels = trail.map((folder) => reservedRootLabel(folder));
-  if (!trail[0]?.systemKey) labels.unshift("Organization");
+  const labels = trail.map((folder) => reservedRootLabel(folder, translate));
+  if (!trail[0]?.systemKey) labels.unshift(translate?.("skillfoldertree.general.organization") ?? "Organization");
   return labels.join(" / ");
 }
 
@@ -177,7 +182,10 @@ function humanizeFolderPathSegment(segment: string): string {
     .replace(/\b\w/g, (character) => character.toUpperCase());
 }
 
-export function skillFolderPathDisplayFallback(folderPath: string | null | undefined): string | null {
+export function skillFolderPathDisplayFallback(
+  folderPath: string | null | undefined,
+  translate?: FolderLabelTranslator,
+): string | null {
   if (!folderPath) return null;
   if (folderPath.includes(" / ")) return folderPath;
 
@@ -186,10 +194,10 @@ export function skillFolderPathDisplayFallback(folderPath: string | null | undef
 
   const root = segments[0]?.toLowerCase();
   const labels = segments.map(humanizeFolderPathSegment);
-  if (root === "my") labels[0] = "My Skills";
-  else if (root === "projects") labels[0] = "Projects";
-  else if (root === "bundled") labels[0] = "Bundled";
-  else labels.unshift("Organization");
+  if (root === "my") labels[0] = translate?.("skillfoldertree.general.myskills") ?? "My Skills";
+  else if (root === "projects") labels[0] = translate?.("skillfoldertree.general.projects") ?? "Projects";
+  else if (root === "bundled") labels[0] = translate?.("skillfoldertree.general.bundled") ?? "Bundled";
+  else labels.unshift(translate?.("skillfoldertree.general.organization") ?? "Organization");
   return labels.join(" / ");
 }
 

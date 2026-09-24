@@ -115,13 +115,15 @@ function selectionLabel({
   folders,
   selection,
   allLabel,
+  unfiledLabel,
 }: {
   folders: FolderListItem[];
   selection: FolderSelection;
   allLabel: string;
+  unfiledLabel: string;
 }) {
   if (selection === "all") return allLabel;
-  if (selection === "unfiled") return "Unfiled";
+  if (selection === "unfiled") return unfiledLabel;
   return folders.find((folder) => folder.id === selection)?.name ?? allLabel;
 }
 
@@ -143,11 +145,12 @@ export function FolderChip({
   allLabel: string;
   onClick: () => void;
 }) {
+  const { t } = useTranslation();
   const folder = result ? selectedFolderFromList(result.folders, selection) : null;
   return (
     <Button variant="outline" size="sm" className="max-w-full justify-start" onClick={onClick}>
       {selection === "all" ? <FolderIcon className="mr-2 h-3.5 w-3.5" /> : <FolderSwatch color={folder?.color} className="mr-2" />}
-      <span className="truncate">{selectionLabel({ folders: result?.folders ?? [], selection, allLabel })}</span>
+      <span className="truncate">{selectionLabel({ folders: result?.folders ?? [], selection, allLabel, unfiledLabel: t("foldercontrols.general.unfiled") })}</span>
       <span className="ml-2 text-xs text-muted-foreground">{selectionCount(result, selection)}</span>
       <ChevronDown className="ml-1 h-3.5 w-3.5 shrink-0" />
     </Button>
@@ -224,7 +227,7 @@ export function FolderRail({
   }
 
   return (
-    <nav aria-label={`${itemLabelPlural} folders`} className="hidden w-(--sz-folder-rail) shrink-0 border-r border-border pr-3 md:block">
+    <nav aria-label={t("foldercontrols.general.foldersfor", { itemLabelPlural })} className="hidden w-(--sz-folder-rail) shrink-0 border-r border-border pr-3 md:block">
       <div className="mb-2 flex items-center justify-between gap-2">
         <div className="text-(length:--text-micro) font-medium uppercase tracking-wide text-muted-foreground">{t("foldercontrols.general.folders")}</div>
         <Button variant="ghost" size="icon-sm" title={t("foldercontrols.general.newfolder")} onClick={onCreate}>
@@ -258,7 +261,7 @@ export function FolderRail({
           ))}
           <div className="px-2 pb-1 pt-3 text-(length:--text-micro) font-medium uppercase tracking-wide text-muted-foreground">
             {t("foldercontrols.general.system")}</div>
-          {renderVirtualRow("unfiled", "Unfiled", result?.unfiledCount ?? 0, <FolderSwatch color={null} className="mt-0.5" />)}
+          {renderVirtualRow("unfiled", t("foldercontrols.general.unfiled"), result?.unfiledCount ?? 0, <FolderSwatch color={null} className="mt-0.5" />)}
         </div>
       )}
     </nav>
@@ -336,7 +339,7 @@ export function FolderRailItem({
             variant="ghost"
             size="icon-sm"
             className="h-6 w-6 opacity-0 group-hover:opacity-100 data-[state=open]:opacity-100"
-            aria-label={`Folder actions for ${folder.name}`}
+            aria-label={t("foldercontrols.general.folderactionsfor", { folderName: folder.name })}
           >
             <MoreHorizontal className="h-3.5 w-3.5" />
           </Button>
@@ -465,15 +468,15 @@ export function MobileFolderSheet({
           />
           {result?.kind === "skill" ? (
             <>
-              {model.my ? renderBranch(model.my, "My Skills") : null}
+              {model.my ? renderBranch(model.my, t("skillfoldertree.general.myskills")) : null}
               <div className="px-2 pb-0.5 pt-2 text-(length:--text-micro) font-medium uppercase tracking-wide text-muted-foreground">
                 {t("foldercontrols.general.organization")}</div>
               {model.company.map((node) => renderBranch(node))}
-              {model.projects ? renderBranch(model.projects, "Projects") : null}
-              {model.bundled ? renderBranch(model.bundled, "Bundled") : null}
+              {model.projects ? renderBranch(model.projects, t("skillfoldertree.general.projects")) : null}
+              {model.bundled ? renderBranch(model.bundled, t("skillfoldertree.general.bundled")) : null}
             </>
           ) : (
-            model.roots.map((node) => renderBranch(node, reservedRootLabel(node.folder)))
+            model.roots.map((node) => renderBranch(node, reservedRootLabel(node.folder, t)))
           )}
           <MobileFolderRow
             id="unfiled"
@@ -660,7 +663,7 @@ export function FolderFormDialog({
                 <button
                   key={swatch}
                   type="button"
-                  aria-label={`Use folder color ${swatch}`}
+                  aria-label={t("foldercontrols.general.usefoldercolor", { color: swatch })}
                   className={cn(
                     "h-7 w-7 rounded-md border border-border",
                     color === swatch && "ring-2 ring-ring ring-offset-2 ring-offset-background",
