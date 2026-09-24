@@ -122,12 +122,37 @@ function localizeOptions(
   }));
 }
 
+const routineRunStatusKeys: Record<string, string> = {
+  queued: "queued",
+  running: "running",
+  succeeded: "succeeded",
+  failed: "failed",
+  cancelled: "cancelled",
+  timed_out: "timedOut",
+  interrupted: "interrupted",
+};
+
+function localizeRoutineRunStatus(t: (key: string) => string, status: string) {
+  const key = routineRunStatusKeys[status];
+  return key ? t(`statusbadge.general.${key}`) : status.replaceAll("_", " ");
+}
+
+function fireDispositionLabel(t: (key: string) => string, disposition: string) {
+  return t(`editablesections.general.fire${disposition}`);
+}
+
+function fireDispositionNote(t: (key: string) => string, disposition: string) {
+  return disposition === "queued"
+    ? t("editablesections.general.firerunsimmediately")
+    : t("editablesections.general.fireifpreviousactive");
+}
+
 export function OverviewSection({
   defaultDescriptionAnnotationsOpen = false,
 }: {
   defaultDescriptionAnnotationsOpen?: boolean;
 } = {}) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const ctx = useRoutineDetail();
   const {
     routine,
@@ -160,9 +185,10 @@ export function OverviewSection({
       .filter((trigger) => trigger.kind === "schedule" && trigger.nextRunAt)
       .map((trigger) => new Date(trigger.nextRunAt as Date))
       .sort((a, b) => a.getTime() - b.getTime())[0];
-    return upcoming ? upcoming.toLocaleString() : null;
-  }, [routine.triggers]);
+    return upcoming ? upcoming.toLocaleString(i18n.language) : null;
+  }, [i18n.language, routine.triggers]);
   const lastRun = (routineRuns ?? [])[0] ?? null;
+  const lastRunLabel = lastRun ? localizeRoutineRunStatus(t, lastRun.status) : null;
   const recentActivity = (activity ?? []).slice(0, 5);
 
   return (
@@ -339,18 +365,20 @@ export function OverviewSection({
         <SummaryCard
           icon={Clock3}
           label={t("editablesections.general.triggers")}
-          value={activeTriggers === 0 ? "None" : `${activeTriggers} active`}
-          hint={nextFire ? `Next fire ${nextFire}` : "No schedule"}
+          value={activeTriggers === 0 ? t("editablesections.general.none") : t("editablesections.general.triggersactive", { count: activeTriggers })}
+          hint={nextFire ? t("editablesections.general.nextfire", { time: nextFire }) : t("editablesections.general.noschedule")}
           to={() => navigateToSection("triggers")}
-          ariaLabel={`${activeTriggers} triggers. Open triggers.`}
+          ariaLabel={t("editablesections.general.triggersopen", { count: activeTriggers })}
         />
         <SummaryCard
           icon={Play}
           label={t("editablesections.general.lastrun")}
-          value={lastRun ? lastRun.status.replaceAll("_", " ") : "No runs"}
-          hint={lastRun ? timeAgo(lastRun.triggeredAt) : "Trigger a run"}
+          value={lastRunLabel ?? t("editablesections.general.noruns")}
+          hint={lastRun ? timeAgo(lastRun.triggeredAt) : t("editablesections.general.triggerrun")}
           to={() => navigateToSection("runs")}
-          ariaLabel={lastRun ? `Last run ${lastRun.status}. Open runs.` : "No runs. Open runs."}
+          ariaLabel={lastRunLabel
+            ? t("editablesections.general.lastrunopen", { status: lastRunLabel })
+            : t("editablesections.general.norunsopen")}
         />
       </div>
 
@@ -483,8 +511,8 @@ export function TriggersSection() {
               <SelectContent>
                 {triggerKinds.map((kind) => (
                   <SelectItem key={kind} value={kind} disabled={kind === "webhook"}>
-                    {kind}
-                    {kind === "webhook" ? " — COMING SOON" : ""}
+                    {kind === "schedule" ? t("editablesections.general.schedule") : t("editablesections.general.webhook")}
+                    {kind === "webhook" ? ` — ${t("editablesections.general.comingsoon")}` : ""}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -811,10 +839,10 @@ function NextFiresPreview({
                 <span className="tabular-nums">{formatFireTime(entry.at, preview.timeZone)}</span>
                 <ArrowRight className="h-3 w-3 shrink-0 text-muted-foreground/50" />
                 <span className={cn("font-medium", dispositionToneClass[entry.disposition])}>
-                  {entry.label}
+                  {fireDispositionLabel(t, entry.disposition)}
                 </span>
                 {entry.note ? (
-                  <span className="truncate text-muted-foreground/60">({entry.note})</span>
+                  <span className="truncate text-muted-foreground/60">({fireDispositionNote(t, entry.disposition)})</span>
                 ) : null}
               </div>
             ))}

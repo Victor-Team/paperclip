@@ -3129,7 +3129,26 @@
       "webhookurl": "Webhook URL",
       "concurrencypolicy": "并发策略",
       "catchuppolicy": "追赶策略",
-      "activitygatescope": "活动门控范围"
+      "activitygatescope": "活动门控范围",
+      "none": "无",
+      "triggersactive": "{{count}} 个已启用",
+      "nextfire": "下次触发：{{time}}",
+      "noschedule": "无计划",
+      "triggersopen": "{{count}} 个触发器。打开触发器。",
+      "secretsbound": "已绑定 {{count}} 个",
+      "manageboundsecrets": "管理已绑定机密",
+      "secretsopen": "已绑定 {{count}} 个机密。打开机密。",
+      "noruns": "无运行记录",
+      "triggerrun": "触发一次运行",
+      "lastrunopen": "上次运行：{{status}}。打开运行。",
+      "norunsopen": "无运行记录。打开运行。",
+      "webhook": "Webhook",
+      "comingsoon": "即将推出",
+      "firequeued": "已排队",
+      "firecoalesced": "将被合并",
+      "fireskipped": "将被跳过",
+      "firerunsimmediately": "立即运行",
+      "fireifpreviousactive": "如果上一次运行仍处于活动状态"
     }
   },
   "editablesections": {
@@ -3211,7 +3230,23 @@
       "webhookurl": "Webhook URL",
       "concurrencypolicy": "并发策略",
       "catchuppolicy": "追赶策略",
-      "activitygatescope": "活动门控范围"
+      "activitygatescope": "活动门控范围",
+      "none": "无",
+      "triggersactive": "{{count}} 个已启用",
+      "nextfire": "下次触发：{{time}}",
+      "noschedule": "无计划",
+      "triggersopen": "{{count}} 个触发器。打开触发器。",
+      "noruns": "无运行记录",
+      "triggerrun": "触发一次运行",
+      "lastrunopen": "上次运行：{{status}}。打开运行。",
+      "norunsopen": "无运行记录。打开运行。",
+      "webhook": "Webhook",
+      "comingsoon": "即将推出",
+      "firequeued": "已排队",
+      "firecoalesced": "将被合并",
+      "fireskipped": "将被跳过",
+      "firerunsimmediately": "立即运行",
+      "fireifpreviousactive": "如果上一次运行仍处于活动状态"
     }
   },
   "operatesections": {

@@ -3129,7 +3129,26 @@
       "webhookurl": "Webhook URL",
       "concurrencypolicy": "Concurrency policy",
       "catchuppolicy": "Catch-up policy",
-      "activitygatescope": "Activity gate scope"
+      "activitygatescope": "Activity gate scope",
+      "none": "None",
+      "triggersactive": "{{count}} active",
+      "nextfire": "Next fire {{time}}",
+      "noschedule": "No schedule",
+      "triggersopen": "{{count}} triggers. Open triggers.",
+      "secretsbound": "{{count}} bound",
+      "manageboundsecrets": "Manage bound secrets",
+      "secretsopen": "{{count}} secrets bound. Open secrets.",
+      "noruns": "No runs",
+      "triggerrun": "Trigger a run",
+      "lastrunopen": "Last run {{status}}. Open runs.",
+      "norunsopen": "No runs. Open runs.",
+      "webhook": "Webhook",
+      "comingsoon": "Coming soon",
+      "firequeued": "queued",
+      "firecoalesced": "would be coalesced",
+      "fireskipped": "would be skipped",
+      "firerunsimmediately": "runs immediately",
+      "fireifpreviousactive": "if the previous run is still active"
     }
   },
   "editablesections": {
@@ -3211,7 +3230,23 @@
       "webhookurl": "Webhook URL",
       "concurrencypolicy": "Concurrency policy",
       "catchuppolicy": "Catch-up policy",
-      "activitygatescope": "Activity gate scope"
+      "activitygatescope": "Activity gate scope",
+      "none": "None",
+      "triggersactive": "{{count}} active",
+      "nextfire": "Next fire {{time}}",
+      "noschedule": "No schedule",
+      "triggersopen": "{{count}} triggers. Open triggers.",
+      "noruns": "No runs",
+      "triggerrun": "Trigger a run",
+      "lastrunopen": "Last run {{status}}. Open runs.",
+      "norunsopen": "No runs. Open runs.",
+      "webhook": "Webhook",
+      "comingsoon": "Coming soon",
+      "firequeued": "queued",
+      "firecoalesced": "would be coalesced",
+      "fireskipped": "would be skipped",
+      "firerunsimmediately": "runs immediately",
+      "fireifpreviousactive": "if the previous run is still active"
     }
   },
   "operatesections": {
