@@ -1310,31 +1310,41 @@ settings:
     return (
       <div className="space-y-5">
         <div>
-          <h1 className="text-xl font-bold">Finish Slack setup</h1>
+          <h1 className="text-xl font-bold">
+            {t("chatendpointsetup.slack.finishsetup")}
+          </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Point the Slack app at Paperclip now that its signing secret is
-            connected.
+            {t("chatendpointsetup.slack.finishdescription")}
           </p>
         </div>
-        {endpointValue("Paperclip webhook URL", endpoint.setup?.webhookUrl)}
-        {endpointValue("Slack command", slackCommand)}
+        {endpointValue(
+          t("chatendpointsetup.slack.webhookurl"),
+          endpoint.setup?.webhookUrl,
+        )}
+        {endpointValue(t("chatendpointsetup.slack.command"), slackCommand)}
         <div className="rounded-lg border border-border p-3 text-sm">
-          <p className="font-medium">Use the registered command</p>
+          <p className="font-medium">
+            {t("chatendpointsetup.slack.useregisteredcommand")}
+          </p>
           <p className="mt-1 text-muted-foreground">
-            Start work with <code>{slackCommand} investigate this</code>. In a
-            direct message, use <code>{slackCommand} status</code>,{" "}
-            <code>{slackCommand} new</code>, or{" "}
-            <code>{slackCommand} close</code>. Slack&apos;s bare{" "}
-            <code>/status</code> command is not a Paperclip control.
+            <Trans
+              i18nKey="chatendpointsetup.slack.commanddescription"
+              values={{
+                taskCommand: `${slackCommand} investigate this`,
+                statusCommand: `${slackCommand} status`,
+                newCommand: `${slackCommand} new`,
+                closeCommand: `${slackCommand} close`,
+              }}
+              components={{ code: <code /> }}
+            />
           </p>
         </div>
         <ol className="list-decimal space-y-2 pl-5 text-sm">
           <li>
-            Return to <strong>App Manifest</strong> in Slack and click{" "}
-            <strong>Save Changes</strong>. The copied manifest already contains
-            the event, interaction, and slash-command URLs. Slack verifies the
-            Events URL when you save; Paperclip records Interactivity and slash
-            command health only after each signed callback is observed.
+            <Trans
+              i18nKey="chatendpointsetup.slack.finishstep"
+              components={{ strong: <strong /> }}
+            />
           </li>
         </ol>
         <div className="flex flex-wrap gap-2">
@@ -1342,11 +1352,11 @@ settings:
             variant="outline"
             onClick={() => openProviderSetup("https://api.slack.com/apps")}
           >
-            Open Slack app settings <ExternalLink />
+            {t("chatendpointsetup.slack.openappsettings")} <ExternalLink />
           </Button>
           <Button disabled={pending} onClick={() => onAction("verify")}>
             {pending && <Loader2 className="h-4 w-4 animate-spin" />}
-            Start Slack message test
+            {t("chatendpointsetup.slack.startmessagetest")}
           </Button>
         </div>
       </div>
@@ -1354,42 +1364,57 @@ settings:
   return (
     <div className="space-y-5">
       <div>
-        <h1 className="text-xl font-bold">Connect a Slack app</h1>
+        <h1 className="text-xl font-bold">
+          {t("chatendpointsetup.slack.connectapp")}
+        </h1>
         <p className="mt-1 text-sm text-muted-foreground">
           {repairing
-            ? "Reconnect verifies or replaces credentials for this same Slack app. It does not reinstall the app or change its workspace or channel membership. Leave credentials blank to reuse the saved values."
-            : "Bring your own Slack app. The manifest requests the scopes Paperclip needs; credentials remain write-only."}
+            ? t("chatendpointsetup.slack.reconnectdescription")
+            : t("chatendpointsetup.slack.createdescription")}
         </p>
       </div>
       <ol className="list-decimal space-y-2 pl-5 text-sm">
         <li>
-          Copy the manifest, then create a Slack app{" "}
-          <strong>From an app manifest</strong> in the target workspace.
+          <Trans
+            i18nKey="chatendpointsetup.slack.step1"
+            components={{ strong: <strong /> }}
+          />
         </li>
         <li>
-          Open <strong>OAuth &amp; Permissions</strong>, install the app to the
-          workspace, and copy its Bot User OAuth Token.
+          <Trans
+            i18nKey="chatendpointsetup.slack.step2"
+            components={{ strong: <strong /> }}
+          />
         </li>
         <li>
-          Open <strong>Basic Information</strong> and copy its Signing Secret.
+          <Trans
+            i18nKey="chatendpointsetup.slack.step3"
+            components={{ strong: <strong /> }}
+          />
         </li>
       </ol>
       <div className="space-y-2 rounded-lg border border-border p-3 text-sm">
         <div className="flex items-center justify-between gap-4">
-          <span className="text-muted-foreground">Slack app name</span>
+          <span className="text-muted-foreground">
+            {t("chatendpointsetup.slack.appname")}
+          </span>
           <code>{slackAppName}</code>
         </div>
         <div className="flex items-center justify-between gap-4">
-          <span className="text-muted-foreground">Bot display name</span>
+          <span className="text-muted-foreground">
+            {t("chatendpointsetup.slack.botdisplayname")}
+          </span>
           <code>{slackBotName}</code>
         </div>
         <div className="flex items-center justify-between gap-4">
-          <span className="text-muted-foreground">Slash command</span>
+          <span className="text-muted-foreground">
+            {t("chatendpointsetup.slack.slashcommand")}
+          </span>
           <code>{slackCommand}</code>
         </div>
       </div>
       <label className="grid gap-2 text-sm font-medium">
-        Slack app manifest
+        {t("chatendpointsetup.slack.appmanifest")}
         <Textarea
           className="min-h-56 font-mono text-xs"
           readOnly
@@ -1406,21 +1431,22 @@ settings:
             );
           }}
         >
-          {manifestCopied ? "Manifest copied" : "Copy manifest"}
+          {manifestCopied
+            ? t("chatendpointsetup.slack.manifestcopied")
+            : t("chatendpointsetup.slack.copymanifest")}
         </Button>
         <Button
           variant="outline"
           onClick={() => openProviderSetup("https://api.slack.com/apps")}
         >
-          Open Slack app settings <ExternalLink />
+          {t("chatendpointsetup.slack.openappsettings")} <ExternalLink />
         </Button>
       </div>
-      {field("botToken", "Bot User OAuth Token")}
-      {field("signingSecret", "Signing Secret")}
+      {field("botToken", t("chatendpointsetup.slack.botuseroauthtoken"))}
+      {field("signingSecret", t("chatendpointsetup.slack.signingsecret"))}
       {!endpoint.setup?.webhookUrl && (
         <p className="text-sm text-destructive">
-          Configure a public HTTPS URL for this Paperclip instance before
-          connecting Slack.
+          {t("chatendpointsetup.slack.publichttpsrequired")}
         </p>
       )}
       <Button
@@ -1435,7 +1461,9 @@ settings:
         }
       >
         {pending && <Loader2 className="h-4 w-4 animate-spin" />}
-        {repairing ? "Reconnect Slack app" : "Connect Slack app"}
+        {repairing
+          ? t("chatendpointsetup.slack.reconnectapp")
+          : t("chatendpointsetup.slack.connectapp")}
       </Button>
     </div>
   );

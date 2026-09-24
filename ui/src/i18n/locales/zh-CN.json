@@ -578,6 +578,33 @@
       "publichttpsrequired": "连接 GitHub 前，请为此 Paperclip 实例配置公开的 HTTPS URL。",
       "reconnectandverify": "重新连接并验证",
       "connectandverify": "连接并验证"
+    },
+    "slack": {
+      "finishsetup": "完成 Slack 设置",
+      "finishdescription": "连接签名密钥后，将 Slack 应用指向 Paperclip。",
+      "webhookurl": "Paperclip Webhook URL",
+      "command": "Slack 命令",
+      "useregisteredcommand": "使用已注册的命令",
+      "commanddescription": "使用 <code>{{taskCommand}}</code> 开始工作。在直接消息中，使用 <code>{{statusCommand}}</code>、<code>{{newCommand}}</code> 或 <code>{{closeCommand}}</code>。Slack 原生的 <code>/status</code> 命令不是 Paperclip 控制命令。",
+      "finishstep": "回到 Slack 的 <strong>App Manifest</strong>，然后点击 <strong>Save Changes</strong>。复制的清单已包含事件、交互和斜杠命令 URL。保存时 Slack 会验证 Events URL；Paperclip 仅在观察到每个已签名回调后才会记录 Interactivity 和斜杠命令健康状态。",
+      "openappsettings": "打开 Slack 应用设置",
+      "startmessagetest": "开始 Slack 消息测试",
+      "connectapp": "连接 Slack 应用",
+      "reconnectdescription": "重新连接会验证或替换同一 Slack 应用的凭据。它不会重新安装应用，也不会更改其工作区或频道成员关系。字段留空即可复用已保存的值。",
+      "createdescription": "使用您自己的 Slack 应用。清单会请求 Paperclip 所需的范围；凭据保持只写。",
+      "step1": "复制清单，然后在目标工作区中通过 <strong>From an app manifest</strong> 创建 Slack 应用。",
+      "step2": "打开 <strong>OAuth &amp; Permissions</strong>，将应用安装到工作区，然后复制其 Bot User OAuth Token。",
+      "step3": "打开 <strong>Basic Information</strong>，然后复制其 Signing Secret。",
+      "appname": "Slack 应用名称",
+      "botdisplayname": "机器人显示名称",
+      "slashcommand": "斜杠命令",
+      "appmanifest": "Slack 应用清单",
+      "manifestcopied": "已复制清单",
+      "copymanifest": "复制清单",
+      "botuseroauthtoken": "Bot User OAuth Token",
+      "signingsecret": "Signing Secret",
+      "publichttpsrequired": "连接 Slack 前，请为此 Paperclip 实例配置公开的 HTTPS URL。",
+      "reconnectapp": "重新连接 Slack 应用"
     }
   },
   "common": {
