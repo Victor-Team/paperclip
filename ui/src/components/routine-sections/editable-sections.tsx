@@ -40,70 +40,87 @@ import { useTranslation } from "@/i18n";
 const concurrencyPolicyOptions = [
   {
     value: "coalesce_if_active",
-    title: "Coalesce if active",
-    description: "Keep one follow-up run queued while an active run is still working.",
+    titleKey: "concurrencycoalesceifactive",
+    descriptionKey: "keeponefollowuprunqueuedwhileanactive",
   },
   {
     value: "always_enqueue",
-    title: "Always enqueue",
-    description: "Queue every trigger occurrence, even if several runs stack up.",
+    titleKey: "concurrencyalwaysenqueue",
+    descriptionKey: "queueeverytriggeroccurrenceevenifseveralruns",
   },
   {
     value: "skip_if_active",
-    title: "Skip if active",
-    description: "Drop overlapping trigger occurrences while the routine is already active.",
+    titleKey: "concurrencyskipifactive",
+    descriptionKey: "dropoverlappingtriggeroccurrenceswhiletheroutine",
   },
 ];
 
 const catchUpPolicyOptions = [
   {
     value: "skip_missed",
-    title: "Skip missed",
-    description: "Ignore schedule windows that were missed while paused.",
+    titleKey: "catchupskipmissed",
+    descriptionKey: "ignoreschedulewindowsthatweremissedwhilepaused",
   },
   {
     value: "enqueue_missed_with_cap",
-    title: "Enqueue missed with cap",
-    description: "Catch up missed schedule windows after recovery; sub-hourly schedules are combined into one catch-up run, slower schedules replay each missed window up to a cap.",
+    titleKey: "catchupenqueuemissedwithcap",
+    descriptionKey: "catchupmissedschedulewindowsafterrecovery",
   },
 ];
 
 const activityGatePolicyOptions = [
   {
     value: "always",
-    title: "Run on every scheduled tick",
-    description: "Fire on the schedule no matter what — the default behavior.",
+    titleKey: "activitygaterunoneveryscheduledtick",
+    descriptionKey: "fireontheschedulenomatterwhatthedefault",
   },
   {
     value: "require_external_activity",
-    title: "Skip when there's been no activity since the last run",
-    description:
-      "On a scheduled tick, only run if something happened since the last run that finished. Lets a watcher-style routine stay asleep while the system is settled instead of burning tokens.",
+    titleKey: "activitygateskipwhentheresbeennoactivity",
+    descriptionKey: "onascheduledtickonlyrunifsomethinghappened",
   },
 ];
 
 const activityGateScopeOptions = [
   {
     value: "company",
-    title: "Organization-wide",
-    description: "Any activity across the organization counts as a reason to run.",
+    titleKey: "activitygatescopeorganizationwide",
+    descriptionKey: "anyactivityacrosstheorganizationcountsasa",
   },
   {
     value: "project",
-    title: "This project",
-    description: "Only activity in the routine's project counts as a reason to run.",
+    titleKey: "activitygatescopethisproject",
+    descriptionKey: "onlyactivityintheroutinesprojectcountsasa",
   },
 ];
 
 const triggerKinds = ["schedule", "webhook"];
 const signingModes = ["bearer", "hmac_sha256", "github_hmac", "none"];
-const signingModeDescriptions: Record<string, string> = {
-  bearer: "Expect a shared bearer token in the Authorization header.",
-  hmac_sha256: "Expect an HMAC SHA-256 signature over the request using the shared secret.",
-  github_hmac: "Accept GitHub-style X-Hub-Signature-256 header (HMAC over raw body, no timestamp).",
-  none: "No authentication — the webhook URL itself acts as a shared secret.",
+const signingModeDescriptionKeys: Record<string, string> = {
+  bearer: "signingmodebearerdescription",
+  hmac_sha256: "signingmodehmacsha256description",
+  github_hmac: "signingmodegithubhmacdescription",
+  none: "signingmodenonedescription",
 };
 const SIGNING_MODES_WITHOUT_REPLAY_WINDOW = new Set(["github_hmac", "none"]);
+
+type KeyedOption = {
+  value: string;
+  titleKey: string;
+  descriptionKey: string;
+};
+
+function localizeOptions(
+  t: (key: string) => string,
+  prefix: string,
+  options: readonly KeyedOption[],
+) {
+  return options.map((option) => ({
+    value: option.value,
+    title: t(`${prefix}.${option.titleKey}`),
+    description: t(`${prefix}.${option.descriptionKey}`),
+  }));
+}
 
 export function OverviewSection({
   defaultDescriptionAnnotationsOpen = false,
@@ -507,7 +524,7 @@ export function TriggersSection() {
                   </SelectContent>
                 </Select>
                 <p className="text-xs text-muted-foreground">
-                  {signingModeDescriptions[newTrigger.signingMode]}
+                  {t(`editablesections.general.${signingModeDescriptionKeys[newTrigger.signingMode]}`)}
                 </p>
               </div>
               {!SIGNING_MODES_WITHOUT_REPLAY_WINDOW.has(newTrigger.signingMode) && (
@@ -691,7 +708,7 @@ export function DeliverySection() {
           onValueChange={(concurrencyPolicy) =>
             setEditDraft((current) => ({ ...current, concurrencyPolicy }))
           }
-          options={concurrencyPolicyOptions}
+          options={localizeOptions(t, "editablesections.general", concurrencyPolicyOptions)}
         />
       </div>
       <div className="space-y-3">
@@ -703,7 +720,7 @@ export function DeliverySection() {
           onValueChange={(catchUpPolicy) =>
             setEditDraft((current) => ({ ...current, catchUpPolicy }))
           }
-          options={catchUpPolicyOptions}
+          options={localizeOptions(t, "editablesections.general", catchUpPolicyOptions)}
         />
       </div>
       <div className="space-y-3">
@@ -715,7 +732,7 @@ export function DeliverySection() {
           onValueChange={(activityGatePolicy) =>
             setEditDraft((current) => ({ ...current, activityGatePolicy }))
           }
-          options={activityGatePolicyOptions}
+          options={localizeOptions(t, "editablesections.general", activityGatePolicyOptions)}
           disabled={!hasScheduleTrigger}
         />
         {!hasScheduleTrigger ? (
@@ -730,7 +747,7 @@ export function DeliverySection() {
               onValueChange={(activityGateScope) =>
                 setEditDraft((current) => ({ ...current, activityGateScope }))
               }
-              options={activityGateScopeOptions}
+              options={localizeOptions(t, "editablesections.general", activityGateScopeOptions)}
             />
           </div>
         ) : null}
