@@ -7,6 +7,7 @@ import type { ReactNode } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { i18n } from "@/i18n";
 import { BoardChat } from "./BoardChat";
 
 /**
@@ -53,9 +54,9 @@ vi.mock("../components/MarkdownBody", () => ({
   MarkdownBody: ({ children }: { children: ReactNode }) => <div>{children}</div>,
 }));
 vi.mock("../components/ChatComposer", () => ({
-  ChatComposer: forwardRef((_props, ref) => {
+  ChatComposer: forwardRef(({ value, sendLabel }: { value: string; sendLabel: string }, ref) => {
     useImperativeHandle(ref, () => ({ focus: vi.fn() }));
-    return <div data-testid="chat-composer" />;
+    return <div data-testid="chat-composer" data-value={value} data-send-label={sendLabel} />;
   }),
 }));
 vi.mock("../components/AgentBubbleActionRow", () => ({
@@ -117,7 +118,8 @@ describe("BoardChat staged typing intro", () => {
   let container: HTMLDivElement;
   let root: Root | null = null;
 
-  beforeEach(() => {
+  beforeEach(async () => {
+    await i18n.changeLanguage("en");
     vi.useFakeTimers();
     vi.stubGlobal("ResizeObserver", ResizeObserverStub);
     container = document.createElement("div");
@@ -142,6 +144,7 @@ describe("BoardChat staged typing intro", () => {
     vi.unstubAllGlobals();
     vi.useRealTimers();
     vi.clearAllMocks();
+    await i18n.changeLanguage("en");
     // Drop any per-test document.visibilityState override.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     delete (document as any).visibilityState;
@@ -217,6 +220,26 @@ describe("BoardChat staged typing intro", () => {
     // t=2.7s: chips stage in.
     await advance(700);
     expect(hasChips(container)).toBe(true);
+  });
+
+  it("updates the welcome, suggestion, and composer label when the language changes", async () => {
+    await render();
+    await advance(2000);
+    await advance(700);
+    expect(hasChips(container)).toBe(true);
+
+    await act(async () => {
+      await i18n.changeLanguage("zh-CN");
+    });
+    expect(container.textContent).toContain("欢迎来到 **Acme Robotics**");
+    const suggestion = [...container.querySelectorAll("button")].find((button) => button.textContent === "起草组织概述");
+    expect(suggestion).toBeTruthy();
+    expect(container.querySelector('[data-testid="chat-composer"]')?.getAttribute("data-send-label")).toBe("发送消息");
+
+    await act(async () => {
+      suggestion?.click();
+    });
+    expect(container.querySelector('[data-testid="chat-composer"]')?.getAttribute("data-value")).toContain("为 Acme Robotics 起草一页组织概述");
   });
 
   it("skips the staged reveal when a user comment already exists", async () => {
