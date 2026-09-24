@@ -3595,5 +3595,32 @@
       "remotehttp": "Remote HTTP",
       "unknown": "Unknown"
     }
+  },
+  "railwayaccesspanel": {
+    "general": {
+      "railwayoperations": "Railway operations",
+      "refreshactions": "Refresh actions after connecting to check service, log, and deployment access.",
+      "containeraccess": "Container access",
+      "containeraccessdescription": "To allow Paperclip direct SSH access to Railway containers, you can optionally generate an SSH key pair.",
+      "railwaysshdocumentation": "Railway SSH documentation",
+      "onlyconnectionmanager": "The connection manager and authorization owner can configure container access.",
+      "authorization": "Authorization",
+      "sharedaccount": "Shared account",
+      "myaccount": "My account",
+      "agentaccount": "Agent account",
+      "generatesshkeypair": "Generate SSH key pair",
+      "publickey": "Public key",
+      "registerpublickey": "Register this public key in the Railway account used by this authorization. The private key stays in Paperclip’s vault.",
+      "railwaykeysetup": "Railway key setup",
+      "verifiedrailwayhostkey": "Verified Railway host key",
+      "pasteverifiedhostkey": "Paste the ssh.railway.com line from a known_hosts entry you have independently verified. Paperclip refuses untrusted or changed host keys.",
+      "updatetrustedhostkey": "Update trusted host key",
+      "enablecontaineraccess": "Enable container access",
+      "removecontainerkey": "Remove container key",
+      "containeraccessenabled": "Container access is enabled for this authorization.",
+      "registerandverify": "Register the public key and verify the host key before enabling access.",
+      "removingkeystopsconnections": "Removing the key stops new Paperclip connections. Also remove its public key from Railway.",
+      "containeraccesscouldntbeupdated": "Container access could not be updated."
+    }
   }
 }

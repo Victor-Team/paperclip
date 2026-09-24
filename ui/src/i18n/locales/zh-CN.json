@@ -3531,6 +3531,33 @@
       "unknown": "未知"
     }
   },
+  "railwayaccesspanel": {
+    "general": {
+      "railwayoperations": "Railway 操作",
+      "refreshactions": "连接后请刷新操作，以检查服务、日志和部署访问权限。",
+      "containeraccess": "容器访问",
+      "containeraccessdescription": "如需允许 Paperclip 通过 SSH 直接访问 Railway 容器，您可以选择生成 SSH 密钥对。",
+      "railwaysshdocumentation": "Railway SSH 文档",
+      "onlyconnectionmanager": "连接管理者和授权所有者可以配置容器访问。",
+      "authorization": "授权",
+      "sharedaccount": "共享账户",
+      "myaccount": "我的账户",
+      "agentaccount": "智能体账户",
+      "generatesshkeypair": "生成 SSH 密钥对",
+      "publickey": "公钥",
+      "registerpublickey": "请在此授权所使用的 Railway 账户中注册此公钥。私钥会保留在 Paperclip 的密钥库中。",
+      "railwaykeysetup": "Railway 密钥设置",
+      "verifiedrailwayhostkey": "已验证的 Railway 主机密钥",
+      "pasteverifiedhostkey": "请粘贴您已独立验证的 known_hosts 条目中的 ssh.railway.com 行。Paperclip 会拒绝不受信任或已变更的主机密钥。",
+      "updatetrustedhostkey": "更新受信任的主机密钥",
+      "enablecontaineraccess": "启用容器访问",
+      "removecontainerkey": "移除容器密钥",
+      "containeraccessenabled": "已为此授权启用容器访问。",
+      "registerandverify": "请先注册公钥并验证主机密钥，再启用访问。",
+      "removingkeystopsconnections": "移除密钥会阻止新的 Paperclip 连接。也请从 Railway 中移除此公钥。",
+      "containeraccesscouldntbeupdated": "无法更新容器访问。"
+    }
+  },
   "appnotconnected": {
     "general": {
       "app": "应用",

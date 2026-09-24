@@ -4,10 +4,12 @@ import type { ConfigureRailwaySsh, ConnectionGrantsResponse, RailwaySshSetup, To
 import { toolsApi } from "@/api/tools";
 import { queryKeys } from "@/lib/queryKeys";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "@/i18n";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
 export function RailwayAccessPanel({ connection, grants }: { connection: ToolConnection; grants?: ConnectionGrantsResponse }) {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const id = useId();
   const setup = connection.config?.railwaySsh as RailwaySshSetup | null | undefined;
@@ -28,42 +30,44 @@ export function RailwayAccessPanel({ connection, grants }: { connection: ToolCon
   });
   return <section className="space-y-4" aria-labelledby={`${id}-title`}>
     <div className="space-y-2">
-      <h2 id={`${id}-title`} className="text-lg font-semibold">Railway operations</h2>
+      <h2 id={`${id}-title`} className="text-lg font-semibold">{t("railwayaccesspanel.general.railwayoperations")}</h2>
       <p className="text-sm text-muted-foreground">
-        {typeof connection.config?.railwayApiMessage === "string" ? connection.config?.railwayApiMessage : "Refresh actions after connecting to check service, log, and deployment access."}
+        {typeof connection.config?.railwayApiMessage === "string"
+          ? connection.config?.railwayApiMessage
+          : t("railwayaccesspanel.general.refreshactions")}
       </p>
     </div>
     <div className="space-y-2">
-      <h3 className="font-medium">Container access</h3>
-      <p className="text-sm text-muted-foreground">To allow Paperclip direct SSH access to Railway containers, you can optionally generate an SSH key pair. <a className="underline" href="https://docs.railway.com/cli/ssh" target="_blank" rel="noreferrer">Railway SSH documentation</a></p>
+      <h3 className="font-medium">{t("railwayaccesspanel.general.containeraccess")}</h3>
+      <p className="text-sm text-muted-foreground">{t("railwayaccesspanel.general.containeraccessdescription")} <a className="underline" href="https://docs.railway.com/cli/ssh" target="_blank" rel="noreferrer">{t("railwayaccesspanel.general.railwaysshdocumentation")}</a></p>
     </div>
-    {!canConfigure && <p className="text-sm text-muted-foreground">The connection manager and authorization owner can configure container access.</p>}
+    {!canConfigure && <p className="text-sm text-muted-foreground">{t("railwayaccesspanel.general.onlyconnectionmanager")}</p>}
     {(canConfigure || canRemove) && grantId && <>
       {!setup && eligible.length > 1 && <div className="space-y-2">
-        <Label htmlFor={`${id}-grant`}>Authorization</Label>
+        <Label htmlFor={`${id}-grant`}>{t("railwayaccesspanel.general.authorization")}</Label>
         <select id={`${id}-grant`} className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm" value={grantId} onChange={(event) => setSelectedGrant(event.target.value)}>
-          {eligible.map((grant) => <option key={grant.id} value={grant.id}>{grant.kind === "organization" ? "Shared account" : grant.kind === "user" ? "My account" : "Agent account"}</option>)}
+          {eligible.map((grant) => <option key={grant.id} value={grant.id}>{grant.kind === "organization" ? t("railwayaccesspanel.general.sharedaccount") : grant.kind === "user" ? t("railwayaccesspanel.general.myaccount") : t("railwayaccesspanel.general.agentaccount")}</option>)}
         </select>
       </div>}
-      {!setup && <Button variant="outline" disabled={mutation.isPending} onClick={() => mutation.mutate({ action: "prepare", grantId })}>Generate SSH key pair</Button>}
+      {!setup && <Button variant="outline" disabled={mutation.isPending} onClick={() => mutation.mutate({ action: "prepare", grantId })}>{t("railwayaccesspanel.general.generatesshkeypair")}</Button>}
       {setup && <>
         <div className="space-y-2">
-          <Label htmlFor={`${id}-public`}>Public key</Label>
+          <Label htmlFor={`${id}-public`}>{t("railwayaccesspanel.general.publickey")}</Label>
           <Textarea id={`${id}-public`} readOnly value={setup.publicKey} className="font-mono text-xs" />
-          <p className="text-sm text-muted-foreground">Register this public key in the Railway account used by this authorization. The private key stays in Paperclip’s vault. <a className="underline" href="https://docs.railway.com/cli/ssh#manage-ssh-keys" target="_blank" rel="noreferrer">Railway key setup</a></p>
+          <p className="text-sm text-muted-foreground">{t("railwayaccesspanel.general.registerpublickey")} <a className="underline" href="https://docs.railway.com/cli/ssh#manage-ssh-keys" target="_blank" rel="noreferrer">{t("railwayaccesspanel.general.railwaykeysetup")}</a></p>
         </div>
         <div className="space-y-2">
-          <Label htmlFor={`${id}-host`}>Verified Railway host key</Label>
+          <Label htmlFor={`${id}-host`}>{t("railwayaccesspanel.general.verifiedrailwayhostkey")}</Label>
           <Textarea id={`${id}-host`} value={knownHosts} onChange={(event) => setKnownHosts(event.target.value)} placeholder="ssh.railway.com ssh-ed25519 …" className="font-mono text-xs" />
-          <p className="text-sm text-muted-foreground">Paste the ssh.railway.com line from a known_hosts entry you have independently verified. Paperclip refuses untrusted or changed host keys.</p>
+          <p className="text-sm text-muted-foreground">{t("railwayaccesspanel.general.pasteverifiedhostkey")}</p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Button disabled={!canConfigure || mutation.isPending || !knownHosts.trim()} onClick={() => mutation.mutate({ action: "enable", grantId, knownHosts })}>{setup.enabled ? "Update trusted host key" : "Enable container access"}</Button>
-          <Button variant="outline" disabled={mutation.isPending} onClick={() => mutation.mutate({ action: "remove", grantId })}>Remove container key</Button>
+          <Button disabled={!canConfigure || mutation.isPending || !knownHosts.trim()} onClick={() => mutation.mutate({ action: "enable", grantId, knownHosts })}>{setup.enabled ? t("railwayaccesspanel.general.updatetrustedhostkey") : t("railwayaccesspanel.general.enablecontaineraccess")}</Button>
+          <Button variant="outline" disabled={mutation.isPending} onClick={() => mutation.mutate({ action: "remove", grantId })}>{t("railwayaccesspanel.general.removecontainerkey")}</Button>
         </div>
-        <p className="text-sm text-muted-foreground">{setup.enabled ? "Container access is enabled for this authorization." : "Register the public key and verify the host key before enabling access."} Removing the key stops new Paperclip connections. Also remove its public key from Railway.</p>
+        <p className="text-sm text-muted-foreground">{setup.enabled ? t("railwayaccesspanel.general.containeraccessenabled") : t("railwayaccesspanel.general.registerandverify")} {t("railwayaccesspanel.general.removingkeystopsconnections")}</p>
       </>}
     </>}
-    {mutation.isError && <p role="alert" className="text-sm text-destructive">{mutation.error instanceof Error ? mutation.error.message : "Container access could not be updated."}</p>}
+    {mutation.isError && <p role="alert" className="text-sm text-destructive">{mutation.error instanceof Error ? mutation.error.message : t("railwayaccesspanel.general.containeraccesscouldntbeupdated")}</p>}
   </section>;
 }
