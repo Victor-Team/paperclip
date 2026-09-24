@@ -2592,7 +2592,19 @@
       "createsecret": "创建机密",
       "ldquo": "&ldquo;",
       "rdquo": "&rdquo;",
-      "createnewsecret": "创建新机密…"
+      "createnewsecret": "创建新机密…",
+      "browsesecrets": "浏览机密",
+      "uponefolder": "上一级文件夹",
+      "current": "当前",
+      "missingsecret": "缺失的机密（{{secretId}}）",
+      "recentlyused": "最近使用",
+      "allsecrets": "全部机密",
+      "searchsecrets": "搜索机密…",
+      "nomatchingsecrets": "无匹配的机密",
+      "active": "活跃",
+      "disabled": "已禁用",
+      "archived": "已归档",
+      "deleted": "已删除"
     }
   },
   "index": {

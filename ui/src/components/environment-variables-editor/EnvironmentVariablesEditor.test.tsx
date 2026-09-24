@@ -5,6 +5,7 @@ import { flushSync } from "react-dom";
 import { createRoot, type Root } from "react-dom/client";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import type { CompanySecret, EnvBinding } from "@paperclipai/shared";
+import { i18n } from "@/i18n";
 import { EnvironmentVariablesEditor } from "./index";
 import { SecretPicker } from "./SecretPicker";
 
@@ -131,6 +132,7 @@ describe("EnvironmentVariablesEditor", () => {
     }
     document.body.style.pointerEvents = "";
     vi.restoreAllMocks();
+    await i18n.changeLanguage("en");
   });
 
   const secrets = [makeSecret("s1", { name: "GITHUB_TOKEN", latestVersion: 3 })];
@@ -947,5 +949,38 @@ describe("EnvironmentVariablesEditor", () => {
       el.textContent?.includes(cloudMigrationKey),
     );
     expect(match?.querySelector<HTMLElement>("[title]")?.getAttribute("title")).toBe(cloudMigrationKey);
+  });
+
+  it("localizes secret picker folders, search, and empty state", async () => {
+    await i18n.changeLanguage("zh-CN");
+    render(
+      <SecretPicker
+        secretId=""
+        secrets={[makeSecret("nested", { name: "/production/database-url", key: "/production/database-url" })]}
+        onSelect={() => {}}
+        onCreateNew={() => {}}
+        disablePortal
+      />,
+    );
+
+    const combobox = container.querySelector<HTMLElement>('[role="combobox"]')!;
+    combobox.focus();
+    await flush();
+    expect(document.body.textContent).toContain("浏览机密");
+
+    const search = document.querySelector<HTMLInputElement>('input[placeholder="搜索机密…"]')!;
+    expect(search).toBeTruthy();
+    const folder = [...document.querySelectorAll<HTMLElement>("[cmdk-item]")].find((item) =>
+      item.textContent?.includes("production"),
+    );
+    folder!.click();
+    await flush();
+    expect(document.body.textContent).toContain("上一级文件夹");
+
+    const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!;
+    setter.call(search, "no-match");
+    search.dispatchEvent(new Event("input", { bubbles: true }));
+    await flush();
+    expect(document.body.textContent).toContain("无匹配的机密");
   });
 });

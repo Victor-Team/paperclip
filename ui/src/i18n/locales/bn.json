@@ -2592,7 +2592,19 @@
       "createsecret": "Create secret",
       "ldquo": "&ldquo;",
       "rdquo": "&rdquo;",
-      "createnewsecret": "Create new secret…"
+      "createnewsecret": "Create new secret…",
+      "browsesecrets": "Browse secrets",
+      "uponefolder": "Up one folder",
+      "current": "Current",
+      "missingsecret": "Missing secret ({{secretId}})",
+      "recentlyused": "Recently used",
+      "allsecrets": "All secrets",
+      "searchsecrets": "Search secrets…",
+      "nomatchingsecrets": "No matching secrets",
+      "active": "active",
+      "disabled": "disabled",
+      "archived": "archived",
+      "deleted": "deleted"
     }
   },
   "index": {

@@ -22,11 +22,11 @@ interface SecretOption extends SearchableSelectOption {
 
 const FOLDER_VALUE_PREFIX = "__secret_folder__:";
 
-function statusBadge(status: SecretStatus | undefined) {
+function statusBadge(status: SecretStatus | undefined, label: string) {
   if (!status || status === "active") return null;
   return (
     <Badge variant="outline" className="ml-auto text-(length:--text-nano) font-normal text-muted-foreground">
-      {status}
+      {label}
     </Badge>
   );
 }
@@ -56,6 +56,7 @@ function buildFolderGroup(
   secrets: readonly CompanySecret[],
   currentPath: readonly string[],
   currentSecretId: string,
+  labels: { browseSecrets: string; upOneFolder: string },
 ): SearchableSelectGroup<string, SecretOption> {
   const currentLength = currentPath.length;
   const folders = new Map<string, SecretOption>();
@@ -108,7 +109,7 @@ function buildFolderGroup(
     options.push({
       key: `folder-up-${pathKey(currentPath)}`,
       value: folderValue(parentPath),
-      label: "Up one folder",
+      label: labels.upOneFolder,
       title: pathLabel(parentPath),
       searchText: pathLabel(parentPath),
       kind: "back",
@@ -120,7 +121,7 @@ function buildFolderGroup(
 
   return {
     id: "browse-secrets",
-    label: currentPath.length > 0 ? pathLabel(currentPath) : "Browse secrets",
+    label: currentPath.length > 0 ? pathLabel(currentPath) : labels.browseSecrets,
     options,
   };
 }
@@ -164,6 +165,20 @@ export function SecretPicker({
   const boundMissing = Boolean(secretId) && !boundSecret;
   const currentPath = useMemo(() => (currentPathKey ? currentPathKey.split("/") : []), [currentPathKey]);
   const hasFolderPaths = useMemo(() => secrets.some((secret) => splitSecretPath(secret.name).length > 1), [secrets]);
+  const secretStatusLabel = (status: SecretStatus | undefined) => {
+    switch (status) {
+      case "disabled":
+        return t("secretpicker.general.disabled");
+      case "archived":
+        return t("secretpicker.general.archived");
+      case "deleted":
+        return t("secretpicker.general.deleted");
+      case "active":
+        return t("secretpicker.general.active");
+      default:
+        return "";
+    }
+  };
 
   const groups = useMemo<SearchableSelectGroup<string, SecretOption>[]>(() => {
     const result: SearchableSelectGroup<string, SecretOption>[] = [];
@@ -173,13 +188,13 @@ export function SecretPicker({
     if (boundMissing) {
       result.push({
         id: "current-missing",
-        label: "Current",
+        label: t("secretpicker.general.current"),
         options: [
           {
             key: `missing-${secretId}`,
             value: secretId,
-            label: `Missing secret (${secretId.slice(0, 8)}…)`,
-            title: `Missing secret (${secretId})`,
+            label: t("secretpicker.general.missingsecret", { secretId: `${secretId.slice(0, 8)}…` }),
+            title: t("secretpicker.general.missingsecret", { secretId }),
             missing: true,
             disabled: true,
           },
@@ -193,7 +208,7 @@ export function SecretPicker({
     if (recent.length > 0) {
       result.push({
         id: "recently-used",
-        label: "Recently used",
+        label: t("secretpicker.general.recentlyused"),
         options: recent.map((secret) => ({
           key: `recent-${secret.id}`,
           value: secret.id,
@@ -209,7 +224,7 @@ export function SecretPicker({
 
     result.push({
       id: "all-secrets",
-      label: recent.length > 0 ? "All secrets" : undefined,
+      label: recent.length > 0 ? t("secretpicker.general.allsecrets") : undefined,
       options: secrets.map((secret) => ({
         key: `all-${secret.id}`,
         value: secret.id,
@@ -226,18 +241,21 @@ export function SecretPicker({
     });
 
     return result;
-  }, [boundMissing, recentlyUsedSecrets, secretId, secrets]);
+  }, [boundMissing, recentlyUsedSecrets, secretId, secrets, t]);
 
   const deriveGroups = useCallback(
     (query: string, baseGroups: readonly SearchableSelectGroup<string, SecretOption>[]) => {
       if (!hasFolderPaths) return baseGroups;
       if (normalizeSearchText(query)) return baseGroups;
 
-      const browseGroup = buildFolderGroup(secrets, currentPath, secretId);
+      const browseGroup = buildFolderGroup(secrets, currentPath, secretId, {
+        browseSecrets: t("secretpicker.general.browsesecrets"),
+        upOneFolder: t("secretpicker.general.uponefolder"),
+      });
       const stableGroups = baseGroups.filter((group) => group.id === "current-missing" || group.id === "recently-used");
       return browseGroup.options.length > 0 ? [...stableGroups, browseGroup] : stableGroups;
     },
-    [currentPath, hasFolderPaths, secretId, secrets],
+    [currentPath, hasFolderPaths, secretId, secrets, t],
   );
 
   return (
@@ -256,8 +274,8 @@ export function SecretPicker({
       disabled={disabled}
       disablePortal={disablePortal}
       placeholder={t("secretpicker.general.selectsecret")}
-      searchPlaceholder="Search secrets…"
-      emptyMessage="No matching secrets"
+      searchPlaceholder={t("secretpicker.general.searchsecrets")}
+      emptyMessage={t("secretpicker.general.nomatchingsecrets")}
       triggerClassName={cn(
         "h-(--sz-34px) min-h-(--sz-34px) font-mono text-sm",
         boundMissing && "border-destructive text-destructive",
@@ -281,7 +299,7 @@ export function SecretPicker({
           <span className="flex w-full min-w-0 items-center gap-1.5" title={option.title}>
             <KeyRound className={cn("size-3.5 shrink-0", nonActive ? "text-amber-600" : "text-muted-foreground")} />
             <span className="min-w-0 flex-1 truncate">{option.label}</span>
-            {nonActive ? <span className="text-amber-600">({option.status})</span> : null}
+            {nonActive ? <span className="text-amber-600">({secretStatusLabel(option.status)})</span> : null}
           </span>
         );
       }}
@@ -315,7 +333,7 @@ export function SecretPicker({
                 <span className="truncate font-mono text-(length:--text-micro) text-muted-foreground">{option.pathHint}</span>
               ) : null}
             </span>
-            {statusBadge(option.status)}
+            {statusBadge(option.status, secretStatusLabel(option.status))}
           </span>
         );
       }}
