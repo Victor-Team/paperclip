@@ -3130,6 +3130,23 @@
       "enterapikeyhere": "Enter API key here"
     }
   },
+  "connectionidentity": {
+    "general": {
+      "personal": "Personal",
+      "dedicatedagent": "Dedicated agent",
+      "organization": "Organization",
+      "connected": "Connected",
+      "needsattention": "Needs attention",
+      "expired": "Expired",
+      "revoked": "Revoked",
+      "notconnected": "Not connected",
+      "connectedaccount": "Connected account",
+      "dedicatedaccount": "Dedicated account",
+      "sharedcredential": "Shared credential",
+      "allorganizationmembers": "All organization members",
+      "selectedmembers": "{{count}} selected members"
+    }
+  },
   "aiconnectionfield": {
     "general": {
       "thisconnectiondoesnotsupportthecurrent": "This connection does not support the current harness and model. Choose\n          a compatible connection before saving.",

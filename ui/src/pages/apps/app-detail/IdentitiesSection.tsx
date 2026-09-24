@@ -54,6 +54,7 @@ const STATUS_CHIP: Record<GrantStatusTone, string> = {
 };
 
 function StatusText({ status }: { status: ConnectionGrant["status"] | null }) {
+  const { t } = useTranslation();
   const tone = grantStatusTone(status);
   return (
     <span
@@ -62,7 +63,7 @@ function StatusText({ status }: { status: ConnectionGrant["status"] | null }) {
         STATUS_CHIP[tone],
       )}
     >
-      {grantStatusLabel(status)}
+      {grantStatusLabel(status, t)}
     </span>
   );
 }
@@ -509,7 +510,7 @@ export function AudienceDialog({
         <DialogHeader>
           <DialogTitle>{t("identitiessection.general.whocanusethisidentity")}</DialogTitle>
           <DialogDescription>
-            {grantAccountLabel(grant)} · {appName}
+            {grantAccountLabel(grant, t)} · {appName}
           </DialogDescription>
         </DialogHeader>
 

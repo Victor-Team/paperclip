@@ -281,8 +281,8 @@ export function Connections() {
       }
       return appConnections.map((connection) => {
         const owner = connectionOwnerProfile(connection, userProfileById);
-        const type = connectionTypeLabel(connection.credentialPolicy);
-        const displayName = type === "Organization"
+        const displayName = connection.credentialPolicy === "shared"
+          || connection.credentialPolicy === "per_user_with_fallback"
           ? connectionNameForCredentialPolicy(
               humanizeConnectionDisplayName(connection),
               connection.credentialPolicy,
@@ -467,7 +467,7 @@ export function Connections() {
                       </td>
                       <td className="px-4 py-3">
                         <span className="text-xs font-medium text-foreground">
-                          {connection ? connectionTypeLabel(connection.credentialPolicy) : "—"}
+                          {connection ? connectionTypeLabel(connection.credentialPolicy, t) : "—"}
                         </span>
                       </td>
                       <td className="px-4 py-3">

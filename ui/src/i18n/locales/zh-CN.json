@@ -3130,6 +3130,23 @@
       "enterapikeyhere": "在此处输入 API 密钥"
     }
   },
+  "connectionidentity": {
+    "general": {
+      "personal": "个人",
+      "dedicatedagent": "专用智能体",
+      "organization": "组织",
+      "connected": "已连接",
+      "needsattention": "需要注意",
+      "expired": "已过期",
+      "revoked": "已撤销",
+      "notconnected": "未连接",
+      "connectedaccount": "已连接账户",
+      "dedicatedaccount": "专用账户",
+      "sharedcredential": "共享凭据",
+      "allorganizationmembers": "所有组织成员",
+      "selectedmembers": "已选择 {{count}} 位成员"
+    }
+  },
   "aiconnectionfield": {
     "general": {
       "thisconnectiondoesnotsupportthecurrent": "此连接不支持当前 harness 和模型。保存前请选择兼容的连接。",

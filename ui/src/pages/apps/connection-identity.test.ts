@@ -5,11 +5,17 @@ import {
   connectionTypeLabel,
 } from "./connection-identity";
 
+const english = (key: string) => ({
+  "connectionidentity.general.personal": "Personal",
+  "connectionidentity.general.dedicatedagent": "Dedicated agent",
+  "connectionidentity.general.organization": "Organization",
+}[key] ?? key);
+
 describe("connectionTypeLabel", () => {
   it("names each credential policy", () => {
-    expect(connectionTypeLabel("per_user")).toBe("Personal");
-    expect(connectionTypeLabel("per_agent")).toBe("Dedicated agent");
-    expect(connectionTypeLabel("shared")).toBe("Organization");
+    expect(connectionTypeLabel("per_user", english)).toBe("Personal");
+    expect(connectionTypeLabel("per_agent", english)).toBe("Dedicated agent");
+    expect(connectionTypeLabel("shared", english)).toBe("Organization");
   });
 });
 
@@ -54,6 +60,8 @@ describe("connectionNameForGrantKind", () => {
 describe("connectionNameForCredentialPolicy", () => {
   it("suffixes a shared credential and leaves a personal one alone", () => {
     expect(connectionNameForCredentialPolicy("Notion", "shared")).toBe("Notion for the organization");
+    expect(connectionNameForCredentialPolicy("Notion", "per_user_with_fallback"))
+      .toBe("Notion for the organization");
     expect(connectionNameForCredentialPolicy("Notion", "per_user")).toBe("Notion");
   });
 
