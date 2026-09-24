@@ -121,7 +121,13 @@ export function AiConnectionField({
           </DialogHeader>
           <p className="text-sm">
             {pendingAdoption?.mode === "responsible_user"
-              ? `Responsible user’s default. For you: ${accounts.data?.connections.find((account) => account.isDefault && account.provider === provider)?.name ?? t("aiconnectionfield.general.notconnected")}. Other users use their own default.`
+              ? t("aiconnectionfield.general.responsibleuserdefault", {
+                  connection:
+                    accounts.data?.connections.find(
+                      (account) =>
+                        account.isDefault && account.provider === provider,
+                    )?.name ?? t("aiconnectionfield.general.notconnected"),
+                })
               : accounts.data?.connections.find(
                   (account) => account.id === pendingAdoption?.connectionId,
                 )?.name}
@@ -153,7 +159,20 @@ export function AiConnectionField({
             companyId={companyId}
             provider={provider}
             initialMethod={method}
-            name={`My ${provider === "anthropic" ? "Claude" : provider === "openai" ? "OpenAI" : provider === "xai" ? "Grok" : "OpenRouter"} ${method === "subscription" ? "subscription" : "API"}`}
+            name={t("aiconnectionfield.general.myproviderconnection", {
+              provider:
+                provider === "anthropic"
+                  ? "Claude"
+                  : provider === "openai"
+                    ? "OpenAI"
+                    : provider === "xai"
+                      ? "Grok"
+                      : "OpenRouter",
+              type:
+                method === "subscription"
+                  ? t("aiconnectionfield.general.subscription")
+                  : "API",
+            })}
             ownership="personal"
             agentIds={agentId ? [agentId] : []}
             allAgents={false}

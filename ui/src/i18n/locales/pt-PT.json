@@ -2341,12 +2341,15 @@
       "makedefault": "Make default",
       "notyourdefault": "Not your default",
       "reconnect": "Reconnect",
-      "revokeidentity": "Revoke identity"
+      "revokeidentity": "Revoke identity",
+      "revocationdescription": "New runs using this account will be blocked. Existing runs may retain credentials already issued to them. No other account will be selected automatically.",
+      "couldnotrevokeaccount": "Could not revoke this account. Retry."
     }
   },
   "aiconnectionauth": {
     "general": {
       "connect": "Connect",
+      "connectprovider": "Connect {{provider}}",
       "connectedthisaccountissavedinconnections": "Connected. This account is saved in Connections and can be reused.",
       "useconnection": "Use connection",
       "thisproviderdoesnotofferasubscription": "This provider does not offer a subscription connection.",
@@ -2390,6 +2393,9 @@
       "savingteststhisaccountin": "Saving tests this account in",
       "senvironmentbeforereplacingitsexistingauthentication": "’s environment before\n              replacing its existing authentication. Other agents keep their\n              current configuration.",
       "notconnected": "Not connected",
+      "responsibleuserdefault": "Responsible user’s default. For you: {{connection}}. Other users use their own default.",
+      "myproviderconnection": "My {{provider}} {{type}}",
+      "subscription": "subscription",
       "afteradoptionmissingcredentialsblockexecutionprevious": "After adoption, missing credentials block execution. Previous\n            authentication will not be used as a fallback.",
       "cancel": "Cancel",
       "usethisbindingwhensaved": "Use this binding when saved",
@@ -2399,7 +2405,8 @@
   "aiconnectionidentity": {
     "general": {
       "companyshared": "Company shared",
-      "accountowner": "Account owner"
+      "accountowner": "Account owner",
+      "personalowner": "Personal · {{owner}}"
     }
   },
   "aiconnectionmanagement": {
@@ -2945,6 +2952,7 @@
       "meetyournextagent": "Meet your next agent",
       "chooseanadapter": "Choose an adapter",
       "startwithanamemakethemyour": "Start with a name. Make them your own.",
+      "howshouldagentwork": "How should {{name}} work?",
       "agentname": "Agent name",
       "egdarnold": "e.g. Darnold",
       "inviteanexternalagent": "Invite an external agent",

@@ -31,7 +31,11 @@ export function AiConnectionIdentity({
           <Icon aria-hidden className="size-3" />
           {connection.ownership === "shared"
             ? t("aiconnectionidentity.general.companyshared")
-            : `Personal · ${connection.ownerName ?? t("aiconnectionidentity.general.accountowner")}`}
+            : t("aiconnectionidentity.general.personalowner", {
+                owner:
+                  connection.ownerName ??
+                  t("aiconnectionidentity.general.accountowner"),
+              })}
         </span>
       </div>
     </div>

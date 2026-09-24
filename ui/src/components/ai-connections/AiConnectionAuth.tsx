@@ -65,7 +65,9 @@ function AuthAttempt({
   };
   return (
     <section
-      aria-label={`Connect ${info.name}`}
+      aria-label={t("aiconnectionauth.general.connectprovider", {
+        provider: info.name,
+      })}
       className="flex flex-col gap-4"
     >
       <div className="flex flex-col gap-1">

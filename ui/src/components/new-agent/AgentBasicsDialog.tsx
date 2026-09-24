@@ -176,7 +176,9 @@ export function AgentBasicsDialog({
                 <DialogDescription className="text-base">
                   {step === "name"
                     ? t("agentbasicsdialog.general.startwithanamemakethemyour")
-                    : `How should ${name.trim()} work?`}
+                    : t("agentbasicsdialog.general.howshouldagentwork", {
+                        name: name.trim(),
+                      })}
                 </DialogDescription>
               </div>
             </div>

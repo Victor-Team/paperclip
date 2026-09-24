@@ -2341,12 +2341,15 @@
       "makedefault": "设为默认",
       "notyourdefault": "非您的默认设置",
       "reconnect": "重新连接",
-      "revokeidentity": "撤销身份"
+      "revokeidentity": "撤销身份",
+      "revocationdescription": "使用此账户的新运行将被阻止。已有运行可能保留已向其发放的凭据。不会自动选择其他账户。",
+      "couldnotrevokeaccount": "无法撤销此账户。请重试。"
     }
   },
   "aiconnectionauth": {
     "general": {
       "connect": "连接",
+      "connectprovider": "连接 {{provider}}",
       "connectedthisaccountissavedinconnections": "已连接。此账户已保存至“连接”中，可重复使用。",
       "useconnection": "使用连接",
       "thisproviderdoesnotofferasubscription": "此提供商不提供订阅式连接。",
@@ -2390,6 +2393,9 @@
       "savingteststhisaccountin": "正在测试此账户在中的保存情况",
       "senvironmentbeforereplacingitsexistingauthentication": "' 的环境，在替换其现有认证之前。其他智能体保留其当前配置。",
       "notconnected": "未连接",
+      "responsibleuserdefault": "负责用户的默认连接。对您而言：{{connection}}。其他用户使用各自的默认连接。",
+      "myproviderconnection": "我的 {{provider}}{{type}}",
+      "subscription": "订阅",
       "afteradoptionmissingcredentialsblockexecutionprevious": "采用后，缺少凭据将阻止执行。不会使用之前的认证作为备用。",
       "cancel": "取消",
       "usethisbindingwhensaved": "保存时使用此绑定",
@@ -2399,7 +2405,8 @@
   "aiconnectionidentity": {
     "general": {
       "companyshared": "公司共享",
-      "accountowner": "账户所有者"
+      "accountowner": "账户所有者",
+      "personalowner": "个人 · {{owner}}"
     }
   },
   "aiconnectionmanagement": {
@@ -2945,6 +2952,7 @@
       "meetyournextagent": "认识您的下一个智能体",
       "chooseanadapter": "选择适配器",
       "startwithanamemakethemyour": "从名称开始。让它们成为您自己的。",
+      "howshouldagentwork": "{{name}} 应如何工作？",
       "agentname": "智能体名称",
       "egdarnold": "例如：Darnold",
       "inviteanexternalagent": "邀请外部智能体",
