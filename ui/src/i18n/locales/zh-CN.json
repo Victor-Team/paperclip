@@ -2844,7 +2844,12 @@
       "openraw": "打开原始文件",
       "download": "下载",
       "documentisempty1": "文档为空。",
-      "noartifactsyetworkproductsdocumentsand": "暂无产物。工作产品、文档和智能体生成的文件将显示在此处。"
+      "noartifactsyetworkproductsdocumentsand": "暂无产物。工作产品、文档和智能体生成的文件将显示在此处。",
+      "inprogress": "进行中",
+      "forreview": "待审查",
+      "done": "已完成",
+      "changesrequested": "已请求修改",
+      "failed": "失败"
     }
   },
   "issuepropertiesplanstab": {

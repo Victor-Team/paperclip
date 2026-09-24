@@ -55,21 +55,21 @@ function formatBytes(n: number): string {
   return `${(n / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-/** Work-product status → label + `--status-task-*` base-hue var for `.status-chip`. */
-function workProductStatusBadge(status: string): { label: string; cssVar: string } | null {
+/** Work-product status → translation key + `--status-task-*` base-hue var for `.status-chip`. */
+function workProductStatusBadge(status: string): { labelKey: string; cssVar: string } | null {
   switch (status) {
     case "active":
     case "draft":
-      return { label: "In progress", cssVar: "--status-task-in_progress" };
+      return { labelKey: "issuepropertiesartifactstab.general.inprogress", cssVar: "--status-task-in_progress" };
     case "ready_for_review":
-      return { label: "For review", cssVar: "--status-task-in_review" };
+      return { labelKey: "issuepropertiesartifactstab.general.forreview", cssVar: "--status-task-in_review" };
     case "approved":
     case "merged":
-      return { label: "Done", cssVar: "--status-task-done" };
+      return { labelKey: "issuepropertiesartifactstab.general.done", cssVar: "--status-task-done" };
     case "changes_requested":
-      return { label: "Changes requested", cssVar: "--status-task-todo" };
+      return { labelKey: "issuepropertiesartifactstab.general.changesrequested", cssVar: "--status-task-todo" };
     case "failed":
-      return { label: "Failed", cssVar: "--status-task-blocked" };
+      return { labelKey: "issuepropertiesartifactstab.general.failed", cssVar: "--status-task-blocked" };
     default:
       return null;
   }
@@ -213,7 +213,7 @@ function MarkdownWorkProductRow({
               className="status-chip inline-flex shrink-0 items-center rounded-full border px-1.5 py-0.5 text-(length:--text-nano) leading-none whitespace-nowrap"
               style={{ "--sc": `var(${badge.cssVar})` } as CSSProperties}
             >
-              {badge.label}
+              {t(badge.labelKey)}
             </span>
           ) : null}
           {reviewDoc ? (

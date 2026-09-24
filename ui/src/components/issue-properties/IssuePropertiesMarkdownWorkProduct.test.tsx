@@ -8,6 +8,7 @@ import type { Issue, IssueAttachment, IssueDocument, IssueWorkProduct } from "@p
 import { artifactReviewDocumentKey } from "@paperclipai/shared";
 import { IssuePropertiesArtifactsTab } from "./IssuePropertiesArtifactsTab";
 import { ApiError } from "@/api/client";
+import { i18n } from "@/i18n";
 
 const mockIssuesApi = vi.hoisted(() => ({
   listAttachments: vi.fn(async (): Promise<unknown[]> => []),
@@ -178,6 +179,7 @@ describe("markdown work product review row", () => {
       await act(async () => currentRoot.unmount());
       root = null;
     }
+    await i18n.changeLanguage("en");
     container.remove();
   });
 
@@ -215,6 +217,13 @@ describe("markdown work product review row", () => {
     expect(raw?.getAttribute("href")).toBe(`/api/attachments/${ATTACHMENT_ID}/content`);
     expect(raw?.getAttribute("target")).toBe("_blank");
     expect(download?.getAttribute("href")).toBe(`/api/attachments/${ATTACHMENT_ID}/content?download=1`);
+  });
+
+  it("translates the work-product status chip", async () => {
+    await i18n.changeLanguage("zh-CN");
+    await renderTab();
+
+    expect(expandButton().textContent).toContain("待审查");
   });
 
   it("expands into the existing document surface without a server call when the document exists", async () => {

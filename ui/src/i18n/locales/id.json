@@ -2844,7 +2844,12 @@
       "openraw": "Open raw",
       "download": "Download",
       "documentisempty1": "Document is empty.",
-      "noartifactsyetworkproductsdocumentsand": "No artifacts yet. Work products, documents, and agent-produced files will appear here."
+      "noartifactsyetworkproductsdocumentsand": "No artifacts yet. Work products, documents, and agent-produced files will appear here.",
+      "inprogress": "In progress",
+      "forreview": "For review",
+      "done": "Done",
+      "changesrequested": "Changes requested",
+      "failed": "Failed"
     }
   },
   "issuepropertiesplanstab": {
