@@ -76,7 +76,6 @@ import {
   InboxIssueMetaLeading,
   InboxIssueTrailingColumns,
   IssueColumnPicker,
-  issueActivityText,
   issueTrailingColumns,
 } from "../components/IssueColumns";
 import { IssueFiltersPopover } from "../components/IssueFiltersPopover";
@@ -220,12 +219,8 @@ function firstNonEmptyLine(value: string | null | undefined): string | null {
   return line ?? null;
 }
 
-function runFailureMessage(run: HeartbeatRun): string {
-  return firstNonEmptyLine(run.error) ?? firstNonEmptyLine(run.stderrExcerpt) ?? "Run exited with an error.";
-}
-
-function approvalStatusLabel(status: Approval["status"]): string {
-  return status.replaceAll("_", " ");
+function runFailureMessage(run: HeartbeatRun, fallback = "Run exited with an error."): string {
+  return firstNonEmptyLine(run.error) ?? firstNonEmptyLine(run.stderrExcerpt) ?? fallback;
 }
 
 function readIssueIdFromRun(run: HeartbeatRun): string | null {
@@ -256,9 +251,10 @@ export function formatJoinRequestInboxLabel(
       email: string | null;
     } | null;
   },
+  labels: { agent: string; human: string; separator: string } = { agent: "Agent join request", human: "Human join request", separator: ": " },
 ) {
   if (joinRequest.requestType !== "human") {
-    return `Agent join request${joinRequest.agentName ? `: ${joinRequest.agentName}` : ""}`;
+    return `${labels.agent}${joinRequest.agentName ? `${labels.separator}${joinRequest.agentName}` : ""}`;
   }
 
   const requesterName = nonEmptyLabel(joinRequest.requesterUser?.name);
@@ -271,7 +267,7 @@ export function formatJoinRequestInboxLabel(
   if (requesterEmail) return requesterEmail;
   if (requesterName) return requesterName;
   if (requesterId) return requesterId;
-  return "Human join request";
+  return labels.human;
 }
 
 
@@ -315,7 +311,7 @@ export function FailedRunInboxRow({
   const { t } = useTranslation();
   const issueId = readIssueIdFromRun(run);
   const issue = issueId ? issueById.get(issueId) ?? null : null;
-  const displayError = runFailureMessage(run);
+  const displayError = runFailureMessage(run, t("legacyinbox.general.runexitederror"));
   const showUnreadSlot = unreadState !== null;
   const showUnreadDot = unreadState === "visible" || unreadState === "fading";
 
@@ -515,7 +511,7 @@ function ApprovalInboxRow({
               {label}
             </span>
             <span className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
-              <span className="capitalize">{approvalStatusLabel(approval.status)}</span>
+              <span>{t(`legacyinbox.general.approvalstatus${approval.status}`)}</span>
               {requesterName ? <span>{t("legacyinbox.general.requestedby")} {requesterName}</span> : null}
               <span>{t("legacyinbox.general.updated")} {timeAgo(approval.updatedAt)}</span>
             </span>
@@ -595,7 +591,7 @@ function JoinRequestInboxRow({
   className?: string;
 }) {
   const { t } = useTranslation();
-  const label = formatJoinRequestInboxLabel(joinRequest);
+  const label = formatJoinRequestInboxLabel(joinRequest, { agent: t("legacyinbox.general.agentjoinrequest"), human: t("legacyinbox.general.humanjoinrequest"), separator: "：" });
   const showUnreadSlot = unreadState !== null;
   const showUnreadDot = unreadState === "visible" || unreadState === "fading";
 
@@ -639,7 +635,7 @@ function JoinRequestInboxRow({
               {label}
             </span>
             <span className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
-              <span>{t("legacyinbox.general.requested")} {timeAgo(joinRequest.createdAt)} {t("legacyinbox.general.fromip")} {joinRequest.requestIp}</span>
+              <span>{t("legacyinbox.general.requestfromip", { time: timeAgo(joinRequest.createdAt), ip: joinRequest.requestIp })}</span>
               {joinRequest.adapterType && <span>{t("legacyinbox.general.adapter")} {joinRequest.adapterType}</span>}
             </span>
           </span>
@@ -731,11 +727,11 @@ export function Inbox() {
   const issueLinkState = useMemo(
     () =>
       createIssueDetailLocationState(
-        "Inbox",
+        t("legacyinbox.general.inbox"),
         `${location.pathname}${location.search}${location.hash}`,
         "inbox",
       ),
-    [location.pathname, location.search, location.hash],
+    [location.pathname, location.search, location.hash, t],
   );
 
   const { data: session } = useQuery({
@@ -770,8 +766,8 @@ export function Inbox() {
   });
 
   useEffect(() => {
-    setBreadcrumbs([{ label: "Inbox" }]);
-  }, [setBreadcrumbs]);
+    setBreadcrumbs([{ label: t("legacyinbox.general.inbox") }]);
+  }, [setBreadcrumbs, t]);
 
   useEffect(() => {
     saveLastInboxTab(tab);
@@ -1032,7 +1028,7 @@ export function Inbox() {
     if (currentUserId) {
       options.set(`user:${currentUserId}`, {
         id: `user:${currentUserId}`,
-        label: currentUserId === "local-board" ? "Board" : "Me",
+        label: currentUserId === "local-board" ? t("legacyinbox.general.board") : t("legacyinbox.general.me"),
         kind: "user",
         searchText: currentUserId === "local-board" ? "board me human local-board" : `me board human ${currentUserId}`,
       });
@@ -1620,7 +1616,7 @@ export function Inbox() {
       navigate(`/approvals/${id}?resolved=approved`);
     },
     onError: (err) => {
-      setActionError(err instanceof Error ? err.message : "Failed to approve");
+      setActionError(err instanceof Error ? err.message : t("legacyinbox.general.failedtoapprove"));
     },
   });
 
@@ -1631,7 +1627,7 @@ export function Inbox() {
       queryClient.invalidateQueries({ queryKey: queryKeys.approvals.list(selectedCompanyId!) });
     },
     onError: (err) => {
-      setActionError(err instanceof Error ? err.message : "Failed to reject");
+      setActionError(err instanceof Error ? err.message : t("legacyinbox.general.failedtoreject"));
     },
   });
 
@@ -1646,7 +1642,7 @@ export function Inbox() {
       queryClient.invalidateQueries({ queryKey: queryKeys.companies.all });
     },
     onError: (err) => {
-      setActionError(err instanceof Error ? err.message : "Failed to approve join request");
+      setActionError(err instanceof Error ? err.message : t("legacyinbox.general.failedtoapprovejoin"));
     },
   });
 
@@ -1659,7 +1655,7 @@ export function Inbox() {
       queryClient.invalidateQueries({ queryKey: queryKeys.sidebarBadges(selectedCompanyId!) });
     },
     onError: (err) => {
-      setActionError(err instanceof Error ? err.message : "Failed to reject join request");
+      setActionError(err instanceof Error ? err.message : t("legacyinbox.general.failedtorejectjoin"));
     },
   });
 
@@ -1686,8 +1682,8 @@ export function Inbox() {
     },
     onError: (error) => {
       pushToast({
-        title: "Run retry failed",
-        body: error instanceof Error ? error.message : "Unable to retry run",
+        title: t("legacyinbox.general.runretryfailed"),
+        body: error instanceof Error ? error.message : t("legacyinbox.general.unabletoretryrun"),
         tone: "error",
       });
     },
@@ -1760,7 +1756,7 @@ export function Inbox() {
       return { companyId: selectedCompanyId, previousData };
     },
     onError: (err, id, context) => {
-      setActionError(err instanceof Error ? err.message : "Failed to archive task");
+      setActionError(err instanceof Error ? err.message : t("legacyinbox.general.failedtoarchivetask"));
       if (context?.companyId) clearLocalInboxArchive(context.companyId, id);
       setArchivingIssueIds((prev) => {
         const next = new Set(prev);
@@ -1801,7 +1797,7 @@ export function Inbox() {
       return { companyId: selectedCompanyId };
     },
     onError: (err, id, context) => {
-      setActionError(err instanceof Error ? err.message : "Failed to undo inbox archive");
+      setActionError(err instanceof Error ? err.message : t("legacyinbox.general.failedtoundoarchive"));
       if (context?.companyId) {
         beginLocalInboxArchive(context.companyId, id);
         boundLocalInboxArchive(context.companyId, id);
@@ -2207,7 +2203,7 @@ export function Inbox() {
   }, [selectedIndex]);
 
   if (!selectedCompanyId) {
-    return <EmptyState icon={InboxIcon} message="Select a company to view inbox." />;
+    return <EmptyState icon={InboxIcon} message={t("legacyinbox.general.selectcompanytoviewinbox")} />;
   }
 
   const hasRunFailures = failedRuns.length > 0;
@@ -2295,15 +2291,15 @@ export function Inbox() {
             items={[
               {
                 value: "mine",
-                label: "Mine",
+                label: t("legacyinbox.general.mine"),
               },
               {
                 value: "recent",
-                label: "Recent",
+                label: t("legacyinbox.general.recent"),
               },
-              { value: "unread", label: "Unread" },
-              { value: "blocked", label: "Blocked" },
-              { value: "all", label: "All" },
+              { value: "unread", label: t("legacyinbox.general.unread") },
+              { value: "blocked", label: t("legacyinbox.general.blocked") },
+              { value: "all", label: t("legacyinbox.general.all") },
             ]}
           />
         </Tabs>
@@ -2369,7 +2365,7 @@ export function Inbox() {
                 </PopoverTrigger>
                 <PopoverContent align="end" className="w-44 p-0">
                   <div className="space-y-0.5 p-2">
-                    {BLOCKED_GROUP_OPTIONS.map(([value, label]) => (
+                    {BLOCKED_GROUP_OPTIONS.map(([value]) => (
                       <button
                         key={value}
                         type="button"
@@ -2379,7 +2375,7 @@ export function Inbox() {
                         )}
                         onClick={() => setBlockedGroupBy(value)}
                       >
-                        <span>{label}</span>
+                        <span>{t(`legacyinbox.general.blockedgroup${value}`)}</span>
                         {blockedGroupBy === value ? <Check className="h-3.5 w-3.5" /> : null}
                       </button>
                     ))}
@@ -2408,7 +2404,7 @@ export function Inbox() {
                 </PopoverTrigger>
                 <PopoverContent align="end" className="w-48 p-0">
                   <div className="space-y-0.5 p-2">
-                    {BLOCKED_SORT_OPTIONS.map(([value, label]) => (
+                    {BLOCKED_SORT_OPTIONS.map(([value]) => (
                       <button
                         key={value}
                         type="button"
@@ -2418,7 +2414,7 @@ export function Inbox() {
                         )}
                         onClick={() => setBlockedSortBy(value)}
                       >
-                        <span>{label}</span>
+                        <span>{t(`legacyinbox.general.blockedsort${value}`)}</span>
                         {blockedSortBy === value ? <Check className="h-3.5 w-3.5" /> : null}
                       </button>
                     ))}
@@ -2434,7 +2430,7 @@ export function Inbox() {
                 size="icon"
                 className={cn("hidden h-8 w-8 shrink-0 sm:inline-flex", nestingEnabled && "bg-accent")}
                 onClick={toggleNesting}
-                title={nestingEnabled ? "Disable parent-child nesting" : "Enable parent-child nesting"}
+                title={nestingEnabled ? t("legacyinbox.general.disablenesting") : t("legacyinbox.general.enablenesting")}
               >
                 <ListTree className="h-3.5 w-3.5" />
               </Button>
@@ -2474,7 +2470,7 @@ export function Inbox() {
                       ["assignee", "Responsible"],
                       ["project", "Project"],
                       ...(isolatedWorkspacesEnabled ? ([["workspace", "Workspace"]] as const) : []),
-                    ] as const).map(([value, label]) => (
+                    ] as const).map(([value]) => (
                       <button
                         key={value}
                         type="button"
@@ -2484,7 +2480,7 @@ export function Inbox() {
                         )}
                         onClick={() => updateGroupBy(value)}
                       >
-                        <span>{label}</span>
+                        <span>{t(`legacyinbox.general.group${value}`)}</span>
                         {groupBy === value ? <Check className="h-3.5 w-3.5" /> : null}
                       </button>
                     ))}
@@ -2516,7 +2512,7 @@ export function Inbox() {
                       <DialogHeader>
                         <DialogTitle>{t("legacyinbox.general.markallasread15")}</DialogTitle>
                         <DialogDescription>
-                          {t("legacyinbox.general.thiswillmark")} {unreadIssueIds.length} {t("legacyinbox.general.unread")} {unreadIssueIds.length === 1 ? t("legacyinbox.general.item") : t("legacyinbox.general.items")} {t("legacyinbox.general.asread")}</DialogDescription>
+                          {t("legacyinbox.general.markallreaddescription", { count: unreadIssueIds.length })}</DialogDescription>
                       </DialogHeader>
                       <DialogFooter>
                         <Button variant="outline" onClick={() => setShowMarkAllReadConfirm(false)}>
@@ -2609,14 +2605,14 @@ export function Inbox() {
           icon={searchQuery.trim() ? Search : InboxIcon}
           message={
             searchQuery.trim()
-              ? "No inbox items match your search."
+              ? t("legacyinbox.general.noitemssearch")
               : tab === "mine"
-              ? "Inbox zero."
+              ? t("legacyinbox.general.inboxzero")
               : tab === "unread"
-              ? "No new inbox items."
+              ? t("legacyinbox.general.nonewitems")
               : tab === "recent"
-                ? "No recent inbox items."
-                : "No inbox items match these filters."
+                ? t("legacyinbox.general.norecentitems")
+                : t("legacyinbox.general.noitemsfilters")
           }
         />
       )}
@@ -2728,10 +2724,10 @@ export function Inbox() {
                       }
                       titleSuffix={hasChildren && !isExpanded && depth === 0 ? (
                         <span className="ml-1.5 text-xs text-muted-foreground">
-                          ({childCount} {t("legacyinbox.general.subtask")}{childCount !== 1 ? "s" : ""})
+                          {t(childCount === 1 ? "legacyinbox.general.subtaskcountone" : "legacyinbox.general.subtaskcountmany", { count: childCount })}
                         </span>
                       ) : undefined}
-                      mobileMeta={issueActivityText(issue).toLowerCase()}
+                      mobileMeta={t("legacyinbox.general.updatedtime", { time: timeAgo(issue.lastActivityAt ?? issue.lastExternalCommentAt ?? issue.updatedAt) })}
                       mobileLeading={
                         depth === 0 && hasChildren && collapseParentId ? (
                           <button
@@ -2803,7 +2799,7 @@ export function Inbox() {
                       >
                         <div className="h-px flex-1 bg-border/80" />
                         <span className="shrink-0 text-(length:--text-micro) font-semibold uppercase tracking-wide text-muted-foreground">
-                          {group.searchSection === "archived" ? "Archived" : "Other results"}
+                          {group.searchSection === "archived" ? t("legacyinbox.general.archived") : t("legacyinbox.general.otherresults")}
                         </span>
                         <div className="h-px flex-1 bg-border/80" />
                       </div>,
@@ -2813,6 +2809,15 @@ export function Inbox() {
                     const groupNavIdx = groupFlatIndex.get(group.key) ?? -1;
                     const isGroupSelected = groupNavIdx >= 0 && selectedIndex === groupNavIdx;
                     const canCreateIssueInGroup = group.displayItems.some((item) => item.kind === "issue");
+                    const groupLabel = ({
+                      "kind:issue": t("legacyinbox.general.grouptasks"),
+                      "kind:approval": t("legacyinbox.general.groupapprovals"),
+                      "kind:failed_run": t("legacyinbox.general.groupfailedruns"),
+                      "kind:join_request": t("legacyinbox.general.groupjoinrequests"),
+                      "assignee:none": t("legacyinbox.general.groupunassigned"),
+                      "project:none": t("legacyinbox.general.groupnoproject"),
+                      "workspace:none": t("legacyinbox.general.groupnoworkspace"),
+                    } as Record<string, string>)[group.key.replace(/^(archived-search:|other-search:)/, "")] ?? group.label;
                     elements.push(
                       <div
                         key={`group-${group.key}`}
@@ -2831,7 +2836,7 @@ export function Inbox() {
                             their chevron — same as the tasks list. */}
                         <div className={cn("rounded-lg px-3 sm:pl-0 sm:pr-4", isGroupSelected ? "bg-accent/50" : "hover:bg-accent/50")}>
                         <IssueGroupHeader
-                          label={group.label}
+                          label={groupLabel}
                           collapsible
                           collapsed={isGroupCollapsed}
                           onToggle={() => toggleGroupCollapse(group.key)}
@@ -2840,8 +2845,8 @@ export function Inbox() {
                               variant="ghost"
                               size="icon-xs"
                               className="-mr-2 text-muted-foreground"
-                              title={`New task in ${group.label}`}
-                              aria-label={`New task in ${group.label}`}
+                              title={t("legacyinbox.general.newtaskingroup", { group: groupLabel })}
+                              aria-label={t("legacyinbox.general.newtaskingroup", { group: groupLabel })}
                               onClick={(event) => {
                                 event.stopPropagation();
                                 openCreateIssueForGroup(group);
