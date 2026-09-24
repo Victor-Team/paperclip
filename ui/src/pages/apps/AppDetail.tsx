@@ -176,13 +176,13 @@ export function AppDetail({ renderActions, onReconnect }: {
     )
     : grantsQuery.data?.capabilities.canConfigure === true;
   const reconnectUnavailableMessage = grantsQuery.isLoading
-    ? "Checking who can reconnect this identity…"
+    ? t("appdetail.general.checkingreconnectidentity")
     : grantsQuery.isError
-      ? "We couldn't verify who can reconnect this identity. Reload the page to try again."
+      ? t("appdetail.general.couldntverifyreconnectidentity")
       : managedIdentityGrant?.kind === "user"
         && managedPersonalUserId !== grantsQuery.data?.currentUserId
-        ? "The person this connection belongs to must reconnect it."
-        : "You don't have permission to reconnect this identity.";
+        ? t("appdetail.general.ownerreconnectrequired")
+        : t("appdetail.general.noreconnectpermission");
   const logoEntry = useMemo(
     () => galleryEntryFor((galleryQuery.data?.apps ?? []) as AppGalleryDisplayEntry[], connection, application),
     [galleryQuery.data, connection, application],
@@ -197,10 +197,10 @@ export function AppDetail({ renderActions, onReconnect }: {
   const owner = connection ? connectionOwnerProfile(connection, userProfileById) : null;
   const baseAppName = connection
     ? logoEntry ? appDefinitionName(logoEntry) : humanizeConnectionDisplayName(connection)
-    : "App";
+    : t("appdetail.general.app");
   const appName = connection
     ? connectionDisplayNameForOwner(connection, baseAppName, owner)
-    : "App";
+    : t("appdetail.general.app");
   const successNoticeShownFor = useRef<string | null>(null);
 
   useEffect(() => {
@@ -273,8 +273,8 @@ export function AppDetail({ renderActions, onReconnect }: {
     },
     onError: (error) =>
       pushToast({
-        title: "Couldn't save that",
-        body: error instanceof Error ? error.message : "Please try again.",
+        title: t("appdetail.general.couldntsavethat"),
+        body: error instanceof Error ? error.message : t("appdetail.general.pleasetryagain"),
         tone: "error",
       }),
     onSettled: () => setPending(false),
@@ -292,8 +292,8 @@ export function AppDetail({ renderActions, onReconnect }: {
     },
     onError: (error) =>
       pushToast({
-        title: "Couldn't rename the app",
-        body: error instanceof Error ? error.message : "Please try again.",
+        title: t("appdetail.general.couldntrenameapp"),
+        body: error instanceof Error ? error.message : t("appdetail.general.pleasetryagain"),
         tone: "error",
       }),
   });
@@ -309,16 +309,16 @@ export function AppDetail({ renderActions, onReconnect }: {
         navigateTopLevel(target.url);
       } catch (error) {
         pushToast({
-          title: "Couldn't start sign-in",
-          body: error instanceof Error ? error.message : "Please try again.",
+          title: t("appdetail.general.couldntstartsignin"),
+          body: error instanceof Error ? error.message : t("appdetail.general.pleasetryagain"),
           tone: "error",
         });
       }
     },
     onError: (error) =>
       pushToast({
-        title: "Couldn't start sign-in",
-        body: error instanceof Error ? error.message : "Please try again.",
+        title: t("appdetail.general.couldntstartsignin"),
+        body: error instanceof Error ? error.message : t("appdetail.general.pleasetryagain"),
         tone: "error",
       }),
   });
@@ -336,7 +336,7 @@ export function AppDetail({ renderActions, onReconnect }: {
   const startPersonalAuth = useMutation({
     mutationFn: () => {
       const subjectUserId = grantsQuery.data?.currentUserId;
-      if (!subjectUserId) throw new Error("Sign in again to connect your own account.");
+      if (!subjectUserId) throw new Error(t("appdetail.general.signinagainconnectownaccount"));
       return toolsApi.startPersonalAuthorization(selectedCompanyId!, connectionId, {
         subjectUserId,
         returnTo: appTabHref(connectionId, "permissions"),
@@ -351,16 +351,16 @@ export function AppDetail({ renderActions, onReconnect }: {
         navigateTopLevel(target.url);
       } catch (error) {
         pushToast({
-          title: "Couldn't start sign-in",
-          body: error instanceof Error ? error.message : "Please try again.",
+          title: t("appdetail.general.couldntstartsignin"),
+          body: error instanceof Error ? error.message : t("appdetail.general.pleasetryagain"),
           tone: "error",
         });
       }
     },
     onError: (error) =>
       pushToast({
-        title: "Couldn't start sign-in",
-        body: error instanceof Error ? error.message : "Please try again.",
+        title: t("appdetail.general.couldntstartsignin"),
+        body: error instanceof Error ? error.message : t("appdetail.general.pleasetryagain"),
         tone: "error",
       }),
   });
@@ -377,15 +377,17 @@ export function AppDetail({ renderActions, onReconnect }: {
       invalidateGrants();
       setAudienceOpenGrantId(null);
       pushToast({
-        title: "Audience saved",
+        title: t("appdetail.general.audiencesaved"),
         body: (grant.members?.length ?? 0) === 0
-          ? "Every organization member can use this identity."
-          : `${grant.members?.length} ${grant.members?.length === 1 ? "member" : "members"} can use this identity.`,
+          ? t("appdetail.general.allmemberscanuseidentity")
+          : t("appdetail.general.memberscanuseidentity", {
+              count: grant.members?.length ?? 0,
+            }),
         tone: "success",
       });
     },
     onError: (error) =>
-      setAudienceError(error instanceof Error ? error.message : "We couldn't save that audience."),
+      setAudienceError(error instanceof Error ? error.message : t("appdetail.general.couldntsaveaudience")),
   });
 
   const refreshTools = useMutation({
@@ -397,17 +399,17 @@ export function AppDetail({ renderActions, onReconnect }: {
       queryClient.invalidateQueries({ queryKey: queryKeys.tools.connections(selectedCompanyId!) });
       queryClient.invalidateQueries({ queryKey: queryKeys.apps.attention(selectedCompanyId!) });
       pushToast({
-        title: `Found ${result.discoveredCount} ${result.discoveredCount === 1 ? "action" : "actions"}`,
+        title: t("appdetail.general.foundactions", { count: result.discoveredCount }),
         body: result.quarantinedCount > 0
-          ? `${result.quarantinedCount} new ${result.quarantinedCount === 1 ? "action needs" : "actions need"} your OK.`
+          ? t("appdetail.general.newactionsneedapproval", { count: result.quarantinedCount })
           : undefined,
         tone: "success",
       });
     },
     onError: (error) =>
       pushToast({
-        title: "Couldn't refresh actions",
-        body: error instanceof Error ? error.message : "Please try again.",
+        title: t("appdetail.general.couldntrefreshactions"),
+        body: error instanceof Error ? error.message : t("appdetail.general.pleasetryagain"),
         tone: "error",
       }),
   });
@@ -418,14 +420,14 @@ export function AppDetail({ renderActions, onReconnect }: {
       queryClient.invalidateQueries({ queryKey: queryKeys.tools.connectionGrants(connectionId) });
       queryClient.invalidateQueries({ queryKey: queryKeys.apps.attention(selectedCompanyId!) });
       pushToast({
-        title: "GitHub access refreshed",
-        body: "Account, installation, and repository access are current.",
+        title: t("appdetail.general.githubaccessrefreshed"),
+        body: t("appdetail.general.githubaccesscurrent"),
         tone: "success",
       });
     },
     onError: (error) => pushToast({
-      title: "Couldn't refresh GitHub access",
-      body: error instanceof Error ? error.message : "Please try again.",
+      title: t("appdetail.general.couldntrefreshgithubaccess"),
+      body: error instanceof Error ? error.message : t("appdetail.general.pleasetryagain"),
       tone: "error",
     }),
   });
@@ -488,7 +490,7 @@ export function AppDetail({ renderActions, onReconnect }: {
 
   const aiGrantRevoked = connection.connectionPurpose === "ai"
     && grantRows.length > 0 && grantRows.every((grant) => grant.status === "revoked");
-  const status: StatusInfo = aiGrantRevoked ? { label: "Revoked", tone: "attention" } : statusFor(connection);
+  const status: StatusInfo = aiGrantRevoked ? { label: t("appdetail.general.revoked"), tone: "attention" } : statusFor(connection, t);
   const needsReconnect = connection.requiresReauthorization
     ?? (status.tone === "attention" && connection.healthStatus !== "unknown");
   const quarantined = catalog.filter((e) => e.status === "quarantined");
@@ -529,7 +531,7 @@ export function AppDetail({ renderActions, onReconnect }: {
 
       {status.tone === "attention" && connection.requiresReauthorization === false && (
         <div role="status">
-          <p>{connection.healthMessage || "GitHub access could not be checked. Try again."}</p>
+          <p>{connection.healthMessage || t("appdetail.general.githubaccesscouldntbechecked")}</p>
           <Button variant="outline" disabled={refreshGitHubAccess.isPending} onClick={() => refreshGitHubAccess.mutate()}>
             {t("appdetail.general.retryaccess")}</Button>
         </div>
@@ -790,14 +792,17 @@ function unverifiedRemoteHost(connection: ToolConnection): string | null {
 
 type StatusInfo = { label: string; tone: "connected" | "attention" | "paused" };
 
-function statusFor(connection: ToolConnection): StatusInfo {
+function statusFor(
+  connection: ToolConnection,
+  t: (key: string) => string,
+): StatusInfo {
   if (connection.enabled === false || connection.status === "disabled") {
-    return { label: "Paused", tone: "paused" };
+    return { label: t("appdetail.general.paused"), tone: "paused" };
   }
   if (isAttentionHealthStatus(connection.healthStatus) || (connection.connectionPurpose === "ai" && (connection.healthStatus !== "ok" || aiSubscriptionNeedsIsolatedLogin(connection.config)))) {
-    return { label: "Needs attention", tone: "attention" };
+    return { label: t("appdetail.general.needsattention"), tone: "attention" };
   }
-  return { label: "Connected", tone: "connected" };
+  return { label: t("appdetail.general.connected"), tone: "connected" };
 }
 
 function StatusBadge({ status }: { status: StatusInfo }) {

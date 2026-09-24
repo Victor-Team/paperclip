@@ -23,6 +23,31 @@
       "loadingtools": "正在加载工具…",
       "couldntloadtoolsforthisapp": "无法加载此应用的工具。",
       "tryagain": "重试"
+      ,"app": "应用"
+      ,"pleasetryagain": "请重试。"
+      ,"checkingreconnectidentity": "正在检查谁可以重新连接此身份…"
+      ,"couldntverifyreconnectidentity": "无法验证谁可以重新连接此身份。请重新加载页面后重试。"
+      ,"ownerreconnectrequired": "此连接所属的人员必须自行重新连接。"
+      ,"noreconnectpermission": "您没有重新连接此身份的权限。"
+      ,"couldntsavethat": "无法保存"
+      ,"couldntrenameapp": "无法重命名应用"
+      ,"couldntstartsignin": "无法启动登录"
+      ,"signinagainconnectownaccount": "请再次登录以连接您自己的帐户。"
+      ,"audiencesaved": "受众已保存"
+      ,"allmemberscanuseidentity": "所有组织成员均可使用此身份。"
+      ,"memberscanuseidentity": "{{count}} 位成员可使用此身份。"
+      ,"couldntsaveaudience": "无法保存该受众。"
+      ,"foundactions": "发现 {{count}} 项操作"
+      ,"newactionsneedapproval": "有 {{count}} 项新操作需要您确认。"
+      ,"couldntrefreshactions": "无法刷新操作"
+      ,"githubaccessrefreshed": "GitHub 访问权限已刷新"
+      ,"githubaccesscurrent": "帐户、安装和仓库访问权限均为最新状态。"
+      ,"couldntrefreshgithubaccess": "无法刷新 GitHub 访问权限"
+      ,"githubaccesscouldntbechecked": "无法检查 GitHub 访问权限。请重试。"
+      ,"revoked": "已撤销"
+      ,"paused": "已暂停"
+      ,"needsattention": "需要关注"
+      ,"connected": "已连接"
     }
   },
   "browse": {
