@@ -46,6 +46,9 @@ const uiProject = snapshot.getProjects().find((project) => project.configFileNam
 if (!uiProject) throw new Error("TypeScript compiler API did not load ui/tsconfig.json");
 
 function filesUnder(root) {
+  if (fs.statSync(root).isFile()) {
+    return root.endsWith(".tsx") && !root.includes(".test.") ? [root] : [];
+  }
   return fs.readdirSync(root, { withFileTypes: true }).flatMap((entry) => {
     const entryPath = path.join(root, entry.name);
     if (entry.isDirectory()) return filesUnder(entryPath);

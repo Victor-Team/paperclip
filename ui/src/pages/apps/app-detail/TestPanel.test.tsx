@@ -6,6 +6,7 @@ import { createRoot } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { ToolCatalogEntry } from "@paperclipai/shared";
+import { i18n } from "@/i18n";
 import { TestPanel, errorHints } from "./TestPanel";
 
 const listTestAgentsMock = vi.hoisted(() => vi.fn());
@@ -193,7 +194,10 @@ function renderPanel(
   );
 }
 
-beforeEach(() => {
+beforeEach(async () => {
+  await act(async () => {
+    await i18n.changeLanguage("en");
+  });
   container = document.createElement("div");
   document.body.appendChild(container);
   root = createRoot(container);
@@ -266,6 +270,24 @@ describe("TestPanel", () => {
     expect(container.textContent).toContain("Ask first");
     expect(container.textContent).toContain("Off");
     expect(container.querySelector(".bg-card")).toBeNull();
+  });
+
+  it("renders static action-testing controls in Simplified Chinese", async () => {
+    await act(async () => {
+      await i18n.changeLanguage("zh-CN");
+    });
+    await act(async () => renderPanel());
+    await flushReact();
+
+    expect(container.textContent).toContain("测试操作");
+    expect(container.textContent).toContain("允许");
+    expect(container.textContent).toContain("请求确认");
+    expect(container.textContent).toContain("关闭");
+
+    await act(async () => {
+      await i18n.changeLanguage("en");
+    });
+    await flushReact();
   });
 
   it("defaults to the highest-ranked accessible agent", async () => {
