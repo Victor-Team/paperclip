@@ -540,11 +540,11 @@ export function GatewaysTab({ companyId }: { companyId: string }) {
                                   <span className="text-xs text-muted-foreground">
                                     {token.revokedAt ? (
                                       <>
-                                        {t("gatewaystab.general.revoked")}<RelativeTime value={token.revokedAt} />
+                                        {t("gatewaystab.general.revoked")}{" "}<RelativeTime value={token.revokedAt} />
                                       </>
                                     ) : token.expiresAt ? (
                                       <>
-                                        {t("gatewaystab.general.expires3")}<RelativeTime value={token.expiresAt} />
+                                        {t("gatewaystab.general.expires3")}{" "}<RelativeTime value={token.expiresAt} />
                                       </>
                                     ) : (
                                       "no expiry"

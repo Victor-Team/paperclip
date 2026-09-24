@@ -487,10 +487,10 @@ function AllowList({ rows, total }: { rows: AllowRow[]; total: number }) {
       </table>
       {rows.length > 80 ? (
         <p className="border-t border-border px-3 py-2 text-xs text-muted-foreground">
-          {t("profiledetail.general.showing80of")} {rows.length} {t("profiledetail.general.allowedtools")}</p>
+          {t("profiledetail.general.showingAllowedTools", { shown: 80, count: rows.length })}</p>
       ) : (
         <p className="border-t border-border px-3 py-2 text-xs text-muted-foreground">
-          {t("profiledetail.general.allows")} {rows.length} {t("profiledetail.general.of")} {total} {t("profiledetail.general.knowntools")}</p>
+          {t("profiledetail.general.allowedKnownTools", { allowed: rows.length, total })}</p>
       )}
     </div>
   );

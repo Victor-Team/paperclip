@@ -487,7 +487,7 @@ function CatalogReview({
         </div>
         <Button size="sm" onClick={onFinish} disabled={finishing || enabledCount === 0 || Boolean(activatedName)}>
           {finishing ? <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" /> : null}
-          {t("pasteconfigtab.general.activate")} {enabledCount} {t("pasteconfigtab.general.of")} {total}
+          {t("pasteconfigtab.general.activateSelectedActions", { enabled: enabledCount, total })}
         </Button>
       </div>
       <ActionGroup

@@ -1,5 +1,6 @@
 // @vitest-environment jsdom
 
+import { act } from "react";
 import { createRoot } from "react-dom/client";
 import type { Root } from "react-dom/client";
 import { flushSync } from "react-dom";
@@ -7,6 +8,7 @@ import type { ToolCatalogEntry } from "@paperclipai/shared";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { AdvancedRule, WizardSelections } from "./profile-model";
 import { WizardToolsStep } from "./WizardToolsStep";
+import { i18n } from "@/i18n";
 
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -55,9 +57,10 @@ describe("WizardToolsStep", () => {
     advancedRules = [];
   });
 
-  afterEach(() => {
+  afterEach(async () => {
     flushSync(() => root.unmount());
     container.remove();
+    await i18n.changeLanguage("en");
     vi.unstubAllGlobals();
     vi.restoreAllMocks();
   });
@@ -84,6 +87,18 @@ describe("WizardToolsStep", () => {
       );
     });
   }
+
+  it("updates the group sentence and accessibility label when Chinese is selected", async () => {
+    await i18n.changeLanguage("en");
+    render();
+    expect(container.textContent).toContain("Includes tools from Gmail and adds new tools later");
+
+    await act(async () => {
+      await i18n.changeLanguage("zh-CN");
+    });
+    expect(container.textContent).toContain("包含 Gmail 的工具，并会添加以后新增的工具");
+    expect(container.querySelector('button[aria-label="Gmail 的所有工具"]')).toBeTruthy();
+  });
 
   it("adds an advanced rule when crypto.randomUUID is unavailable", () => {
     vi.stubGlobal("crypto", {});

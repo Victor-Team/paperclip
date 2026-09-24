@@ -6678,6 +6678,7 @@
   },
   "pasteconfigtab": {
     "general": {
+      "activateSelectedActions": "Activate {{enabled}} of {{total}} actions",
       "pastethemcpconfigsnippetfromthe": "Paste the MCP config snippet from the tool's README and we'll turn it into a friendly setup.",
       "justaurl": "Just a URL?",
       "browseplannedappconnections": "Browse planned app connections",
@@ -6918,6 +6919,8 @@
   },
   "profiledetail": {
     "general": {
+      "showingAllowedTools": "Showing {{shown}} of {{count}} allowed tools.",
+      "allowedKnownTools": "Allows {{allowed}} of {{total}} known tools.",
       "loadingprofile": "Loading profile...",
       "profilenotfound": "Profile not found",
       "backtoprofiles": "Back to profiles",
@@ -7074,6 +7077,9 @@
   },
   "wizardtoolsstep": {
     "general": {
+      "noToolsMatchSearch": "No tools match “{{search}}”.",
+      "includesGroupToolsAndFuture": "Includes tools from {{group}} and adds new tools later",
+      "allGroupTools": "All {{group}} tools",
       "loadingtools": "Loading tools…",
       "appconnectionsarecomingsoon": "App connections are coming soon",
       "profileswillbeavailableonceappconnections": "Profiles will be available once app connections are ready. Browse the planned integrations in the\n            meantime.",

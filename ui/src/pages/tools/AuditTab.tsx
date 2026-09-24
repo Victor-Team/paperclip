@@ -223,11 +223,11 @@ function ActivityRow({
               {t("audittab.general.permitted")} {(permittedNotInstalledCount ?? permittedNotInstalledConnections.length) === 1 ? t("audittab.general.connection") : t("audittab.general.connections")} {t("audittab.general.notinstalled")}</span>
           ) : (
             <span className="block text-foreground">
-              <span className="font-medium">{who}</span> {t("audittab.general.used")}<span className="font-medium">{action}</span>
+              <span className="font-medium">{who}</span> {t("audittab.general.used")}{" "}<span className="font-medium">{action}</span>
               {app ? (
                 <>
                   {" "}
-                  {t("audittab.general.in")}<span className="font-medium">{app}</span>
+                  {t("audittab.general.in")}{" "}<span className="font-medium">{app}</span>
                 </>
               ) : null}
             </span>

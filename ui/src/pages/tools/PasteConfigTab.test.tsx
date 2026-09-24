@@ -530,7 +530,7 @@ describe("PasteConfigTab — activation handoff (PAP-11092)", () => {
 
     expect(container.textContent).toContain("We found 1 app in that config");
     expect(buttonStartingWith("Check actions")).toBeFalsy();
-    expect(container.textContent).toContain("stay as drafts until an admin");
+    expect(container.textContent?.replace(/\s+/g, " ")).toContain("stay as drafts until an admin");
     expect(container.textContent).toContain("Keys from this config stay draft-only");
     expect(container.textContent).not.toContain("No keys needed for this one.");
   });
