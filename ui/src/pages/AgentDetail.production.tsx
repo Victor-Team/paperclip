@@ -544,18 +544,18 @@ function parseStoredLogContent(content: string): RunLogChunk[] {
   return parsed;
 }
 
-function workspaceOperationPhaseLabel(phase: WorkspaceOperation["phase"]) {
+function workspaceOperationPhaseLabel(phase: WorkspaceOperation["phase"], translate: (key: string) => string) {
   switch (phase) {
     case "worktree_prepare":
-      return "Worktree setup";
+      return translate("agentdetailproduction.general.worktreesetup");
     case "workspace_config_freshness":
-      return "Config freshness";
+      return translate("agentdetailproduction.general.configfreshness");
     case "workspace_provision":
-      return "Provision";
+      return translate("agentdetailproduction.general.provision");
     case "workspace_teardown":
-      return "Teardown";
+      return translate("agentdetailproduction.general.teardown");
     case "worktree_cleanup":
-      return "Worktree cleanup";
+      return translate("agentdetailproduction.general.worktreecleanup");
     default:
       return phase;
   }
@@ -577,6 +577,7 @@ function workspaceOperationStatusTone(status: WorkspaceOperation["status"]) {
 }
 
 function WorkspaceOperationStatusBadge({ status }: { status: WorkspaceOperation["status"] }) {
+  const { t } = useTranslation();
   return (
     <Badge variant="outline"
       className={cn(
@@ -584,7 +585,7 @@ function WorkspaceOperationStatusBadge({ status }: { status: WorkspaceOperation[
         workspaceOperationStatusTone(status),
       )}
     >
-      {status.replace("_", " ")}
+      {t(`agentdetailproduction.general.workspacestatus${status.replaceAll("_", "")}`, { defaultValue: status.replace("_", " ") })}
     </Badge>
   );
 }
@@ -681,7 +682,7 @@ function WorkspaceOperationsSection({
           return (
             <div key={operation.id} className="rounded-md border border-border/70 bg-background/70 p-3 space-y-2">
               <div className="flex flex-wrap items-center gap-2">
-                <div className="text-sm font-medium">{workspaceOperationPhaseLabel(operation.phase)}</div>
+                <div className="text-sm font-medium">{workspaceOperationPhaseLabel(operation.phase, t)}</div>
                 <WorkspaceOperationStatusBadge status={operation.status} />
                 <div className="text-(length:--text-micro) text-muted-foreground">
                   {relativeTime(operation.startedAt)}
@@ -725,7 +726,7 @@ function WorkspaceOperationsSection({
               )}
               {typeof metadata?.created === "boolean" && (
                 <div className="text-xs text-muted-foreground">
-                  {metadata.created ? "Created by this run" : "Reused existing workspace"}
+                  {metadata.created ? t("agentdetailproduction.general.createdbythisrun") : t("agentdetailproduction.general.reusedexistingworkspace")}
                 </div>
               )}
               {operation.stderrExcerpt && operation.stderrExcerpt.trim() && (
@@ -795,8 +796,8 @@ export function AgentDetail() {
   const setSaveConfigAction = useCallback((fn: (() => void) | null) => { saveConfigActionRef.current = fn; }, []);
   const setCancelConfigAction = useCallback((fn: (() => void) | null) => { cancelConfigActionRef.current = fn; }, []);
   const prepareAgentNavigation = useCallback(() => {
-    return confirmAgentConfigNavigation(configDirty);
-  }, [configDirty]);
+    return confirmAgentConfigNavigation(configDirty, () => typeof window === "undefined" || window.confirm(t("agentdetailproduction.general.discardunsavedchanges")));
+  }, [configDirty, t]);
 
   const { data: agent, isLoading, error } = useQuery<AgentDetailRecord>({
     queryKey: [...queryKeys.agents.detail(routeAgentRef), lookupCompanyId ?? null],
@@ -851,7 +852,7 @@ export function AgentDetail() {
       builtInAgentsApi.reset(resolvedCompanyId!, builtInState!.definition.key, [kind]),
     onSuccess: invalidateBuiltIn,
     onError: (error) => {
-      setActionError(error instanceof Error ? error.message : "Failed to update bundle resource");
+      setActionError(error instanceof Error ? error.message : t("agentdetailproduction.general.failedupdatebundle"));
     },
   });
   const runBuiltInRoutine = useMutation({
@@ -859,7 +860,7 @@ export function AgentDetail() {
       builtInAgentsApi.runRoutine(resolvedCompanyId!, builtInState!.definition.key, routineKey),
     onSuccess: invalidateBuiltIn,
     onError: (error) => {
-      setActionError(error instanceof Error ? error.message : "Failed to run built-in routine");
+      setActionError(error instanceof Error ? error.message : t("agentdetailproduction.general.failedrunroutine"));
     },
   });
   const enableBuiltInSchedule = useMutation({
@@ -867,7 +868,7 @@ export function AgentDetail() {
       builtInAgentsApi.enableRoutineSchedule(resolvedCompanyId!, builtInState!.definition.key, routineKey),
     onSuccess: invalidateBuiltIn,
     onError: (error) => {
-      setActionError(error instanceof Error ? error.message : "Failed to enable routine schedule");
+      setActionError(error instanceof Error ? error.message : t("agentdetailproduction.general.failedenableroutineschedule"));
     },
   });
   const disableBuiltInSchedule = useMutation({
@@ -875,7 +876,7 @@ export function AgentDetail() {
       builtInAgentsApi.disableRoutineSchedule(resolvedCompanyId!, builtInState!.definition.key, routineKey),
     onSuccess: invalidateBuiltIn,
     onError: (error) => {
-      setActionError(error instanceof Error ? error.message : "Failed to disable routine schedule");
+      setActionError(error instanceof Error ? error.message : t("agentdetailproduction.general.faileddisableroutineschedule"));
     },
   });
   const builtInRoutineActionPending =
@@ -1021,7 +1022,7 @@ export function AgentDetail() {
       }
     },
     onError: (err) => {
-      setActionError(err instanceof Error ? err.message : "Action failed");
+      setActionError(err instanceof Error ? err.message : t("agentdetailproduction.general.actionfailedmessage"));
     },
   });
 
@@ -1066,42 +1067,42 @@ export function AgentDetail() {
       }
     },
     onError: (err) => {
-      setActionError(err instanceof Error ? err.message : "Failed to update permissions");
+      setActionError(err instanceof Error ? err.message : t("agentdetailproduction.general.failedupdatepermissions"));
     },
   });
 
   useEffect(() => {
     const crumbs: { label: string; href?: string }[] = [
-      { label: "Agents", href: "/agents" },
+      { label: t("agentdetailproduction.general.agentsbreadcrumb"), href: "/agents" },
     ];
-    const agentName = agent?.name ?? routeAgentRef ?? "Agent";
+    const agentName = agent?.name ?? routeAgentRef ?? t("agentdetailproduction.general.agentbreadcrumb");
     if (activeView === "dashboard" && !urlRunId) {
       crumbs.push({ label: agentName });
     } else {
       crumbs.push({ label: agentName, href: `/agents/${canonicalAgentRef}/dashboard` });
       if (urlRunId) {
-        crumbs.push({ label: "Runs", href: `/agents/${canonicalAgentRef}/runs` });
-        crumbs.push({ label: `Run ${urlRunId.slice(0, 8)}` });
+        crumbs.push({ label: t("agentdetailproduction.general.navigationruns"), href: `/agents/${canonicalAgentRef}/runs` });
+        crumbs.push({ label: t("agentdetailproduction.general.runbreadcrumb", { id: urlRunId.slice(0, 8) }) });
       } else if (activeView === "instructions") {
-        crumbs.push({ label: "Instructions" });
+        crumbs.push({ label: t("agentdetailproduction.general.navigationinstructions") });
       } else if (activeView === "configuration") {
-        crumbs.push({ label: "Configuration" });
+        crumbs.push({ label: t("agentdetailproduction.general.navigationconfiguration") });
       } else if (activeView === "secrets") {
-        crumbs.push({ label: "Secrets" });
+        crumbs.push({ label: t("agentdetailproduction.general.navigationsecrets") });
       // } else if (activeView === "skills") { // TODO: bring back later
       //   crumbs.push({ label: "Skills" });
       } else if (activeView === "tools") {
-        crumbs.push({ label: "Tools" });
+        crumbs.push({ label: t("agentdetailproduction.general.navigationtools") });
       } else if (activeView === "runs") {
-        crumbs.push({ label: "Runs" });
+        crumbs.push({ label: t("agentdetailproduction.general.navigationruns") });
       } else if (activeView === "budget") {
-        crumbs.push({ label: "Budget" });
+        crumbs.push({ label: t("agentdetailproduction.general.navigationbudget") });
       } else {
-        crumbs.push({ label: "Dashboard" });
+        crumbs.push({ label: t("agentdetailproduction.general.navigationdashboard") });
       }
     }
     setBreadcrumbs(crumbs);
-  }, [setBreadcrumbs, agent, routeAgentRef, canonicalAgentRef, activeView, urlRunId]);
+  }, [setBreadcrumbs, agent, routeAgentRef, canonicalAgentRef, activeView, urlRunId, t]);
 
   useEffect(() => {
     closePanel();
@@ -1313,11 +1314,11 @@ export function AgentDetail() {
           <AgentActionButtons
             agent={agent}
             companyId={resolvedCompanyId}
-            assignLabel="Assign Task"
-            runLabel="Run Heartbeat"
+            assignLabel={t("agentdetailproduction.general.assigntaskaction")}
+            runLabel={t("agentdetailproduction.general.runheartbeat")}
             actionsDisabled={agentAction.isPending}
             workActionsDisabled={hasInvalidOrgChain}
-            workActionsDisabledReason="Repair this agent's reporting chain before assigning tasks or starting runs"
+            workActionsDisabledReason={t("agentdetailproduction.general.repairreportingchain")}
             hasPendingNavigationChanges={configDirty}
             onBeforeNavigate={prepareAgentNavigation}
             onActionError={setActionError}
@@ -1326,7 +1327,7 @@ export function AgentDetail() {
             pauseConfirm={
               builtInState
                 ? {
-                    title: `Pause the ${builtInState.definition.displayName}?`,
+                    title: t("agentdetailproduction.general.pausebuiltinconfirm", { name: builtInState.definition.displayName }),
                     description: (
                       <>
                         {builtInFeatureLabel} {t("agentdetailproduction.general.dependsonthisagentwhilepaused")}{" "}
@@ -1364,7 +1365,7 @@ export function AgentDetail() {
               onClick={() => resetBuiltIn.mutate()}
               disabled={resetBuiltIn.isPending}
             >
-              {resetBuiltIn.isPending ? "Resetting…" : "Reset to defaults"}
+              {resetBuiltIn.isPending ? t("agentdetailproduction.general.resettingbuiltin") : t("agentdetailproduction.general.resettodefaults")}
             </Button>
           }
         >
@@ -1745,7 +1746,7 @@ function LatestRunCard({
                   : run.invocationSource === "on_demand" ? "bg-cyan-100 text-cyan-700 dark:bg-cyan-900/50 dark:text-cyan-300"
                   : "bg-muted text-muted-foreground"
               )}>
-                {sourceLabels[run.invocationSource] ?? run.invocationSource}
+                {t(`agentdetailproduction.general.sourcelabel${run.invocationSource.replaceAll("_", "")}`, { defaultValue: sourceLabels[run.invocationSource] ?? run.invocationSource })}
               </Badge>
             </>
           )}
@@ -2136,7 +2137,7 @@ function ConfigurationTab({
       if (!syncAgentRouteAfterRename(queryClient, navigate, agent, updated, urlTab ?? content)) {
         queryClient.invalidateQueries({ queryKey: queryKeys.agents.detail(agent.urlKey) });
       }
-      pushToast({ title: "Agent saved", tone: "success" });
+      pushToast({ title: t("agentdetailproduction.general.agentsavedtoast"), tone: "success" });
     },
     onError: (err) => {
       setAwaitingRefreshAfterSave(false);
@@ -2145,8 +2146,8 @@ function ConfigurationTab({
           ? err.message
           : err instanceof Error
             ? err.message
-            : "Could not save agent";
-      pushToast({ title: "Save failed", body: message, tone: "error" });
+            : t("agentdetailproduction.general.couldnotsaveagent");
+      pushToast({ title: t("agentdetailproduction.general.savefailedtoast"), body: message, tone: "error" });
     },
   });
 
@@ -2169,14 +2170,14 @@ function ConfigurationTab({
   const taskAssignLocked = agent.role === "ceo" || canCreateAgents;
   const taskAssignHint =
     taskAssignSource === "ceo_role"
-      ? "Enabled automatically for CEO agents."
+      ? t("agentdetailproduction.general.enabledforceoagents")
       : taskAssignSource === "agent_creator"
-        ? "Enabled automatically while this agent can create new agents."
+        ? t("agentdetailproduction.general.enabledforagentcreator")
         : taskAssignSource === "explicit_grant"
-          ? "Enabled via explicit company permission grant."
+          ? t("agentdetailproduction.general.enabledviaexplicitgrant")
           : taskAssignSource === "simple_default"
-            ? "Enabled by simple company-wide task assignment defaults."
-            : "Disabled unless explicitly granted.";
+            ? t("agentdetailproduction.general.enabledviasimpledefault")
+            : t("agentdetailproduction.general.disabledunlessexplicitlygranted");
 
   return (
     <div className="space-y-6">
@@ -2961,9 +2962,9 @@ export function PromptsTab({
               {!fileLoading && (
                 <CopyText
                   text={displayValue}
-                  ariaLabel="Copy instructions file as markdown"
+                  ariaLabel={t("agentdetailproduction.general.copyinstructionsfileasmarkdown")}
                   title={t("agentdetailproduction.general.copyasmarkdown")}
-                  copiedLabel="Copied"
+                  copiedLabel={t("agentdetailproduction.general.copiedlabel")}
                   className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-border text-muted-foreground hover:bg-accent hover:text-foreground"
                 >
                   <Copy className="h-3.5 w-3.5" />
@@ -2975,7 +2976,7 @@ export function PromptsTab({
                   size="sm"
                   variant="outline"
                   onClick={() => {
-                    if (confirm(`Delete ${selectedOrEntryFile}?`)) {
+                    if (confirm(t("agentdetailproduction.general.deletefileconfirm", { filename: selectedOrEntryFile }))) {
                       deleteFile.mutate(selectedOrEntryFile, {
                         onSuccess: () => {
                           setSelectedFile(currentEntryFile);
@@ -3108,7 +3109,7 @@ function RunListItem({ run, isSelected, agentId }: { run: HeartbeatRun; isSelect
             : run.invocationSource === "on_demand" ? "bg-cyan-100 text-cyan-700 dark:bg-cyan-900/50 dark:text-cyan-300"
             : "bg-muted text-muted-foreground"
         )}>
-          {sourceLabels[run.invocationSource] ?? run.invocationSource}
+          {t(`agentdetailproduction.general.sourcelabel${run.invocationSource.replaceAll("_", "")}`, { defaultValue: sourceLabels[run.invocationSource] ?? run.invocationSource })}
         </Badge>
         {sourceResolvedFold ? <SourceResolvedFoldBadge showIcon={false} className="shrink-0 text-(length:--text-nano) py-0" /> : null}
         <span className="ml-auto text-(length:--text-micro) text-muted-foreground shrink-0">
@@ -3618,7 +3619,7 @@ function RunDetail({ run: initialRun, agentRouteId, adapterType, adapterConfig }
                       onClick={() => {
                         const issueCount = touchedIssueIds.length;
                         const confirmed = window.confirm(
-                          `Clear session for ${issueCount} issue${issueCount === 1 ? "" : "s"} touched by this run?`,
+                          t("agentdetailproduction.general.clearsessionsconfirm", { count: issueCount }),
                         );
                         if (!confirmed) return;
                         clearSessionsForTouchedIssues.mutate();
@@ -3911,7 +3912,7 @@ export function LogViewer({ run, adapterType }: { run: HeartbeatRun; adapterType
             setLogLoading(false);
             return;
           }
-          setLogError(err instanceof Error ? err.message : "Failed to load run log");
+          setLogError(err instanceof Error ? err.message : t("agentdetailproduction.general.failedloadrunlog"));
         }
       } finally {
         if (!cancelled) setLogLoading(false);
@@ -3935,7 +3936,7 @@ export function LogViewer({ run, adapterType }: { run: HeartbeatRun; adapterType
       setLogOffset(next);
       setHasMoreLog(result.nextOffset !== undefined);
     } catch (err) {
-      setLogError(err instanceof Error ? err.message : "Failed to load more run log");
+      setLogError(err instanceof Error ? err.message : t("agentdetailproduction.general.failedloadmorerunlog"));
     } finally {
       setLoadingMoreLog(false);
     }
@@ -4247,7 +4248,7 @@ export function LogViewer({ run, adapterType }: { run: HeartbeatRun; adapterType
           mode={transcriptMode}
           streaming={isLive}
           limit={isLive ? LIVE_TRANSCRIPT_RENDER_LIMIT : undefined}
-          emptyMessage={run.logRef ? "Waiting for transcript..." : "No persisted transcript for this run."}
+          emptyMessage={run.logRef ? t("agentdetailproduction.general.waitingfortranscript") : t("agentdetailproduction.general.nopersistedtranscript")}
         />
         {hasMoreLog && (
           <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-border/60 pt-3">
@@ -4388,7 +4389,7 @@ function KeysTab({ agentId, companyId }: { agentId: string; companyId?: string }
         setTimeout(() => setCopied(false), 2000);
       })
       .catch(() => {
-        pushToast({ title: "Copy failed", body: "Clipboard access is unavailable.", tone: "error" });
+        pushToast({ title: t("agentdetailproduction.general.copyfailedtoast"), body: t("agentdetailproduction.general.clipboardaccessunavailable"), tone: "error" });
       });
   }
 

@@ -544,18 +544,18 @@ function parseStoredLogContent(content: string): RunLogChunk[] {
   return parsed;
 }
 
-function workspaceOperationPhaseLabel(phase: WorkspaceOperation["phase"]) {
+function workspaceOperationPhaseLabel(phase: WorkspaceOperation["phase"], translate: (key: string) => string) {
   switch (phase) {
     case "worktree_prepare":
-      return "Worktree setup";
+      return translate("agentdetail.general.worktreesetup");
     case "workspace_config_freshness":
-      return "Config freshness";
+      return translate("agentdetail.general.configfreshness");
     case "workspace_provision":
-      return "Provision";
+      return translate("agentdetail.general.provision");
     case "workspace_teardown":
-      return "Teardown";
+      return translate("agentdetail.general.teardown");
     case "worktree_cleanup":
-      return "Worktree cleanup";
+      return translate("agentdetail.general.worktreecleanup");
     default:
       return phase;
   }
@@ -577,6 +577,7 @@ function workspaceOperationStatusTone(status: WorkspaceOperation["status"]) {
 }
 
 function WorkspaceOperationStatusBadge({ status }: { status: WorkspaceOperation["status"] }) {
+  const { t } = useTranslation();
   return (
     <Badge variant="outline"
       className={cn(
@@ -584,7 +585,7 @@ function WorkspaceOperationStatusBadge({ status }: { status: WorkspaceOperation[
         workspaceOperationStatusTone(status),
       )}
     >
-      {status.replace("_", " ")}
+      {t(`agentdetail.general.workspacestatus${status.replaceAll("_", "")}`, { defaultValue: status.replace("_", " ") })}
     </Badge>
   );
 }
@@ -681,7 +682,7 @@ function WorkspaceOperationsSection({
           return (
             <div key={operation.id} className="rounded-md border border-border/70 bg-background/70 p-3 space-y-2">
               <div className="flex flex-wrap items-center gap-2">
-                <div className="text-sm font-medium">{workspaceOperationPhaseLabel(operation.phase)}</div>
+                <div className="text-sm font-medium">{workspaceOperationPhaseLabel(operation.phase, t)}</div>
                 <WorkspaceOperationStatusBadge status={operation.status} />
                 <div className="text-(length:--text-micro) text-muted-foreground">
                   {relativeTime(operation.startedAt)}
@@ -725,7 +726,7 @@ function WorkspaceOperationsSection({
               )}
               {typeof metadata?.created === "boolean" && (
                 <div className="text-xs text-muted-foreground">
-                  {metadata.created ? "Created by this run" : "Reused existing workspace"}
+                  {metadata.created ? t("agentdetail.general.createdbythisrun") : t("agentdetail.general.reusedexistingworkspace")}
                 </div>
               )}
               {operation.stderrExcerpt && operation.stderrExcerpt.trim() && (
@@ -809,8 +810,8 @@ export function AgentDetail() {
   const setSaveConfigAction = useCallback((fn: (() => void) | null) => { saveConfigActionRef.current = fn; }, []);
   const setCancelConfigAction = useCallback((fn: (() => void) | null) => { cancelConfigActionRef.current = fn; }, []);
   const prepareAgentNavigation = useCallback(() => {
-    return confirmAgentConfigNavigation(configDirty);
-  }, [configDirty]);
+    return confirmAgentConfigNavigation(configDirty, () => typeof window === "undefined" || window.confirm(t("agentdetail.general.discardunsavedchanges")));
+  }, [configDirty, t]);
   const { data: agent, isLoading, error } = useQuery<AgentDetailRecord>({
     queryKey: [...queryKeys.agents.detail(routeAgentRef), lookupCompanyId ?? null],
     queryFn: () => agentsApi.get(routeAgentRef, lookupCompanyId),
@@ -876,7 +877,7 @@ export function AgentDetail() {
       builtInAgentsApi.reset(resolvedCompanyId!, builtInState!.definition.key, [kind]),
     onSuccess: invalidateBuiltIn,
     onError: (error) => {
-      setActionError(error instanceof Error ? error.message : "Failed to update bundle resource");
+      setActionError(error instanceof Error ? error.message : t("agentdetail.general.failedupdatebundle"));
     },
   });
   const runBuiltInRoutine = useMutation({
@@ -884,7 +885,7 @@ export function AgentDetail() {
       builtInAgentsApi.runRoutine(resolvedCompanyId!, builtInState!.definition.key, routineKey),
     onSuccess: invalidateBuiltIn,
     onError: (error) => {
-      setActionError(error instanceof Error ? error.message : "Failed to run built-in routine");
+      setActionError(error instanceof Error ? error.message : t("agentdetail.general.failedrunroutine"));
     },
   });
   const enableBuiltInSchedule = useMutation({
@@ -892,7 +893,7 @@ export function AgentDetail() {
       builtInAgentsApi.enableRoutineSchedule(resolvedCompanyId!, builtInState!.definition.key, routineKey),
     onSuccess: invalidateBuiltIn,
     onError: (error) => {
-      setActionError(error instanceof Error ? error.message : "Failed to enable routine schedule");
+      setActionError(error instanceof Error ? error.message : t("agentdetail.general.failedenableroutineschedule"));
     },
   });
   const disableBuiltInSchedule = useMutation({
@@ -900,7 +901,7 @@ export function AgentDetail() {
       builtInAgentsApi.disableRoutineSchedule(resolvedCompanyId!, builtInState!.definition.key, routineKey),
     onSuccess: invalidateBuiltIn,
     onError: (error) => {
-      setActionError(error instanceof Error ? error.message : "Failed to disable routine schedule");
+      setActionError(error instanceof Error ? error.message : t("agentdetail.general.faileddisableroutineschedule"));
     },
   });
   const builtInRoutineActionPending =
@@ -1015,7 +1016,7 @@ export function AgentDetail() {
       }
     },
     onError: (err) => {
-      setActionError(err instanceof Error ? err.message : "Action failed");
+      setActionError(err instanceof Error ? err.message : t("agentdetail.general.actionfailedmessage"));
     },
   });
 
@@ -1042,31 +1043,31 @@ export function AgentDetail() {
       }
     },
     onError: (err) => {
-      setActionError(err instanceof Error ? err.message : "Failed to update permissions");
+      setActionError(err instanceof Error ? err.message : t("agentdetail.general.failedupdatepermissions"));
     },
   });
 
   useEffect(() => {
     const crumbs: { label: string; href?: string }[] = [
-      { label: "Agents", href: "/agents" },
+      { label: t("agentdetail.general.agentsbreadcrumb"), href: "/agents" },
     ];
-    const agentName = agent?.name ?? routeAgentRef ?? "Agent";
+    const agentName = agent?.name ?? routeAgentRef ?? t("agentdetail.general.agentbreadcrumb");
     if (activeView === "overview" && !urlRunId) {
       crumbs.push({ label: agentName });
     } else {
       crumbs.push({ label: agentName, href: agentDetailHref(canonicalAgentRef) });
       if (urlRunId) {
-        crumbs.push({ label: "Runs", href: agent?.id ? agentScopedAuditHref(agent.id, "runs") : undefined });
-        crumbs.push({ label: `Run ${urlRunId.slice(0, 8)}` });
+        crumbs.push({ label: t("agentdetail.general.runsbreadcrumb"), href: agent?.id ? agentScopedAuditHref(agent.id, "runs") : undefined });
+        crumbs.push({ label: t("agentdetail.general.runbreadcrumb", { id: urlRunId.slice(0, 8) }) });
       } else {
         const item = AGENT_DETAIL_NAVIGATION
           .flatMap((section) => section.items)
           .find((candidate) => candidate.value === activeView);
-        crumbs.push({ label: item?.label ?? "Overview" });
+        crumbs.push({ label: (item ? t(`agentdetail.general.navigation${item.value.replaceAll("-", "")}`, { defaultValue: item.label }) : t("agentdetail.general.overviewbreadcrumb")) });
       }
     }
     setBreadcrumbs(crumbs);
-  }, [setBreadcrumbs, agent, routeAgentRef, canonicalAgentRef, activeView, urlRunId]);
+  }, [setBreadcrumbs, agent, routeAgentRef, canonicalAgentRef, activeView, urlRunId, t]);
 
   useEffect(() => {
     closePanel();
@@ -1279,12 +1280,12 @@ export function AgentDetail() {
           <AgentActionButtons
             agent={agent}
             companyId={resolvedCompanyId}
-            assignLabel="Assign Task"
+            assignLabel={t("agentdetail.general.assigntaskaction")}
             showStatus={false}
             canRunWithProviderTrace={canUseProviderTrace}
             actionsDisabled={agentAction.isPending}
             workActionsDisabled={hasInvalidOrgChain}
-            workActionsDisabledReason="Repair this agent's reporting chain before assigning tasks or starting runs"
+            workActionsDisabledReason={t("agentdetail.general.repairreportingchain")}
             hasPendingNavigationChanges={configDirty}
             onBeforeNavigate={prepareAgentNavigation}
             onActionError={setActionError}
@@ -1293,7 +1294,7 @@ export function AgentDetail() {
             pauseConfirm={
               builtInState
                 ? {
-                    title: `Pause the ${builtInState.definition.displayName}?`,
+                    title: t("agentdetail.general.pausebuiltinconfirm", { name: builtInState.definition.displayName }),
                     description: (
                       <>
                         {builtInFeatureLabel} {t("agentdetail.general.dependsonthisagentwhilepaused")}{" "}
@@ -1331,7 +1332,7 @@ export function AgentDetail() {
               onClick={() => resetBuiltIn.mutate()}
               disabled={resetBuiltIn.isPending}
             >
-              {resetBuiltIn.isPending ? "Resetting…" : "Reset to defaults"}
+              {resetBuiltIn.isPending ? t("agentdetail.general.resettingbuiltin") : t("agentdetail.general.resettodefaults")}
             </Button>
           }
         >
@@ -1383,7 +1384,7 @@ export function AgentDetail() {
         </div>
       )}
 
-      {activeView !== "run-detail" && activeView !== "channels" && <h2 className="text-xl font-semibold">{activeView === "secrets" ? t("agentdetail.general.secretsvariables") : AGENT_DETAIL_NAVIGATION.flatMap(section => section.items).find(item => item.value === activeView)?.label}</h2>}
+      {activeView !== "run-detail" && activeView !== "channels" && <h2 className="text-xl font-semibold">{activeView === "secrets" ? t("agentdetail.general.secretsvariables") : t(`agentdetail.general.navigation${activeView.replaceAll("-", "")}`, { defaultValue: AGENT_DETAIL_NAVIGATION.flatMap(section => section.items).find(item => item.value === activeView)?.label ?? activeView })}</h2>}
 
       {/* View content */}
       {activeView === "overview" && (
@@ -1682,7 +1683,7 @@ function LatestRunCard({
                   : run.invocationSource === "on_demand" ? "bg-cyan-100 text-cyan-700 dark:bg-cyan-900/50 dark:text-cyan-300"
                   : "bg-muted text-muted-foreground"
               )}>
-                {sourceLabels[run.invocationSource] ?? run.invocationSource}
+                {t(`agentdetail.general.sourcelabel${run.invocationSource.replaceAll("_", "")}`, { defaultValue: sourceLabels[run.invocationSource] ?? run.invocationSource })}
               </Badge>
             </>
           )}
@@ -1729,7 +1730,7 @@ export function AgentOverview({
   const configuredModel = asNonEmptyString(agent.adapterConfig?.model)
     ?? asNonEmptyString(agent.adapterConfig?.modelName)
     ?? asNonEmptyString(agent.runtimeConfig?.model)
-    ?? "Adapter default";
+    ?? t("agentdetail.general.adapterdefault");
   const lastRun = runs[0] ?? null;
 
   return (
@@ -2008,7 +2009,7 @@ export function ConfigurationTab({
       if (!syncAgentRouteAfterRename(queryClient, navigate, agent, updated, urlTab ?? content)) {
         queryClient.invalidateQueries({ queryKey: queryKeys.agents.detail(agent.urlKey) });
       }
-      pushToast({ title: "Agent saved", tone: "success" });
+      pushToast({ title: t("agentdetail.general.agentsavedtoast"), tone: "success" });
     },
     onError: (err) => {
       setAwaitingRefreshAfterSave(false);
@@ -2017,8 +2018,8 @@ export function ConfigurationTab({
           ? err.message
           : err instanceof Error
             ? err.message
-            : "Could not save agent";
-      pushToast({ title: "Save failed", body: message, tone: "error" });
+            : t("agentdetail.general.couldnotsaveagent");
+      pushToast({ title: t("agentdetail.general.savefailedtoast"), body: message, tone: "error" });
     },
   });
 
@@ -2048,14 +2049,14 @@ export function ConfigurationTab({
   const taskAssignLocked = agent.role === "ceo" || canCreateAgents;
   const taskAssignHint =
     taskAssignSource === "ceo_role"
-      ? "Enabled automatically for CEO agents."
+      ? t("agentdetail.general.enabledforceoagents")
       : taskAssignSource === "agent_creator"
-        ? "Enabled automatically while this agent can create new agents."
+        ? t("agentdetail.general.enabledforagentcreator")
         : taskAssignSource === "explicit_grant"
-          ? "Enabled via explicit organization permission grant."
+          ? t("agentdetail.general.enabledviaexplicitgrant")
           : taskAssignSource === "simple_default"
-            ? "Enabled by simple organization-wide task assignment defaults."
-            : "Disabled unless explicitly granted.";
+            ? t("agentdetail.general.enabledviasimpledefault")
+            : t("agentdetail.general.disabledunlessexplicitlygranted");
 
   return (
     <div className="agent-settings-form space-y-6">
@@ -2076,7 +2077,7 @@ export function ConfigurationTab({
         environmentVariablesPlacement="configuration"
         compactTestFeedback
         sectionOrder={["identity", "adapter", "configuration", "environment", "environment-variables", "run-policy"]}
-        sectionTitles={{ adapter: "Adapter", configuration: "Configuration", identity: "Agent identity" }}
+        sectionTitles={{ adapter: t("agentdetail.general.adaptersectiontitle"), configuration: t("agentdetail.general.configurationsectiontitle"), identity: t("agentdetail.general.agentidentitysectiontitle") }}
         canConfigureProviderTrace={canConfigureProviderTrace}
       /> : null}
 
@@ -2890,9 +2891,9 @@ export function PromptsTab({
               {!fileLoading && (
                 <CopyText
                   text={displayValue}
-                  ariaLabel="Copy instructions file as markdown"
+                  ariaLabel={t("agentdetail.general.copyinstructionsfileasmarkdown")}
                   title={t("agentdetail.general.copyasmarkdown")}
-                  copiedLabel="Copied"
+                  copiedLabel={t("agentdetail.general.copiedlabel")}
                   className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-border text-muted-foreground hover:bg-accent hover:text-foreground"
                 >
                   <Copy className="h-3.5 w-3.5" />
@@ -2904,7 +2905,7 @@ export function PromptsTab({
                   size="sm"
                   variant="outline"
                   onClick={() => {
-                    if (confirm(`Delete ${selectedOrEntryFile}?`)) {
+                    if (confirm(t("agentdetail.general.deletefileconfirm", { filename: selectedOrEntryFile }))) {
                       deleteFile.mutate(selectedOrEntryFile, {
                         onSuccess: () => {
                           setSelectedFile(currentEntryFile);
@@ -3071,7 +3072,7 @@ function RunListItem({ run, isSelected, agentId }: { run: HeartbeatRun; isSelect
             : run.invocationSource === "on_demand" ? "bg-cyan-100 text-cyan-700 dark:bg-cyan-900/50 dark:text-cyan-300"
             : "bg-muted text-muted-foreground"
         )}>
-          {sourceLabels[run.invocationSource] ?? run.invocationSource}
+          {t(`agentdetail.general.sourcelabel${run.invocationSource.replaceAll("_", "")}`, { defaultValue: sourceLabels[run.invocationSource] ?? run.invocationSource })}
         </Badge>
         {sourceResolvedFold ? <SourceResolvedFoldBadge showIcon={false} className="shrink-0 text-(length:--text-nano) py-0" /> : null}
         <span className="ml-auto text-(length:--text-micro) text-muted-foreground shrink-0">
@@ -3502,7 +3503,7 @@ function RunDetail({ run: initialRun, agentRouteId, adapterType, adapterConfig }
                     const person = userDirectory?.users.find((entry) => entry.principalId === identity.responsibleUserId);
                     return (
                       <li key={identity.id}>
-                        <span className="text-foreground">{person?.user?.name ?? person?.user?.email ?? identity.responsibleUserId ?? "No responsible person"}</span>
+                        <span className="text-foreground">{person?.user?.name ?? person?.user?.email ?? identity.responsibleUserId ?? t("agentdetail.general.noresponsibleperson")}</span>
                         {" · "}{identity.cause}{" · "}{identity.status}
                         {identity.github ? (
                           <span className="block">
@@ -3691,7 +3692,7 @@ function RunDetail({ run: initialRun, agentRouteId, adapterType, adapterConfig }
                       onClick={() => {
                         const issueCount = touchedIssueIds.length;
                         const confirmed = window.confirm(
-                          `Clear session for ${issueCount} issue${issueCount === 1 ? "" : "s"} touched by this run?`,
+                          t("agentdetail.general.clearsessionsconfirm", { count: issueCount }),
                         );
                         if (!confirmed) return;
                         clearSessionsForTouchedIssues.mutate();
@@ -3995,7 +3996,7 @@ export function LogViewer({ run, adapterType }: { run: HeartbeatRun; adapterType
             setLogLoading(false);
             return;
           }
-          setLogError(err instanceof Error ? err.message : "Failed to load run log");
+          setLogError(err instanceof Error ? err.message : t("agentdetail.general.failedloadrunlog"));
         }
       } finally {
         if (!cancelled) setLogLoading(false);
@@ -4019,7 +4020,7 @@ export function LogViewer({ run, adapterType }: { run: HeartbeatRun; adapterType
       setLogOffset(next);
       setHasMoreLog(result.nextOffset !== undefined);
     } catch (err) {
-      setLogError(err instanceof Error ? err.message : "Failed to load more run log");
+      setLogError(err instanceof Error ? err.message : t("agentdetail.general.failedloadmorerunlog"));
     } finally {
       setLoadingMoreLog(false);
     }
@@ -4331,7 +4332,7 @@ export function LogViewer({ run, adapterType }: { run: HeartbeatRun; adapterType
           mode={transcriptMode}
           streaming={isLive}
           limit={isLive ? LIVE_TRANSCRIPT_RENDER_LIMIT : undefined}
-          emptyMessage={run.logRef ? "Waiting for transcript..." : "No persisted transcript for this run."}
+          emptyMessage={run.logRef ? t("agentdetail.general.waitingfortranscript") : t("agentdetail.general.nopersistedtranscript")}
         />
         {hasMoreLog && (
           <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-border/60 pt-3">
@@ -4472,7 +4473,7 @@ export function KeysTab({ agentId, companyId }: { agentId: string; companyId?: s
         setTimeout(() => setCopied(false), 2000);
       })
       .catch(() => {
-        pushToast({ title: "Copy failed", body: "Clipboard access is unavailable.", tone: "error" });
+        pushToast({ title: t("agentdetail.general.copyfailedtoast"), body: t("agentdetail.general.clipboardaccessunavailable"), tone: "error" });
       });
   }
 
