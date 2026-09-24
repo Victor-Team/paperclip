@@ -3468,6 +3468,16 @@
       "unverifiedserver": "未验证服务器"
     }
   },
+  "connectionprovenancechip": {
+    "general": {
+      "credentialsmanagedbyvercelconnect": "凭据由 Vercel Connect 管理",
+      "credentialsmanagedbyvercelconnectwithuid": "凭据由 Vercel Connect 管理（{{connectorUid}}）",
+      "viavercelconnect": "通过 Vercel Connect",
+      "viacomposio": "通过 Composio",
+      "brokeredbycomposiowithtoolkit": "由 Composio 代理（{{toolkitSlug}}）",
+      "brokeredbycomposioopentab": "由 Composio 代理（{{toolkitSlug}}）— 打开 Composio 服务页"
+    }
+  },
   "appnotconnected": {
     "general": {
       "app": "应用",

@@ -3468,6 +3468,16 @@
       "unverifiedserver": "Unverified server"
     }
   },
+  "connectionprovenancechip": {
+    "general": {
+      "credentialsmanagedbyvercelconnect": "Credentials managed by Vercel Connect",
+      "credentialsmanagedbyvercelconnectwithuid": "Credentials managed by Vercel Connect ({{connectorUid}})",
+      "viavercelconnect": "via Vercel Connect",
+      "viacomposio": "via Composio",
+      "brokeredbycomposiowithtoolkit": "Brokered by Composio ({{toolkitSlug}})",
+      "brokeredbycomposioopentab": "Brokered by Composio ({{toolkitSlug}}) — open the Composio Services tab"
+    }
+  },
   "appnotconnected": {
     "general": {
       "app": "App",
