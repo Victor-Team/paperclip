@@ -3453,5 +3453,19 @@
       "forkedfromlabel": "Forked from {{label}}",
       "theprojectworkingtree": "the project working tree"
     }
+  },
+  "appsreview": {
+    "general": {
+      "connectors": "Connectors",
+      "review": "Review",
+      "selectanorganizationtoreviewapprovals": "Select an organization to review approvals.",
+      "actionsyouragentswanttorun": "Actions your agents want to run that need your OK first. Approve, always-allow, or decline.",
+      "waitingforyourok": "Waiting for your OK"
+    }
+  },
+  "unverifiedserverbadge": {
+    "general": {
+      "unverifiedserver": "Unverified server"
+    }
   }
 }

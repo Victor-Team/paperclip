@@ -3453,5 +3453,19 @@
       "forkedfromlabel": "从 {{label}} 派生",
       "theprojectworkingtree": "项目工作树"
     }
+  },
+  "appsreview": {
+    "general": {
+      "connectors": "连接器",
+      "review": "审查",
+      "selectanorganizationtoreviewapprovals": "请选择组织以查看审批。",
+      "actionsyouragentswanttorun": "您的智能体想要执行且需要先获得您确认的操作。您可以批准、始终允许或拒绝。",
+      "waitingforyourok": "等待您的确认"
+    }
+  },
+  "unverifiedserverbadge": {
+    "general": {
+      "unverifiedserver": "未验证服务器"
+    }
   }
 }
