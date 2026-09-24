@@ -1,9 +1,9 @@
 {
   "app": {
     "noCompanies": {
-      "title": "तुमची पहिली कंपनी तयार करा",
-      "description": "कंपनी तयार करून सुरुवात करा.",
-      "newCompany": "नवीन कंपनी"
+      "title": "Create your first organization",
+      "description": "Get started by creating an organization.",
+      "newCompany": "New Organization"
     }
   },
   "common": {
@@ -1578,6 +1578,95 @@
     "general": {
       "activity": "Activity",
       "selectacompanytoviewactivity": "Select a company to view activity."
+    }
+  },
+  "breadcrumb": {
+    "general": {
+      "breadcrumb": "Breadcrumb",
+      "more": "More"
+    }
+  },
+  "command": {
+    "general": {
+      "close": "Close"
+    }
+  },
+  "dialog": {
+    "general": {
+      "close": "Close"
+    }
+  },
+  "sheet": {
+    "general": {
+      "close": "Close"
+    }
+  },
+  "searchfilterbar": {
+    "general": {
+      "me": "Me",
+      "unassigned": "Unassigned",
+      "status": "Status",
+      "openitems": "Open items",
+      "assignee": "Assignee",
+      "searchassignees": "Search assignees…",
+      "noassignees": "No assignees",
+      "project": "Project",
+      "searchprojects": "Search projects…",
+      "noprojects": "No projects",
+      "label": "Label",
+      "searchlabels": "Search labels…",
+      "nolabels": "No labels",
+      "priority": "Priority",
+      "updated": "Updated"
+    }
+  },
+  "searchfilterchips": {
+    "general": {
+      "removefilter": "Remove filter {{filter}}",
+      "clearall": "Clear all"
+    }
+  },
+  "searchfiltermenu": {
+    "general": {
+      "search": "Search…",
+      "nooptions": "No options",
+      "filterby": "Filter by {{filter}}",
+      "clear": "Clear"
+    }
+  },
+  "searchfiltersheet": {
+    "general": {
+      "showresults": "Show results",
+      "showresultswithcount": "Show {{count}} results",
+      "filters": "Filters",
+      "clearall": "Clear all",
+      "status": "Status",
+      "priority": "Priority",
+      "assignee": "Assignee",
+      "project": "Project",
+      "label": "Label",
+      "updated": "Updated",
+      "sortby": "Sort by",
+      "cancel": "Cancel"
+    }
+  },
+  "searchsortmenu": {
+    "general": {
+      "sortresults": "Sort results",
+      "sort": "Sort:",
+      "sortby": "Sort by"
+    }
+  },
+  "zeroresultsrecovery": {
+    "general": {
+      "noresultswiththesefilters": "No results with these filters",
+      "matchsummary": "{{count}} results match, but your {{filters}} active filters hide all of them.",
+      "matchsummarywithquery": "{{count}} results match \"{{query}}\", but your {{filters}} active filters hide all of them.",
+      "loosenafilter": "Loosen a filter",
+      "remove": "Remove",
+      "oneresult": "1 result",
+      "resultcount": "{{count}} results",
+      "clearallfilters": "Clear all filters"
     }
   }
 }

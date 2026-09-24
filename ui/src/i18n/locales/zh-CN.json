@@ -1579,5 +1579,94 @@
       "activity": "活动",
       "selectacompanytoviewactivity": "请选择一个公司以查看活动。"
     }
+  },
+  "breadcrumb": {
+    "general": {
+      "breadcrumb": "面包屑导航",
+      "more": "更多"
+    }
+  },
+  "command": {
+    "general": {
+      "close": "关闭"
+    }
+  },
+  "dialog": {
+    "general": {
+      "close": "关闭"
+    }
+  },
+  "sheet": {
+    "general": {
+      "close": "关闭"
+    }
+  },
+  "searchfilterbar": {
+    "general": {
+      "me": "我",
+      "unassigned": "未分配",
+      "status": "状态",
+      "openitems": "未完成项",
+      "assignee": "负责人",
+      "searchassignees": "搜索负责人…",
+      "noassignees": "没有负责人",
+      "project": "项目",
+      "searchprojects": "搜索项目…",
+      "noprojects": "没有项目",
+      "label": "标签",
+      "searchlabels": "搜索标签…",
+      "nolabels": "没有标签",
+      "priority": "优先级",
+      "updated": "更新时间"
+    }
+  },
+  "searchfilterchips": {
+    "general": {
+      "removefilter": "移除筛选条件 {{filter}}",
+      "clearall": "清除全部"
+    }
+  },
+  "searchfiltermenu": {
+    "general": {
+      "search": "搜索…",
+      "nooptions": "没有选项",
+      "filterby": "按 {{filter}} 筛选",
+      "clear": "清除"
+    }
+  },
+  "searchfiltersheet": {
+    "general": {
+      "showresults": "显示结果",
+      "showresultswithcount": "显示 {{count}} 条结果",
+      "filters": "筛选条件",
+      "clearall": "清除全部",
+      "status": "状态",
+      "priority": "优先级",
+      "assignee": "负责人",
+      "project": "项目",
+      "label": "标签",
+      "updated": "更新时间",
+      "sortby": "排序方式",
+      "cancel": "取消"
+    }
+  },
+  "searchsortmenu": {
+    "general": {
+      "sortresults": "排序结果",
+      "sort": "排序：",
+      "sortby": "排序方式"
+    }
+  },
+  "zeroresultsrecovery": {
+    "general": {
+      "noresultswiththesefilters": "没有符合这些筛选条件的结果",
+      "matchsummary": "共有 {{count}} 条结果匹配，但当前 {{filters}} 个筛选条件隐藏了全部结果。",
+      "matchsummarywithquery": "共有 {{count}} 条结果匹配“{{query}}”，但当前 {{filters}} 个筛选条件隐藏了全部结果。",
+      "loosenafilter": "放宽筛选条件",
+      "remove": "移除",
+      "oneresult": "1 条结果",
+      "resultcount": "{{count}} 条结果",
+      "clearallfilters": "清除全部筛选条件"
+    }
   }
 }
