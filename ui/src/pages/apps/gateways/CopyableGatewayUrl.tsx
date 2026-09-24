@@ -2,6 +2,7 @@ import { Copy } from "lucide-react";
 import { useToast } from "@/context/ToastContext";
 import { copyTextToClipboard } from "@/lib/clipboard";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@/i18n";
 
 export function gatewayEndpointUrl(endpointPath: string): string {
   if (typeof window === "undefined") return endpointPath;
@@ -19,6 +20,7 @@ export function CopyableGatewayUrl({
   endpointPath: string;
   className?: string;
 }) {
+  const { t } = useTranslation();
   const { pushToast } = useToast();
   const url = gatewayEndpointUrl(endpointPath);
 
@@ -47,7 +49,7 @@ export function CopyableGatewayUrl({
         className,
       )}
       title={`${url} — click to copy`}
-      aria-label="Copy gateway URL"
+      aria-label={t("copyablegatewayurl.general.copygatewayurl")}
     >
       <span className="min-w-0 truncate">{url}</span>
       <Copy className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
