@@ -3,6 +3,7 @@
 import { flushSync } from "react-dom";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { i18n } from "@/i18n";
 import { ServicesList } from "./ServicesPanel";
 import type { ComposioServiceRow } from "../composio-services";
 
@@ -24,13 +25,14 @@ function act(callback: () => void) {
 let container: HTMLDivElement | null = null;
 let root: Root | null = null;
 
-afterEach(() => {
+afterEach(async () => {
   if (root) {
     act(() => root?.unmount());
   }
   container?.remove();
   container = null;
   root = null;
+  await i18n.changeLanguage("en");
 });
 
 function row(over: Partial<ComposioServiceRow> & { toolkitSlug: string }): ComposioServiceRow {
@@ -88,6 +90,14 @@ describe("ServicesList row states", () => {
     expect(text).toContain("Not connected");
     expect(buttonLabelled(node, "Connect")).toBeTruthy();
     expect(buttonLabelled(node, "Disconnect")).toBeFalsy();
+  });
+
+  it("renders a not-connected service in Simplified Chinese", async () => {
+    await i18n.changeLanguage("zh-CN");
+    const node = renderList([row({ toolkitSlug: "gmail", name: "Gmail" })]);
+
+    expect(node.textContent).toContain("未连接");
+    expect(buttonLabelled(node, "连接")).toBeTruthy();
   });
 
   it("shows a pending service as waiting, with no Connect to click twice", () => {

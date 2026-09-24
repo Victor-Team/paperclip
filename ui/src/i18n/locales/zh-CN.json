@@ -3595,6 +3595,47 @@
       "viewpermissions": "查看权限"
     }
   },
+  "servicespanel": {
+    "general": {
+      "couldntconnect": "无法连接 {{name}}",
+      "finishconnecting": "请在 Composio 中完成 {{name}} 的连接",
+      "openedcomposio": "我们已在新标签页打开 Composio。收到结果后，此列表会立即更新。",
+      "pleasetryagain": "请重试。",
+      "couldntcheck": "无法检查 {{name}}",
+      "couldntdisconnect": "无法断开 {{name}} 的连接",
+      "disconnected": "{{name}} 已断开连接",
+      "agentscannotuse": "智能体不能再使用 {{name}}，其凭据也已从 Composio 中删除。",
+      "loadingservices": "正在从 Composio 加载服务，可能需要一点时间。",
+      "services": "服务",
+      "brokersthese": "{{appName}} 代理这些服务。连接一个服务后，它会成为 Paperclip 中的独立应用，之后可在其权限页授予智能体使用。",
+      "servicesconnected_one": "已连接 {{count}} 个服务。",
+      "servicesconnected_other": "已连接 {{count}} 个服务。",
+      "noservicesavailable": "暂时没有可用服务",
+      "noservicesdescription": "此 Composio 项目没有可供 Paperclip 提供的工具包。请在 Composio 中添加工具包和授权配置后再回来查看。",
+      "couldntloadservices": "无法从 Composio 加载服务。",
+      "tryagain": "重试",
+      "manage": "管理",
+      "checkagain": "再次检查 {{name}}",
+      "connect": "连接",
+      "reconnect": "重新连接",
+      "disconnect": "断开连接",
+      "actions_one": "{{count}} 个操作",
+      "actions_other": "{{count}} 个操作",
+      "waitingforcomposio": "正在等待 Composio 确认连接。",
+      "composioreports": "Composio 报告此连接状态为 {{status}}。请重新连接以修复。",
+      "connectionnolongerusable": "此连接已无法使用。请重新连接以修复。",
+      "availabletoagents": "可供已授予的智能体使用",
+      "nosigninneeded": "无需登录",
+      "notconnected": "未连接",
+      "pending": "等待中",
+      "connected": "已连接",
+      "attention": "需要关注",
+      "disconnectname": "断开 {{name}} 的连接？",
+      "disconnectnameaction": "断开 {{name}} 的连接",
+      "disconnectdescription": "这会从 Paperclip 中移除 {{name}} 并删除其在 Composio 中的凭据。正在使用其操作的智能体会立即失去访问权限。再次连接需要重新登录。",
+      "cancel": "取消"
+    }
+  },
   "setuppanel": {
     "general": {
       "agents": "智能体",

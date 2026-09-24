@@ -3595,6 +3595,47 @@
       "viewpermissions": "View permissions"
     }
   },
+  "servicespanel": {
+    "general": {
+      "couldntconnect": "Couldn't connect {{name}}",
+      "finishconnecting": "Finish connecting {{name}} in Composio",
+      "openedcomposio": "We opened Composio in a new tab. This list updates as soon as it reports back.",
+      "pleasetryagain": "Please try again.",
+      "couldntcheck": "Couldn't check {{name}}",
+      "couldntdisconnect": "Couldn't disconnect {{name}}",
+      "disconnected": "{{name}} disconnected",
+      "agentscannotuse": "Agents can no longer use {{name}}, and its credentials are deleted from Composio.",
+      "loadingservices": "Loading services from Composio, this may take a moment.",
+      "services": "Services",
+      "brokersthese": "{{appName}} brokers these services. Connect one and it becomes its own app in Paperclip, which you then give to agents on its Permissions tab.",
+      "servicesconnected_one": "{{count}} service is connected.",
+      "servicesconnected_other": "{{count}} services are connected.",
+      "noservicesavailable": "No services available yet",
+      "noservicesdescription": "This Composio project has no toolkits Paperclip can offer. Add a toolkit and an auth configuration in Composio, then check back.",
+      "couldntloadservices": "Couldn’t load services from Composio.",
+      "tryagain": "Try again",
+      "manage": "Manage",
+      "checkagain": "Check {{name}} again",
+      "connect": "Connect",
+      "reconnect": "Reconnect",
+      "disconnect": "Disconnect",
+      "actions_one": "{{count}} action",
+      "actions_other": "{{count}} actions",
+      "waitingforcomposio": "Waiting for Composio to confirm the connection.",
+      "composioreports": "Composio reports this connection as {{status}}. Reconnect to fix it.",
+      "connectionnolongerusable": "This connection is no longer usable. Reconnect to fix it.",
+      "availabletoagents": "available to agents you install it for",
+      "nosigninneeded": "No sign-in needed",
+      "notconnected": "Not connected",
+      "pending": "Pending",
+      "connected": "Connected",
+      "attention": "Needs attention",
+      "disconnectname": "Disconnect {{name}}?",
+      "disconnectnameaction": "Disconnect {{name}}",
+      "disconnectdescription": "This removes {{name}} from Paperclip and deletes its credentials in Composio. Agents using its actions lose them immediately. Connecting it again needs a new sign-in.",
+      "cancel": "Cancel"
+    }
+  },
   "setuppanel": {
     "general": {
       "agents": "Agents",
