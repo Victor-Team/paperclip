@@ -185,7 +185,7 @@ function renderImportFileExtra(node: FileTreeNode, checked: boolean, renameMap: 
     <span className="inline-flex items-center gap-1.5 shrink-0">
       {renamedTo && checked && (
         <span className="text-(length:--text-nano) text-cyan-500 font-mono truncate max-w-(--sz-7rem)" title={renamedTo}>
-          &rarr; {renamedTo}
+          → {renamedTo}
         </span>
       )}
       {actionBadge}
