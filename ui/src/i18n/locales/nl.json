@@ -4705,6 +4705,43 @@
       "loadmore": "Load more"
     }
   },
+  "overviewpanel": {
+    "general": {
+      "copied": "Copied",
+      "copyfailed": "Copy failed",
+      "clipboardaccessisunavailable": "Clipboard access is unavailable.",
+      "on": "On",
+      "off": "Off",
+      "togglegateway": "Toggle gateway",
+      "togglethewholegateway": "Toggle the whole gateway off here.",
+      "apps": "Apps",
+      "appcountsingular": "{{count}} app",
+      "appcountplural": "{{count}} apps",
+      "notoolsallowed": "No tools allowed",
+      "allowedtoolcountsingular": "{{count}} tool",
+      "allowedtoolcountplural": "{{count}} tools",
+      "tokens": "Tokens",
+      "activetokencount": "{{count}} active",
+      "expiringtokencount": "{{count}} expiring",
+      "health": "Health",
+      "allgreen": "All green",
+      "needsattentioncount": "{{count}} needs attention",
+      "whocanuseit": "Who can use it",
+      "anyoneholdinganactive": "Anyone holding an active token below, restricted by the rules in the bound profile.",
+      "scope": "Scope · {{value}}",
+      "profile": "Profile · {{value}}",
+      "unavailable": "Unavailable",
+      "appsinthisgateway": "Apps in this gateway",
+      "thisgatewaysprofiledoesntincludeanyappsyet": "This gateway’s profile doesn’t include any apps yet.",
+      "howclientsconnect": "How clients connect",
+      "clientconfig": "Client config",
+      "copy": "Copy",
+      "toolcountsingular": "{{count}} tool",
+      "toolcountplural": "{{count}} tools",
+      "needsattention": "Needs attention",
+      "healthy": "Healthy"
+    }
+  },
   "appstoolspanel": {
     "general": {
       "theseappsgothroughthisgatewaythe": "These apps go through this gateway. The bound profile",

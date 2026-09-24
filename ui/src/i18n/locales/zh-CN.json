@@ -4705,6 +4705,43 @@
       "loadmore": "加载更多"
     }
   },
+  "overviewpanel": {
+    "general": {
+      "copied": "已复制",
+      "copyfailed": "复制失败",
+      "clipboardaccessisunavailable": "无法访问剪贴板。",
+      "on": "开启",
+      "off": "关闭",
+      "togglegateway": "切换网关状态",
+      "togglethewholegateway": "在此切换整个网关的开启状态。",
+      "apps": "应用",
+      "appcountsingular": "{{count}} 个应用",
+      "appcountplural": "{{count}} 个应用",
+      "notoolsallowed": "不允许使用工具",
+      "allowedtoolcountsingular": "{{count}} 个工具",
+      "allowedtoolcountplural": "{{count}} 个工具",
+      "tokens": "令牌",
+      "activetokencount": "{{count}} 个活跃",
+      "expiringtokencount": "{{count}} 个即将过期",
+      "health": "健康状态",
+      "allgreen": "一切正常",
+      "needsattentioncount": "{{count}} 项需要关注",
+      "whocanuseit": "谁可以使用它",
+      "anyoneholdinganactive": "持有下方活跃令牌的任何人都可以使用，但会受到所绑定配置文件规则的限制。",
+      "scope": "范围 · {{value}}",
+      "profile": "配置文件 · {{value}}",
+      "unavailable": "不可用",
+      "appsinthisgateway": "此网关中的应用",
+      "thisgatewaysprofiledoesntincludeanyappsyet": "此网关的配置文件尚未包含任何应用。",
+      "howclientsconnect": "客户端如何连接",
+      "clientconfig": "客户端配置",
+      "copy": "复制",
+      "toolcountsingular": "{{count}} 个工具",
+      "toolcountplural": "{{count}} 个工具",
+      "needsattention": "需要关注",
+      "healthy": "健康"
+    }
+  },
   "appstoolspanel": {
     "general": {
       "theseappsgothroughthisgatewaythe": "这些应用通过此网关。绑定的配置",
