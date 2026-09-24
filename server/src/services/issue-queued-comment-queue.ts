@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+import { isUuidLike } from "@paperclipai/shared";
 import type { IssueComment, IssueQueuedCommentQueue } from "@paperclipai/shared";
 
 const QUEUE_CONTEXT_KEY = "_paperclipWakeContext";
@@ -15,6 +16,14 @@ function uniqueIds(value: unknown): string[] {
   const seen = new Set<string>();
   return value.flatMap((candidate) => {
     if (typeof candidate !== "string" || !candidate || seen.has(candidate)) return [];
+    // Every caller feeds these ids straight into an `inArray(issueComments.id, ...)`
+    // lookup. Postgres rejects the whole statement on the first malformed uuid, so a
+    // single bad id (a truncated short form that reached a wake payload) takes down
+    // every query that touches this queue: the wake dispatch, the queued-comment
+    // endpoint, the heartbeat paths. Drop malformed ids here, at the one place both
+    // readers go through, so no consumer has to repeat the guard. A malformed id can
+    // never match a comment row anyway, so dropping it costs nothing.
+    if (!isUuidLike(candidate)) return [];
     seen.add(candidate);
     return [candidate];
   });
