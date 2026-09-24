@@ -27,7 +27,41 @@
   },
   "browse": {
     "general": {
-      "selectanorganizationtomanageconnectors": "请选择一个组织以管理连接器", "searchconnectors": "搜索连接器…", "searchconnectors1": "搜索连接器", "couldntloadeveryconnectorexistingaccounts": "无法加载所有连接器。可用时仍会显示已有账户。", "tryagain": "重试", "loadingconnectors": "正在加载连接器", "noconnectorsmatch": "没有连接器匹配“", "connectorlist": "连接器列表", "remove": "移除", "this": "此", "connection": "连接？", "service": "服务", "services": "服务", "connection2": "连接", "connections": "连接", "thesavedcredentialsaredeletedandagents": "保存的凭据将被删除，智能体会立即失去访问权限。以后重新连接需要再次登录或提供密钥。", "cancel": "取消", "removing": "正在移除…", "removeconnection": "移除连接", "connectedby": "连接人", "retryaccess": "重试访问", "reconnect": "重新连接", "finishsetup": "完成设置", "permissions": "权限", "removeconnection3": "移除连接", "connectyourowntool": "连接自己的工具", "addacustommcpserverorpaste": "添加自定义 MCP 服务器或粘贴现有配置。", "close": "关闭", "connect": "连接", "connectyourownmcpserver": "连接自己的 MCP 服务器", "pasteaconfig": "粘贴配置", "removechildren": "这还会移除 {{count}} 个已连接的{{kind}}，并立即撤销智能体访问权限。Composio 密钥和子会话凭据也会被删除。", "removeotherconnections": "此连接保存的凭据将被删除，智能体会立即失去访问权限。它们仍可通过 {{count}} 个其他活跃{{kind}}使用 {{provider}}。", "customserverdescription": "输入自定义或自托管 MCP 服务器的 URL。", "pasteconfigdescription": "粘贴现有设置片段并连接。"
+      "selectanorganizationtomanageconnectors": "请选择一个组织以管理连接器",
+      "searchconnectors": "搜索连接器…",
+      "searchconnectors1": "搜索连接器",
+      "couldntloadeveryconnectorexistingaccounts": "无法加载所有连接器。可用时仍会显示已有账户。",
+      "tryagain": "重试",
+      "loadingconnectors": "正在加载连接器",
+      "noconnectorsmatch": "没有连接器匹配“",
+      "connectorlist": "连接器列表",
+      "remove": "移除",
+      "this": "此",
+      "connection": "连接？",
+      "service": "服务",
+      "services": "服务",
+      "connection2": "连接",
+      "connections": "连接",
+      "thesavedcredentialsaredeletedandagents": "保存的凭据将被删除，智能体会立即失去访问权限。以后重新连接需要再次登录或提供密钥。",
+      "cancel": "取消",
+      "removing": "正在移除…",
+      "removeconnection": "移除连接",
+      "connectedby": "连接人",
+      "retryaccess": "重试访问",
+      "reconnect": "重新连接",
+      "finishsetup": "完成设置",
+      "permissions": "权限",
+      "removeconnection3": "移除连接",
+      "connectyourowntool": "连接自己的工具",
+      "addacustommcpserverorpaste": "添加自定义 MCP 服务器或粘贴现有配置。",
+      "close": "关闭",
+      "connect": "连接",
+      "connectyourownmcpserver": "连接自己的 MCP 服务器",
+      "pasteaconfig": "粘贴配置",
+      "removechildren": "这还会移除 {{count}} 个已连接的{{kind}}，并立即撤销智能体访问权限。Composio 密钥和子会话凭据也会被删除。",
+      "removeotherconnections": "此连接保存的凭据将被删除，智能体会立即失去访问权限。它们仍可通过 {{count}} 个其他活跃{{kind}}使用 {{provider}}。",
+      "customserverdescription": "输入自定义或自托管 MCP 服务器的 URL。",
+      "pasteconfigdescription": "粘贴现有设置片段并连接。"
     }
   },
   "common": {
@@ -3579,7 +3613,8 @@
       "containeraccessenabled": "已为此授权启用容器访问。",
       "registerandverify": "请先注册公钥并验证主机密钥，再启用访问。",
       "removingkeystopsconnections": "移除密钥会阻止新的 Paperclip 连接。也请从 Railway 中移除此公钥。",
-      "containeraccesscouldntbeupdated": "无法更新容器访问。"
+      "containeraccesscouldntbeupdated": "无法更新容器访问。",
+      "sshrailwaycomsshed25519": "ssh.railway.com ssh-ed25519 …"
     }
   },
   "activitypanel": {
@@ -3876,6 +3911,57 @@
       "nocallwillbemadethisaction": "不会发起调用 — 此操作已对以下智能体关闭：",
       "whythisisoff": "为何已关闭",
       "tryasadifferentagent": "换一个智能体尝试："
+    }
+  },
+  "identitiessection": {
+    "general": {
+      "wecouldntloadwhothisconnection": "无法加载此连接使用的身份。请刷新页面后重试。",
+      "githubidentity": "GitHub 身份",
+      "thisagentusesthisgithubaccountfor": "此智能体使用该 GitHub 账户处理所有人的工作，而不是使用发出指令者的账户。",
+      "usedonlyby": "仅供以下人员使用",
+      "connectdedicatedaccount": "连接专用账户",
+      "personalaccount": "个人账户",
+      "connectasme": "以我的身份连接",
+      "manageaccess": "管理访问权限",
+      "organizationaccount": "组织账户",
+      "connectorganizationidentity": "连接组织身份",
+      "githubaccount": "GitHub 账户",
+      "repositories": "仓库",
+      "refreshaccess": "刷新访问权限",
+      "refreshaccess1": "刷新访问权限",
+      "addmorereposongithub": "在 GitHub 上添加更多仓库",
+      "loadgithubconfiguration": "加载 GitHub 配置",
+      "accessiblegithubrepositories": "可访问的 GitHub 仓库",
+      "privaterepository": "私有仓库",
+      "noaccessiblerepositories": "没有可访问的仓库。",
+      "refreshaccesstoloadthecurrentrepository": "刷新访问权限以加载当前仓库列表。",
+      "missinganorganizationorrepository": "缺少组织或仓库？",
+      "configureaccessongithub": "在 GitHub 上配置访问权限",
+      "thenrefreshthislist": "，然后刷新此列表。",
+      "whichhumanscanusethiscredential": "哪些人员可以使用此凭据？",
+      "whocanusethisidentity": "谁可以使用此身份",
+      "thiscontrolswhoseworkcanusethe": "这决定哪些人的工作可以使用该身份，不会改变哪些智能体拥有此连接。",
+      "cancel": "取消",
+      "saveaudience": "保存适用范围",
+      "cancel2": "取消",
+      "revokeidentity": "撤销身份"
+    }
+  },
+  "permissionspanel": {
+    "general": {
+      "whichagentscanusethisconnection": "哪些智能体可以使用此连接？",
+      "saving": "正在保存…",
+      "anyagentcanusethisconnection": "任何智能体均可使用此连接。",
+      "noagentscanusethisconnection": "没有智能体可以使用此连接。",
+      "actions": "操作",
+      "saving1": "正在保存…",
+      "refreshactions": "刷新操作",
+      "findanaction": "查找操作",
+      "findanaction2": "查找操作",
+      "matchessortedaz": "项匹配 · 按 A–Z 排序",
+      "noactionsmatch": "没有操作匹配“",
+      "clearthesearchtoseethemall": "”。清除搜索即可查看全部。",
+      "test": "测试"
     }
   }
 }

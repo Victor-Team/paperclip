@@ -3613,7 +3613,8 @@
       "containeraccessenabled": "Container access is enabled for this authorization.",
       "registerandverify": "Register the public key and verify the host key before enabling access.",
       "removingkeystopsconnections": "Removing the key stops new Paperclip connections. Also remove its public key from Railway.",
-      "containeraccesscouldntbeupdated": "Container access could not be updated."
+      "containeraccesscouldntbeupdated": "Container access could not be updated.",
+      "sshrailwaycomsshed25519": "ssh.railway.com ssh-ed25519 …"
     }
   },
   "activitypanel": {
@@ -3910,6 +3911,57 @@
       "nocallwillbemadethisaction": "No call will be made — this action is off for",
       "whythisisoff": "Why this is off",
       "tryasadifferentagent": "Try as a different agent:"
+    }
+  },
+  "identitiessection": {
+    "general": {
+      "wecouldntloadwhothisconnection": "We couldn't load who this connection acts as. Reload the page to try again.",
+      "githubidentity": "GitHub identity",
+      "thisagentusesthisgithubaccountfor": "This agent uses this GitHub account for everyone’s work, instead of the person giving instructions.",
+      "usedonlyby": "Used only by",
+      "connectdedicatedaccount": "Connect dedicated account",
+      "personalaccount": "Personal account",
+      "connectasme": "Connect as me",
+      "manageaccess": "Manage access",
+      "organizationaccount": "Organization account",
+      "connectorganizationidentity": "Connect organization identity",
+      "githubaccount": "GitHub account",
+      "repositories": "Repositories",
+      "refreshaccess": "Refresh access",
+      "refreshaccess1": "Refresh access",
+      "addmorereposongithub": "Add More Repos on GitHub",
+      "loadgithubconfiguration": "Load GitHub configuration",
+      "accessiblegithubrepositories": "Accessible GitHub repositories",
+      "privaterepository": "Private repository",
+      "noaccessiblerepositories": "No accessible repositories.",
+      "refreshaccesstoloadthecurrentrepository": "Refresh access to load the current repository list.",
+      "missinganorganizationorrepository": "Missing an organization or repository?",
+      "configureaccessongithub": "Configure access on GitHub",
+      "thenrefreshthislist": ", then refresh this list.",
+      "whichhumanscanusethiscredential": "Which humans can use this credential?",
+      "whocanusethisidentity": "Who can use this identity",
+      "thiscontrolswhoseworkcanusethe": "This controls whose work can use the identity. It does not change which agents have the\n            connection.",
+      "cancel": "Cancel",
+      "saveaudience": "Save audience",
+      "cancel2": "Cancel",
+      "revokeidentity": "Revoke identity"
+    }
+  },
+  "permissionspanel": {
+    "general": {
+      "whichagentscanusethisconnection": "Which agents can use this connection?",
+      "saving": "Saving…",
+      "anyagentcanusethisconnection": "Any agent can use this connection.",
+      "noagentscanusethisconnection": "No agents can use this connection.",
+      "actions": "Actions",
+      "saving1": "Saving…",
+      "refreshactions": "Refresh actions",
+      "findanaction": "Find an action",
+      "findanaction2": "Find an action…",
+      "matchessortedaz": "matches · sorted A–Z",
+      "noactionsmatch": "No actions match “",
+      "clearthesearchtoseethemall": "”. Clear the search to see them all.",
+      "test": "Test"
     }
   }
 }

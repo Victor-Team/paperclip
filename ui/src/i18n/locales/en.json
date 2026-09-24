@@ -27,7 +27,41 @@
   },
   "browse": {
     "general": {
-      "selectanorganizationtomanageconnectors": "Select an organization to manage connectors.", "searchconnectors": "Search connectors…", "searchconnectors1": "Search connectors", "couldntloadeveryconnectorexistingaccounts": "Couldn’t load every connector. Existing accounts are shown where available.", "tryagain": "Try again", "loadingconnectors": "Loading connectors", "noconnectorsmatch": "No connectors match “", "connectorlist": "Connector list", "remove": "Remove", "this": "this", "connection": "connection?", "service": "service", "services": "services", "connection2": "connection", "connections": "connections", "thesavedcredentialsaredeletedandagents": "The saved credentials are deleted and agents lose access immediately. Connecting it again later requires a new sign-in or key.", "cancel": "Cancel", "removing": "Removing…", "removeconnection": "Remove connection", "connectedby": "Connected by", "retryaccess": "Retry access", "reconnect": "Reconnect", "finishsetup": "Finish setup", "permissions": "Permissions", "removeconnection3": "Remove connection", "connectyourowntool": "Connect your own tool", "addacustommcpserverorpaste": "Add a custom MCP server or paste an existing configuration.", "close": "Close", "connect": "Connect", "connectyourownmcpserver": "Connect your own MCP server", "pasteaconfig": "Paste a config", "removechildren": "This also removes {{count}} connected {{kind}} and takes agent access away immediately. The Composio key and child session credentials are deleted.", "removeotherconnections": "This connection's saved credentials are deleted and agents lose access through it immediately. They can still use {{provider}} through {{count}} other active {{kind}}.", "customserverdescription": "Enter the URL for a custom or self-hosted MCP server.", "pasteconfigdescription": "Paste an existing setup snippet and connect it."
+      "selectanorganizationtomanageconnectors": "Select an organization to manage connectors.",
+      "searchconnectors": "Search connectors…",
+      "searchconnectors1": "Search connectors",
+      "couldntloadeveryconnectorexistingaccounts": "Couldn’t load every connector. Existing accounts are shown where available.",
+      "tryagain": "Try again",
+      "loadingconnectors": "Loading connectors",
+      "noconnectorsmatch": "No connectors match “",
+      "connectorlist": "Connector list",
+      "remove": "Remove",
+      "this": "this",
+      "connection": "connection?",
+      "service": "service",
+      "services": "services",
+      "connection2": "connection",
+      "connections": "connections",
+      "thesavedcredentialsaredeletedandagents": "The saved credentials are deleted and agents lose access immediately. Connecting it again later requires a new sign-in or key.",
+      "cancel": "Cancel",
+      "removing": "Removing…",
+      "removeconnection": "Remove connection",
+      "connectedby": "Connected by",
+      "retryaccess": "Retry access",
+      "reconnect": "Reconnect",
+      "finishsetup": "Finish setup",
+      "permissions": "Permissions",
+      "removeconnection3": "Remove connection",
+      "connectyourowntool": "Connect your own tool",
+      "addacustommcpserverorpaste": "Add a custom MCP server or paste an existing configuration.",
+      "close": "Close",
+      "connect": "Connect",
+      "connectyourownmcpserver": "Connect your own MCP server",
+      "pasteaconfig": "Paste a config",
+      "removechildren": "This also removes {{count}} connected {{kind}} and takes agent access away immediately. The Composio key and child session credentials are deleted.",
+      "removeotherconnections": "This connection's saved credentials are deleted and agents lose access through it immediately. They can still use {{provider}} through {{count}} other active {{kind}}.",
+      "customserverdescription": "Enter the URL for a custom or self-hosted MCP server.",
+      "pasteconfigdescription": "Paste an existing setup snippet and connect it."
     }
   },
   "common": {
@@ -3579,7 +3613,8 @@
       "containeraccessenabled": "Container access is enabled for this authorization.",
       "registerandverify": "Register the public key and verify the host key before enabling access.",
       "removingkeystopsconnections": "Removing the key stops new Paperclip connections. Also remove its public key from Railway.",
-      "containeraccesscouldntbeupdated": "Container access could not be updated."
+      "containeraccesscouldntbeupdated": "Container access could not be updated.",
+      "sshrailwaycomsshed25519": "ssh.railway.com ssh-ed25519 …"
     }
   },
   "activitypanel": {
@@ -3876,6 +3911,57 @@
       "nocallwillbemadethisaction": "No call will be made — this action is off for",
       "whythisisoff": "Why this is off",
       "tryasadifferentagent": "Try as a different agent:"
+    }
+  },
+  "identitiessection": {
+    "general": {
+      "wecouldntloadwhothisconnection": "We couldn't load who this connection acts as. Reload the page to try again.",
+      "githubidentity": "GitHub identity",
+      "thisagentusesthisgithubaccountfor": "This agent uses this GitHub account for everyone’s work, instead of the person giving instructions.",
+      "usedonlyby": "Used only by",
+      "connectdedicatedaccount": "Connect dedicated account",
+      "personalaccount": "Personal account",
+      "connectasme": "Connect as me",
+      "manageaccess": "Manage access",
+      "organizationaccount": "Organization account",
+      "connectorganizationidentity": "Connect organization identity",
+      "githubaccount": "GitHub account",
+      "repositories": "Repositories",
+      "refreshaccess": "Refresh access",
+      "refreshaccess1": "Refresh access",
+      "addmorereposongithub": "Add More Repos on GitHub",
+      "loadgithubconfiguration": "Load GitHub configuration",
+      "accessiblegithubrepositories": "Accessible GitHub repositories",
+      "privaterepository": "Private repository",
+      "noaccessiblerepositories": "No accessible repositories.",
+      "refreshaccesstoloadthecurrentrepository": "Refresh access to load the current repository list.",
+      "missinganorganizationorrepository": "Missing an organization or repository?",
+      "configureaccessongithub": "Configure access on GitHub",
+      "thenrefreshthislist": ", then refresh this list.",
+      "whichhumanscanusethiscredential": "Which humans can use this credential?",
+      "whocanusethisidentity": "Who can use this identity",
+      "thiscontrolswhoseworkcanusethe": "This controls whose work can use the identity. It does not change which agents have the\n            connection.",
+      "cancel": "Cancel",
+      "saveaudience": "Save audience",
+      "cancel2": "Cancel",
+      "revokeidentity": "Revoke identity"
+    }
+  },
+  "permissionspanel": {
+    "general": {
+      "whichagentscanusethisconnection": "Which agents can use this connection?",
+      "saving": "Saving…",
+      "anyagentcanusethisconnection": "Any agent can use this connection.",
+      "noagentscanusethisconnection": "No agents can use this connection.",
+      "actions": "Actions",
+      "saving1": "Saving…",
+      "refreshactions": "Refresh actions",
+      "findanaction": "Find an action",
+      "findanaction2": "Find an action…",
+      "matchessortedaz": "matches · sorted A–Z",
+      "noactionsmatch": "No actions match “",
+      "clearthesearchtoseethemall": "”. Clear the search to see them all.",
+      "test": "Test"
     }
   }
 }

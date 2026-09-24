@@ -58,7 +58,7 @@ export function RailwayAccessPanel({ connection, grants }: { connection: ToolCon
         </div>
         <div className="space-y-2">
           <Label htmlFor={`${id}-host`}>{t("railwayaccesspanel.general.verifiedrailwayhostkey")}</Label>
-          <Textarea id={`${id}-host`} value={knownHosts} onChange={(event) => setKnownHosts(event.target.value)} placeholder="ssh.railway.com ssh-ed25519 …" className="font-mono text-xs" />
+          <Textarea id={`${id}-host`} value={knownHosts} onChange={(event) => setKnownHosts(event.target.value)} placeholder={t("railwayaccesspanel.general.sshrailwaycomsshed25519")} className="font-mono text-xs" />
           <p className="text-sm text-muted-foreground">{t("railwayaccesspanel.general.pasteverifiedhostkey")}</p>
         </div>
         <div className="flex flex-wrap gap-2">
