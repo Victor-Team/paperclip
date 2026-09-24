@@ -38,6 +38,7 @@ import { RichWorkProductCard } from "@/components/task-chat/RichWorkProductCard"
 import { DocumentAnnotationsCountChip, IssueDocumentAnnotations } from "@/components/IssueDocumentAnnotations";
 import { cn, formatDateTime } from "@/lib/utils";
 import { useLocation } from "@/lib/router";
+import { useTranslation } from "@/i18n";
 
 interface IssuePropertiesArtifactsTabProps {
   issue: Issue;
@@ -97,6 +98,7 @@ function MarkdownWorkProductRow({
   reviewDoc: IssueDocument | undefined;
   openRequestId?: number;
 }) {
+  const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
   const [annotationPanelOpen, setAnnotationPanelOpen] = useState(false);
   const headerRef = useRef<HTMLDivElement | null>(null);
@@ -149,8 +151,7 @@ function MarkdownWorkProductRow({
   if (tooLarge) {
     expandedBody = (
       <p className="text-sm text-muted-foreground">
-        This Markdown file is too large to preview. Use Raw or Download instead.
-      </p>
+        {t("issuepropertiesartifactstab.general.thismarkdownfileistoolargeto")}</p>
     );
   } else if (reviewDoc) {
     expandedBody = reviewDoc.body.trim().length > 0 ? (
@@ -169,15 +170,15 @@ function MarkdownWorkProductRow({
         <MarkdownBody>{reviewDoc.body}</MarkdownBody>
       </IssueDocumentAnnotations>
     ) : (
-      <p className="text-sm text-muted-foreground">Document is empty.</p>
+      <p className="text-sm text-muted-foreground">{t("issuepropertiesartifactstab.general.documentisempty")}</p>
     );
   } else if (ensure.isError) {
     expandedBody = (
       <div className="flex flex-col items-start gap-1.5">
         <p className="text-sm text-muted-foreground">
           {unsupportedError
-            ? "This file can't be previewed as Markdown. Use Raw or Download instead."
-            : "Preview failed to load."}
+            ? t("issuepropertiesartifactstab.general.thisfilecantbepreviewedas")
+            : t("issuepropertiesartifactstab.general.previewfailedtoload")}
         </p>
         {!unsupportedError ? (
           <button
@@ -188,13 +189,12 @@ function MarkdownWorkProductRow({
               ensure.mutate();
             }}
           >
-            Retry
-          </button>
+            {t("issuepropertiesartifactstab.general.retry")}</button>
         ) : null}
       </div>
     );
   } else {
-    expandedBody = <p className="text-sm text-muted-foreground">Preparing preview…</p>;
+    expandedBody = <p className="text-sm text-muted-foreground">{t("issuepropertiesartifactstab.general.preparingpreview")}</p>;
   }
 
   return (
@@ -236,7 +236,7 @@ function MarkdownWorkProductRow({
           target="_blank"
           rel="noreferrer"
           aria-label={`Open raw ${workProduct.title}`}
-          title="Open raw"
+          title={t("issuepropertiesartifactstab.general.openraw")}
           className="shrink-0 px-1.5 py-1.5 text-muted-foreground hover:text-foreground"
         >
           <ExternalLink className="h-3 w-3" />
@@ -244,7 +244,7 @@ function MarkdownWorkProductRow({
         <a
           href={metadata.downloadPath}
           aria-label={`Download ${workProduct.title}`}
-          title="Download"
+          title={t("issuepropertiesartifactstab.general.download")}
           className="shrink-0 py-1.5 pr-2 pl-0.5 text-muted-foreground hover:text-foreground"
         >
           <Download className="h-3 w-3" />
@@ -268,6 +268,7 @@ function DocumentRow({
   openRequestId?: number;
   onOpen?: () => void;
 }) {
+  const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
   const [annotationPanelOpen, setAnnotationPanelOpen] = useState(false);
   const headerRef = useRef<HTMLDivElement | null>(null);
@@ -338,7 +339,7 @@ function DocumentRow({
               <MarkdownBody>{doc.body}</MarkdownBody>
             </IssueDocumentAnnotations>
           ) : (
-            <p className="text-sm text-muted-foreground">Document is empty.</p>
+            <p className="text-sm text-muted-foreground">{t("issuepropertiesartifactstab.general.documentisempty1")}</p>
           )}
         </div>
       ) : null}
@@ -357,6 +358,7 @@ function DocumentRow({
  * thread.
  */
 export function IssuePropertiesArtifactsTab({ issue, documentDeepLink, onOpenDocument }: IssuePropertiesArtifactsTabProps) {
+  const { t } = useTranslation();
   const { data: attachments } = useQuery({
     queryKey: queryKeys.issues.attachments(issue.id),
     queryFn: () => issuesApi.listAttachments(issue.id),
@@ -432,8 +434,7 @@ export function IssuePropertiesArtifactsTab({ issue, documentDeepLink, onOpenDoc
   if (workProductRows.length === 0 && documentRows.length === 0 && fileRows.length === 0) {
     return (
       <div className="px-1 py-6 text-sm text-muted-foreground">
-        No artifacts yet. Work products, documents, and agent-produced files will appear here.
-      </div>
+        {t("issuepropertiesartifactstab.general.noartifactsyetworkproductsdocumentsand")}</div>
     );
   }
 

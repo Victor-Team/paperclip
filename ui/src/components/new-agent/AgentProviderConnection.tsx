@@ -23,6 +23,7 @@ import { FooterNav } from "../onboarding/FooterNav";
 import { MAKE_ROOM, CARD_ENTER } from "../onboarding/onboarding-motion";
 import { buildFixedClaudeOAuthBinding } from "../environment-variables-editor/model";
 import type { EnvBinding } from "@paperclipai/shared";
+import { useTranslation } from "@/i18n";
 
 export type ProviderConnection = {
   env: Record<string, EnvBinding>;
@@ -62,6 +63,7 @@ export function AgentProviderConnection({
     onComplete: (result: { connectionId: string; grantId: string; method: "subscription" | "api_key" }) => void;
   };
 }) {
+  const { t } = useTranslation();
   const health = useQuery({ queryKey: queryKeys.health, queryFn: healthApi.get, enabled: localEnvironment });
   const canUseLocalLogin = localEnvironment && (health.data?.localAiLoginSupported ?? health.data?.deploymentMode === "local_trusted");
   const epoch = useRef(0);
@@ -217,7 +219,7 @@ export function AgentProviderConnection({
   return (
     <div className="min-w-0 max-w-full">
       <ModelSourceTiles
-        label="Connect your model provider"
+        label={t("agentproviderconnection.general.connectyourmodelprovider")}
         sources={[
           {
             id: adapterType,
@@ -250,8 +252,8 @@ export function AgentProviderConnection({
       )}
       {!opened && savedKeys.options.length > 0 && (
         <p className="mt-2 text-sm text-muted-foreground">
-          {savedKeys.options.length} saved API{" "}
-          {savedKeys.options.length === 1 ? "key available" : "keys available"}.
+          {savedKeys.options.length} {t("agentproviderconnection.general.savedapi")}{" "}
+          {savedKeys.options.length === 1 ? t("agentproviderconnection.general.keyavailable") : t("agentproviderconnection.general.keysavailable")}.
         </p>
       )}
       {method === "subscription" &&
@@ -295,7 +297,7 @@ export function AgentProviderConnection({
                 />
                 {!selectedKey && (
                   <OnboardingCardField
-                    label="API key"
+                    label={t("agentproviderconnection.general.apikey")}
                     masked
                     autoFocus
                     value={apiKey}
@@ -358,10 +360,10 @@ export function AgentProviderConnection({
             ) : (
               <p className="text-sm text-muted-foreground">
                 {storedLogin.data
-                  ? "Use your saved Claude subscription for this agent."
+                  ? t("agentproviderconnection.general.useyoursavedclaudesubscriptionforthis")
                   : canLogin
-                    ? "Use the existing provider connection for this environment."
-                    : "This environment does not support browser sign-in. Choose a sign-in environment or connect with an API key."}
+                    ? t("agentproviderconnection.general.usetheexistingproviderconnectionforthis")
+                    : t("agentproviderconnection.general.thisenvironmentdoesnotsupportbrowsersign")}
               </p>
             )}
           </div>
@@ -369,8 +371,7 @@ export function AgentProviderConnection({
       </motion.div>
       {method === "subscription" && storedLogin.isError && (
         <p role="alert" className="mt-4 text-sm text-destructive">
-          Could not check your saved Claude subscription. Try again.
-        </p>
+          {t("agentproviderconnection.general.couldnotcheckyoursavedclaudesubscription")}</p>
       )}
       {error && (
         <p role="alert" className="mt-4 text-sm text-destructive">
@@ -378,7 +379,7 @@ export function AgentProviderConnection({
         </p>
       )}
       {localEnvironment && health.isError && (
-        <p role="alert" className="mt-4 text-sm text-destructive">Could not prepare sign-in. Reload this page to try again.</p>
+        <p role="alert" className="mt-4 text-sm text-destructive">{t("agentproviderconnection.general.couldnotpreparesigninreloadthis")}</p>
       )}
       <FooterNav
         onBack={() => {

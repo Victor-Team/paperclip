@@ -52,6 +52,7 @@ import {
   treeFromResult,
   type FolderTreeNode,
 } from "./skill-folder-tree";
+import { useTranslation } from "@/i18n";
 
 export type FolderSelection = "all" | "unfiled" | string;
 
@@ -176,6 +177,7 @@ export function FolderRail({
   onEdit: (folder: FolderListItem) => void;
   onDelete: (folder: FolderListItem) => void;
 }) {
+  const { t } = useTranslation();
   const folders = result?.folders ?? [];
   const [renamingFolderId, setRenamingFolderId] = useState<string | null>(null);
   const [renameDraft, setRenameDraft] = useState("");
@@ -224,8 +226,8 @@ export function FolderRail({
   return (
     <nav aria-label={`${itemLabelPlural} folders`} className="hidden w-(--sz-folder-rail) shrink-0 border-r border-border pr-3 md:block">
       <div className="mb-2 flex items-center justify-between gap-2">
-        <div className="text-(length:--text-micro) font-medium uppercase tracking-wide text-muted-foreground">Folders</div>
-        <Button variant="ghost" size="icon-sm" title="New folder" onClick={onCreate}>
+        <div className="text-(length:--text-micro) font-medium uppercase tracking-wide text-muted-foreground">{t("foldercontrols.general.folders")}</div>
+        <Button variant="ghost" size="icon-sm" title={t("foldercontrols.general.newfolder")} onClick={onCreate}>
           <Plus className="h-3.5 w-3.5" />
         </Button>
       </div>
@@ -255,8 +257,7 @@ export function FolderRail({
             />
           ))}
           <div className="px-2 pb-1 pt-3 text-(length:--text-micro) font-medium uppercase tracking-wide text-muted-foreground">
-            System
-          </div>
+            {t("foldercontrols.general.system")}</div>
           {renderVirtualRow("unfiled", "Unfiled", result?.unfiledCount ?? 0, <FolderSwatch color={null} className="mt-0.5" />)}
         </div>
       )}
@@ -294,6 +295,7 @@ export function FolderRailItem({
   onEdit: () => void;
   onDelete: () => void;
 }) {
+  const { t } = useTranslation();
   return (
     <div
       className={cn(
@@ -340,13 +342,12 @@ export function FolderRailItem({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuItem onSelect={onStartRename}>Rename</DropdownMenuItem>
-          <DropdownMenuItem onSelect={onEdit}>Edit color</DropdownMenuItem>
+          <DropdownMenuItem onSelect={onStartRename}>{t("foldercontrols.general.rename")}</DropdownMenuItem>
+          <DropdownMenuItem onSelect={onEdit}>{t("foldercontrols.general.editcolor")}</DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem variant="destructive" onSelect={onDelete}>
             <Trash2 className="h-3.5 w-3.5" />
-            Delete
-          </DropdownMenuItem>
+            {t("foldercontrols.general.delete")}</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
@@ -366,6 +367,7 @@ export function AllUnfiledBanner({
   itemLabelPlural: string;
   onCreateFolder: () => void;
 }) {
+  const { t } = useTranslation();
   const [dismissed, setDismissed] = useState(() => {
     try {
       return window.localStorage.getItem(storageKey) === "1";
@@ -389,12 +391,10 @@ export function AllUnfiledBanner({
     <div className="mb-3 flex flex-wrap items-center gap-2 rounded-md border border-border bg-muted/40 px-3 py-2 text-sm">
       <FolderIcon className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
       <span className="min-w-0 flex-1 text-muted-foreground">
-        Group these {itemLabelPlural} into folders to keep things tidy.
-      </span>
+        {t("foldercontrols.general.groupthese")} {itemLabelPlural} {t("foldercontrols.general.intofolderstokeepthingstidy")}</span>
       <Button size="sm" variant="outline" onClick={onCreateFolder}>
-        Create your first folder
-      </Button>
-      <Button size="icon-sm" variant="ghost" aria-label="Dismiss folder suggestion" onClick={dismiss}>
+        {t("foldercontrols.general.createyourfirstfolder")}</Button>
+      <Button size="icon-sm" variant="ghost" aria-label={t("foldercontrols.general.dismissfoldersuggestion")} onClick={dismiss}>
         <X className="h-3.5 w-3.5" />
       </Button>
     </div>
@@ -420,6 +420,7 @@ export function MobileFolderSheet({
   onSelect: (selection: FolderSelection) => void;
   onCreate: () => void;
 }) {
+  const { t } = useTranslation();
   function select(next: FolderSelection) {
     onSelect(next);
     onOpenChange(false);
@@ -451,7 +452,7 @@ export function MobileFolderSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="bottom" className="max-h-(--sz-folder-sheet-max) rounded-t-lg pb-4">
         <SheetHeader className="border-b border-border px-4 py-3">
-          <SheetTitle>{itemLabelPlural} folders</SheetTitle>
+          <SheetTitle>{itemLabelPlural} {t("foldercontrols.general.folders1")}</SheetTitle>
         </SheetHeader>
         <div className="overflow-y-auto px-3">
           <MobileFolderRow
@@ -466,8 +467,7 @@ export function MobileFolderSheet({
             <>
               {model.my ? renderBranch(model.my, "My Skills") : null}
               <div className="px-2 pb-0.5 pt-2 text-(length:--text-micro) font-medium uppercase tracking-wide text-muted-foreground">
-                Organization
-              </div>
+                {t("foldercontrols.general.organization")}</div>
               {model.company.map((node) => renderBranch(node))}
               {model.projects ? renderBranch(model.projects, "Projects") : null}
               {model.bundled ? renderBranch(model.bundled, "Bundled") : null}
@@ -477,7 +477,7 @@ export function MobileFolderSheet({
           )}
           <MobileFolderRow
             id="unfiled"
-            label="Unfiled"
+            label={t("foldercontrols.general.unfiled")}
             count={result?.unfiledCount ?? 0}
             selected={selection === "unfiled"}
             onSelect={select}
@@ -486,8 +486,7 @@ export function MobileFolderSheet({
         <div className="border-t border-border px-4 pt-3">
           <Button size="sm" variant="outline" className="w-full" onClick={onCreate}>
             <Plus className="mr-2 h-3.5 w-3.5" />
-            New folder
-          </Button>
+            {t("foldercontrols.general.newfolder2")}</Button>
         </div>
       </SheetContent>
     </Sheet>
@@ -536,9 +535,10 @@ export function MoveToMenu({
   onMove: (folderId: string | null) => void;
   onCreateAndMove: () => void;
 }) {
+  const { t } = useTranslation();
   return (
     <DropdownMenuSub>
-      <DropdownMenuSubTrigger>Move to...</DropdownMenuSubTrigger>
+      <DropdownMenuSubTrigger>{t("foldercontrols.general.moveto")}</DropdownMenuSubTrigger>
       <DropdownMenuSubContent className="w-56">
         <MoveToMenuItems
           folders={folders}
@@ -562,6 +562,7 @@ function MoveToMenuItems({
   onMove: (folderId: string | null) => void;
   onCreateAndMove: () => void;
 }) {
+  const { t } = useTranslation();
   const [query, setQuery] = useState("");
   const visibleFolders = useMemo(() => {
     const lowered = query.trim().toLowerCase();
@@ -577,15 +578,14 @@ function MoveToMenuItems({
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             onKeyDown={(event) => event.stopPropagation()}
-            placeholder="Search folders"
+            placeholder={t("foldercontrols.general.searchfolders")}
             className="h-7 min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
           />
         </div>
         <DropdownMenuSeparator />
         <DropdownMenuItem onSelect={() => onMove(null)}>
           <FolderSwatch color={null} />
-          Unfiled
-          {currentFolderId == null ? <Check className="ml-auto h-3.5 w-3.5" /> : null}
+          {t("foldercontrols.general.unfiled3")}          {currentFolderId == null ? <Check className="ml-auto h-3.5 w-3.5" /> : null}
         </DropdownMenuItem>
         {visibleFolders.map((folder) => (
           <DropdownMenuItem key={folder.id} onSelect={() => onMove(folder.id)}>
@@ -595,13 +595,12 @@ function MoveToMenuItems({
           </DropdownMenuItem>
         ))}
         {visibleFolders.length === 0 ? (
-          <div className="px-2 py-2 text-xs text-muted-foreground">No folders match.</div>
+          <div className="px-2 py-2 text-xs text-muted-foreground">{t("foldercontrols.general.nofoldersmatch")}</div>
         ) : null}
         <DropdownMenuSeparator />
         <DropdownMenuItem onSelect={onCreateAndMove}>
           <Plus className="h-3.5 w-3.5" />
-          New folder...
-        </DropdownMenuItem>
+          {t("foldercontrols.general.newfolder4")}</DropdownMenuItem>
     </>
   );
 }
@@ -621,6 +620,7 @@ export function FolderFormDialog({
   onSubmit: (payload: { name: string; color: string | null }) => void;
   pending?: boolean;
 }) {
+  const { t } = useTranslation();
   const [name, setName] = useState("");
   const [color, setColor] = useState<string | null>(FOLDER_COLORS[0] ?? null);
   const isEdit = Boolean(folder);
@@ -635,14 +635,14 @@ export function FolderFormDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>{isEdit ? "Edit folder" : "Create folder"}</DialogTitle>
+          <DialogTitle>{isEdit ? t("foldercontrols.general.editfolder") : t("foldercontrols.general.createfolder")}</DialogTitle>
           <DialogDescription>
-            {kind === "routine" ? "Organize routines in this organization." : "Organize installed organization skills."}
+            {kind === "routine" ? t("foldercontrols.general.organizeroutinesinthisorganization") : t("foldercontrols.general.organizeinstalledorganizationskills")}
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium" htmlFor="folder-name">Name</label>
+            <label className="text-sm font-medium" htmlFor="folder-name">{t("foldercontrols.general.name")}</label>
             <Input
               id="folder-name"
               value={name}
@@ -654,7 +654,7 @@ export function FolderFormDialog({
             />
           </div>
           <div className="space-y-2">
-            <div className="text-sm font-medium">Color</div>
+            <div className="text-sm font-medium">{t("foldercontrols.general.color")}</div>
             <div className="flex flex-wrap gap-2">
               {FOLDER_COLORS.map((swatch) => (
                 <button
@@ -677,17 +677,15 @@ export function FolderFormDialog({
                 )}
                 onClick={() => setColor(null)}
               >
-                None
-              </button>
+                {t("foldercontrols.general.none")}</button>
             </div>
           </div>
         </div>
         <DialogFooter>
           <Button variant="ghost" onClick={() => onOpenChange(false)} disabled={pending}>
-            Cancel
-          </Button>
+            {t("foldercontrols.general.cancel")}</Button>
           <Button onClick={() => onSubmit({ name: name.trim(), color })} disabled={pending || !name.trim()}>
-            {pending ? "Saving..." : isEdit ? "Save" : "Create folder"}
+            {pending ? t("foldercontrols.general.saving") : isEdit ? t("foldercontrols.general.save") : t("foldercontrols.general.createfolder5")}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -710,17 +708,17 @@ export function DeleteFolderDialog({
   onConfirm: () => void;
   pending?: boolean;
 }) {
+  const { t } = useTranslation();
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Delete folder</AlertDialogTitle>
+          <AlertDialogTitle>{t("foldercontrols.general.deletefolder")}</AlertDialogTitle>
           <AlertDialogDescription>
-            The {folder?.itemCount ?? 0} {itemLabelPlural} in this folder won't be deleted. They'll move to Unfiled.
-          </AlertDialogDescription>
+            {t("foldercontrols.general.the")} {folder?.itemCount ?? 0} {itemLabelPlural} {t("foldercontrols.general.inthisfolderwontbedeleted")}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={pending}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel disabled={pending}>{t("foldercontrols.general.cancel6")}</AlertDialogCancel>
           <AlertDialogAction
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             disabled={pending || !folder}
@@ -729,7 +727,7 @@ export function DeleteFolderDialog({
               onConfirm();
             }}
           >
-            {pending ? "Deleting..." : "Delete folder"}
+            {pending ? t("foldercontrols.general.deleting") : t("foldercontrols.general.deletefolder7")}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
@@ -752,13 +750,14 @@ export function BulkBar({
   onClear: () => void;
   onDone: () => void;
 }) {
+  const { t } = useTranslation();
   if (selectedCount === 0) return null;
   return (
     <div className="sticky top-2 z-10 flex flex-wrap items-center gap-2 rounded-md border border-border bg-background/95 px-3 py-2 shadow-sm backdrop-blur">
-      <span className="mr-auto text-sm text-muted-foreground">{selectedCount} selected</span>
+      <span className="mr-auto text-sm text-muted-foreground">{selectedCount} {t("foldercontrols.general.selected")}</span>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button size="sm" variant="outline">Move to...</Button>
+          <Button size="sm" variant="outline">{t("foldercontrols.general.moveto8")}</Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">
           <MoveToMenuItems
@@ -769,8 +768,8 @@ export function BulkBar({
           />
         </DropdownMenuContent>
       </DropdownMenu>
-      <Button size="sm" variant="ghost" onClick={onClear}>Deselect all</Button>
-      <Button size="sm" onClick={onDone}>Done</Button>
+      <Button size="sm" variant="ghost" onClick={onClear}>{t("foldercontrols.general.deselectall")}</Button>
+      <Button size="sm" onClick={onDone}>{t("foldercontrols.general.done")}</Button>
     </div>
   );
 }

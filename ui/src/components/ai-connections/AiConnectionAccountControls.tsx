@@ -5,6 +5,7 @@ import { RevokeGrantDialog } from "@/pages/apps/app-detail/IdentitiesSection";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { AI_PROVIDERS, aiMethodLabel, type AiConnectionSummary } from "./model";
+import { useTranslation } from "@/i18n";
 
 /** AI-only account controls; identity, access and navigation belong to AppDetail. */
 export function AiConnectionAccountControls({
@@ -19,6 +20,7 @@ export function AiConnectionAccountControls({
   onRevoke: () => void | Promise<void>;
   revocationDetails?: ReactNode;
 }) {
+  const { t } = useTranslation();
   const [revoking, setRevoking] = useState(false);
   const [revokePending, setRevokePending] = useState(false);
   const [revokeError, setRevokeError] = useState<string>();
@@ -26,7 +28,7 @@ export function AiConnectionAccountControls({
   const available = account.status === "connected";
   const activeDefault = account.isDefault && available;
   return (
-    <section className="space-y-4" aria-label="AI account settings">
+    <section className="space-y-4" aria-label={t("aiconnectionaccountcontrols.general.aiaccountsettings")}>
       {ownPersonal && (
         <div className={cn(
           "flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border p-3",
@@ -35,18 +37,18 @@ export function AiConnectionAccountControls({
           <div className="flex items-center gap-3">
             <Star aria-hidden className={cn("size-5 shrink-0", activeDefault ? "fill-current text-(--status-task-icon-done)" : "text-muted-foreground")} />
             <div>
-              <h3 className="text-sm font-semibold">Personal default</h3>
-              <p className="text-xs text-muted-foreground">For your {AI_PROVIDERS[account.provider].name} tasks</p>
+              <h3 className="text-sm font-semibold">{t("aiconnectionaccountcontrols.general.personaldefault")}</h3>
+              <p className="text-xs text-muted-foreground">{t("aiconnectionaccountcontrols.general.foryour")} {AI_PROVIDERS[account.provider].name} {t("aiconnectionaccountcontrols.general.tasks")}</p>
             </div>
           </div>
           {account.isDefault ? (
             <span role="status" className={cn("inline-flex items-center gap-1.5 text-sm font-medium", available ? "text-(--status-task-icon-done)" : "text-destructive")}>
               {available ? <CheckCircle2 className="size-4" aria-hidden /> : <TriangleAlert className="size-4" aria-hidden />}
-              {available ? "Your default" : "Default unavailable"}
+              {available ? t("aiconnectionaccountcontrols.general.yourdefault") : t("aiconnectionaccountcontrols.general.defaultunavailable")}
             </span>
           ) : !readOnly ? (
-            <Button variant="outline" size="sm" disabled={!available} onClick={onMakeDefault}>Make default</Button>
-          ) : <span className="text-xs text-muted-foreground">Not your default</span>}
+            <Button variant="outline" size="sm" disabled={!available} onClick={onMakeDefault}>{t("aiconnectionaccountcontrols.general.makedefault")}</Button>
+          ) : <span className="text-xs text-muted-foreground">{t("aiconnectionaccountcontrols.general.notyourdefault")}</span>}
         </div>
       )}
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -56,8 +58,8 @@ export function AiConnectionAccountControls({
         </div>
         {!readOnly && grant.capabilities?.canRevoke && (
           <div className="flex flex-wrap items-center gap-2">
-            {<Button variant="outline" size="sm" onClick={onReconnect}><RefreshCw className="size-4" aria-hidden />Reconnect</Button>}
-            {account.status !== "revoked" && <Button variant="ghost" size="sm" className="text-destructive" onClick={() => setRevoking(true)}><Unplug className="size-4" aria-hidden />Revoke identity</Button>}
+            {<Button variant="outline" size="sm" onClick={onReconnect}><RefreshCw className="size-4" aria-hidden />{t("aiconnectionaccountcontrols.general.reconnect")}</Button>}
+            {account.status !== "revoked" && <Button variant="ghost" size="sm" className="text-destructive" onClick={() => setRevoking(true)}><Unplug className="size-4" aria-hidden />{t("aiconnectionaccountcontrols.general.revokeidentity")}</Button>}
           </div>
         )}
       </div>
