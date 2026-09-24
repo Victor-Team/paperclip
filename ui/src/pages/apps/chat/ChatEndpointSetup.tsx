@@ -1062,54 +1062,57 @@ settings:
         <div>
           <h1 className="text-xl font-bold">
             {repairing
-              ? "Reconnect GitHub App"
-              : "Create or connect a GitHub App"}
+              ? t("chatendpointsetup.github.reconnectapp")
+              : t("chatendpointsetup.github.createorconnectapp")}
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
             {repairing
-              ? "Reconnect verifies this same App and installation, then updates its webhook URL, secret, and secure delivery settings. It does not reinstall the App or change repository access. Leave App ID and private key blank to reuse saved credentials. Keep Webhooks · Active enabled in GitHub; send a test conversation after reconnecting."
-              : "Configure its webhook and permissions, then verify the App with Paperclip."}
+              ? t("chatendpointsetup.github.reconnectdescription")
+              : t("chatendpointsetup.github.createdescription")}
           </p>
         </div>
         {!repairing && (
           <ol className="list-decimal space-y-2 pl-5 text-sm">
             <li>
-              Under the target user or organization, create a new GitHub App.
-              Give it a globally unique name (34 characters or fewer), use the
-              Paperclip homepage URL below, and leave user authorization off.
+              <Trans
+                i18nKey="chatendpointsetup.github.step1"
+                components={{ strong: <strong /> }}
+              />
             </li>
             <li>
-              Keep <strong>Webhooks · Active</strong> on. Enter the Paperclip
-              webhook URL and the Paperclip-generated webhook secret below, and
-              keep <strong>Enable SSL verification</strong> selected.
+              <Trans
+                i18nKey="chatendpointsetup.github.step2"
+                components={{ strong: <strong /> }}
+              />
             </li>
             <li>
-              Under Repository permissions, set <strong>Issues</strong> and{" "}
-              <strong>Pull requests</strong> to{" "}
-              <strong>Read &amp; write</strong>. Leave every other permission at
-              its default; Metadata remains read-only.
+              <Trans
+                i18nKey="chatendpointsetup.github.step3"
+                components={{ strong: <strong /> }}
+              />
             </li>
             <li>
-              Subscribe to <strong>Issue comment</strong> (
-              <code>issue_comment</code>),{" "}
-              <strong>Pull request review comment</strong> (
-              <code>pull_request_review_comment</code>). GitHub sends{" "}
-              <code>installation</code> and{" "}
-              <code>installation_repositories</code> to every GitHub App
-              automatically; they are not selectable here.
+              <Trans
+                i18nKey="chatendpointsetup.github.step4"
+                components={{ strong: <strong />, code: <code /> }}
+              />
             </li>
             <li>
-              Choose <strong>Only on this account</strong>, create the App, copy
-              its App ID, generate one private key, then install it on the
-              selected repositories.
+              <Trans
+                i18nKey="chatendpointsetup.github.step5"
+                components={{ strong: <strong /> }}
+              />
             </li>
           </ol>
         )}
         {endpointValue(
-          "Paperclip homepage URL",
+          t("chatendpointsetup.github.homepageurl"),
           publicOrigin(endpoint.setup?.webhookUrl),
         )}
-        {endpointValue("Paperclip webhook URL", endpoint.setup?.webhookUrl)}
+        {endpointValue(
+          t("chatendpointsetup.github.webhookurl"),
+          endpoint.setup?.webhookUrl,
+        )}
         <Button
           variant="outline"
           onClick={() =>
@@ -1123,12 +1126,16 @@ settings:
             )
           }
         >
-          {repairing ? "Open GitHub App settings" : "Open new GitHub App form"}{" "}
+          {repairing
+            ? t("chatendpointsetup.github.openappsettings")
+            : t("chatendpointsetup.github.opennewappform")}{" "}
           <ExternalLink />
         </Button>
-        {field("appId", "GitHub App ID", "text")}
+        {field("appId", t("chatendpointsetup.github.appid"), "text")}
         <div className="grid gap-2 text-sm font-medium">
-          <label htmlFor="github-private-key">Private key (PEM)</label>
+          <label htmlFor="github-private-key">
+            {t("chatendpointsetup.github.privatekeypem")}
+          </label>
           <div className="relative">
             {privateKeyVisible ? (
               <Textarea
@@ -1156,7 +1163,9 @@ settings:
               size="icon"
               className="absolute right-1 top-1"
               aria-label={
-                privateKeyVisible ? "Hide private key" : "Show private key"
+                privateKeyVisible
+                  ? t("chatendpointsetup.github.hideprivatekey")
+                  : t("chatendpointsetup.github.showprivatekey")
               }
               onClick={() => setPrivateKeyVisible((visible) => !visible)}
             >
@@ -1168,7 +1177,7 @@ settings:
             type="file"
             accept=".pem,.key,application/x-pem-file,application/pkcs8,text/plain"
             className="hidden"
-            aria-label="Choose GitHub App private key file"
+            aria-label={t("chatendpointsetup.github.chooseprivatekeyfile")}
             onChange={loadPrivateKeyFile}
           />
           <div>
@@ -1177,7 +1186,7 @@ settings:
               variant="outline"
               onClick={() => privateKeyFileInputRef.current?.click()}
             >
-              Choose .pem file
+              {t("chatendpointsetup.github.choosepemfile")}
             </Button>
           </div>
           {privateKeyFileError ? (
@@ -1191,7 +1200,7 @@ settings:
               aria-live="polite"
               className="text-sm text-muted-foreground"
             >
-              Reading private key file…
+              {t("chatendpointsetup.github.readingprivatekey")}
             </p>
           ) : privateKeyFileLoaded ? (
             <p
@@ -1199,16 +1208,18 @@ settings:
               aria-live="polite"
               className="text-sm text-muted-foreground"
             >
-              Private key loaded. It stays in this form until you connect.
+              {t("chatendpointsetup.github.privatekeyloaded")}
             </p>
           ) : null}
         </div>
         <div className="grid gap-2">
-          <p className="text-sm font-medium">Webhook secret</p>
+          <p className="text-sm font-medium">
+            {t("chatendpointsetup.github.webhooksecret")}
+          </p>
           {generatedWebhookSecret ? (
             <>
               <Input
-                aria-label="Generated webhook secret"
+                aria-label={t("chatendpointsetup.github.generatedwebhooksecret")}
                 className="font-mono text-xs"
                 readOnly
                 value={generatedWebhookSecret}
@@ -1223,18 +1234,18 @@ settings:
                     );
                   }}
                 >
-                  Copy webhook secret
+                  {t("chatendpointsetup.github.copywebhooksecret")}
                 </Button>
               </div>
               <p className="text-sm text-muted-foreground">
-                Copy this value now. Paperclip will not show it again.
+                {t("chatendpointsetup.github.copysecretnow")}
               </p>
             </>
           ) : (
             <p className="text-sm text-muted-foreground">
               {endpoint.setup?.webhookSecretConfigured
-                ? "A webhook secret is configured and cannot be shown again."
-                : "Generate the secret in Paperclip, then paste it into the GitHub App."}
+                ? t("chatendpointsetup.github.secretconfigured")
+                : t("chatendpointsetup.github.generatesecretandpaste")}
             </p>
           )}
           <div>
@@ -1248,15 +1259,15 @@ settings:
                 <Loader2 className="h-4 w-4 animate-spin" />
               )}
               {endpoint.setup?.webhookSecretConfigured
-                ? "Regenerate webhook secret"
-                : "Generate webhook secret"}
+                ? t("chatendpointsetup.github.regeneratewebhooksecret")
+                : t("chatendpointsetup.github.generatewebhooksecret")}
             </Button>
           </div>
           {endpoint.setup?.webhookSecretConfigured && (
             <p className="text-sm text-muted-foreground">
               {endpoint.providerAccountId || endpoint.botExternalId
-                ? "Regenerating immediately invalidates GitHub webhook signatures until you replace the secret in the GitHub App settings."
-                : "Generating another secret replaces the previous value. Paste the newest value into GitHub before continuing."}
+                ? t("chatendpointsetup.github.regeneratingwarning")
+                : t("chatendpointsetup.github.generatingwarning")}
             </p>
           )}
           {endpoint.setup?.webhookSecretConfigured && (
@@ -1264,15 +1275,14 @@ settings:
               className={`text-sm ${endpoint.setup.webhookVerifiedAt ? "text-foreground" : "text-muted-foreground"}`}
             >
               {endpoint.setup.webhookVerifiedAt
-                ? "GitHub has verified this webhook."
-                : "Waiting for GitHub to deliver its signed webhook ping…"}
+                ? t("chatendpointsetup.github.webhookverified")
+                : t("chatendpointsetup.github.waitingforwebhook")}
             </p>
           )}
         </div>
         {!endpoint.setup?.webhookUrl && (
           <p className="text-sm text-destructive">
-            Configure a public HTTPS URL for this Paperclip instance before
-            connecting GitHub.
+            {t("chatendpointsetup.github.publichttpsrequired")}
           </p>
         )}
         <Button
@@ -1290,7 +1300,9 @@ settings:
           }
         >
           {pending && <Loader2 className="h-4 w-4 animate-spin" />}
-          {repairing ? "Reconnect and verify" : "Connect and verify"}
+          {repairing
+            ? t("chatendpointsetup.github.reconnectandverify")
+            : t("chatendpointsetup.github.connectandverify")}
         </Button>
       </div>
     );
