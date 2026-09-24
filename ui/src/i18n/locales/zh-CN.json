@@ -3508,5 +3508,29 @@
       "applicationnameconnected": "{{applicationName}} 已连接",
       "theconnectionisreadyreviewpermissions": "连接已就绪。请审查权限，或在下方测试操作。"
     }
+  },
+  "reviewqueuecard": {
+    "general": {
+      "review": "审查",
+      "waitingforyourok": "等待您的确认",
+      "couldnotloadconnectionreviews": "无法加载连接审查。请刷新页面后重试。",
+      "nothingiswaitingforyouokrightnow": "当前没有等待您确认的事项。",
+      "allowedonce": "已允许一次",
+      "actionlabelcanrunthistime": "{{actionLabel}} 本次可以运行。",
+      "alwaysallowed": "已始终允许",
+      "actionlabelwontaskagain": "{{actionLabel}} 不会再请求确认。",
+      "declined": "已拒绝",
+      "actionlabelwontrun": "{{actionLabel}} 不会运行。",
+      "inapplicationname": "在 {{applicationName}} 中",
+      "askedtime": "· 请求于 {{time}}",
+      "anagentwantstorunthisaction": "有智能体想要运行此操作。您的连接策略要求先获得批准。",
+      "alwaysallowletsthisagentusethisaction": "始终允许会让此智能体在此连接上使用不同参数运行此操作；如有当前项目，则限制在该项目内。",
+      "allowonce": "允许一次",
+      "alwaysallow": "始终允许",
+      "decline": "拒绝",
+      "thisaction": "此操作",
+      "couldntsavethat": "无法保存",
+      "pleasetryagain": "请重试。"
+    }
   }
 }

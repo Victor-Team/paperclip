@@ -3508,5 +3508,29 @@
       "applicationnameconnected": "{{applicationName}} connected",
       "theconnectionisreadyreviewpermissions": "The connection is ready. Review permissions or test an action below."
     }
+  },
+  "reviewqueuecard": {
+    "general": {
+      "review": "Review",
+      "waitingforyourok": "Waiting for your OK",
+      "couldnotloadconnectionreviews": "Could not load connection reviews. Please refresh to try again.",
+      "nothingiswaitingforyouokrightnow": "Nothing is waiting for your OK right now.",
+      "allowedonce": "Allowed once",
+      "actionlabelcanrunthistime": "{{actionLabel}} can run this time.",
+      "alwaysallowed": "Always allowed",
+      "actionlabelwontaskagain": "{{actionLabel}} won’t ask again.",
+      "declined": "Declined",
+      "actionlabelwontrun": "{{actionLabel}} won’t run.",
+      "inapplicationname": "in {{applicationName}}",
+      "askedtime": "· asked {{time}}",
+      "anagentwantstorunthisaction": "An agent wants to run this action. Your connection policy requires approval first.",
+      "alwaysallowletsthisagentusethisaction": "Always allow lets this agent use this action with different arguments on this connection, within the current project when present.",
+      "allowonce": "Allow once",
+      "alwaysallow": "Always allow",
+      "decline": "Decline",
+      "thisaction": "This action",
+      "couldntsavethat": "Couldn’t save that",
+      "pleasetryagain": "Please try again."
+    }
   }
 }

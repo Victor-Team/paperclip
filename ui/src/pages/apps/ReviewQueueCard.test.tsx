@@ -4,6 +4,7 @@ import { flushSync } from "react-dom";
 import { createRoot } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { i18n } from "@/i18n";
 import { ReviewQueueCard } from "./ReviewQueueCard";
 
 const listActionRequestsMock = vi.hoisted(() => vi.fn());
@@ -95,7 +96,8 @@ describe("ReviewQueueCard", () => {
   let container: HTMLDivElement;
   let root: ReturnType<typeof createRoot>;
 
-  beforeEach(() => {
+  beforeEach(async () => {
+    await i18n.changeLanguage("en");
     container = document.createElement("div");
     document.body.appendChild(container);
     listActionRequestsMock.mockResolvedValue({ actionRequests: [pendingRequest()] });
@@ -145,5 +147,18 @@ describe("ReviewQueueCard", () => {
     expect(approveActionRequestMock).toHaveBeenCalledWith("company-1", "request-1", true);
     expect(createTrustRuleFromActionRequestMock).not.toHaveBeenCalled();
     expect(pushToastMock).toHaveBeenCalledWith(expect.objectContaining({ title: "Always allowed" }));
+  });
+
+  it("renders approval controls and policy guidance in Simplified Chinese", async () => {
+    await i18n.changeLanguage("zh-CN");
+
+    await render();
+
+    expect(container.textContent).toContain("等待您的确认");
+    expect(container.textContent).toContain("有智能体想要运行此操作。您的连接策略要求先获得批准。");
+    expect(container.textContent).toContain("始终允许会让此智能体在此连接上使用不同参数运行此操作");
+    expect(buttonContaining("允许一次")).toBeDefined();
+    expect(buttonContaining("始终允许")).toBeDefined();
+    expect(buttonContaining("拒绝")).toBeDefined();
   });
 });
