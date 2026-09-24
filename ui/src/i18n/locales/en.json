@@ -6417,5 +6417,45 @@
       "loading": "Loading...",
       "loadmore": "Load more"
     }
+  },
+  "agentskillreleasepicker": {
+    "general": {
+      "skillrelease": "Skill release",
+      "beta": "Beta"
+    }
+  },
+  "agentskillrow": {
+    "general": {
+      "readonly": "Read-only"
+    }
+  },
+  "agentskillstab": {
+    "general": {
+      "beta": "Beta ·",
+      "enabledcount": "{{enabled}} / {{total}} enabled",
+      "searchskills": "Search skills",
+      "searchskills1": "Search skills",
+      "browseskillsstore": "Browse skills store",
+      "failedtoupdateskills": "Failed to update skills",
+      "isenabledbutmissingfromtheorganization": "is enabled but missing from the organization library.",
+      "remove": "Remove",
+      "enabledonthisagent": "Enabled on this agent",
+      "noenabledskillsmatchyoursearch": "No enabled skills match your search.",
+      "noskillsenabledonthisagentyet": "No skills enabled on this agent yet.",
+      "availablefromthelibrary": "Available from the library",
+      "noavailableskillsmatchyoursearch": "No available skills match your search.",
+      "importskillsintotheorganizationlibraryto": "Import skills into the organization library to enable them here.",
+      "everylibraryskillisenabledonthis": "Every library skill is enabled on this agent.",
+      "automaticanddetectedskillsreadonly": "Automatic and detected skills (read-only)",
+      "nodetectedskillsmatchyoursearch": "No detected skills match your search.",
+      "adapter": "Adapter:",
+      "saving": "Saving…",
+      "couldntsave": "Couldn’t save",
+      "savingsoon": "Saving soon…",
+      "saved": "Saved",
+      "noskillsintheorganizationlibrary": "No skills in the organization library",
+      "installskillstotheorganizationthenenable": "Install skills to the organization, then enable them on this agent.",
+      "browseskillsstore2": "Browse skills store"
+    }
   }
 }

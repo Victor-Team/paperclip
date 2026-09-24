@@ -6417,5 +6417,45 @@
       "loading": "加载中",
       "loadmore": "加载更多"
     }
+  },
+  "agentskillreleasepicker": {
+    "general": {
+      "skillrelease": "技能版本",
+      "beta": "测试版"
+    }
+  },
+  "agentskillrow": {
+    "general": {
+      "readonly": "只读"
+    }
+  },
+  "agentskillstab": {
+    "general": {
+      "beta": "测试版 ·",
+      "enabledcount": "已启用 {{enabled}} / {{total}} 项",
+      "searchskills": "搜索技能",
+      "searchskills1": "搜索技能",
+      "browseskillsstore": "浏览技能商店",
+      "failedtoupdateskills": "更新技能失败",
+      "isenabledbutmissingfromtheorganization": "已启用，但公司技能库中缺少此技能。",
+      "remove": "移除",
+      "enabledonthisagent": "此智能体已启用",
+      "noenabledskillsmatchyoursearch": "没有已启用的技能符合您的搜索条件。",
+      "noskillsenabledonthisagentyet": "此智能体尚未启用任何技能。",
+      "availablefromthelibrary": "可从技能库获取",
+      "noavailableskillsmatchyoursearch": "没有可用技能符合您的搜索条件。",
+      "importskillsintotheorganizationlibraryto": "将技能导入公司技能库后，即可在此启用。",
+      "everylibraryskillisenabledonthis": "技能库中的所有技能均已在此智能体上启用。",
+      "automaticanddetectedskillsreadonly": "自动和检测到的技能（只读）",
+      "nodetectedskillsmatchyoursearch": "没有检测到的技能符合您的搜索条件。",
+      "adapter": "适配器：",
+      "saving": "保存中…",
+      "couldntsave": "无法保存",
+      "savingsoon": "即将保存…",
+      "saved": "已保存",
+      "noskillsintheorganizationlibrary": "公司技能库中没有技能",
+      "installskillstotheorganizationthenenable": "先将技能安装到公司，再在此智能体上启用。",
+      "browseskillsstore2": "浏览技能商店"
+    }
   }
 }
