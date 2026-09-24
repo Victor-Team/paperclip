@@ -11,6 +11,7 @@ import {
   savedCodexSubscriptions,
   type SavedProviderKey,
 } from "@/lib/saved-provider-credentials";
+import { useTranslation } from "@/i18n";
 
 export function useSavedProviderKeys(
   companyId: string | null,
@@ -87,11 +88,12 @@ export function SavedProviderKeySelect({
   disabled?: boolean;
   kind?: "api" | "subscription";
 }) {
+  const { t } = useTranslation();
   return (
     <div className="space-y-2">
       {options.length > 0 && (
         <label className="block space-y-2 text-sm">
-          <span>{kind === "api" ? "API key" : "Subscription"}</span>
+          <span>{kind === "api" ? t("savedproviderkeyselect.general.apikey") : t("savedproviderkeyselect.general.subscription")}</span>
           <select
             aria-label={kind === "api" ? "Saved API key" : "Saved subscription"}
             className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
@@ -106,27 +108,23 @@ export function SavedProviderKeySelect({
             ))}
             <option value="">
               {kind === "api"
-                ? "Enter a new API key"
-                : "Sign in to another account"}
+                ? t("savedproviderkeyselect.general.enteranewapikey")
+                : t("savedproviderkeyselect.general.signintoanotheraccount")}
             </option>
           </select>
         </label>
       )}
       {loading && (
         <p role="status" className="text-sm text-muted-foreground">
-          Checking saved API keys…
-        </p>
+          {t("savedproviderkeyselect.general.checkingsavedapikeys")}</p>
       )}
       {error && (
         <p role="alert" className="text-sm text-destructive">
-          Some saved keys could not be loaded. You can still enter a new key.
-        </p>
+          {t("savedproviderkeyselect.general.somesavedkeyscouldnotbeloaded")}</p>
       )}
       {value && (
         <p className="text-sm text-muted-foreground">
-          Reuse this saved {kind === "api" ? "key" : "subscription"} for this
-          agent.
-        </p>
+          {t("savedproviderkeyselect.general.reusethissaved")} {kind === "api" ? t("savedproviderkeyselect.general.key") : t("savedproviderkeyselect.general.subscription1")} {t("savedproviderkeyselect.general.forthisagent")}</p>
       )}
     </div>
   );

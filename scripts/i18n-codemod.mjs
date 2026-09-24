@@ -10,7 +10,7 @@
  *
  * Usage:
  *   node scripts/i18n-codemod.mjs --directory ui/src/pages/audit --expected 126
- *   node scripts/i18n-codemod.mjs --directory ui/src/pages/audit --write
+ *   node scripts/i18n-codemod.mjs --directory ui/src/components/a --directory ui/src/components/b --write
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -21,16 +21,17 @@ import * as ts from "typescript/unstable/ast";
 const TRANSLATABLE_ATTRIBUTES = new Set(["placeholder", "title", "aria-label", "alt", "label"]);
 const sourceRoot = process.cwd();
 const args = process.argv.slice(2);
-const directoryIndex = args.indexOf("--directory");
+const directoryArgs = args.flatMap((argument, index) => argument === "--directory" ? [args[index + 1]] : [])
+  .filter(Boolean);
 const jsonIndex = args.indexOf("--json");
 const expectedIndex = args.indexOf("--expected");
 const write = args.includes("--write");
 
-if (directoryIndex === -1 || !args[directoryIndex + 1]) {
-  throw new Error("Usage: node scripts/i18n-codemod.mjs --directory <relative-directory> [--write] [--json <report-path>]");
+if (!directoryArgs.length) {
+  throw new Error("Usage: node scripts/i18n-codemod.mjs --directory <relative-directory> [--directory <relative-directory>] [--write] [--json <report-path>]");
 }
 
-const directory = path.resolve(sourceRoot, args[directoryIndex + 1]);
+const directories = [...new Set(directoryArgs.map((directory) => path.resolve(sourceRoot, directory)))];
 const reportPath = jsonIndex === -1 ? null : path.resolve(sourceRoot, args[jsonIndex + 1] ?? "");
 const expected = expectedIndex === -1 ? null : Number(args[expectedIndex + 1]);
 if (expected !== null && (!Number.isInteger(expected) || expected < 0)) {
@@ -185,12 +186,13 @@ function scan(file) {
   return { file: path.relative(sourceRoot, file), candidates, keys: candidates.filter((entry) => entry.key).map((entry) => ({ key: entry.key, text: entry.text })) };
 }
 
-const reports = filesUnder(directory).sort().map(scan);
+const reports = [...new Set(directories.flatMap(filesUnder))].sort().map(scan);
 const candidates = reports.flatMap((report) => report.candidates);
 const automatic = candidates.filter((entry) => entry.automatic).length;
 const baseline = expected ?? candidates.length;
 const report = {
-  directory: path.relative(sourceRoot, directory),
+  directory: directories.length === 1 ? path.relative(sourceRoot, directories[0]) : null,
+  directories: directories.map((directory) => path.relative(sourceRoot, directory)),
   mode: write ? "write" : "scan",
   files: reports,
   summary: {

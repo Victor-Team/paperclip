@@ -1,4 +1,5 @@
 import { cn } from "../../lib/utils";
+import { useTranslation } from "@/i18n";
 
 /**
  * The agent arc — create the agent, connect it, review — is the part of the
@@ -107,6 +108,7 @@ export function Stepper({
   canJumpToStep?: (target: number) => boolean;
   onJumpToStep?: (target: number) => void;
 }) {
+  const { t } = useTranslation();
   return (
     <div className="mb-11 flex items-center justify-center gap-2">
       {Array.from({ length: total }, (_, index) => index + 1).map((segment) => {
@@ -134,7 +136,7 @@ export function Stepper({
       })}
       {/* Out of flow, so it neither takes a row nor picks up the gap. */}
       <span className="sr-only">
-        Step {step} of {total}
+        {t("stepper.general.step")} {step} {t("stepper.general.of")} {total}
       </span>
     </div>
   );

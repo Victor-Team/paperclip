@@ -2016,5 +2016,249 @@
       "resetall": "全部重置",
       "copyastheme": "复制为 @theme"
     }
+  },
+  "actioncard": {
+    "general": {
+      "approve": "批准",
+      "deny": "拒绝",
+      "editampresign": "编辑并重新签名",
+      "requestedapprovaltocall": "请求批准调用",
+      "catalogchangedsincethisrequestwassigned": "目录自请求签名后已变更。",
+      "input": "输入",
+      "whyiaposmasking": "请求原因",
+      "policy": "政策 #",
+      "requiresapprovalhere": "需要在此处批准。",
+      "noexpiryset": "未设置到期时间",
+      "previouscataloghash": "先前目录哈希",
+      "currentcataloghash": "当前目录哈希",
+      "application": "应用",
+      "manifestv": "清单 v{{version}}",
+      "connection": "连接",
+      "catalog": "目录",
+      "payload": "载荷",
+      "signed": "已签名",
+      "reissuerequestbeforeapproving": "批准前请重新发起请求——目录哈希已变更。",
+      "cataloghashnolonger": "此应用的工具目录哈希不再与签发此审批时的哈希匹配。审批已禁用——智能体必须编辑并重新签名后再次请求。"
+    }
+  },
+  "interrupthandoffviews": {
+    "general": {
+      "agent": "智能体",
+      "user": "用户",
+      "noresponsible": "无负责人 —",
+      "unassigned": "未分配",
+      "wake": "唤醒",
+      "didyoumean": "您是否想",
+      "plaintextwontnotifyorassign": "？纯文本不会通知或分派智能体。",
+      "insertmention": "插入提及",
+      "dismisssuggestion": "关闭建议",
+      "handoffto": "转交给",
+      "whatthisaffects": "影响范围",
+      "nothinglivetopausenoagentrun": "没有正在运行或排队的智能体运行可暂停。此操作将记录暂停状态，新的工作会在您恢复前不再启动。",
+      "notasksareaffected": "没有受影响的任务。",
+      "insertmentionforagent": "在您的评论中插入对 {{agent}} 的提及"
+    }
+  },
+  "issueoutputsection": {
+    "general": {
+      "taskoutputs": "任务输出",
+      "output": "输出",
+      "alsoproduced": "还生成了",
+      "browsefileingallery": "在图库中浏览 {{filename}}",
+      "openfile": "打开 {{filename}}"
+    }
+  },
+  "outputprimarycard": {
+    "general": {
+      "outputmetadataisunavailablethisfilecan": "输出元数据不可用——此文件无法在此处播放或下载。",
+      "primary": "主要",
+      "browse": "浏览",
+      "open": "打开",
+      "download": "下载",
+      "browsefileingallery": "在图库中浏览 {{filename}}",
+      "openfile": "打开 {{filename}}",
+      "downloadfile": "下载 {{filename}}"
+    }
+  },
+  "outputrow": {
+    "general": {
+      "filedetailsunavailable": "文件详情不可用",
+      "openinnewtab": "在新标签页中打开",
+      "download": "下载",
+      "openfile": "打开 {{filename}}",
+      "downloadfile": "下载 {{filename}}"
+    }
+  },
+  "connectmodelpreview": {
+    "general": {
+      "connectamodel": "连接模型",
+      "modelsource": "模型来源",
+      "useapikeysinstead": "改用 API 密钥"
+    }
+  },
+  "footernav": {
+    "general": {
+      "back": "返回"
+    }
+  },
+  "savedproviderkeyselect": {
+    "general": {
+      "apikey": "API 密钥",
+      "subscription": "订阅",
+      "enteranewapikey": "输入新的 API 密钥",
+      "signintoanotheraccount": "登录其他账号",
+      "checkingsavedapikeys": "正在检查已保存的 API 密钥…",
+      "somesavedkeyscouldnotbeloaded": "部分已保存的密钥无法加载。您仍可输入新密钥。",
+      "reusethissaved": "复用此已保存的",
+      "key": "密钥",
+      "subscription1": "订阅",
+      "forthisagent": "用于此智能体。"
+    }
+  },
+  "stepper": {
+    "general": {
+      "step": "第",
+      "of": "步，共"
+    }
+  },
+  "sidepanelframe": {
+    "general": {
+      "closesidepanel": "关闭侧边面板",
+      "closesidepanel1": "关闭侧边面板",
+      "restoresidepanel": "还原侧边面板",
+      "maximizesidepanel": "最大化侧边面板"
+    }
+  },
+  "sidepanellauncher": {
+    "general": {
+      "loading": "加载中…",
+      "alreadyopen": "已打开"
+    }
+  },
+  "taskdetailrelationspanel": {
+    "general": {
+      "subtasks": "子任务",
+      "progress": "进度",
+      "of": "共",
+      "complete": "已完成",
+      "subtaskcompletion": "子任务完成情况",
+      "rootblocker": "根阻塞项",
+      "blockedsubtask": "被阻塞的子任务",
+      "nextaction": "下一步操作",
+      "allsubtasksarecomplete": "所有子任务均已完成。",
+      "noremainingsubtaskactions": "没有剩余的子任务操作。",
+      "nosubtasksyet": "暂无子任务。",
+      "othersubtasks": "其他子任务",
+      "subtasks1": "子任务",
+      "addsubtask": "添加子任务",
+      "referenced": "被引用",
+      "mentionedin": "被提及于"
+    }
+  },
+  "taskdetailtaskspanel": {
+    "general": {
+      "relatedtasks": "相关任务",
+      "loadingtasks": "正在加载任务…",
+      "couldnotloadalltasks": "无法加载所有任务。",
+      "retry": "重试",
+      "notasksyet": "暂无任务。",
+      "project": "项目",
+      "noproject": "无项目",
+      "subtasks": "子任务",
+      "gotoproject": "前往 {{name}} 项目",
+      "projecttasks": "{{name}} 任务"
+    }
+  },
+  "taskdocumentpanel": {
+    "general": {
+      "loadingdocument": "正在加载文档…",
+      "thedocumentcouldnotbeloadedretry": "无法加载文档。请从标签页启动器重试或刷新任务。",
+      "documentnolongeravailable": "文档已不可用",
+      "thistabispreservedsothemissing": "此标签页保留以明确说明资源缺失。请关闭它或选择其他文档。",
+      "documentisempty": "文档为空。"
+    }
+  },
+  "tasksidepanel": {
+    "general": {
+      "openanewtab": "打开新标签页",
+      "tasks": "任务",
+      "subtasks": "子任务",
+      "plan": "计划",
+      "properties": "属性",
+      "couldnotloadalltasks": "无法加载所有任务",
+      "total": "共 {{count}} 项",
+      "artifacts": "产物",
+      "files": "文件",
+      "revision": "修订版 {{number}}",
+      "open": "打开",
+      "taskdocuments": "任务文档",
+      "recentworkspacefiles": "最近的工作区文件",
+      "recentfilesunavailable": "最近文件暂时不可用。"
+    }
+  },
+  "taskskillpanel": {
+    "general": {
+      "loadingskill": "正在加载技能…",
+      "skillnolongeravailable": "技能已不可用。",
+      "youdonothaveaccesstothis": "您无权访问此技能。",
+      "theskillcouldnotbeloaded": "无法加载此技能。",
+      "retrying": "正在重试…",
+      "retry": "重试",
+      "skillnolongeravailable1": "技能已不可用。",
+      "openinskillstudio": "在技能工作室中打开",
+      "currentversion": "当前版本",
+      "skillinstructions": "技能说明"
+    }
+  },
+  "taskworkspacefilepanel": {
+    "general": {
+      "copyfilecontents": "复制文件内容",
+      "downloadfile": "下载文件",
+      "downloadfile1": "下载文件",
+      "copied": "已复制"
+    }
+  },
+  "worktimelinechart": {
+    "general": {
+      "now": "现在",
+      "kickedoffby": "发起者：",
+      "retry": " · 重试",
+      "dragleftedgetoresizevisiblerange": "拖动左边缘以调整可见范围",
+      "dragrightedgetoresizevisiblerange": "拖动右边缘以调整可见范围"
+    }
+  },
+  "runtranscriptview": {
+    "general": {
+      "providerreported": "提供方报告",
+      "requested": "请求值",
+      "effective": "生效值",
+      "user": "用户",
+      "streaming": "流式传输",
+      "decision": "决策",
+      "invocation": "调用",
+      "audit": "审计",
+      "action": "操作",
+      "card": "卡片",
+      "input": "输入",
+      "result": "结果",
+      "waitingforresult": "正在等待结果…",
+      "commandfailed": "命令失败",
+      "input1": "输入",
+      "result2": "结果",
+      "log": "日志",
+      "line": "行",
+      "lines": "行",
+      "system": "系统",
+      "message": "消息",
+      "messages": "消息",
+      "stdout": "标准输出",
+      "needsapproval": "需要批准",
+      "denied": "已拒绝",
+      "timedout": "已超时",
+      "failed": "失败",
+      "approved": "已批准",
+      "executed": "已执行",
+      "allowed": "已允许"
+    }
   }
 }

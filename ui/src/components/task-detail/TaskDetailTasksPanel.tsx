@@ -7,8 +7,9 @@ import { issueStatusOrder } from "@/lib/issue-filters";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { TaskDetailSubtasksPanel, TaskDetailTaskList } from "./TaskDetailRelationsPanel";
+import { useTranslation } from "@/i18n";
 
-function TaskGroup({ name, projectPath, children }: { name: string; projectPath?: string; children: ReactNode }) {
+function TaskGroup({ name, projectPath, projectLinkLabel, children }: { name: string; projectPath?: string; projectLinkLabel?: string; children: ReactNode }) {
   return (
     <Collapsible defaultOpen asChild>
       <section aria-label={name}>
@@ -22,7 +23,7 @@ function TaskGroup({ name, projectPath, children }: { name: string; projectPath?
             </CollapsibleTrigger>
           </h2>
           {projectPath && (
-            <Link to={projectPath} aria-label={`Go to ${name} project`} title={`Go to ${name} project`} className="ml-auto inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-muted-foreground opacity-0 transition-opacity duration-(--motion-duration-fast) ease-(--motion-ease-standard) hover:bg-accent hover:text-foreground group-hover/header:opacity-100 group-focus-within/header:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+            <Link to={projectPath} aria-label={projectLinkLabel} title={projectLinkLabel} className="ml-auto inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-muted-foreground opacity-0 transition-opacity duration-(--motion-duration-fast) ease-(--motion-ease-standard) hover:bg-accent hover:text-foreground group-hover/header:opacity-100 group-focus-within/header:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
               <ArrowUpRight aria-hidden className="h-3.5 w-3.5" />
             </Link>
           )}
@@ -44,6 +45,7 @@ export interface TaskDetailTasksPanelProps {
 }
 
 export function TaskDetailTasksPanel({ subtasks, createdTasks, projects, isLoading, hasError, onRetry, issueLinkState }: TaskDetailTasksPanelProps) {
+  const { t } = useTranslation();
   const sortedSubtasks = sortTasks(subtasks);
   const groups = new Map<string, { name: string; path?: string; tasks: Issue[] }>();
   for (const item of sortTasks(createdTasks)) {
@@ -52,7 +54,7 @@ export function TaskDetailTasksPanel({ subtasks, createdTasks, projects, isLoadi
       ? projects.find((candidate) => candidate.id === item.projectId) ?? item.project
       : null;
     const group = groups.get(key) ?? {
-      name: project?.name ?? (item.projectId ? "Project" : "No project"),
+      name: project?.name ?? (item.projectId ? t("taskdetailtaskspanel.general.project") : t("taskdetailtaskspanel.general.noproject")),
       path: item.projectId ? `/projects/${projectRouteRef(project ?? { id: item.projectId })}/issues` : undefined,
       tasks: [],
     };
@@ -60,26 +62,26 @@ export function TaskDetailTasksPanel({ subtasks, createdTasks, projects, isLoadi
     groups.set(key, group);
   }
   return (
-    <section className="flex flex-col gap-6" aria-label="Related tasks">
+    <section className="flex flex-col gap-6" aria-label={t("taskdetailtaskspanel.general.relatedtasks")}>
       {sortedSubtasks.length > 0 && (
-        <TaskGroup name="Subtasks">
+        <TaskGroup name={t("taskdetailtaskspanel.general.subtasks")}>
           <TaskDetailSubtasksPanel items={sortedSubtasks} issueLinkState={issueLinkState} />
         </TaskGroup>
       )}
       {[...groups.entries()].sort(([, a], [, b]) => a.name.localeCompare(b.name)).map(([id, group]) => (
-        <TaskGroup key={id} name={group.name} projectPath={group.path}>
-          <TaskDetailTaskList items={group.tasks} ariaLabel={`${group.name} tasks`} issueLinkState={issueLinkState} />
+        <TaskGroup key={id} name={group.name} projectPath={group.path} projectLinkLabel={t("taskdetailtaskspanel.general.gotoproject", { name: group.name })}>
+          <TaskDetailTaskList items={group.tasks} ariaLabel={t("taskdetailtaskspanel.general.projecttasks", { name: group.name })} issueLinkState={issueLinkState} />
         </TaskGroup>
       ))}
-      {isLoading && <p role="status" className="text-sm text-muted-foreground">Loading tasks…</p>}
+      {isLoading && <p role="status" className="text-sm text-muted-foreground">{t("taskdetailtaskspanel.general.loadingtasks")}</p>}
       {hasError && (
         <div role="alert" className="flex items-center gap-2 text-sm text-destructive">
-          <span>Could not load all tasks.</span>
-          {onRetry && <Button variant="ghost" size="sm" onClick={onRetry}>Retry</Button>}
+          <span>{t("taskdetailtaskspanel.general.couldnotloadalltasks")}</span>
+          {onRetry && <Button variant="ghost" size="sm" onClick={onRetry}>{t("taskdetailtaskspanel.general.retry")}</Button>}
         </div>
       )}
       {!isLoading && !hasError && subtasks.length === 0 && createdTasks.length === 0 && (
-        <p className="py-6 text-center text-sm text-muted-foreground">No tasks yet.</p>
+        <p className="py-6 text-center text-sm text-muted-foreground">{t("taskdetailtaskspanel.general.notasksyet")}</p>
       )}
     </section>
   );

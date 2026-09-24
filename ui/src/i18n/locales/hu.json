@@ -2016,5 +2016,249 @@
       "resetall": "Reset all",
       "copyastheme": "Copy as @theme"
     }
+  },
+  "actioncard": {
+    "general": {
+      "approve": "Approve",
+      "deny": "Deny",
+      "editampresign": "Edit &amp; re-sign",
+      "requestedapprovaltocall": "requested approval to call",
+      "catalogchangedsincethisrequestwassigned": "Catalog changed since this request was signed.",
+      "input": "Input",
+      "whyiaposmasking": "Why I&apos;m asking",
+      "policy": "Policy #",
+      "requiresapprovalhere": "requires approval here.",
+      "noexpiryset": "no expiry set",
+      "previouscataloghash": "Previous catalog hash",
+      "currentcataloghash": "Current catalog hash",
+      "application": "Application",
+      "manifestv": "manifest v{{version}}",
+      "connection": "Connection",
+      "catalog": "Catalog",
+      "payload": "Payload",
+      "signed": "signed",
+      "reissuerequestbeforeapproving": "Re-issue the request before approving — the catalog hash changed.",
+      "cataloghashnolonger": "The application's tool catalog hash no longer matches the one this approval was issued against. Approval is disabled — the agent must edit & re-sign to request again."
+    }
+  },
+  "interrupthandoffviews": {
+    "general": {
+      "agent": "Agent",
+      "user": "User",
+      "noresponsible": "No responsible —",
+      "unassigned": "Unassigned",
+      "wake": "Wake",
+      "didyoumean": "Did you mean",
+      "plaintextwontnotifyorassign": "? Plain text won't\n        notify or assign an agent.",
+      "insertmention": "Insert mention",
+      "dismisssuggestion": "Dismiss suggestion",
+      "handoffto": "Hand off to",
+      "whatthisaffects": "What this affects",
+      "nothinglivetopausenoagentrun": "Nothing live to pause — no agent run is in flight or queued. This records a hold so new work\n          won't start until you resume.",
+      "notasksareaffected": "No tasks are affected.",
+      "insertmentionforagent": "Insert mention for {{agent}} into your comment"
+    }
+  },
+  "issueoutputsection": {
+    "general": {
+      "taskoutputs": "Task outputs",
+      "output": "Output",
+      "alsoproduced": "Also produced",
+      "browsefileingallery": "Browse {{filename}} in gallery",
+      "openfile": "Open {{filename}}"
+    }
+  },
+  "outputprimarycard": {
+    "general": {
+      "outputmetadataisunavailablethisfilecan": "Output metadata is unavailable — this file can’t be played or downloaded here.",
+      "primary": "Primary",
+      "browse": "Browse",
+      "open": "Open",
+      "download": "Download",
+      "browsefileingallery": "Browse {{filename}} in gallery",
+      "openfile": "Open {{filename}}",
+      "downloadfile": "Download {{filename}}"
+    }
+  },
+  "outputrow": {
+    "general": {
+      "filedetailsunavailable": "File details unavailable",
+      "openinnewtab": "Open in new tab",
+      "download": "Download",
+      "openfile": "Open {{filename}}",
+      "downloadfile": "Download {{filename}}"
+    }
+  },
+  "connectmodelpreview": {
+    "general": {
+      "connectamodel": "Connect a model",
+      "modelsource": "Model source",
+      "useapikeysinstead": "Use API keys instead"
+    }
+  },
+  "footernav": {
+    "general": {
+      "back": "Back"
+    }
+  },
+  "savedproviderkeyselect": {
+    "general": {
+      "apikey": "API key",
+      "subscription": "Subscription",
+      "enteranewapikey": "Enter a new API key",
+      "signintoanotheraccount": "Sign in to another account",
+      "checkingsavedapikeys": "Checking saved API keys…",
+      "somesavedkeyscouldnotbeloaded": "Some saved keys could not be loaded. You can still enter a new key.",
+      "reusethissaved": "Reuse this saved",
+      "key": "key",
+      "subscription1": "subscription",
+      "forthisagent": "for this\n          agent."
+    }
+  },
+  "stepper": {
+    "general": {
+      "step": "Step",
+      "of": "of"
+    }
+  },
+  "sidepanelframe": {
+    "general": {
+      "closesidepanel": "Close side panel",
+      "closesidepanel1": "Close side panel",
+      "restoresidepanel": "Restore side panel",
+      "maximizesidepanel": "Maximize side panel"
+    }
+  },
+  "sidepanellauncher": {
+    "general": {
+      "loading": "Loading…",
+      "alreadyopen": "Already open"
+    }
+  },
+  "taskdetailrelationspanel": {
+    "general": {
+      "subtasks": "Subtasks",
+      "progress": "Progress",
+      "of": "of",
+      "complete": "complete",
+      "subtaskcompletion": "Subtask completion",
+      "rootblocker": "Root blocker",
+      "blockedsubtask": "Blocked subtask",
+      "nextaction": "Next action",
+      "allsubtasksarecomplete": "All subtasks are complete.",
+      "noremainingsubtaskactions": "No remaining subtask actions.",
+      "nosubtasksyet": "No subtasks yet.",
+      "othersubtasks": "Other subtasks",
+      "subtasks1": "Subtasks",
+      "addsubtask": "Add subtask",
+      "referenced": "Referenced",
+      "mentionedin": "Mentioned in"
+    }
+  },
+  "taskdetailtaskspanel": {
+    "general": {
+      "relatedtasks": "Related tasks",
+      "loadingtasks": "Loading tasks…",
+      "couldnotloadalltasks": "Could not load all tasks.",
+      "retry": "Retry",
+      "notasksyet": "No tasks yet.",
+      "project": "Project",
+      "noproject": "No project",
+      "subtasks": "Subtasks",
+      "gotoproject": "Go to {{name}} project",
+      "projecttasks": "{{name}} tasks"
+    }
+  },
+  "taskdocumentpanel": {
+    "general": {
+      "loadingdocument": "Loading document…",
+      "thedocumentcouldnotbeloadedretry": "The document could not be loaded. Retry from the tab launcher or refresh the task.",
+      "documentnolongeravailable": "Document no longer available",
+      "thistabispreservedsothemissing": "This tab is preserved so the missing resource is explicit. Close it or choose another document.",
+      "documentisempty": "Document is empty."
+    }
+  },
+  "tasksidepanel": {
+    "general": {
+      "openanewtab": "Open a new tab",
+      "tasks": "Tasks",
+      "subtasks": "Subtasks",
+      "plan": "Plan",
+      "properties": "Properties",
+      "couldnotloadalltasks": "Could not load all tasks",
+      "total": "{{count}} total",
+      "artifacts": "Artifacts",
+      "files": "Files",
+      "revision": "Revision {{number}}",
+      "open": "Open",
+      "taskdocuments": "Task documents",
+      "recentworkspacefiles": "Recent workspace files",
+      "recentfilesunavailable": "Recent files are temporarily unavailable."
+    }
+  },
+  "taskskillpanel": {
+    "general": {
+      "loadingskill": "Loading skill…",
+      "skillnolongeravailable": "Skill no longer available.",
+      "youdonothaveaccesstothis": "You do not have access to this skill.",
+      "theskillcouldnotbeloaded": "The skill could not be loaded.",
+      "retrying": "Retrying…",
+      "retry": "Retry",
+      "skillnolongeravailable1": "Skill no longer available.",
+      "openinskillstudio": "Open in Skill Studio",
+      "currentversion": "Current version",
+      "skillinstructions": "Skill instructions"
+    }
+  },
+  "taskworkspacefilepanel": {
+    "general": {
+      "copyfilecontents": "Copy file contents",
+      "downloadfile": "Download file",
+      "downloadfile1": "Download file",
+      "copied": "Copied"
+    }
+  },
+  "worktimelinechart": {
+    "general": {
+      "now": "now",
+      "kickedoffby": "kicked off by:",
+      "retry": " · retry",
+      "dragleftedgetoresizevisiblerange": "Drag left edge to resize visible range",
+      "dragrightedgetoresizevisiblerange": "Drag right edge to resize visible range"
+    }
+  },
+  "runtranscriptview": {
+    "general": {
+      "providerreported": "Provider-reported",
+      "requested": "Requested",
+      "effective": "Effective",
+      "user": "User",
+      "streaming": "Streaming",
+      "decision": "Decision",
+      "invocation": "invocation",
+      "audit": "audit",
+      "action": "action",
+      "card": "card",
+      "input": "Input",
+      "result": "Result",
+      "waitingforresult": "Waiting for result...",
+      "commandfailed": "Command failed",
+      "input1": "Input",
+      "result2": "Result",
+      "log": "log",
+      "line": "line",
+      "lines": "lines",
+      "system": "system",
+      "message": "message",
+      "messages": "messages",
+      "stdout": "stdout",
+      "needsapproval": "Needs approval",
+      "denied": "Denied",
+      "timedout": "Timed out",
+      "failed": "Failed",
+      "approved": "Approved",
+      "executed": "Executed",
+      "allowed": "Allowed"
+    }
   }
 }

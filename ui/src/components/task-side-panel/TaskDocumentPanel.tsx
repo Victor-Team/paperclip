@@ -9,6 +9,7 @@ import { MarkdownBody } from "@/components/MarkdownBody";
 import { queryKeys } from "@/lib/queryKeys";
 import { documentDisplayTitle } from "@/lib/issue-artifacts";
 import { useLocation } from "@/lib/router";
+import { useTranslation } from "@/i18n";
 
 export function TaskDocumentPanel({
   issueId,
@@ -19,6 +20,7 @@ export function TaskDocumentPanel({
   documentKey: string;
   initialDocument?: IssueDocument;
 }) {
+  const { t } = useTranslation();
   const location = useLocation();
   const [annotationPanelOpen, setAnnotationPanelOpen] = useState(false);
   const query = useQuery<IssueDocument | null>({
@@ -38,15 +40,13 @@ export function TaskDocumentPanel({
     return (
       <div className="flex items-center gap-2 py-8 text-sm text-muted-foreground" role="status">
         <Loader2 className="size-4 animate-spin" aria-hidden />
-        Loading document…
-      </div>
+        {t("taskdocumentpanel.general.loadingdocument")}</div>
     );
   }
   if (query.isError) {
     return (
       <div className="py-8 text-sm text-muted-foreground" role="alert">
-        The document could not be loaded. Retry from the tab launcher or refresh the task.
-      </div>
+        {t("taskdocumentpanel.general.thedocumentcouldnotbeloadedretry")}</div>
     );
   }
   const document = query.data;
@@ -55,10 +55,9 @@ export function TaskDocumentPanel({
       <div className="flex items-start gap-3 py-8 text-sm" role="status">
         <FileQuestion className="mt-0.5 size-5 shrink-0 text-muted-foreground" aria-hidden />
         <div className="space-y-1">
-          <p className="font-medium">Document no longer available</p>
+          <p className="font-medium">{t("taskdocumentpanel.general.documentnolongeravailable")}</p>
           <p className="text-muted-foreground">
-            This tab is preserved so the missing resource is explicit. Close it or choose another document.
-          </p>
+            {t("taskdocumentpanel.general.thistabispreservedsothemissing")}</p>
         </div>
       </div>
     );
@@ -96,7 +95,7 @@ export function TaskDocumentPanel({
           <MarkdownBody>{document.body}</MarkdownBody>
         </IssueDocumentAnnotations>
       ) : (
-        <p className="text-sm text-muted-foreground">Document is empty.</p>
+        <p className="text-sm text-muted-foreground">{t("taskdocumentpanel.general.documentisempty")}</p>
       )}
     </article>
   );

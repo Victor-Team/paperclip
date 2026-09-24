@@ -8,6 +8,7 @@ import type { FileViewerUrlState } from "@/context/FileViewerContext";
 import { copyTextToClipboard } from "@/lib/clipboard";
 import { queryKeys } from "@/lib/queryKeys";
 import type { TaskSidePanelTabPayload } from "@/lib/task-side-panel-state";
+import { useTranslation } from "@/i18n";
 
 type WorkspaceFilePayload = Extract<TaskSidePanelTabPayload, { kind: "workspace-file" }>;
 
@@ -20,6 +21,7 @@ export function TaskWorkspaceFilePanel({
   payload: WorkspaceFilePayload;
   onFallbackToProject?: () => void;
 }) {
+  const { t } = useTranslation();
   const [copied, setCopied] = useState(false);
   const [announcement, setAnnouncement] = useState("");
   const state: FileViewerUrlState = {
@@ -60,8 +62,8 @@ export function TaskWorkspaceFilePanel({
               type="button"
               variant="ghost"
               size="icon-sm"
-              aria-label="Copy file contents"
-              title={copied ? "Copied" : "Copy file contents"}
+              aria-label={t("taskworkspacefilepanel.general.copyfilecontents")}
+              title={copied ? t("taskworkspacefilepanel.general.copied") : t("taskworkspacefilepanel.general.copyfilecontents")}
               onClick={() => {
                 void copyTextToClipboard(contentQuery.data!.content.data).then(() => {
                   setCopied(true);
@@ -74,7 +76,7 @@ export function TaskWorkspaceFilePanel({
           ) : null}
           {downloadUrl ? (
             <Button asChild variant="ghost" size="icon-sm">
-              <a href={downloadUrl} download={resource?.title} aria-label="Download file" title="Download file">
+              <a href={downloadUrl} download={resource?.title} aria-label={t("taskworkspacefilepanel.general.downloadfile")} title={t("taskworkspacefilepanel.general.downloadfile1")}>
                 <Download aria-hidden />
               </a>
             </Button>
