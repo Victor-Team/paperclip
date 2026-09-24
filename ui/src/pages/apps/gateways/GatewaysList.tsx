@@ -90,6 +90,21 @@ export function GatewaysList() {
     () => new Map((projectsQuery.data ?? []).map((project) => [project.id, project.name])),
     [projectsQuery.data],
   );
+  const scopeLabels = {
+    project: t("gatewayslist.general.project"),
+    agent: t("gatewayslist.general.agent"),
+    organization: t("gatewayslist.general.organization"),
+  };
+  const toolLabels = {
+    profileUnavailable: t("gatewayslist.general.profileunavailable"),
+    noToolsAllowed: t("gatewayslist.general.notoolsallowed"),
+    toolCount: (count: number) => t(
+      count === 1
+        ? "gatewayslist.general.toolcountsingular"
+        : "gatewayslist.general.toolcountplural",
+      { count },
+    ),
+  };
 
   const toggleMutation = useMutation({
     mutationFn: ({ gateway }: { gateway: ToolMcpGatewayWithTokens }) =>
@@ -130,7 +145,7 @@ export function GatewaysList() {
   const term = search.trim().toLowerCase();
   const filtered = term
     ? gateways.filter((gateway) => {
-        const scope = formatScope(gateway, projectNames, agentNames).toLowerCase();
+        const scope = formatScope(gateway, projectNames, agentNames, scopeLabels).toLowerCase();
         return (
           gateway.name.toLowerCase().includes(term) ||
           gateway.displaySlug.toLowerCase().includes(term) ||
@@ -183,13 +198,14 @@ export function GatewaysList() {
                 profile,
                 applicationsQuery.data?.applications ?? [],
                 connectionsQuery.data?.connections ?? [],
+                t("gatewayslist.general.signinexpiredreconnect"),
               );
               return {
                 gateway,
                 profile,
-                scope: formatScope(gateway, projectNames, agentNames),
+                scope: formatScope(gateway, projectNames, agentNames, scopeLabels),
                 appsLabel: `${t("gatewayslist.general.appcount", { count: apps.length })}${
-                  profile ? ` · ${allowedToolsLabel(profile)}` : ""
+                  profile ? ` · ${allowedToolsLabel(profile, toolLabels)}` : ""
                 }`,
                 active: activeTokenCount(gateway),
                 expiring: expiringTokenCount(gateway),

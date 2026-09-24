@@ -53,13 +53,13 @@ export function EditGatewayDialog({
         profileId,
       }),
     onSuccess: async (updated) => {
-      pushToast({ title: "Gateway updated", body: updated.name, tone: "success" });
+      pushToast({ title: t("editgatewaydialog.general.gatewayupdated"), body: updated.name, tone: "success" });
       await queryClient.invalidateQueries({ queryKey: gatewaysQueryKey(companyId) });
       onOpenChange(false);
     },
     onError: (error) => {
       pushToast({
-        title: "Gateway was not updated",
+        title: t("editgatewaydialog.general.gatewaywasnotupdated"),
         body: error instanceof Error ? error.message : String(error),
         tone: "error",
       });
@@ -95,7 +95,16 @@ export function EditGatewayDialog({
             >
               {activeProfiles.map((profile) => (
                 <option key={profile.id} value={profile.id}>
-                  {profile.name} — {allowedToolsLabel(profile)}
+                  {profile.name} — {allowedToolsLabel(profile, {
+                    profileUnavailable: t("editgatewaydialog.general.profileunavailable"),
+                    noToolsAllowed: t("editgatewaydialog.general.notoolsallowed"),
+                    toolCount: (count) => t(
+                      count === 1
+                        ? "editgatewaydialog.general.toolcountsingular"
+                        : "editgatewaydialog.general.toolcountplural",
+                      { count },
+                    ),
+                  })}
                 </option>
               ))}
             </select>

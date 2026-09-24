@@ -86,8 +86,9 @@ export function GatewayDetail() {
         profile,
         applicationsQuery.data?.applications ?? [],
         connectionsQuery.data?.connections ?? [],
+        t("gatewaydetail.general.signinexpiredreconnect"),
       ),
-    [profile, applicationsQuery.data, connectionsQuery.data],
+    [profile, applicationsQuery.data, connectionsQuery.data, t],
   );
   const agentNames = useMemo(
     () => new Map((agentsQuery.data ?? []).map((agent) => [agent.id, agent.name])),
@@ -105,12 +106,12 @@ export function GatewayDetail() {
   useEffect(() => {
     if (!gateway) return;
     setBreadcrumbs([
-      { label: "Connectors", href: "/apps" },
-      { label: "Gateways", href: "/apps/gateways" },
+      { label: t("gatewaydetail.general.connectors"), href: "/apps" },
+      { label: t("gatewaydetail.general.gateways"), href: "/apps/gateways" },
       { label: gateway.name },
     ]);
     return () => setBreadcrumbs([]);
-  }, [setBreadcrumbs, gateway]);
+  }, [setBreadcrumbs, gateway, t]);
 
   const toggleMutation = useMutation({
     mutationFn: () =>
@@ -119,18 +120,20 @@ export function GatewayDetail() {
       }),
     onSuccess: async (updated) => {
       pushToast({
-        title: updated.status === "active" ? "Gateway on" : "Gateway off",
+        title: updated.status === "active"
+          ? t("gatewaydetail.general.gatewayon")
+          : t("gatewaydetail.general.gatewayoff"),
         body:
           updated.status === "active"
-            ? `${updated.name} is exposing its tools again.`
-            : `${updated.name} is off — every client goes silent.`,
+            ? t("gatewaydetail.general.gatewayonbody", { name: updated.name })
+            : t("gatewaydetail.general.gatewayoffbody", { name: updated.name }),
         tone: "success",
       });
       await queryClient.invalidateQueries({ queryKey: gatewaysQueryKey(selectedCompanyId!) });
     },
     onError: (error) =>
       pushToast({
-        title: "Couldn't update the gateway",
+        title: t("gatewaydetail.general.couldntupdategateway"),
         body: error instanceof Error ? error.message : String(error),
         tone: "error",
       }),
@@ -200,7 +203,7 @@ export function GatewayDetail() {
               )}
               aria-current={isActive ? "page" : undefined}
             >
-              {item.label}
+              {t(item.labelKey)}
             </Link>
           );
         })}

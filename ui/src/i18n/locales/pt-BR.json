@@ -4565,7 +4565,11 @@
   },
   "copyablegatewayurl": {
     "general": {
-      "copygatewayurl": "Copy gateway URL"
+      "copygatewayurl": "Copy gateway URL",
+      "gatewayurlcopied": "Gateway URL copied",
+      "copyfailed": "Copy failed",
+      "clipboardaccessisunavailable": "Clipboard access is unavailable.",
+      "clicktocopy": "{{url}} — click to copy"
     }
   },
   "editgatewaydialog": {
@@ -4576,6 +4580,12 @@
       "accessprofile": "Access profile",
       "descriptionoptional": "Description (optional)",
       "whothisendpointisfor": "Who this endpoint is for.",
+      "gatewayupdated": "Gateway updated",
+      "gatewaywasnotupdated": "Gateway was not updated",
+      "profileunavailable": "Profile unavailable",
+      "notoolsallowed": "No tools allowed",
+      "toolcountsingular": "{{count}} tool",
+      "toolcountplural": "{{count}} tools",
       "cancel": "Cancel",
       "saving": "Saving…",
       "savechanges": "Save changes"
@@ -4586,10 +4596,23 @@
       "selectanorganizationtomanagegateways": "Select an organization to manage gateways.",
       "wecouldntfindthatgateway": "We couldn’t find that gateway.",
       "backtogateways": "Back to gateways",
+      "connectors": "Connectors",
+      "gateways": "Gateways",
+      "gatewayon": "Gateway on",
+      "gatewayoff": "Gateway off",
+      "gatewayonbody": "{{name}} is exposing its tools again.",
+      "gatewayoffbody": "{{name}} is off — every client goes silent.",
+      "couldntupdategateway": "Couldn't update the gateway",
+      "signinexpiredreconnect": "Sign-in expired — reconnect to restore access.",
       "appsgateways": "Apps · Gateways",
       "edit": "Edit",
       "clientsnippets": "Client snippets",
-      "gatewaytabs": "Gateway tabs"
+      "gatewaytabs": "Gateway tabs",
+      "overview": "Overview",
+      "appstools": "Apps & tools",
+      "tokens": "Tokens",
+      "activity": "Activity",
+      "advanced": "Advanced"
     }
   },
   "connectclientdialog": {
@@ -4641,6 +4664,14 @@
       "searchgateways": "Search gateways",
       "newgateway": "New gateway",
       "appcount": "{{count}} app",
+      "project": "Project",
+      "agent": "Agent",
+      "organization": "Organization",
+      "profileunavailable": "Profile unavailable",
+      "notoolsallowed": "No tools allowed",
+      "toolcountsingular": "{{count}} tool",
+      "toolcountplural": "{{count}} tools",
+      "signinexpiredreconnect": "Sign-in expired — reconnect to restore access.",
       "turngateway": "Turn {{name}} {{state}}",
       "on": "on",
       "off": "off",
@@ -4672,6 +4703,10 @@
       "descriptionoptional": "Description (optional)",
       "descriptionplaceholder": "Who this endpoint is for and when it should be rotated.",
       "noprofilesmessage": "Create an access profile under Advanced before adding a gateway.",
+      "profileunavailable": "Profile unavailable",
+      "notoolsallowed": "No tools allowed",
+      "toolcountsingular": "{{count}} tool",
+      "toolcountplural": "{{count}} tools",
       "cancel": "Cancel",
       "creating": "Creating…",
       "creategateway": "Create gateway"
@@ -4729,6 +4764,9 @@
       "whocanuseit": "Who can use it",
       "anyoneholdinganactive": "Anyone holding an active token below, restricted by the rules in the bound profile.",
       "scope": "Scope · {{value}}",
+      "project": "Project",
+      "agent": "Agent",
+      "organization": "Organization",
       "profile": "Profile · {{value}}",
       "unavailable": "Unavailable",
       "appsinthisgateway": "Apps in this gateway",
@@ -4830,7 +4868,15 @@
       "app": "App",
       "tools": "Tools",
       "status": "Status",
-      "open": "Open →"
+      "open": "Open →",
+      "descriptionwithprofile": "These apps go through this gateway. The bound profile ({{profile}}) decides which tools are allowed — {{tools}}. Change the profile under Advanced.",
+      "descriptionwithoutprofile": "These apps go through this gateway. No access profile is currently bound.",
+      "profileunavailable": "Profile unavailable",
+      "notoolsallowed": "No tools allowed",
+      "toolcountsingular": "{{count}} tool",
+      "toolcountplural": "{{count}} tools",
+      "needsattention": "Needs attention",
+      "healthy": "Healthy"
     }
   }
 }

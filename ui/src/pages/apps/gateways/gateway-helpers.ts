@@ -37,13 +37,6 @@ export function tokenStatus(
   return "active";
 }
 
-export const TOKEN_STATUS_LABEL: Record<TokenStatus, string> = {
-  active: "Active",
-  expiring: "Expiring",
-  expired: "Expired",
-  revoked: "Revoked",
-};
-
 /** Count of tokens that can currently authenticate (not revoked, not expired). */
 export function activeTokenCount(gateway: ToolMcpGatewayWithTokens, now: number = Date.now()): number {
   return gateway.tokens.filter((token) => {
@@ -69,31 +62,46 @@ function shortId(value: string | null | undefined): string | null {
   return value.length > 12 ? `${value.slice(0, 8)}…` : value;
 }
 
-/** Prosumer "Scope" label — Company / Project · X / Agent · X. */
+export type GatewayScopeLabels = {
+  project: string;
+  agent: string;
+  organization: string;
+};
+
+/** Prosumer scope label supplied by its rendering surface. */
 export function formatScope(
   gateway: ToolMcpGatewayWithTokens,
   projectNames: Map<string, string>,
   agentNames: Map<string, string>,
+  labels: GatewayScopeLabels,
 ): string {
   if (gateway.contextScopeType !== "none" && gateway.contextScopeId) {
     if (gateway.contextScopeType === "project") {
-      return `Project · ${projectNames.get(gateway.contextScopeId) ?? shortId(gateway.contextScopeId)}`;
+      return `${labels.project} · ${projectNames.get(gateway.contextScopeId) ?? shortId(gateway.contextScopeId)}`;
     }
     if (gateway.contextScopeType === "agent") {
-      return `Agent · ${agentNames.get(gateway.contextScopeId) ?? shortId(gateway.contextScopeId)}`;
+      return `${labels.agent} · ${agentNames.get(gateway.contextScopeId) ?? shortId(gateway.contextScopeId)}`;
     }
-    return `${gateway.contextScopeType} · ${shortId(gateway.contextScopeId)}`;
   }
-  if (gateway.projectId) return `Project · ${projectNames.get(gateway.projectId) ?? shortId(gateway.projectId)}`;
-  if (gateway.agentId) return `Agent · ${agentNames.get(gateway.agentId) ?? shortId(gateway.agentId)}`;
-  return "Organization";
+  if (gateway.projectId) return `${labels.project} · ${projectNames.get(gateway.projectId) ?? shortId(gateway.projectId)}`;
+  if (gateway.agentId) return `${labels.agent} · ${agentNames.get(gateway.agentId) ?? shortId(gateway.agentId)}`;
+  return labels.organization;
 }
 
-export function formatOwner(gateway: ToolMcpGatewayWithTokens, agentNames: Map<string, string>): string {
+export type GatewayOwnerLabels = {
+  agent: string;
+  board: string;
+};
+
+export function formatOwner(
+  gateway: ToolMcpGatewayWithTokens,
+  agentNames: Map<string, string>,
+  labels: GatewayOwnerLabels,
+): string {
   if (gateway.createdByAgentId) {
-    return agentNames.get(gateway.createdByAgentId) ?? `Agent ${shortId(gateway.createdByAgentId)}`;
+    return agentNames.get(gateway.createdByAgentId) ?? `${labels.agent} ${shortId(gateway.createdByAgentId)}`;
   }
-  return "Board";
+  return labels.board;
 }
 
 /** Whether the gateway is exposing tools to clients right now. */
@@ -101,16 +109,25 @@ export function isGatewayOn(gateway: ToolMcpGatewayWithTokens): boolean {
   return gateway.status === "active";
 }
 
-/** Human summary of how many tools a profile allows. */
-export function allowedToolsLabel(profile: ToolProfileWithDetails | undefined): string {
-  if (!profile) return "Profile unavailable";
+export type AllowedToolsLabels = {
+  profileUnavailable: string;
+  noToolsAllowed: string;
+  toolCount: (count: number) => string;
+};
+
+/** Human summary of how many tools a profile allows, supplied by the rendering surface. */
+export function allowedToolsLabel(
+  profile: ToolProfileWithDetails | undefined,
+  labels: AllowedToolsLabels,
+): string {
+  if (!profile) return labels.profileUnavailable;
   const { accessMode, allowedToolCount, totalToolCount, excludedToolCount } = profile.summary;
   const count =
     accessMode === "all_except"
       ? Math.max(totalToolCount - excludedToolCount, 0)
       : allowedToolCount;
-  if (count === 0) return "No tools allowed";
-  return `${count} ${count === 1 ? "tool" : "tools"}`;
+  if (count === 0) return labels.noToolsAllowed;
+  return labels.toolCount(count);
 }
 
 export type GatewayAppRow = {
@@ -132,6 +149,7 @@ export function deriveGatewayApps(
   profile: ToolProfileWithDetails | undefined,
   applications: ToolApplication[],
   connections: ToolConnection[],
+  attentionReason: string,
 ): GatewayAppRow[] {
   if (!profile) return [];
   const applicationsById = new Map(applications.map((app) => [app.id, app]));
@@ -175,7 +193,7 @@ export function deriveGatewayApps(
       toolCount: toolCountByApp.get(applicationId) ?? 0,
       needsAttention: Boolean(attentionConnection),
       attentionReason: attentionConnection
-        ? "Sign-in expired — reconnect to restore access."
+        ? attentionReason
         : null,
     });
   }

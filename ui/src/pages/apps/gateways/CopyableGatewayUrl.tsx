@@ -27,11 +27,11 @@ export function CopyableGatewayUrl({
   async function copy() {
     try {
       await copyTextToClipboard(url);
-      pushToast({ title: "Gateway URL copied", tone: "success" });
+      pushToast({ title: t("copyablegatewayurl.general.gatewayurlcopied"), tone: "success" });
     } catch {
       pushToast({
-        title: "Copy failed",
-        body: "Clipboard access is unavailable.",
+        title: t("copyablegatewayurl.general.copyfailed"),
+        body: t("copyablegatewayurl.general.clipboardaccessisunavailable"),
         tone: "error",
       });
     }
@@ -48,7 +48,7 @@ export function CopyableGatewayUrl({
         "flex min-w-0 max-w-full items-center gap-1 text-left font-mono text-xs text-muted-foreground hover:text-foreground",
         className,
       )}
-      title={`${url} — click to copy`}
+      title={t("copyablegatewayurl.general.clicktocopy", { url })}
       aria-label={t("copyablegatewayurl.general.copygatewayurl")}
     >
       <span className="min-w-0 truncate">{url}</span>

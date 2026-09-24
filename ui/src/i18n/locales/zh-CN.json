@@ -4565,7 +4565,11 @@
   },
   "copyablegatewayurl": {
     "general": {
-      "copygatewayurl": "复制网关 URL"
+      "copygatewayurl": "复制网关 URL",
+      "gatewayurlcopied": "网关 URL 已复制",
+      "copyfailed": "复制失败",
+      "clipboardaccessisunavailable": "无法访问剪贴板。",
+      "clicktocopy": "{{url}} — 点击复制"
     }
   },
   "editgatewaydialog": {
@@ -4576,6 +4580,12 @@
       "accessprofile": "访问配置",
       "descriptionoptional": "说明（可选）",
       "whothisendpointisfor": "此端点适用对象。",
+      "gatewayupdated": "网关已更新",
+      "gatewaywasnotupdated": "未能更新网关",
+      "profileunavailable": "配置文件不可用",
+      "notoolsallowed": "不允许使用工具",
+      "toolcountsingular": "{{count}} 个工具",
+      "toolcountplural": "{{count}} 个工具",
       "cancel": "取消",
       "saving": "正在保存…",
       "savechanges": "保存更改"
@@ -4586,10 +4596,23 @@
       "selectanorganizationtomanagegateways": "请选择一个组织以管理网关。",
       "wecouldntfindthatgateway": "找不到该网关。",
       "backtogateways": "返回网关",
+      "connectors": "连接器",
+      "gateways": "网关",
+      "gatewayon": "网关已开启",
+      "gatewayoff": "网关已关闭",
+      "gatewayonbody": "{{name}} 再次公开其工具。",
+      "gatewayoffbody": "{{name}} 已关闭，所有客户端都会断开连接。",
+      "couldntupdategateway": "无法更新网关",
+      "signinexpiredreconnect": "登录已过期，请重新连接以恢复访问。",
       "appsgateways": "应用 · 网关",
       "edit": "编辑",
       "clientsnippets": "客户端代码片段",
-      "gatewaytabs": "网关选项卡"
+      "gatewaytabs": "网关选项卡",
+      "overview": "概览",
+      "appstools": "应用和工具",
+      "tokens": "令牌",
+      "activity": "活动",
+      "advanced": "高级"
     }
   },
   "connectclientdialog": {
@@ -4641,6 +4664,14 @@
       "searchgateways": "搜索网关",
       "newgateway": "新建网关",
       "appcount": "{{count}} 个应用",
+      "project": "项目",
+      "agent": "智能体",
+      "organization": "组织",
+      "profileunavailable": "配置文件不可用",
+      "notoolsallowed": "不允许使用工具",
+      "toolcountsingular": "{{count}} 个工具",
+      "toolcountplural": "{{count}} 个工具",
+      "signinexpiredreconnect": "登录已过期，请重新连接以恢复访问。",
       "turngateway": "将 {{name}} {{state}}",
       "on": "开启",
       "off": "关闭",
@@ -4672,6 +4703,10 @@
       "descriptionoptional": "说明（可选）",
       "descriptionplaceholder": "此端点适用对象以及应何时轮换。",
       "noprofilesmessage": "请先在“高级”下创建访问配置，再添加网关。",
+      "profileunavailable": "配置文件不可用",
+      "notoolsallowed": "不允许使用工具",
+      "toolcountsingular": "{{count}} 个工具",
+      "toolcountplural": "{{count}} 个工具",
       "cancel": "取消",
       "creating": "正在创建…",
       "creategateway": "创建网关"
@@ -4729,6 +4764,9 @@
       "whocanuseit": "谁可以使用它",
       "anyoneholdinganactive": "持有下方活跃令牌的任何人都可以使用，但会受到所绑定配置文件规则的限制。",
       "scope": "范围 · {{value}}",
+      "project": "项目",
+      "agent": "智能体",
+      "organization": "组织",
       "profile": "配置文件 · {{value}}",
       "unavailable": "不可用",
       "appsinthisgateway": "此网关中的应用",
@@ -4830,7 +4868,15 @@
       "app": "应用",
       "tools": "工具",
       "status": "状态",
-      "open": "打开 →"
+      "open": "打开 →",
+      "descriptionwithprofile": "这些应用通过此网关。绑定的配置文件（{{profile}}）决定允许哪些工具 — {{tools}}。请在“高级”中更改配置文件。",
+      "descriptionwithoutprofile": "这些应用通过此网关。目前未绑定访问配置文件。",
+      "profileunavailable": "配置文件不可用",
+      "notoolsallowed": "不允许使用工具",
+      "toolcountsingular": "{{count}} 个工具",
+      "toolcountplural": "{{count}} 个工具",
+      "needsattention": "需要关注",
+      "healthy": "健康"
     }
   }
 }

@@ -126,7 +126,16 @@ export function NewGatewayDialog({
               </option>
               {activeProfiles.map((profile) => (
                 <option key={profile.id} value={profile.id}>
-                  {profile.name} — {allowedToolsLabel(profile)}
+                  {profile.name} — {allowedToolsLabel(profile, {
+                    profileUnavailable: t("newgatewaydialog.general.profileunavailable"),
+                    noToolsAllowed: t("newgatewaydialog.general.notoolsallowed"),
+                    toolCount: (count) => t(
+                      count === 1
+                        ? "newgatewaydialog.general.toolcountsingular"
+                        : "newgatewaydialog.general.toolcountplural",
+                      { count },
+                    ),
+                  })}
                 </option>
               ))}
             </select>

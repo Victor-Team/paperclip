@@ -55,6 +55,11 @@ export function OverviewPanel({
           : "overviewpanel.general.allowedtoolcountplural",
         { count: allowedToolCount },
       );
+  const scope = formatScope(gateway, projectNames, agentNames, {
+    project: t("overviewpanel.general.project"),
+    agent: t("overviewpanel.general.agent"),
+    organization: t("overviewpanel.general.organization"),
+  });
 
   const snippet = [
     "{",
@@ -127,7 +132,7 @@ export function OverviewPanel({
           </div>
         </div>
         <div className="mt-3 flex flex-wrap gap-2">
-          <Chip>{t("overviewpanel.general.scope", { value: formatScope(gateway, projectNames, agentNames) })}</Chip>
+          <Chip>{t("overviewpanel.general.scope", { value: scope })}</Chip>
           <Chip>{t("overviewpanel.general.profile", { value: profile?.name ?? t("overviewpanel.general.unavailable") })}</Chip>
           <Chip>{t("overviewpanel.general.activetokencount", { count: active })}</Chip>
         </div>

@@ -17,10 +17,25 @@ export function AppsToolsPanel({
   profile: ToolProfileWithDetails | undefined;
 }) {
   const { t } = useTranslation();
+  const toolsLabel = profile
+    ? allowedToolsLabel(profile, {
+      profileUnavailable: t("appstoolspanel.general.profileunavailable"),
+      noToolsAllowed: t("appstoolspanel.general.notoolsallowed"),
+      toolCount: (count) => t(
+        count === 1
+          ? "appstoolspanel.general.toolcountsingular"
+          : "appstoolspanel.general.toolcountplural",
+        { count },
+      ),
+    })
+    : null;
   return (
     <div className="space-y-4">
       <p className="text-sm text-muted-foreground">
-        {t("appstoolspanel.general.theseappsgothroughthisgatewaythe")}        {profile ? ` (${profile.name})` : ""} {t("appstoolspanel.general.decideswhichtoolsareallowed")}        {profile ? ` — ${allowedToolsLabel(profile)}.` : "."} {t("appstoolspanel.general.changetheprofileunderadvanced")}</p>
+        {profile
+          ? t("appstoolspanel.general.descriptionwithprofile", { profile: profile.name, tools: toolsLabel })
+          : t("appstoolspanel.general.descriptionwithoutprofile")}
+      </p>
 
       {apps.length === 0 ? (
         <div className="rounded-md border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
@@ -63,7 +78,9 @@ export function AppsToolsPanel({
                             : "border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300",
                         )}
                       >
-                        {app.needsAttention ? "Needs attention" : "Healthy"}
+                        {app.needsAttention
+                          ? t("appstoolspanel.general.needsattention")
+                          : t("appstoolspanel.general.healthy")}
                       </span>
                     </td>
                     <td className="px-4 py-3 text-right">
