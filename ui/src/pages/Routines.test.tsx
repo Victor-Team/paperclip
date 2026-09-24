@@ -7,6 +7,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { FolderListResult, Issue, RoutineListItem } from "@paperclipai/shared";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { Routines, buildRoutineGroups, buildRoutineSections, sortRoutines } from "./Routines";
+import { i18n } from "@/i18n";
 
 let currentSearch = "";
 
@@ -449,6 +450,23 @@ describe("Routines page", () => {
     expect(groups.map((group) => group.label)).toEqual(["Project Alpha", "Built-in routines"]);
     expect(groups[0]?.items.map((item) => item.title)).toEqual(["Morning sync"]);
     expect(groups[1]?.items.map((item) => item.title)).toEqual(["Reflection review"]);
+  });
+
+  it("uses Chinese group labels when the page supplies a Chinese translator", () => {
+    const translate = i18n.getFixedT("zh-CN");
+    const groups = buildRoutineSections(
+      [
+        createRoutine({ id: "routine-1", title: "Morning sync" }),
+        createRoutine({ id: "routine-2", title: "Reflection review", originKind: "built_in_agent_bundle" }),
+      ],
+      "folder",
+      new Map(),
+      new Map(),
+      new Map(),
+      (key, fallback) => translate(`routines.general.${key}`, { defaultValue: fallback }),
+    );
+
+    expect(groups.map((group) => group.label)).toEqual(["未归档", "内置例程"]);
   });
 
   it("groups routines by folder using folder names and Unfiled labels", () => {
