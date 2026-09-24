@@ -3494,5 +3494,19 @@
       "reconnectthisapptoeditwhocanuseit": "重新连接此应用后，您才能编辑谁可以使用它以及哪些操作需要先由人工确认。",
       "previoussetupisretainedforreconnect": "已保留先前设置以供重新连接，但在应用恢复在线前，访问控制保持只读。"
     }
+  },
+  "apptabs": {
+    "general": {
+      "app": "应用",
+      "connectors": "连接器",
+      "permissions": "权限",
+      "services": "服务",
+      "review": "审查",
+      "allconnectors": "所有连接器",
+      "allapps": "所有应用",
+      "needingreview": "需要审查",
+      "applicationnameconnected": "{{applicationName}} 已连接",
+      "theconnectionisreadyreviewpermissions": "连接已就绪。请审查权限，或在下方测试操作。"
+    }
   }
 }

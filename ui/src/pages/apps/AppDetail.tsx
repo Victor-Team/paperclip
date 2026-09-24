@@ -20,6 +20,7 @@ import { Navigate, useParams, useNavigate, useSearchParams } from "@/lib/router"
 import { useCompany } from "@/context/CompanyContext";
 import { useBreadcrumbs } from "@/context/BreadcrumbContext";
 import { useToast } from "@/context/ToastContext";
+import { useTranslation } from "@/i18n";
 import { queryKeys } from "@/lib/queryKeys";
 import { toolsApi } from "@/api/tools";
 import { agentsApi } from "@/api/agents";
@@ -72,6 +73,7 @@ export function AppDetail({ renderActions, onReconnect }: {
   const [searchParams] = useSearchParams();
   const queryClient = useQueryClient();
   const { pushToast } = useToast();
+  const { t } = useTranslation();
   const { selectedCompanyId } = useCompany();
   const { setBreadcrumbs } = useBreadcrumbs();
 
@@ -210,22 +212,22 @@ export function AppDetail({ renderActions, onReconnect }: {
     ) return;
     successNoticeShownFor.current = connection.id;
     pushToast({
-      title: `${appName} connected`,
-      body: "The connection is ready. Review permissions or test an action below.",
+      title: t("apptabs.general.applicationnameconnected", { applicationName: appName }),
+      body: t("apptabs.general.theconnectionisreadyreviewpermissions"),
       tone: "success",
     });
     navigate(appTabHref(connection.id, "permissions"), { replace: true });
-  }, [activeTab, appName, connection, navigate, pushToast, searchParams]);
+  }, [activeTab, appName, connection, navigate, pushToast, searchParams, t]);
 
   useEffect(() => {
     if (!activeTab) return;
     setBreadcrumbs([
-      { label: "Connectors", href: "/apps" },
+      { label: t("apptabs.general.connectors"), href: "/apps" },
       { label: appName, href: appTabHref(connectionId, "permissions") },
-      { label: appTabLabel(activeTab) },
+      { label: appTabLabel(activeTab, t) },
     ]);
     return () => setBreadcrumbs([]);
-  }, [setBreadcrumbs, appName, connectionId, activeTab]);
+  }, [setBreadcrumbs, appName, connectionId, activeTab, t]);
 
   const catalog = catalogQuery.data?.catalog ?? [];
   const profile = useMemo(

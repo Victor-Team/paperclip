@@ -3494,5 +3494,19 @@
       "reconnectthisapptoeditwhocanuseit": "Reconnect this app to edit who can use it and which actions need a human first.",
       "previoussetupisretainedforreconnect": "Previous setup is retained for reconnect, but access controls stay read-only until the app is online."
     }
+  },
+  "apptabs": {
+    "general": {
+      "app": "App",
+      "connectors": "Connectors",
+      "permissions": "Permissions",
+      "services": "Services",
+      "review": "Review",
+      "allconnectors": "All connectors",
+      "allapps": "All apps",
+      "needingreview": "needing review",
+      "applicationnameconnected": "{{applicationName}} connected",
+      "theconnectionisreadyreviewpermissions": "The connection is ready. Review permissions or test an action below."
+    }
   }
 }

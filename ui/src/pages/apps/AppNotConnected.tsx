@@ -83,7 +83,7 @@ export function AppNotConnected() {
     setBreadcrumbs([
       { label: t("appnotconnected.general.connectors"), href: "/apps" },
       { label: appName, href: appApplicationTabHref(applicationId, "permissions") },
-      { label: appTabLabel(activeTab) },
+      { label: appTabLabel(activeTab, t) },
     ]);
     return () => setBreadcrumbs([]);
   }, [setBreadcrumbs, appName, applicationId, activeTab, t]);
