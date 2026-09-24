@@ -1290,7 +1290,7 @@ export function DiscoveryGrid({
               <FolderChip
                 result={folderResult}
                 selection={folderSelection}
-                allLabel="All skills"
+                allLabel={t("companyskillsproduction.general.allskills")}
                 onClick={onOpenMobileFolders ?? (() => undefined)}
               />
             </div>
@@ -1869,7 +1869,7 @@ function CatalogDetailPane({
 }) {
   const { t } = useTranslation();
   if (!skill) {
-    return <EmptyState icon={Boxes} message="Select a catalog skill to inspect." />;
+    return <EmptyState icon={Boxes} message={t("companyskillsproduction.general.selectcatalogskill")} />;
   }
 
   const installedHash = installedSkill?.originHash ?? null;
@@ -1972,8 +1972,8 @@ function CatalogDetailPane({
           <span className="font-mono">{skill.contentHash.slice(0, 24)}…</span>
           <CopyText
             text={skill.contentHash}
-            copiedLabel="Copied hash"
-            ariaLabel="Copy content hash"
+            copiedLabel={t("companyskillsproduction.general.copiedhash")}
+            ariaLabel={t("companyskillsproduction.general.copycontenthash")}
             title={t("companyskillsproduction.general.copycontenthash")}
             className="inline-flex h-6 w-6 items-center justify-center rounded-sm border border-border text-muted-foreground hover:bg-accent hover:text-foreground"
           >
@@ -2170,14 +2170,14 @@ export function InstallPreviewDialog({
                   setSelectedAgentIds(next);
                 }}
                 showSelectionPreview={false}
-                emptyMessage="No agents in this company support skills yet."
+                emptyMessage={t("companyskillsproduction.general.emptyagents")}
                 isAgentDisabled={(agent) => {
                   const option = agent as AttachAgentOption;
                   return option.required || !option.supportsSkills;
                 }}
                 getDescription={(agent) => {
                   const option = agent as AttachAgentOption;
-                  return `${option.adapterType}${option.required ? " · required" : ""}${!option.supportsSkills ? " · skills not supported" : ""}`;
+                  return `${option.adapterType}${option.required ? t("companyskillsproduction.general.required") : ""}${!option.supportsSkills ? t("companyskillsproduction.general.skillsnotsupported") : ""}`;
                 }}
               />
             </div>
@@ -2271,7 +2271,7 @@ function AttachAgentsPopover({
       selectedAgentIds={attachedIds}
       onSave={(nextIds) => onSubmit(Array.from(nextIds), draftVersionId)}
       pending={pending}
-      triggerLabel="Add to agent"
+      triggerLabel={t("companyskillsproduction.general.addtoagent")}
       triggerIcon={<Plus className="mr-1.5 h-3.5 w-3.5" />}
       triggerVariant="default"
       triggerSize="sm"
@@ -2299,14 +2299,14 @@ function AttachAgentsPopover({
           </select>
         </div>
       ) : null}
-      emptyMessage={eligible.length === 0 ? "No agents in this company support skills yet." : "No agents yet."}
+      emptyMessage={eligible.length === 0 ? t("companyskillsproduction.general.emptyagents") : t("companyskillsproduction.general.noagentsyet")}
       isAgentDisabled={(agent) => {
         const option = agent as AttachAgentOption;
         return option.required || !option.supportsSkills;
       }}
       getDescription={(agent) => {
         const option = agent as AttachAgentOption;
-        return `${option.adapterType}${option.required ? " · required" : ""}${!option.supportsSkills ? " · skills not supported" : ""}`;
+        return `${option.adapterType}${option.required ? t("companyskillsproduction.general.required") : ""}${!option.supportsSkills ? t("companyskillsproduction.general.skillsnotsupported") : ""}`;
       }}
       renderNameSuffix={(agent) => (agent as AttachAgentOption).paused ? (
         <Badge variant="outline" className="[&>svg]:size-2.5 border-amber-500/30 bg-amber-500/10 px-1.5 text-(length:--text-nano) uppercase tracking-wide text-amber-500">
@@ -2953,7 +2953,7 @@ export function SkillDetailPage({
   }, [isDirty]);
 
   if (!detail) {
-    return loading ? <PageSkeleton variant="detail" /> : <EmptyState icon={Boxes} message="Skill not found." />;
+    return loading ? <PageSkeleton variant="detail" /> : <EmptyState icon={Boxes} message={t("companyskillsproduction.general.skillnotfound")} />;
   }
 
   const skill = detail;
@@ -3700,7 +3700,7 @@ function SkillPane({
     return (
       <EmptyState
         icon={Boxes}
-        message="Select a skill to inspect its files."
+        message={t("companyskillsproduction.general.selectskillfiles")}
       />
     );
   }
@@ -3776,8 +3776,8 @@ function SkillPane({
                     </span>
                     <CopyText
                       text={detail.sourcePath}
-                      copiedLabel="Copied path"
-                      ariaLabel="Copy source path"
+                      copiedLabel={t("companyskillsproduction.general.copiedpath")}
+                      ariaLabel={t("companyskillsproduction.general.copysourcepath")}
                       title={t("companyskillsproduction.general.copysourcepath")}
                       className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-sm border border-border text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
                     >
@@ -5066,7 +5066,7 @@ export function CompanySkills() {
   );
 
   if (!selectedCompanyId) {
-    return <EmptyState icon={Boxes} message="Select a company to manage skills." />;
+    return <EmptyState icon={Boxes} message={t("companyskillsproduction.general.selecttenant")} />;
   }
 
   function handleAddSkillSource() {
@@ -5311,8 +5311,8 @@ export function CompanySkills() {
         onOpenChange={setMobileFoldersOpen}
         result={railSkillFolderResult}
         selection={folderSelection}
-        allLabel="All skills"
-        itemLabelPlural="Skills"
+        allLabel={t("companyskillsproduction.general.allskills")}
+        itemLabelPlural={t("companyskillsproduction.general.skillsplural")}
         onSelect={setFolderSelection}
         onCreate={() => openCreateFolder()}
       />
@@ -5346,7 +5346,7 @@ export function CompanySkills() {
               {studioForkFromId && studioForkDetailQuery.isLoading ? (
                 <PageSkeleton variant="detail" />
               ) : studioForkFromId && !studioForkDetailQuery.data ? (
-                <EmptyState icon={Boxes} message="Fork source skill not found." />
+                <EmptyState icon={Boxes} message={t("companyskillsproduction.general.forksourcenotfound")} />
               ) : (
                 <NewSkillWizard
                   initialDraft={studioDraft}
@@ -5523,7 +5523,7 @@ export function CompanySkills() {
           {catalogListQuery.isLoading || catalogDetailQuery.isLoading ? (
             <PageSkeleton variant="detail" />
           ) : !selectedCatalogSkill ? (
-            <EmptyState icon={Boxes} message="Catalog skill not found." />
+            <EmptyState icon={Boxes} message={t("companyskillsproduction.general.catalogskillnotfound")} />
           ) : (
             <div className="grid gap-0 xl:grid-cols-(--gtc-30)">
               <aside className="border-b border-border px-3 py-4 xl:border-b-0 xl:border-r">
@@ -5568,7 +5568,7 @@ export function CompanySkills() {
           {skillsQuery.isLoading ? (
             <PageSkeleton variant="detail" />
           ) : (
-            <EmptyState icon={Boxes} message="Skill not found." />
+            <EmptyState icon={Boxes} message={t("companyskillsproduction.general.skillnotfound")} />
           )}
         </div>
       )}

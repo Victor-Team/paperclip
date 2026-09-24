@@ -8342,7 +8342,22 @@
       "lookforrepositorieswithskillmdthen79": "Look for repositories with `SKILL.md`, then paste the repo URL.",
       "back80": "Back",
       "backtostore": "Back to store",
-      "files81": "Files"
+      "files81": "Files",
+      "allskills": "All skills",
+      "selectcatalogskill": "Select a catalog skill to inspect.",
+      "copiedhash": "Copied hash",
+      "addtoagent": "Add to agent",
+      "skillnotfound": "Skill not found.",
+      "selectskillfiles": "Select a skill to inspect its files.",
+      "copiedpath": "Copied path",
+      "skillsplural": "Skills",
+      "forksourcenotfound": "Fork source skill not found.",
+      "catalogskillnotfound": "Catalog skill not found.",
+      "noagentsyet": "No agents yet.",
+      "required": " · required",
+      "skillsnotsupported": " · skills not supported",
+      "emptyagents": "No agents in this company support skills yet.",
+      "selecttenant": "Select a company to manage skills."
     }
   },
   "companyskills": {
@@ -8627,7 +8642,22 @@
       "catalog": "Catalog",
       "bundled84": "Bundled",
       "backtostore": "Back to store",
-      "files85": "Files"
+      "files85": "Files",
+      "allskills": "All skills",
+      "selectcatalogskill": "Select a catalog skill to inspect.",
+      "copiedhash": "Copied hash",
+      "addtoagent": "Add to agent",
+      "skillnotfound": "Skill not found.",
+      "selectskillfiles": "Select a skill to inspect its files.",
+      "copiedpath": "Copied path",
+      "skillsplural": "Skills",
+      "forksourcenotfound": "Fork source skill not found.",
+      "catalogskillnotfound": "Catalog skill not found.",
+      "noagentsyet": "No agents yet.",
+      "required": " · required",
+      "skillsnotsupported": " · skills not supported",
+      "emptyagents": "No agents in this organization support skills yet.",
+      "selecttenant": "Select an organization to manage skills."
     }
   },
   "costsproduction": {
