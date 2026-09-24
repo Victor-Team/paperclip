@@ -2971,7 +2971,21 @@
       "usetheexistingproviderconnectionforthis": "Use the existing provider connection for this environment.",
       "thisenvironmentdoesnotsupportbrowsersign": "This environment does not support browser sign-in. Choose a sign-in environment or connect with an API key.",
       "couldnotcheckyoursavedclaudesubscription": "Could not check your saved Claude subscription. Try again.",
-      "couldnotpreparesigninreloadthis": "Could not prepare sign-in. Reload this page to try again."
+      "couldnotpreparesigninreloadthis": "Could not prepare sign-in. Reload this page to try again.",
+      "providerdidnotrespond": "The provider did not respond. Check the connection and try again.",
+      "couldnotconnectprovider": "Could not connect to the provider.",
+      "chooseorsavedapikey": "Choose a saved API key or enter a new one",
+      "provideproviderapikey": "Provide your {{provider}} API key to connect",
+      "keyenteredretry": "Key entered. Retry the connection.",
+      "enterapikeyhere": "Enter API key here",
+      "logindidnotreturnsavedconnection": "The login did not return a saved connection. Try again.",
+      "couldnotretrievesavedconnection": "Could not retrieve the saved connection. Go back and retry.",
+      "waitingforcode": "Waiting for code",
+      "connecting": "Connecting",
+      "signintoprovider": "Sign in to {{provider}}",
+      "usesavedsubscription": "Use saved subscription",
+      "usesavedapikey": "Use saved API key",
+      "connect": "Connect"
     }
   },
   "externalagentinvitedialog": {

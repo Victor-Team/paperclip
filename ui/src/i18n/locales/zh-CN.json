@@ -2971,7 +2971,21 @@
       "usetheexistingproviderconnectionforthis": "为此环境使用现有的提供商连接。",
       "thisenvironmentdoesnotsupportbrowsersign": "此环境不支持浏览器登录。请选择登录环境或使用 API 密钥连接。",
       "couldnotcheckyoursavedclaudesubscription": "无法检查您已保存的 Claude 订阅。请重试。",
-      "couldnotpreparesigninreloadthis": "无法准备登录。请重新加载此页面以重试。"
+      "couldnotpreparesigninreloadthis": "无法准备登录。请重新加载此页面以重试。",
+      "providerdidnotrespond": "提供商没有响应。请检查连接后重试。",
+      "couldnotconnectprovider": "无法连接到提供商。",
+      "chooseorsavedapikey": "选择已保存的 API 密钥或输入新密钥",
+      "provideproviderapikey": "提供您的 {{provider}} API 密钥以连接",
+      "keyenteredretry": "密钥已输入。请重试连接。",
+      "enterapikeyhere": "在此输入 API 密钥",
+      "logindidnotreturnsavedconnection": "登录未返回已保存的连接。请重试。",
+      "couldnotretrievesavedconnection": "无法获取已保存的连接。请返回后重试。",
+      "waitingforcode": "等待验证码",
+      "connecting": "正在连接",
+      "signintoprovider": "登录 {{provider}}",
+      "usesavedsubscription": "使用已保存的订阅",
+      "usesavedapikey": "使用已保存的 API 密钥",
+      "connect": "连接"
     }
   },
   "externalagentinvitedialog": {

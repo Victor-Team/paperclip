@@ -194,7 +194,7 @@ export function AgentProviderConnection({
       if (connected) onConnected(connection);
       else
         setError(
-          "The provider did not respond. Check the connection and try again.",
+          t("agentproviderconnection.general.providerdidnotrespond"),
         );
     } catch (cause) {
       if (run !== epoch.current) return;
@@ -202,7 +202,7 @@ export function AgentProviderConnection({
       setError(
         cause instanceof Error
           ? cause.message
-          : "Could not connect to the provider.",
+          : t("agentproviderconnection.general.couldnotconnectprovider"),
       );
     } finally {
       if (run === epoch.current) setBusy(false);
@@ -280,8 +280,8 @@ export function AgentProviderConnection({
               <OnboardingLoginCard
                 instruction={
                   savedKeys.options.length
-                    ? "Choose a saved API key or enter a new one"
-                    : `Provide your ${provider} API key to connect`
+                    ? t("agentproviderconnection.general.chooseorsavedapikey")
+                    : t("agentproviderconnection.general.provideproviderapikey", { provider })
                 }
               >
                 <SavedProviderKeySelect
@@ -303,8 +303,8 @@ export function AgentProviderConnection({
                     value={apiKey}
                     placeholder={
                       storedConnection
-                        ? "Key entered. Retry the connection."
-                        : "Enter API key here"
+                        ? t("agentproviderconnection.general.keyenteredretry")
+                        : t("agentproviderconnection.general.enterapikeyhere")
                     }
                     onChange={(value) => {
                       setSelectedKeyId("");
@@ -338,7 +338,7 @@ export function AgentProviderConnection({
                 }}
                 onConnected={(sessionId) => {
                   if (managedAccount) {
-                    if (!sessionId) { setError("The login did not return a saved connection. Try again."); return; }
+                    if (!sessionId) { setError(t("agentproviderconnection.general.logindidnotreturnsavedconnection")); return; }
                     const run = epoch.current;
                     setLoginPhase("connecting");
                     void aiConnectionsApi.loginResult(companyId, sessionId).then((result) => {
@@ -346,7 +346,7 @@ export function AgentProviderConnection({
                     }).catch(() => {
                       if (run !== epoch.current) return;
                       setLoginPhase("ready");
-                      setError("Could not retrieve the saved connection. Go back and retry.");
+                      setError(t("agentproviderconnection.general.couldnotretrievesavedconnection"));
                     });
                     return;
                   }
@@ -388,17 +388,17 @@ export function AgentProviderConnection({
         }}
         primaryLabel={
           opened && needsLogin
-            ? loginPhase === "waiting" ? "Waiting for code"
-              : loginPhase === "connecting" ? "Connecting"
-              : `Sign in to ${provider}`
+            ? loginPhase === "waiting" ? t("agentproviderconnection.general.waitingforcode")
+              : loginPhase === "connecting" ? t("agentproviderconnection.general.connecting")
+              : t("agentproviderconnection.general.signintoprovider", { provider })
             : busy
-            ? "Connecting"
+            ? t("agentproviderconnection.general.connecting")
             : method === "subscription" &&
                 (storedLogin.data || savedSubscription)
-              ? "Use saved subscription"
+              ? t("agentproviderconnection.general.usesavedsubscription")
               : method === "api" && selectedKey
-                ? "Use saved API key"
-                : "Connect"
+                ? t("agentproviderconnection.general.usesavedapikey")
+                : t("agentproviderconnection.general.connect")
         }
         primaryDisabled={
           managedAccount?.disabled ||
