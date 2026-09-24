@@ -1,5 +1,7 @@
 import type { RoutineRunSummary, RoutineVariable } from "@paperclipai/shared";
 
+type Translate = (key: string) => string;
+
 /**
  * Format a single resolved variable value for the runs-row subtitle (§3.6).
  * Strings are quoted (`customer="Acme"`); numbers/booleans rendered bare.
@@ -36,9 +38,9 @@ export function dedupedTriggerLabel(
  * turn it into a one-line "why" for the runs list.
  */
 const SKIP_REASON_LABELS: Record<string, string> = {
-  no_external_activity: "Skipped — no activity since last run",
-  paused: "Skipped — routine paused",
-  worktree_execution_cutoff: "Skipped — worktree execution cutoff",
+  no_external_activity: "operatesections.general.skipNoExternalActivity",
+  paused: "operatesections.general.skipPaused",
+  worktree_execution_cutoff: "operatesections.general.skipWorktreeExecutionCutoff",
 };
 
 /**
@@ -52,13 +54,20 @@ const SKIP_REASON_LABELS: Record<string, string> = {
 export function runRowSubtitle(
   run: Pick<RoutineRunSummary, "status" | "failureReason" | "triggerPayload">,
   variables: readonly RoutineVariable[] | null | undefined,
+  translate?: Translate,
 ): string {
   if (run.status === "failed") {
-    return run.failureReason?.trim() || "Run failed";
+    return run.failureReason?.trim() || (translate ? translate("operatesections.general.runFailed") : "Run failed");
   }
   if (run.status === "skipped") {
     const reason = run.failureReason?.trim();
-    if (reason && SKIP_REASON_LABELS[reason]) return SKIP_REASON_LABELS[reason];
+    if (reason && SKIP_REASON_LABELS[reason]) {
+      return translate ? translate(SKIP_REASON_LABELS[reason]) : {
+        no_external_activity: "Skipped — no activity since last run",
+        paused: "Skipped — routine paused",
+        worktree_execution_cutoff: "Skipped — worktree execution cutoff",
+      }[reason]!;
+    }
   }
   const payload = run.triggerPayload;
   if (!payload || typeof payload !== "object") return "";

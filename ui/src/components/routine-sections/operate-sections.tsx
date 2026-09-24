@@ -19,12 +19,28 @@ import { RoutineActivityRow } from "../RoutineActivityRow";
 import { useRoutineDetail } from "./context";
 import { useTranslation } from "@/i18n";
 
-const DATE_WINDOW_OPTIONS: { value: string; label: string; ms: number | null }[] = [
-  { value: "any", label: "Any time", ms: null },
-  { value: "24h", label: "Last 24h", ms: 24 * 60 * 60 * 1000 },
-  { value: "7d", label: "Last 7d", ms: 7 * 24 * 60 * 60 * 1000 },
-  { value: "30d", label: "Last 30d", ms: 30 * 24 * 60 * 60 * 1000 },
+const DATE_WINDOW_OPTIONS: { value: string; labelKey: string; ms: number | null }[] = [
+  { value: "any", labelKey: "operatesections.general.anytime", ms: null },
+  { value: "24h", labelKey: "operatesections.general.last24hours", ms: 24 * 60 * 60 * 1000 },
+  { value: "7d", labelKey: "operatesections.general.last7days", ms: 7 * 24 * 60 * 60 * 1000 },
+  { value: "30d", labelKey: "operatesections.general.last30days", ms: 30 * 24 * 60 * 60 * 1000 },
 ];
+
+const ROUTINE_RUN_SOURCE_KEYS: Record<string, string> = {
+  schedule: "operatesections.general.sourceSchedule",
+  manual: "operatesections.general.sourceManual",
+  api: "operatesections.general.sourceApi",
+  webhook: "operatesections.general.sourceWebhook",
+};
+
+const ROUTINE_RUN_STATUS_KEYS: Record<string, string> = {
+  received: "operatesections.general.statusReceived",
+  coalesced: "operatesections.general.statusCoalesced",
+  skipped: "operatesections.general.statusSkipped",
+  issue_created: "operatesections.general.statusIssueCreated",
+  completed: "operatesections.general.statusCompleted",
+  failed: "operatesections.general.statusFailed",
+};
 
 export function RunsSection() {
   const { t } = useTranslation();
@@ -58,16 +74,26 @@ export function RunsSection() {
 
   const activeFilters = useMemo<FilterValue[]>(() => {
     const list: FilterValue[] = [];
-    if (sourceFilter !== "any") list.push({ key: "source", label: "Source", value: sourceFilter });
+    if (sourceFilter !== "any") {
+      list.push({
+        key: "source",
+        label: t("operatesections.general.sourceFilterLabel"),
+        value: t(ROUTINE_RUN_SOURCE_KEYS[sourceFilter] ?? sourceFilter),
+      });
+    }
     if (statusFilter !== "any") {
-      list.push({ key: "status", label: "Status", value: statusFilter.replaceAll("_", " ") });
+      list.push({
+        key: "status",
+        label: t("operatesections.general.statusFilterLabel"),
+        value: t(ROUTINE_RUN_STATUS_KEYS[statusFilter] ?? statusFilter.replaceAll("_", " ")),
+      });
     }
     if (dateFilter !== "any") {
-      const label = DATE_WINDOW_OPTIONS.find((option) => option.value === dateFilter)?.label ?? dateFilter;
-      list.push({ key: "date", label: "Date", value: label });
+      const labelKey = DATE_WINDOW_OPTIONS.find((option) => option.value === dateFilter)?.labelKey;
+      list.push({ key: "date", label: t("operatesections.general.dateFilterLabel"), value: t(labelKey ?? dateFilter) });
     }
     return list;
-  }, [sourceFilter, statusFilter, dateFilter]);
+  }, [dateFilter, sourceFilter, statusFilter, t]);
 
   function clearFilters() {
     setSourceFilter("any");
@@ -90,8 +116,8 @@ export function RunsSection() {
       {runs.length === 0 ? (
         <EmptyState
           icon={Play}
-          message="No runs yet. Trigger a run from the header or wait for the schedule."
-          action="Run now"
+          message={t("operatesections.general.noRunsYetMessage")}
+          action={t("operatesections.general.runNow")}
           onAction={onOpenRunDialog}
         />
       ) : (
@@ -135,7 +161,7 @@ export function RunsSection() {
                 <SelectContent>
                   {DATE_WINDOW_OPTIONS.map((option) => (
                     <SelectItem key={option.value} value={option.value}>
-                      {option.label}
+                      {t(option.labelKey)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -147,28 +173,28 @@ export function RunsSection() {
           {filtered.length === 0 ? (
             <EmptyState
               icon={SlidersHorizontal}
-              message="No runs match these filters."
-              action="Clear filters"
+              message={t("operatesections.general.noRunsMatchFilters")}
+              action={t("operatesections.general.clearFilters")}
               onAction={clearFilters}
             />
           ) : (
             <div className="rounded-lg border border-border">
               {filtered.map((run) => {
                 const label = dedupedTriggerLabel(run.trigger);
-                const title = run.linkedIssue?.title ?? label ?? "Run";
+                const title = run.linkedIssue?.title ?? label ?? t("operatesections.general.runFallback");
                 return (
                   <EntityRow
                     key={run.id}
                     leading={
                       <>
                         <Badge variant="outline" className="shrink-0">
-                          {run.source}
+                          {t(ROUTINE_RUN_SOURCE_KEYS[run.source] ?? run.source)}
                         </Badge>
                         <Badge
                           variant={run.status === "failed" ? "destructive" : "secondary"}
                           className="shrink-0"
                         >
-                          {run.status.replaceAll("_", " ")}
+                          {t(ROUTINE_RUN_STATUS_KEYS[run.status] ?? run.status.replaceAll("_", " "))}
                         </Badge>
                       </>
                     }
@@ -178,7 +204,7 @@ export function RunsSection() {
                         : undefined
                     }
                     title={title}
-                    subtitle={runRowSubtitle(run, routine.variables)}
+                    subtitle={runRowSubtitle(run, routine.variables, t)}
                     reserveSubtitleSpace
                     trailing={
                       <span className="text-xs text-muted-foreground">{timeAgo(run.triggeredAt)}</span>
@@ -200,6 +226,7 @@ export function RunsSection() {
 }
 
 export function ActivitySection() {
+  const { t, i18n } = useTranslation();
   const ctx = useRoutineDetail();
   const { activity } = ctx;
   const events = activity ?? [];
@@ -207,9 +234,9 @@ export function ActivitySection() {
   const groups = useMemo(() => {
     const byDay = new Map<string, typeof events>();
     for (const event of events) {
-      let label = "Earlier";
+      let label = t("operatesections.general.earlier");
       try {
-        label = new Date(event.createdAt).toLocaleDateString(undefined, {
+        label = new Date(event.createdAt).toLocaleDateString(i18n.language, {
           weekday: "short",
           month: "short",
           day: "numeric",
@@ -222,10 +249,10 @@ export function ActivitySection() {
       byDay.set(label, bucket);
     }
     return Array.from(byDay.entries());
-  }, [events]);
+  }, [events, i18n.language, t]);
 
   if (events.length === 0) {
-    return <EmptyState icon={ActivityIcon} message="No activity yet." />;
+    return <EmptyState icon={ActivityIcon} message={t("operatesections.general.noActivityYet")} />;
   }
 
   return (
