@@ -327,7 +327,7 @@ export function DecisionQueuePage() {
               onToggle={() => setAgingOpen((prev) => !prev)}
             >
               <p className="text-xs text-muted-foreground">
-                {t("decisionqueuepage.general.idlepast")}t {ATTENTION_AGING_DAYS} {t("decisionqueuepage.general.dayskeptoffthequeuekeepany")}</p>
+                {t("decisionqueuepage.general.idlepast")} {ATTENTION_AGING_DAYS} {t("decisionqueuepage.general.dayskeptoffthequeuekeepany")}</p>
               {agingItems.map((item) => (
                 <AgingItemRow
                   key={item.id}
