@@ -57,7 +57,12 @@ function SubscriptionConnectionStep({ companyId, provider, initialMethod, fixedM
       managedSandboxEnvironmentId: resolveManagedSandboxEnvironmentId(envs.data),
       visibleEnvironmentIds: envs.data?.map((env) => env.id),
     });
-  } catch (error) { environmentError = error instanceof Error ? error.message : "Could not resolve the sign-in environment."; }
+  } catch (error) {
+    environmentError =
+      error instanceof Error
+        ? error.message
+        : t("aiconnectioncredentialstep.general.couldnotresolvesigninenvironment");
+  }
   const loginEnvironments = (envs.data ?? []).filter((env) =>
     env.status === "active" && (env.driver === "local" || (env.driver === "sandbox" &&
     typeof env.config.provider === "string" &&

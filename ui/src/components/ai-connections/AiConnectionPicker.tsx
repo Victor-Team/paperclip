@@ -109,8 +109,8 @@ export function AiConnectionPicker({
             disabled={readOnly}
             selectedId={value?.mode === "responsible_user" ? "responsible_user" : value?.connectionId}
             choices={[
-              { id: "responsible_user", name: "Responsible user’s connection", description: <>
-                <span className="block">{t("aiconnectionpicker.general.foryou")} {personalDefault?.name ?? "Not connected"}</span>
+              { id: "responsible_user", name: t("aiconnectionpicker.general.responsibleuserconnection"), description: <>
+                <span className="block">{t("aiconnectionpicker.general.foryou")} {personalDefault?.name ?? t("aiconnectionpicker.general.notconnected")}</span>
                 <span className="block">{t("aiconnectionpicker.general.otheruserstasksusetheirown")} {AI_PROVIDERS[requirement.provider].name} {t("aiconnectionpicker.general.connection")}</span>
               </> },
               ...compatible.filter((connection) => connection.ownership === "shared").map((connection) => ({

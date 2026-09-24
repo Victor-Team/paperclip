@@ -2395,6 +2395,7 @@
       "submitcode": "提交代码",
       "waitingforsignin": "等待登录…",
       "preparingsignin": "准备登录…",
+      "couldnotresolvesigninenvironment": "无法解析登录环境。",
       "signin": "登录",
       "tryagain": "重试"
     }
@@ -2451,6 +2452,8 @@
   },
   "aiconnectionpicker": {
     "general": {
+      "responsibleuserconnection": "负责用户的连接",
+      "notconnected": "未连接",
       "aiconnection": "AI 连接",
       "aiconnection1": "AI 连接",
       "loadingaiconnections": "正在加载 AI 连接",

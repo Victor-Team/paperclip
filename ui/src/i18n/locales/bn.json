@@ -2395,6 +2395,7 @@
       "submitcode": "Submit code",
       "waitingforsignin": "Waiting for sign-in…",
       "preparingsignin": "Preparing sign-in…",
+      "couldnotresolvesigninenvironment": "Could not resolve the sign-in environment.",
       "signin": "Sign in",
       "tryagain": "Try again"
     }
@@ -2451,6 +2452,8 @@
   },
   "aiconnectionpicker": {
     "general": {
+      "responsibleuserconnection": "Responsible user’s connection",
+      "notconnected": "Not connected",
       "aiconnection": "AI connection",
       "aiconnection1": "AI connection",
       "loadingaiconnections": "Loading AI connections",
