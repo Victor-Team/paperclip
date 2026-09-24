@@ -100,6 +100,7 @@ import {
   type GenericMcpAuthMode,
 } from "@/pages/apps/generic-mcp-connect";
 import { autoExtendNotice, INSTALL_ALL_WARNING, installInfoNotice, installPayload } from "@/lib/tool-installs";
+import { useTranslation } from "@/i18n";
 
 type Step = "gallery" | "access" | "key" | "success";
 export type OAuthConnectPhase = "entry" | "starting" | "redirecting" | "error";
@@ -533,6 +534,7 @@ export interface ConnectionSetupFlowProps {
  * here so a provider can never drift between entry points.
  */
 export function ConnectionSetupFlow(props: ConnectionSetupFlowProps = {}) {
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const params = useParams<{ appKey?: string }>();
   const { selectedCompanyId } = useCompany();
@@ -550,12 +552,12 @@ export function ConnectionSetupFlow(props: ConnectionSetupFlowProps = {}) {
   const existing = useQuery({ queryKey: ["tools", "connection", existingId], queryFn: () => toolsApi.getConnection(existingId!), enabled: lookup });
   const provider = source || existing.data?.config?.sourceTemplateKey;
   const method = searchParams.get("method") || existing.data?.config?.connectionMethodKey;
-  if (lookup && existing.isPending) return <p className="p-6 text-sm text-muted-foreground">Loading connection…</p>;
-  if (lookup && existing.isError) return <div role="alert" className="space-y-3 p-6"><p>Could not load this connection. Your saved access and credentials have not changed.</p><Button variant="outline" onClick={() => void existing.refetch()}>Try again</Button></div>;
+  if (lookup && existing.isPending) return <p className="p-6 text-sm text-muted-foreground">{t("connectionsetupflow.general.loadingconnection")}</p>;
+  if (lookup && existing.isError) return <div role="alert" className="space-y-3 p-6"><p>{t("connectionsetupflow.general.couldnotloadthisconnectionyoursaved")}</p><Button variant="outline" onClick={() => void existing.refetch()}>{t("connectionsetupflow.general.tryagain")}</Button></div>;
   if (!props.byoOnly && (props.credentialSource ?? "paperclip_vault") === "paperclip_vault"
     && isRemoteMcpConnectorId(provider) && (!method || isRemoteMcpConnectorMethod(provider, method))) {
-    if (!aggregators.loaded) return <p className="p-6 text-sm text-muted-foreground">Loading connection settings…</p>;
-    if (!aggregators.enabled) return <p role="status" className="p-6 text-sm text-muted-foreground">Enable MCP aggregators in Settings → Experimental to set up this connection.</p>;
+    if (!aggregators.loaded) return <p className="p-6 text-sm text-muted-foreground">{t("connectionsetupflow.general.loadingconnectionsettings")}</p>;
+    if (!aggregators.enabled) return <p role="status" className="p-6 text-sm text-muted-foreground">{t("connectionsetupflow.general.enablemcpaggregatorsinsettingsexperimentalto")}</p>;
     return <RemoteMcpProductionSetup key={`${interactionId || "page"}:${provider}`} {...props} interactionId={interactionId} providerId={provider} connection={existing.data} />;
   }
   return <StandardConnectionSetupFlow {...props} />;
@@ -579,6 +581,7 @@ function StandardConnectionSetupFlow({
   onCancel,
   renderCredentialStep,
 }: ConnectionSetupFlowProps = {}) {
+  const { t } = useTranslation();
   const routeNavigate = useNavigate();
   const navigate = useCallback((to: string, options?: { replace?: boolean }) => {
     if (host !== "page") return;
@@ -1730,7 +1733,7 @@ function StandardConnectionSetupFlow({
   });
 
   if (!selectedCompanyId) {
-    return <div className="p-6 text-sm text-muted-foreground">Select an organization to connect apps.</div>;
+    return <div className="p-6 text-sm text-muted-foreground">{t("connectionsetupflow.general.selectanorganizationtoconnectapps")}</div>;
   }
 
   if (
@@ -1739,10 +1742,9 @@ function StandardConnectionSetupFlow({
   ) {
     return (
       <div className="mx-auto max-w-xl rounded-xl border border-border bg-card p-6">
-        <h2 className="text-lg font-semibold text-foreground">Couldn’t load connection setup</h2>
+        <h2 className="text-lg font-semibold text-foreground">{t("connectionsetupflow.general.couldntloadconnectionsetup")}</h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          Paperclip couldn’t check the retained connection. The retained connection was not changed.
-        </p>
+          {t("connectionsetupflow.general.paperclipcouldntchecktheretainedconnection")}</p>
         <div className="mt-5 flex flex-wrap gap-2">
           <Button
             type="button"
@@ -1757,11 +1759,9 @@ function StandardConnectionSetupFlow({
               }
             }}
           >
-            Try again
-          </Button>
+            {t("connectionsetupflow.general.tryagain1")}</Button>
           <Button type="button" variant="outline" onClick={() => navigate("/apps")}>
-            Back to apps
-          </Button>
+            {t("connectionsetupflow.general.backtoapps")}</Button>
         </div>
       </div>
     );
@@ -1770,13 +1770,11 @@ function StandardConnectionSetupFlow({
   if (resumeConnectionId && connectionsQuery.isFetchedAfterMount && !resumeConnection) {
     return (
       <div className="mx-auto max-w-xl rounded-xl border border-border bg-card p-6">
-        <h2 className="text-lg font-semibold text-foreground">This setup can’t be resumed</h2>
+        <h2 className="text-lg font-semibold text-foreground">{t("connectionsetupflow.general.thissetupcantberesumed")}</h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          The saved connection no longer exists or is not available to this organization.
-        </p>
+          {t("connectionsetupflow.general.thesavedconnectionnolongerexistsor")}</p>
         <Button type="button" variant="outline" className="mt-5" onClick={() => navigate("/apps")}>
-          Back to apps
-        </Button>
+          {t("connectionsetupflow.general.backtoapps2")}</Button>
       </div>
     );
   }
@@ -1789,15 +1787,14 @@ function StandardConnectionSetupFlow({
   ) {
     return (
       <div className="mx-auto max-w-xl rounded-xl border border-border bg-card p-6">
-        <h2 className="text-lg font-semibold text-foreground">This connection can’t be reconnected</h2>
+        <h2 className="text-lg font-semibold text-foreground">{t("connectionsetupflow.general.thisconnectioncantbereconnected")}</h2>
         <p className="mt-2 text-sm text-muted-foreground">
           {!reconnectConnection
-            ? "The retained connection no longer exists or is not available to this organization."
-            : "This reconnect link does not match the retained connection's provider."}
+            ? t("connectionsetupflow.general.theretainedconnectionnolongerexistsor")
+            : t("connectionsetupflow.general.thisreconnectlinkdoesnotmatchthe")}
         </p>
         <Button type="button" variant="outline" className="mt-5" onClick={() => navigate("/apps")}>
-          Back to apps
-        </Button>
+          {t("connectionsetupflow.general.backtoapps3")}</Button>
       </div>
     );
   }
@@ -1805,17 +1802,14 @@ function StandardConnectionSetupFlow({
   if ((resumeConnectionId || reconnectConnectionId) && galleryQuery.isError) {
     return (
       <div className="mx-auto max-w-xl rounded-xl border border-border bg-card p-6">
-        <h2 className="text-lg font-semibold text-foreground">Couldn’t load connection setup</h2>
+        <h2 className="text-lg font-semibold text-foreground">{t("connectionsetupflow.general.couldntloadconnectionsetup4")}</h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          Paperclip couldn’t load the provider details needed to restore this connection. The retained connection was not changed.
-        </p>
+          {t("connectionsetupflow.general.paperclipcouldntloadtheproviderdetails")}</p>
         <div className="mt-5 flex flex-wrap gap-2">
           <Button type="button" onClick={() => void galleryQuery.refetch()}>
-            Try again
-          </Button>
+            {t("connectionsetupflow.general.tryagain5")}</Button>
           <Button type="button" variant="outline" onClick={() => navigate("/apps")}>
-            Back to apps
-          </Button>
+            {t("connectionsetupflow.general.backtoapps6")}</Button>
         </div>
       </div>
     );
@@ -1824,13 +1818,11 @@ function StandardConnectionSetupFlow({
   if (reconnectConnectionId && unavailableReconnectId === reconnectConnectionId) {
     return (
       <div className="mx-auto max-w-xl rounded-xl border border-border bg-card p-6">
-        <h2 className="text-lg font-semibold text-foreground">This connection can’t be reconnected</h2>
+        <h2 className="text-lg font-semibold text-foreground">{t("connectionsetupflow.general.thisconnectioncantbereconnected7")}</h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          Paperclip no longer has a supported setup method for this retained connection. The retained connection was not changed.
-        </p>
+          {t("connectionsetupflow.general.paperclipnolongerhasasupportedsetup")}</p>
         <Button type="button" variant="outline" className="mt-5" onClick={() => navigate("/apps")}>
-          Back to apps
-        </Button>
+          {t("connectionsetupflow.general.backtoapps8")}</Button>
       </div>
     );
   }
@@ -1842,7 +1834,7 @@ function StandardConnectionSetupFlow({
     || hydratedResumeConnectionId !== resumeConnection?.id
   )) {
     return (
-      <div className="mx-auto max-w-xl space-y-4" aria-label="Loading saved connection setup">
+      <div className="mx-auto max-w-xl space-y-4" aria-label={t("connectionsetupflow.general.loadingsavedconnectionsetup")}>
         <Skeleton className="h-8 w-48" />
         <Skeleton className="h-40 w-full rounded-xl" />
       </div>
@@ -1856,7 +1848,7 @@ function StandardConnectionSetupFlow({
     || Boolean(requestedAppKey && !entry)
   )) {
     return (
-      <div className="mx-auto max-w-xl space-y-4" aria-label="Loading retained connection setup">
+      <div className="mx-auto max-w-xl space-y-4" aria-label={t("connectionsetupflow.general.loadingretainedconnectionsetup")}>
         <Skeleton className="h-8 w-48" />
         <Skeleton className="h-40 w-full rounded-xl" />
       </div>
@@ -1868,11 +1860,10 @@ function StandardConnectionSetupFlow({
       <div className="max-w-5xl" data-testid="connection-existing-choice">
         <div className="mb-6">
           <h1 className="text-2xl font-bold tracking-tight">
-            Use an existing {requestedAppKey ? "connection" : "app connection"}
+            {t("connectionsetupflow.general.useanexisting")} {requestedAppKey ? t("connectionsetupflow.general.connection") : t("connectionsetupflow.general.appconnection")}
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Reuse a connection without changing who already has access, or connect a new one.
-          </p>
+            {t("connectionsetupflow.general.reuseaconnectionwithoutchangingwhoalready")}</p>
         </div>
         <ConnectionChoiceList
           choices={existingConnections.map((connection) => ({
@@ -1895,9 +1886,9 @@ function StandardConnectionSetupFlow({
         ) : null}
         <div className="mt-5 flex flex-wrap gap-2">
           <Button type="button" variant="outline" onClick={() => setShowConnectionChoice(false)}>
-            {configuredConnection ? "Review connection setup" : "Connect new"}
+            {configuredConnection ? t("connectionsetupflow.general.reviewconnectionsetup") : t("connectionsetupflow.general.connectnew")}
           </Button>
-          {onCancel ? <Button type="button" variant="ghost" onClick={onCancel}>Cancel</Button> : null}
+          {onCancel ? <Button type="button" variant="ghost" onClick={onCancel}>{t("connectionsetupflow.general.cancel")}</Button> : null}
         </div>
       </div>
     );
@@ -2192,16 +2183,14 @@ function StandardConnectionSetupFlow({
 
       {managedConnectorUnavailable && entry ? (
         <div className="mx-auto max-w-xl rounded-xl border border-border bg-card p-6">
-          <h2 className="text-lg font-semibold text-foreground">{entry.name} sign-in is unavailable</h2>
+          <h2 className="text-lg font-semibold text-foreground">{entry.name} {t("connectionsetupflow.general.signinisunavailable")}</h2>
           <p className="mt-2 text-sm text-muted-foreground">
-            This instance is connected to Paperclip, but {entry.name} sign-in is not currently available. Try again shortly or contact your instance administrator.
-          </p>
+            {t("connectionsetupflow.general.thisinstanceisconnectedtopaperclipbut")} {entry.name} {t("connectionsetupflow.general.signinisnotcurrentlyavailabletry")}</p>
           <div className="mt-6 flex items-center justify-between gap-3">
-            <Button type="button" variant="ghost" onClick={() => setAppStep("access")}>Back</Button>
+            <Button type="button" variant="ghost" onClick={() => setAppStep("access")}>{t("connectionsetupflow.general.back")}</Button>
             <Button type="button" disabled={galleryQuery.isFetching} onClick={() => void galleryQuery.refetch()}>
               {galleryQuery.isFetching ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-              Try again
-            </Button>
+              {t("connectionsetupflow.general.tryagain9")}</Button>
           </div>
         </div>
       ) : step === "key" && entry && showConnectorEnrollmentStep ? (
@@ -2213,32 +2202,28 @@ function StandardConnectionSetupFlow({
               </div>
               <div className="min-w-0">
                 <h2 className="text-lg font-semibold text-foreground">
-                  Connect with Paperclip
-                </h2>
+                  {t("connectionsetupflow.general.connectwithpaperclip")}</h2>
                 <p className="mt-2 text-sm text-muted-foreground">
-                  You must connect this instance to Paperclip to connect to {entry.name} (you only need to do this once).
-                </p>
+                  {t("connectionsetupflow.general.youmustconnectthisinstancetopaperclip")} {entry.name} {t("connectionsetupflow.general.youonlyneedtodothisonce")}</p>
               </div>
             </div>
 
             {connectorEnrollmentQuery.isError || connectorEnrollmentError ? (
               <InlineBanner tone="danger" className="mt-4">
-                {connectorEnrollmentError ?? "Paperclip couldn’t check Cloud registration. Try again."}
+                {connectorEnrollmentError ?? t("connectionsetupflow.general.paperclipcouldntcheckcloudregistrationtry")}
               </InlineBanner>
             ) : null}
 
             {enrollmentAuthorizationUrl ? (
               <p className="mt-4 text-sm text-muted-foreground">
-                Finish authorization in the opened window.{' '}
+                {t("connectionsetupflow.general.finishauthorizationintheopenedwindow")}{' '}
                 <a className="underline" href={enrollmentAuthorizationUrl} target="_blank" rel="noopener noreferrer">
-                  Open authorization in a new tab
-                </a>
+                  {t("connectionsetupflow.general.openauthorizationinanewtab")}</a>
               </p>
             ) : null}
             <div className="mt-6 flex items-center justify-between gap-3">
               <Button type="button" variant="ghost" onClick={() => setAppStep("access")}>
-                Back
-              </Button>
+                {t("connectionsetupflow.general.back10")}</Button>
               <Button
                 type="button"
                 disabled={connectorEnrollmentQuery.isLoading || startConnectorEnrollment.isPending}
@@ -2253,8 +2238,8 @@ function StandardConnectionSetupFlow({
               >
                 {startConnectorEnrollment.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
                 {connectorEnrollmentQuery.data?.status === "pending"
-                  ? "Continue"
-                  : "Connect with Paperclip"}
+                  ? t("connectionsetupflow.general.continue")
+                  : t("connectionsetupflow.general.connectwithpaperclip11")}
               </Button>
             </div>
           </div>
@@ -2491,6 +2476,7 @@ export function StepHeader({
   unverifiedHost?: string | null;
   onCancel?: () => void;
 }) {
+  const { t } = useTranslation();
   return (
     <div className="mb-6">
       <div className="flex items-start justify-between gap-4">
@@ -2500,22 +2486,21 @@ export function StepHeader({
           ) : null}
           <div>
             <h1 ref={headingRef} tabIndex={headingRef ? -1 : undefined} className="text-2xl font-bold tracking-tight outline-none">
-              {title ?? (appIdentity ? `Connect ${appIdentity.name}` : "Connect your own MCP server")}
+              {title ?? (appIdentity ? `Connect ${appIdentity.name}` : t("connectionsetupflow.general.connectyourownmcpserver"))}
             </h1>
             <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>
             {unverifiedHost ? <UnverifiedServerBadge host={unverifiedHost} className="mt-2" /> : null}
           </div>
         </div>
         {onCancel && <Button variant="ghost" size="sm" onClick={onCancel}>
-          Cancel
-        </Button>}
+          {t("connectionsetupflow.general.cancel12")}</Button>}
       </div>
       {step !== "gallery" && (
         // A landmark with stable hooks, so the step model can be read without
         // guessing at Tailwind classes. The dots are decoration — the label
         // line below already says the same thing, so announcing both would
         // read every step name twice.
-        <nav className="mt-4" aria-label="Setup progress" data-testid="wizard-stepper">
+        <nav className="mt-4" aria-label={t("connectionsetupflow.general.setupprogress")} data-testid="wizard-stepper">
           <ol className="flex gap-2" aria-hidden="true">
             {labels.map((label, i) => (
               <li
@@ -2578,6 +2563,7 @@ export function OAuthConnectStateScreen({
   onBack: () => void;
   onCancel: () => void;
 }) {
+  const { t } = useTranslation();
   const serverName = entry?.name ?? identity?.name ?? "this server";
   const unverifiedHost = entry ? null : identity?.unverifiedHost ?? null;
   const status = phase === "entry"
@@ -2640,16 +2626,14 @@ export function OAuthConnectStateScreen({
             {recoveryActions.installationUrl ? (
               <Button type="button" variant="outline" asChild>
                 <a href={recoveryActions.installationUrl} target="_blank" rel="noreferrer">
-                  Install Paperclip on GitHub
-                  <ArrowUpRight className="ml-1.5 h-3.5 w-3.5" />
+                  {t("connectionsetupflow.general.installpaperclipongithub")}<ArrowUpRight className="ml-1.5 h-3.5 w-3.5" />
                 </a>
               </Button>
             ) : null}
             {recoveryActions.managementUrl ? (
               <Button type="button" variant="ghost" asChild>
                 <a href={recoveryActions.managementUrl} target="_blank" rel="noreferrer">
-                  Manage repositories on GitHub
-                </a>
+                  {t("connectionsetupflow.general.managerepositoriesongithub")}</a>
               </Button>
             ) : null}
           </div>
@@ -2660,15 +2644,15 @@ export function OAuthConnectStateScreen({
             <Button type="button" onClick={onRetry}>
               {phase === "entry"
                 ? resuming ? `Finish with ${serverName}` : `Continue to ${serverName}`
-                : "Try again"}
+                : t("connectionsetupflow.general.tryagain13")}
             </Button>
           ) : (
             <Button type="button" disabled>
-              {phase === "redirecting" ? `Opening ${serverName}…` : "Preparing…"}
+              {phase === "redirecting" ? `Opening ${serverName}…` : t("connectionsetupflow.general.preparing")}
             </Button>
           )}
-          {authorizationUrl ? <Button variant="outline" asChild><a href={authorizationUrl} target="_blank" rel="noopener noreferrer" onClick={onOpenAuthorization}>Open sign-in in a new tab</a></Button> : null}
-          <Button type="button" variant="ghost" onClick={onBack}>Back</Button>
+          {authorizationUrl ? <Button variant="outline" asChild><a href={authorizationUrl} target="_blank" rel="noopener noreferrer" onClick={onOpenAuthorization}>{t("connectionsetupflow.general.opensignininanewtab")}</a></Button> : null}
+          <Button type="button" variant="ghost" onClick={onBack}>{t("connectionsetupflow.general.back14")}</Button>
         </div>
       </div>
     </div>
@@ -2688,6 +2672,7 @@ function ZapierConnectStep({
   onBack: () => void;
   onConnect: () => void;
 }) {
+  const { t } = useTranslation();
   const normalizedLink = normalizeAppLink(link);
   const zapierHostname = normalizedLink ? new URL(normalizedLink).hostname : "";
   const isZapierLink = zapierHostname === "zapier.com" || zapierHostname.endsWith(".zapier.com");
@@ -2695,7 +2680,7 @@ function ZapierConnectStep({
   return (
     <div className="mx-auto max-w-xl">
       <div>
-        <label className="text-sm font-medium text-foreground">Zapier MCP URL</label>
+        <label className="text-sm font-medium text-foreground">{t("connectionsetupflow.general.zapiermcpurl")}</label>
         <Input
           type="password"
           autoComplete="off"
@@ -2710,17 +2695,16 @@ function ZapierConnectStep({
           autoFocus
         />
         {link.trim() && !isZapierLink && (
-          <p className="mt-2 text-xs text-destructive">Paste a valid Zapier URL to continue.</p>
+          <p className="mt-2 text-xs text-destructive">{t("connectionsetupflow.general.pasteavalidzapierurltocontinue")}</p>
         )}
       </div>
 
       <div className="mt-6 flex items-center justify-between">
         <Button variant="ghost" onClick={onBack} disabled={submitting}>
-          Back
-        </Button>
+          {t("connectionsetupflow.general.back15")}</Button>
         <Button onClick={onConnect} disabled={submitting || !isZapierLink}>
           {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          {submitting ? "Checking…" : "Check link"}
+          {submitting ? t("connectionsetupflow.general.checking") : t("connectionsetupflow.general.checklink")}
         </Button>
       </div>
     </div>
@@ -2757,6 +2741,7 @@ function GalleryStep({
   onPick: (entry: AppDefinition) => void;
   onUseLink: (link: string) => void;
 }) {
+  const { t } = useTranslation();
   const [search, setSearch] = useState("");
   const [linkInput, setLinkInput] = useState(initialLink);
   const linkInputEdited = useRef(false);
@@ -2811,23 +2796,21 @@ function GalleryStep({
         <div className="rounded-xl border border-border bg-card p-5">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div>
-              <h2 className="text-lg font-bold tracking-tight">Connect through Vercel</h2>
+              <h2 className="text-lg font-bold tracking-tight">{t("connectionsetupflow.general.connectthroughvercel")}</h2>
               <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-                Create and manage the provider connector in Vercel. Paperclip stores its reference and applies agent access, policy, approval, and audit controls here.
-              </p>
+                {t("connectionsetupflow.general.createandmanagetheproviderconnectorin")}</p>
             </div>
             {vercelConnectAvailability ? (
               <Button asChild variant="outline" size="sm" className="shrink-0">
                 <a href={vercelConnectAvailability.manageUrl} target="_blank" rel="noreferrer">
-                  Open Vercel Connect
-                  <ArrowUpRight className="ml-2 h-3.5 w-3.5" />
+                  {t("connectionsetupflow.general.openvercelconnect")}<ArrowUpRight className="ml-2 h-3.5 w-3.5" />
                 </a>
               </Button>
             ) : null}
           </div>
           {vercelConnectAvailability?.available === false ? (
             <InlineBanner tone="danger" compact className="mt-4">
-              {vercelConnectAvailability.reason ?? "Vercel Connect is unavailable on this instance."}
+              {vercelConnectAvailability.reason ?? t("connectionsetupflow.general.vercelconnectisunavailableonthisinstance")}
             </InlineBanner>
           ) : null}
         </div>
@@ -2840,7 +2823,7 @@ function GalleryStep({
             <Input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search apps…"
+              placeholder={t("connectionsetupflow.general.searchapps")}
               className="h-11 pl-9"
             />
           </div>
@@ -2881,9 +2864,9 @@ function GalleryStep({
                         {app.availability?.reason ?? vercelConnectAvailability?.reason ?? "Unavailable on this instance."}
                       </span>
                     ) : oauthBlocked ? (
-                      <span className="text-muted-foreground">Unavailable</span>
+                      <span className="text-muted-foreground">{t("connectionsetupflow.general.unavailable")}</span>
                     ) : (
-                      <span>Connect →</span>
+                      <span>{t("connectionsetupflow.general.connect")}</span>
                     )}
                   </div>
                 </button>
@@ -2892,7 +2875,7 @@ function GalleryStep({
           </div>
 
           {filtered.length === 0 && (
-            <div className="py-10 text-center text-sm text-muted-foreground">No apps match “{search}”.</div>
+            <div className="py-10 text-center text-sm text-muted-foreground">{t("connectionsetupflow.general.noappsmatch")}{search}”.</div>
           )}
         </>
       )}
@@ -2907,18 +2890,18 @@ function GalleryStep({
         <div>
           <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
             <Link2 className="h-4 w-4 text-muted-foreground" />
-            {zapierSource ? "Connect Zapier" : byo ? "Connect your own MCP server" : "Connect with a link"}
+            {zapierSource ? t("connectionsetupflow.general.connectzapier") : byo ? t("connectionsetupflow.general.connectyourownmcpserver16") : t("connectionsetupflow.general.connectwithalink")}
           </div>
           <p className="mt-1 text-xs text-muted-foreground">
             {zapierSource
-              ? "Paste the complete MCP URL Zapier gives you, including its token."
+              ? t("connectionsetupflow.general.pastethecompletemcpurlzapiergives")
               : byo
-              ? "Paste your MCP server’s URL and every discovered tool will be available immediately."
-              : "Paste a setup link from an app that is not listed here."}
+              ? t("connectionsetupflow.general.pasteyourmcpserversurland")
+              : t("connectionsetupflow.general.pasteasetuplinkfromanapp")}
           </p>
           {!zapierSource && (
             <p className="mt-1 text-xs text-muted-foreground">
-              Any remote tool URL works here — including a local MCP server like{" "}
+              {t("connectionsetupflow.general.anyremotetoolurlworkshereincluding")}{" "}
               <code className="rounded bg-muted px-1 py-0.5 text-xs">http://127.0.0.1:8848/mcp</code>.
             </p>
           )}
@@ -2926,7 +2909,7 @@ function GalleryStep({
             <div className="mt-3 flex items-center justify-between gap-3 rounded-lg border border-border bg-muted/40 px-3 py-2">
               <div className="flex min-w-0 items-center gap-2 text-sm">
                 <AppLogo name={matchedEntry.name} logoUrl={matchedEntry.branding.logoUrl} darkLogoUrl={matchedEntry.branding.darkLogoUrl} size={24} />
-                <span className="truncate">This looks like {matchedEntry.name}.</span>
+                <span className="truncate">{t("connectionsetupflow.general.thislookslike")} {matchedEntry.name}.</span>
               </div>
               <Button
                 type="button"
@@ -2943,9 +2926,9 @@ function GalleryStep({
                 }}
               >
                 {matchedEntry.availability?.available === false
-                  ? "Not available"
+                  ? t("connectionsetupflow.general.notavailable")
                   : matchedEntry.slug === "zapier"
-                    ? "Continue"
+                    ? t("connectionsetupflow.general.continue17")
                     : `Use ${matchedEntry.name}`}
               </Button>
             </div>
@@ -2958,7 +2941,7 @@ function GalleryStep({
               type={zapierSource || matchedEntry?.slug === "zapier" ? "password" : "url"}
               autoComplete="off"
               spellCheck={false}
-              aria-label="MCP server URL"
+              aria-label={t("connectionsetupflow.general.mcpserverurl")}
               value={linkInput}
               onChange={(e) => {
                 linkInputEdited.current = true;
@@ -2972,8 +2955,7 @@ function GalleryStep({
               className="h-10"
             />
             <Button type="button" variant="outline" onClick={continueWithLink}>
-              Continue
-            </Button>
+              {t("connectionsetupflow.general.continue18")}</Button>
           </div>
           {linkError && <div className="text-xs text-destructive">{linkError}</div>}
         </div>
@@ -3054,6 +3036,7 @@ function LinkConnectStep({
   onBack: () => void;
   onConnect: () => void;
 }) {
+  const { t } = useTranslation();
   const host = endpointHost(link);
   const headerError = authMode === "custom_headers" ? customHeaderError(headers) : null;
   const draft: GenericConnectDraft = {
@@ -3085,10 +3068,10 @@ function LinkConnectStep({
         <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border bg-muted/40 px-3 py-2">
           <div className="flex min-w-0 items-center gap-2 text-sm">
             <AppLogo name={matchedEntry.name} logoUrl={matchedEntry.branding.logoUrl} darkLogoUrl={matchedEntry.branding.darkLogoUrl} size={24} />
-            <span className="truncate">Paperclip has a guided setup for {matchedEntry.name}.</span>
+            <span className="truncate">{t("connectionsetupflow.general.papercliphasaguidedsetupfor")} {matchedEntry.name}.</span>
           </div>
           <Button type="button" size="sm" variant="outline" onClick={onUseMatchedEntry}>
-            Use {matchedEntry.name}
+            {t("connectionsetupflow.general.use")} {matchedEntry.name}
           </Button>
         </div>
       ) : null}
@@ -3104,23 +3087,23 @@ function LinkConnectStep({
       <div className="mt-6 space-y-6">
         {showSimpleKeyQuestion && (
           <div>
-            <label className="mr-2 text-sm font-medium text-foreground">Does it need a key?</label>
+            <label className="mr-2 text-sm font-medium text-foreground">{t("connectionsetupflow.general.doesitneedakey")}</label>
             <div className="mt-2 inline-flex rounded-lg border border-border bg-muted/50 p-1">
               <SegmentedOption
-                label="No"
+                label={t("connectionsetupflow.general.no")}
                 selected={!needsKey}
                 onClick={() => onNeedsKeyChange(false)}
               />
               <SegmentedOption
-                label="Yes"
+                label={t("connectionsetupflow.general.yes")}
                 selected={needsKey}
                 onClick={() => onNeedsKeyChange(true)}
               />
             </div>
             <p className="mt-2 text-xs text-muted-foreground">
               {needsKey
-                ? "Paste the key this app gave you."
-                : "Most servers just work from the address — pick Yes only if the server gave you a key, or if it asks you to sign in."}
+                ? t("connectionsetupflow.general.pastethekeythisappgaveyou")
+                : t("connectionsetupflow.general.mostserversjustworkfromtheaddress")}
             </p>
           </div>
         )}
@@ -3128,7 +3111,7 @@ function LinkConnectStep({
         {(showSimpleKeyQuestion && needsKey) || authMode === "bearer" ? (
           <div className="space-y-4">
             <div>
-              <label className="text-sm font-medium text-foreground" htmlFor="generic-mcp-key">App key</label>
+              <label className="text-sm font-medium text-foreground" htmlFor="generic-mcp-key">{t("connectionsetupflow.general.appkey")}</label>
               <Input
                 id="generic-mcp-key"
                 type="password"
@@ -3144,13 +3127,11 @@ function LinkConnectStep({
 
         <Collapsible open={advancedOpen} onOpenChange={onAdvancedOpenChange}>
           <CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg border border-border bg-background px-3 py-2 text-left text-sm font-medium text-foreground hover:bg-accent/40">
-            Advanced authentication
-            <ChevronDown className={cn("h-4 w-4 text-muted-foreground transition-transform", advancedOpen && "rotate-180")} />
+            {t("connectionsetupflow.general.advancedauthentication")}<ChevronDown className={cn("h-4 w-4 text-muted-foreground transition-transform", advancedOpen && "rotate-180")} />
           </CollapsibleTrigger>
           <CollapsibleContent className="space-y-5 pt-4">
             <p className="text-xs text-muted-foreground">
-              Only needed when the server's docs are specific about how to authenticate.
-            </p>
+              {t("connectionsetupflow.general.onlyneededwhentheserversdocs")}</p>
             <div className="flex flex-wrap gap-2">
               {GENERIC_AUTH_MODE_OPTIONS.map((option) => (
                 <SegmentedOption
@@ -3172,8 +3153,8 @@ function LinkConnectStep({
                     <Input
                       value={row.name}
                       onChange={(e) => updateHeader(row.id, { name: e.target.value })}
-                      placeholder="Header name"
-                      aria-label="Header name"
+                      placeholder={t("connectionsetupflow.general.headername")}
+                      aria-label={t("connectionsetupflow.general.headername19")}
                       className="h-10 font-mono"
                     />
                     <Input
@@ -3181,7 +3162,7 @@ function LinkConnectStep({
                       autoComplete="off"
                       value={row.value}
                       onChange={(e) => updateHeader(row.id, { value: e.target.value })}
-                      placeholder="Value"
+                      placeholder={t("connectionsetupflow.general.value")}
                       aria-label={row.name.trim() ? `Value for ${row.name.trim()}` : "Header value"}
                       className="h-10 font-mono"
                     />
@@ -3193,8 +3174,7 @@ function LinkConnectStep({
                       onClick={() => onHeadersChange(headers.filter((candidate) => candidate.id !== row.id))}
                       disabled={headers.length === 1}
                     >
-                      Remove
-                    </Button>
+                      {t("connectionsetupflow.general.remove")}</Button>
                   </div>
                 ))}
                 <Button
@@ -3203,8 +3183,7 @@ function LinkConnectStep({
                   size="sm"
                   onClick={() => onHeadersChange([...headers, newCustomHeaderRow()])}
                 >
-                  Add another header
-                </Button>
+                  {t("connectionsetupflow.general.addanotherheader")}</Button>
                 {headerError ? <p className="text-xs text-destructive">{headerError}</p> : null}
               </div>
             ) : null}
@@ -3212,33 +3191,29 @@ function LinkConnectStep({
             {authMode === "oauth" ? (
               <div className="space-y-4">
                 <p className="text-xs text-muted-foreground">
-                  Paperclip sets sign-in up on its own whenever the server allows it. Only fill these in when the
-                  server's docs tell you to register Paperclip yourself first.
-                </p>
+                  {t("connectionsetupflow.general.paperclipsetssigninuponits")}</p>
                 <div>
                   <label className="text-sm font-medium text-foreground" htmlFor="generic-mcp-client-id">
-                    Client ID
-                  </label>
+                    {t("connectionsetupflow.general.clientid")}</label>
                   <Input
                     id="generic-mcp-client-id"
                     value={oauthClientId}
                     onChange={(e) => onOAuthClientIdChange(e.target.value)}
                     autoComplete="off"
-                    placeholder="Optional"
+                    placeholder={t("connectionsetupflow.general.optional")}
                     className="mt-2 h-11 font-mono"
                   />
                 </div>
                 <div>
                   <label className="text-sm font-medium text-foreground" htmlFor="generic-mcp-client-secret">
-                    Client secret
-                  </label>
+                    {t("connectionsetupflow.general.clientsecret")}</label>
                   <Input
                     id="generic-mcp-client-secret"
                     type="password"
                     autoComplete="off"
                     value={oauthClientSecret}
                     onChange={(e) => onOAuthClientSecretChange(e.target.value)}
-                    placeholder="Optional"
+                    placeholder={t("connectionsetupflow.general.optional20")}
                     className="mt-2 h-11 font-mono"
                   />
                 </div>
@@ -3250,11 +3225,10 @@ function LinkConnectStep({
 
       <div className="mt-8 flex items-center justify-between">
         <Button variant="ghost" onClick={onBack} disabled={submitting}>
-          Back
-        </Button>
+          {t("connectionsetupflow.general.back21")}</Button>
         <Button onClick={onConnect} disabled={submitting || !canSubmit || Boolean(headerError)}>
           {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          {submitting ? "Checking…" : "Check link"}
+          {submitting ? t("connectionsetupflow.general.checking22") : t("connectionsetupflow.general.checklink23")}
         </Button>
       </div>
     </div>
@@ -3372,6 +3346,7 @@ function KeyStep({
   onBack: () => void;
   onConnect: () => void;
 }) {
+  const { t } = useTranslation();
   const methods = useMemo(
     () => connectionMethodsForCredentialSource(entry, credentialSource),
     [credentialSource, entry],
@@ -3468,7 +3443,7 @@ function KeyStep({
   const hasAdvancedSettings = advancedConfigFields.length > 0 || optionalCustomerOAuthClient;
   const capabilitySelection = capabilityGroups.length > 1 ? (
     <div>
-      <label className="text-sm font-medium text-foreground">What should Paperclip be able to do?</label>
+      <label className="text-sm font-medium text-foreground">{t("connectionsetupflow.general.whatshouldpaperclipbeabletodo")}</label>
       <RadioCardGroup
         ariaLabel={`Access level for ${entry.name}`}
         className="mt-2"
@@ -3485,7 +3460,7 @@ function KeyStep({
           description: group.description,
         }))}
       />
-      {!capabilityKey && <p className="mt-2 text-xs text-muted-foreground">Choose an access level to continue.</p>}
+      {!capabilityKey && <p className="mt-2 text-xs text-muted-foreground">{t("connectionsetupflow.general.chooseanaccessleveltocontinue")}</p>}
     </div>
   ) : null;
   const managedGoogleMethod = capabilityMethods.find((candidate) =>
@@ -3512,7 +3487,7 @@ function KeyStep({
     </Button>
   ) : capabilityMethods.length > 1 ? (
     <div>
-      <label className="text-sm font-medium text-foreground">How do you want to connect?</label>
+      <label className="text-sm font-medium text-foreground">{t("connectionsetupflow.general.howdoyouwanttoconnect")}</label>
       <RadioCardGroup
         ariaLabel={`How to connect ${entry.name}`}
         className="mt-2"
@@ -3526,7 +3501,7 @@ function KeyStep({
           title: candidate.label ?? (candidate.auth === "oauth" ? `Sign in with ${entry.name}` : "Use an API key"),
         }))}
       />
-      {!method && <p className="mt-2 text-xs text-muted-foreground">Choose a connection method to continue.</p>}
+      {!method && <p className="mt-2 text-xs text-muted-foreground">{t("connectionsetupflow.general.chooseaconnectionmethodtocontinue")}</p>}
     </div>
   ) : null;
 
@@ -3540,7 +3515,7 @@ function KeyStep({
 
           {robotEmail ? (
             <div>
-              <label className="text-sm font-medium text-foreground">Share each sheet with this email</label>
+              <label className="text-sm font-medium text-foreground">{t("connectionsetupflow.general.shareeachsheetwiththisemail")}</label>
               <div className="mt-2 flex min-w-0 flex-col gap-2 sm:flex-row">
                 <div
                   title={robotEmail}
@@ -3551,17 +3526,15 @@ function KeyStep({
                 <CopyValueButton value={robotEmail} ariaLabel="Copy sharing email" />
               </div>
               <p className="mt-2 text-xs text-muted-foreground">
-                In Google Sheets, click Share and add this email as an Editor. Then paste the sheet links below.
-              </p>
+                {t("connectionsetupflow.general.ingooglesheetsclickshareandadd")}</p>
             </div>
           ) : (
             <div className="rounded-lg bg-muted/50 p-4 text-sm text-muted-foreground">
-              Google Sheets is not available on this instance yet.
-            </div>
+              {t("connectionsetupflow.general.googlesheetsisnotavailableonthis")}</div>
           )}
 
           <div>
-            <label className="text-sm font-medium text-foreground">Paste links to the sheets you shared</label>
+            <label className="text-sm font-medium text-foreground">{t("connectionsetupflow.general.pastelinkstothesheetsyoushared")}</label>
             <Textarea
               value={googleSheetsLinks}
               onChange={(e) => onGoogleSheetsLinksChange(e.target.value)}
@@ -3570,8 +3543,8 @@ function KeyStep({
             />
             <div className="mt-2 text-xs text-muted-foreground">
               {parsed.ids.length > 0
-                ? `${parsed.ids.length} ${parsed.ids.length === 1 ? "sheet" : "sheets"} ready to connect.`
-                : "Paste one link per line. Both .../edit and .../edit#gid=... links work."}
+                ? `${parsed.ids.length} ${parsed.ids.length === 1 ? t("connectionsetupflow.general.sheet") : t("connectionsetupflow.general.sheets")} ready to connect.`
+                : t("connectionsetupflow.general.pasteonelinkperlinebothedit")}
             </div>
             {googleSheetsError && <div className="mt-2 text-xs text-destructive">{googleSheetsError}</div>}
           </div>
@@ -3579,11 +3552,10 @@ function KeyStep({
 
         <div className="mt-8 flex items-center justify-between">
           <Button variant="ghost" onClick={onBack} disabled={submitting}>
-            Back
-          </Button>
+            {t("connectionsetupflow.general.back24")}</Button>
           <Button onClick={onConnect} disabled={submitting || !canConnect}>
             {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {submitting ? "Checking…" : "Connect"}
+            {submitting ? t("connectionsetupflow.general.checking25") : t("connectionsetupflow.general.connect26")}
           </Button>
         </div>
       </div>
@@ -3602,8 +3574,7 @@ function KeyStep({
             rel="noreferrer"
             className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground underline underline-offset-2 hover:text-foreground"
           >
-            Review requirements
-            <ArrowUpRight className="h-3 w-3" />
+            {t("connectionsetupflow.general.reviewrequirements")}<ArrowUpRight className="h-3 w-3" />
           </a>
         </div>
       ) : null}
@@ -3615,35 +3586,31 @@ function KeyStep({
         {usingVercel && vercelReview && vercelConnectAvailability ? (
           <div className="space-y-4 rounded-lg border border-border p-4">
             <div>
-              <div className="text-sm font-medium text-foreground">Create or attach the connector in Vercel</div>
+              <div className="text-sm font-medium text-foreground">{t("connectionsetupflow.general.createorattachtheconnectorinvercel")}</div>
               <p className="mt-1 text-xs text-muted-foreground">
-                Paperclip does not copy Vercel’s setup forms. Finish connector setup there, then paste its UID below.
-              </p>
+                {t("connectionsetupflow.general.paperclipdoesnotcopyvercelssetup")}</p>
               <a
                 href={vercelConnectAvailability.manageUrl}
                 target="_blank"
                 rel="noreferrer"
                 className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-foreground underline underline-offset-2"
               >
-                Open Vercel Connect
-                <ArrowUpRight className="h-3 w-3" />
+                {t("connectionsetupflow.general.openvercelconnect27")}<ArrowUpRight className="h-3 w-3" />
               </a>
             </div>
             <div>
               <label className="text-sm font-medium text-foreground" htmlFor="vercel-connect-connector">
-                Connector UID or ID
-              </label>
+                {t("connectionsetupflow.general.connectoruidorid")}</label>
               <Input
                 id="vercel-connect-connector"
                 value={vercelConnector}
                 onChange={(event) => onVercelConnectorChange(event.target.value)}
                 autoComplete="off"
-                placeholder="service/my-connector or scl_…"
+                placeholder={t("connectionsetupflow.general.servicemyconnectororscl")}
                 className="mt-2 h-11 font-mono"
               />
               <p className="mt-2 text-xs text-muted-foreground">
-                Paperclip validates the connector and stores only its reference and redacted verification metadata.
-              </p>
+                {t("connectionsetupflow.general.paperclipvalidatestheconnectorandstoresonly")}</p>
             </div>
           </div>
         ) : null}
@@ -3663,8 +3630,7 @@ function KeyStep({
           <Collapsible open={advancedOpen} onOpenChange={setAdvancedOpen}>
             <CollapsibleTrigger className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
               <ChevronDown className={cn("h-4 w-4 transition-transform", advancedOpen && "rotate-180")} />
-              Advanced
-            </CollapsibleTrigger>
+              {t("connectionsetupflow.general.advanced")}</CollapsibleTrigger>
             <CollapsibleContent className="pt-4">
               <div className="space-y-6">
                 {advancedConfigFields.map((field) => (
@@ -3693,7 +3659,7 @@ function KeyStep({
         )}
 
         {!usingVercel && method?.auth === "oauth" && customerOAuthClientRequired ? (
-          <div id={googleOAuthFieldsId} role="region" aria-label="Your OAuth app">
+          <div id={googleOAuthFieldsId} role="region" aria-label={t("connectionsetupflow.general.youroauthapp")}>
             <OAuthClientFields
               entry={entry}
               method={method}
@@ -3729,8 +3695,7 @@ function KeyStep({
                   rel="noreferrer"
                   className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-foreground underline underline-offset-2"
                 >
-                  Where do I find this?
-                  <ArrowUpRight className="h-3 w-3" />
+                  {t("connectionsetupflow.general.wheredoifindthis")}<ArrowUpRight className="h-3 w-3" />
                 </a>
               )}
             </div>
@@ -3741,17 +3706,16 @@ function KeyStep({
 
       <div className="mt-8 flex items-center justify-between">
         <Button variant="ghost" onClick={onBack} disabled={submitting}>
-          Back
-        </Button>
+          {t("connectionsetupflow.general.back28")}</Button>
         <Button onClick={onConnect} disabled={submitting || !hasMethodSelection || !allFilled || !oauthClientFilled || !vercelConnectorFilled || !configFilled || !configRequirementMet}>
           {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           {submitting
-            ? "Checking…"
+            ? t("connectionsetupflow.general.checking29")
             : usingVercel
-              ? method?.auth === "oauth" ? "Validate and continue" : "Validate and connect"
+              ? method?.auth === "oauth" ? t("connectionsetupflow.general.validateandcontinue") : t("connectionsetupflow.general.validateandconnect")
               : method?.auth === "oauth"
-                ? entry.slug === "github" ? "Continue to GitHub" : "Continue to sign in"
-                : "Connect"}
+                ? entry.slug === "github" ? t("connectionsetupflow.general.continuetogithub") : t("connectionsetupflow.general.continuetosignin")
+                : t("connectionsetupflow.general.connect30")}
         </Button>
       </div>
     </div>
@@ -3764,6 +3728,7 @@ function KeyStep({
  * has to say whether the clipboard actually took it.
  */
 function CopyValueButton({ value, ariaLabel }: { value: string; ariaLabel: string }) {
+  const { t } = useTranslation();
   const { copied, failed, copy } = useCopyAction();
   return (
     <Button
@@ -3774,7 +3739,7 @@ function CopyValueButton({ value, ariaLabel }: { value: string; ariaLabel: strin
       onClick={() => void copy(value)}
     >
       {copied ? <Check className="mr-2 h-4 w-4" /> : <Copy className="mr-2 h-4 w-4" />}
-      {copied ? "Copied" : failed ? "Copy failed" : "Copy"}
+      {copied ? t("connectionsetupflow.general.copied") : failed ? t("connectionsetupflow.general.copyfailed") : t("connectionsetupflow.general.copy")}
     </Button>
   );
 }
@@ -3798,15 +3763,15 @@ function OAuthClientFields({
   onClientSecretChange: (next: string) => void;
   required: boolean;
 }) {
+  const { t } = useTranslation();
   return (
     <div className="space-y-4 rounded-lg border border-border p-4">
       <div>
         <div className="text-sm font-medium text-foreground">
-          {required ? "Your OAuth app" : "Use your own OAuth app"}
+          {required ? t("connectionsetupflow.general.youroauthapp31") : t("connectionsetupflow.general.useyourownoauthapp")}
         </div>
         <p className="mt-1 text-xs text-muted-foreground">
-          Register Paperclip's callback URI in {entry.name}, then enter the customer-owned client details.
-        </p>
+          {t("connectionsetupflow.general.registerpaperclipscallbackuriin")} {entry.name}{t("connectionsetupflow.general.thenenterthecustomerownedclientdetails")}</p>
         {method.consoleLinks?.register ? (
           <a
             href={method.consoleLinks.register}
@@ -3814,14 +3779,13 @@ function OAuthClientFields({
             rel="noreferrer"
             className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-foreground underline underline-offset-2"
           >
-            Open {entry.name} app settings
-            <ArrowUpRight className="h-3 w-3" />
+            {t("connectionsetupflow.general.open")} {entry.name} {t("connectionsetupflow.general.appsettings")}<ArrowUpRight className="h-3 w-3" />
           </a>
         ) : null}
       </div>
       {callbackUrl ? (
         <div>
-          <label className="text-sm font-medium text-foreground">Paperclip callback URL</label>
+          <label className="text-sm font-medium text-foreground">{t("connectionsetupflow.general.paperclipcallbackurl")}</label>
           <div className="mt-2 flex min-w-0 flex-col gap-2 sm:flex-row">
             <div
               title={callbackUrl}
@@ -3832,14 +3796,12 @@ function OAuthClientFields({
             <CopyValueButton value={callbackUrl} ariaLabel="Copy callback URL" />
           </div>
           <p className="mt-2 text-xs text-muted-foreground">
-            Add this exact URL to {entry.name} before continuing. It must match the authorization request.
-          </p>
+            {t("connectionsetupflow.general.addthisexacturlto")} {entry.name} {t("connectionsetupflow.general.beforecontinuingitmustmatchtheauthorization")}</p>
         </div>
       ) : null}
       <div>
         <label className="text-sm font-medium text-foreground" htmlFor="curated-oauth-client-id">
-          Client ID
-        </label>
+          {t("connectionsetupflow.general.clientid32")}</label>
         <Input
           id="curated-oauth-client-id"
           value={clientId}
@@ -3851,15 +3813,14 @@ function OAuthClientFields({
       </div>
       <div>
         <label className="text-sm font-medium text-foreground" htmlFor="curated-oauth-client-secret">
-          Client secret
-        </label>
+          {t("connectionsetupflow.general.clientsecret33")}</label>
         <Input
           id="curated-oauth-client-secret"
           type="password"
           value={clientSecret}
           onChange={(event) => onClientSecretChange(event.target.value)}
           autoComplete="off"
-          placeholder="Optional for public clients"
+          placeholder={t("connectionsetupflow.general.optionalforpublicclients")}
           className="mt-2 h-11 font-mono"
         />
       </div>
@@ -3876,6 +3837,7 @@ function MethodConfigField({
   value: string | boolean | undefined;
   onChange: (value: string | boolean) => void;
 }) {
+  const { t } = useTranslation();
   if (field.type === "checkbox") {
     return (
       <div className="flex items-start justify-between gap-4 rounded-lg border border-border p-4">
@@ -3903,7 +3865,7 @@ function MethodConfigField({
           onChange={(event) => onChange(event.target.value)}
           className="mt-2 h-11 w-full rounded-md border border-input bg-background px-3 text-sm text-foreground outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/30"
         >
-          <option value="" disabled>Select an option</option>
+          <option value="" disabled>{t("connectionsetupflow.general.selectanoption")}</option>
           {(field.options ?? []).map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
         </select>
       ) : (
@@ -3986,6 +3948,7 @@ export function AccessStepContent({
   onBack: () => void;
   onContinue: () => void;
 }) {
+  const { t } = useTranslation();
   // "Only agents I choose" / "Just agents I pick" means agents this person may actually edit. When the server
   // has not told us, fall back to every live agent rather than an empty list —
   // an empty picker would read as "you have no agents".
@@ -4033,10 +3996,10 @@ export function AccessStepContent({
           <section className="p-6">
             <h2 className="text-sm font-semibold text-foreground">{identityHeading}</h2>
             {githubIdentity && grantKind === "agent" ? (
-              <p className="mt-2 text-sm text-muted-foreground">This agent uses this GitHub account for everyone’s work, instead of the person giving instructions.</p>
+              <p className="mt-2 text-sm text-muted-foreground">{t("connectionsetupflow.general.thisagentusesthisgithubaccountfor")}</p>
             ) : null}
             {identityLoading ? (
-              <div className="mt-4 grid gap-2 sm:grid-cols-2" aria-label="Loading connection identity">
+              <div className="mt-4 grid gap-2 sm:grid-cols-2" aria-label={t("connectionsetupflow.general.loadingconnectionidentity")}>
                 <Skeleton className="h-20 w-full rounded-md" />
                 <Skeleton className="h-20 w-full rounded-md" />
               </div>
@@ -4052,18 +4015,18 @@ export function AccessStepContent({
                 <div>
                   <div className="text-sm font-medium text-foreground">
                     {allowedGrantKinds[0] === "user"
-                      ? githubIdentity ? "My GitHub account" : "Just me"
+                      ? githubIdentity ? t("connectionsetupflow.general.mygithubaccount") : t("connectionsetupflow.general.justme")
                       : allowedGrantKinds[0] === "agent"
-                        ? "A dedicated account for an agent"
-                        : githubIdentity ? "Shared organization GitHub account (advanced)" : "Any human in the organization"}
+                        ? t("connectionsetupflow.general.adedicatedaccountforanagent")
+                        : githubIdentity ? t("connectionsetupflow.general.sharedorganizationgithubaccountadvanced") : t("connectionsetupflow.general.anyhumanintheorganization")}
                   </div>
                   {githubIdentity ? (
                     <p className="mt-1 text-xs text-muted-foreground">
                       {allowedGrantKinds[0] === "user"
-                        ? "Agents use it only for runs where you are the responsible person."
+                        ? t("connectionsetupflow.general.agentsuseitonlyforrunswhere")
                         : allowedGrantKinds[0] === "agent"
-                          ? "That agent always uses this account, regardless of who starts the run."
-                          : "Eligible agents use one shared credential, regardless of who starts the run."}
+                          ? t("connectionsetupflow.general.thatagentalwaysusesthisaccountregardless")
+                          : t("connectionsetupflow.general.eligibleagentsuseonesharedcredentialregardless")}
                     </p>
                   ) : null}
                 </div>
@@ -4120,7 +4083,7 @@ export function AccessStepContent({
             ) : (
               // A connection with no credential has no identity to choose, so
               // asking would be a meaningless decision.
-              <p className="mt-4 text-sm text-muted-foreground">No identity required</p>
+              <p className="mt-4 text-sm text-muted-foreground">{t("connectionsetupflow.general.noidentityrequired")}</p>
             )}
           </section>
 
@@ -4130,20 +4093,17 @@ export function AccessStepContent({
               <div className="mt-4 flex items-start gap-3 rounded-md border border-border bg-muted/40 p-4">
                 <UsersRound className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
                 <div>
-                  <div className="text-sm font-medium text-foreground">Existing agent access stays the same</div>
+                  <div className="text-sm font-medium text-foreground">{t("connectionsetupflow.general.existingagentaccessstaysthesame")}</div>
                   <p className="mt-1 text-xs text-muted-foreground">
-                    Reconnecting replaces the credential without changing which agents can use it.
-                  </p>
+                    {t("connectionsetupflow.general.reconnectingreplacesthecredentialwithoutchangingwhich")}</p>
                 </div>
               </div>
             ) : lockedAgentId ? (
               <p className="mt-2 text-sm text-muted-foreground">
-                This task grants access only to <span className="font-medium text-foreground">{lockedAgentName}</span>.
-                Existing connection access is left unchanged.
-              </p>
+                {t("connectionsetupflow.general.thistaskgrantsaccessonlyto")}<span className="font-medium text-foreground">{lockedAgentName}</span>{t("connectionsetupflow.general.existingconnectionaccessisleftunchanged")}</p>
             ) : (
               grantKind === "agent" ? (
-                <p className="mt-2 text-sm text-muted-foreground">Choose exactly one agent. This identity cannot be shared with other agents.</p>
+                <p className="mt-2 text-sm text-muted-foreground">{t("connectionsetupflow.general.chooseexactlyoneagentthisidentitycannot")}</p>
               ) : <RadioCardGroup
                 ariaLabel={agentAccessLabel}
                 className="mt-4 sm:grid-cols-2"
@@ -4204,8 +4164,7 @@ export function AccessStepContent({
           reading order; desktop keeps Back on the left. */}
       <div className="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-between">
         <Button variant="ghost" className="w-full sm:w-auto" onClick={onBack} disabled={pending}>
-          Back
-        </Button>
+          {t("connectionsetupflow.general.back34")}</Button>
         <Button
           className="w-full sm:w-auto"
           onClick={onContinue}
@@ -4287,6 +4246,7 @@ export function ConnectionSetupCompletionScreen({
   summary: Array<{ label: string; value: string }>;
   onDone: () => void;
 }) {
+  const { t } = useTranslation();
   return (
     <div className="mx-auto max-w-md py-10 text-center">
       <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full border-2 border-emerald-500 bg-emerald-500/10">
@@ -4294,7 +4254,7 @@ export function ConnectionSetupCompletionScreen({
       </div>
       <div className="mt-6 flex items-center justify-center gap-2">
         <AppLogo name={appName} logoUrl={logoUrl} darkLogoUrl={darkLogoUrl} size={28} />
-        <h2 className="text-2xl font-bold tracking-tight">{appName} is ready.</h2>
+        <h2 className="text-2xl font-bold tracking-tight">{appName} {t("connectionsetupflow.general.isready")}</h2>
       </div>
       <dl className="mx-auto mt-6 max-w-xs space-y-1 text-left">
         {summary.map((line) => (
@@ -4306,8 +4266,7 @@ export function ConnectionSetupCompletionScreen({
       </dl>
       <div className="mt-8">
         <Button size="lg" className="px-10" onClick={onDone}>
-          View connection
-        </Button>
+          {t("connectionsetupflow.general.viewconnection")}</Button>
       </div>
     </div>
   );

@@ -14,6 +14,7 @@ import { queryKeys } from "@/lib/queryKeys";
 import { RemoteMcpConnectionSetup } from "./RemoteMcpConnectionSetup";
 import { remoteMcpProviders, type RemoteMcpProviderId } from "./providers";
 import type { RemoteMcpSetupActions, RemoteMcpSetupState } from "./types";
+import { useTranslation } from "@/i18n";
 
 function readAccessDraft(key: string): Partial<RemoteMcpSetupState> {
   try {
@@ -26,6 +27,7 @@ function readAccessDraft(key: string): Partial<RemoteMcpSetupState> {
 export function RemoteMcpProductionSetup({ providerId, connection, host = "page", interactionId,
   requestedAgentId, existingConnections = [], forceNewConnection, onUseExisting, onComplete, onCancel, onPhaseChange,
 }: ConnectionSetupFlowProps & { providerId: RemoteMcpProviderId; connection?: ToolConnection }) {
+  const { t } = useTranslation();
   const provider = remoteMcpProviders[providerId];
   const { selectedCompanyId } = useCompany();
   const navigate = useNavigate();
@@ -181,14 +183,14 @@ export function RemoteMcpProductionSetup({ providerId, connection, host = "page"
     refresh: () => {}, reconnect: () => edit({ step: "connect" }), disconnect: () => {},
   };
   if (showChoices && onUseExisting) return <div className="space-y-5">
-    <div><h1 className="text-xl font-bold">Connect {provider.name}</h1><p className="mt-2 text-sm text-muted-foreground">Use an existing connection or connect a new account. Existing access stays unchanged.</p></div>
+    <div><h1 className="text-xl font-bold">{t("remotemcpproductionsetup.general.connect")} {provider.name}</h1><p className="mt-2 text-sm text-muted-foreground">{t("remotemcpproductionsetup.general.useanexistingconnectionorconnecta")}</p></div>
     <ConnectionChoiceList choices={existingConnections.map((c) => ({ id: c.id, name: c.name, description: "Ready to use" }))} pendingId={choicePending} onSelect={(id) => {
       setChoicePending(id); setChoiceError(null);
       void onUseExisting(id).catch((error) => { setChoiceError(error instanceof Error ? error.message : "Could not use this connection."); setChoicePending(null); });
     }} />
     {choiceError && <p role="alert" className="text-sm text-destructive">{choiceError}</p>}
-    <div className="flex items-center justify-between gap-3"><Button variant="ghost" disabled={Boolean(choicePending)} onClick={onCancel}>Cancel</Button><Button disabled={Boolean(choicePending)} onClick={() => setShowChoices(false)}>Connect new</Button></div>
+    <div className="flex items-center justify-between gap-3"><Button variant="ghost" disabled={Boolean(choicePending)} onClick={onCancel}>{t("remotemcpproductionsetup.general.cancel")}</Button><Button disabled={Boolean(choicePending)} onClick={() => setShowChoices(false)}>{t("remotemcpproductionsetup.general.connectnew")}</Button></div>
   </div>;
-  if (connection && !installs.data) return <div className="space-y-3 p-8"><p>{installs.isError ? "Could not load saved access. Retry before changing this connection." : "Loading saved access…"}</p>{installs.isError && <button type="button" className="text-primary underline" onClick={() => void installs.refetch()}>Try again</button>}</div>;
+  if (connection && !installs.data) return <div className="space-y-3 p-8"><p>{installs.isError ? t("remotemcpproductionsetup.general.couldnotloadsavedaccessretrybefore") : t("remotemcpproductionsetup.general.loadingsavedaccess")}</p>{installs.isError && <button type="button" className="text-primary underline" onClick={() => void installs.refetch()}>{t("remotemcpproductionsetup.general.tryagain")}</button>}</div>;
   return <RemoteMcpConnectionSetup host={host} lockedAgentId={requestedAgentId} authorizationUrl={host === "dialog" ? authorizationUrl.current : undefined} provider={provider} connectionId={savedConnection.current?.id ?? ""} fixedGrantKind={savedConnection.current ? savedConnection.current.credentialPolicy === "per_user" ? "user" : "organization" : undefined} state={state} actions={actions} agents={agents.data ?? []} />;
 }
