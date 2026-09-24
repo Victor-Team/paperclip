@@ -307,6 +307,56 @@
       "waitingfortask": "Waiting for task"
     }
   },
+  "chatidentityconfirm": {
+    "general": {
+      "thisidentitylinkisunavailable": "This identity link is unavailable",
+      "thelinkisinvalidexpiredalreadyused": "The link is invalid, expired, already used, or belongs to another Paperclip organization.",
+      "checkingidentitylink": "Checking identity link…",
+      "thesignedinaccount": "the signed-in account",
+      "identitylinked": "Identity linked",
+      "futuremessagesfrom": "Future messages from",
+      "useyourcurrentpaperclippermissionsin": "use your current Paperclip permissions in",
+      "returntoconnection": "Return to connection",
+      "linkyourexternalidentity": "Link your external identity",
+      "provider": "Provider",
+      "externalidentity": "External identity",
+      "paperclipaccount": "Paperclip account",
+      "agent": "Agent",
+      "paperclipagent": "Paperclip agent",
+      "confirmonlyifthisisyour": "Confirm only if this is your",
+      "identitypaperclipwillcheckyourcurrentorganization": "identity. Paperclip will check your current organization membership on every action.",
+      "thislinkcouldnotbeconfirmedit": "This link could not be confirmed. It may have expired or been revoked.",
+      "confirmidentity": "Confirm identity"
+    }
+  },
+  "photonconnectstep": {
+    "general": {
+      "connectimessagephoton": "Connect iMessage Photon",
+      "connect": "Connect",
+      "tophotoncloudprosupportsdirectmessages": "to Photon Cloud. Pro supports direct messages through a shared line. Dedicated numbers also support individually enabled groups.",
+      "connectagenttophotoncloud": "Connect {{agentName}} to Photon Cloud. Pro supports direct messages through a shared line. Dedicated numbers also support individually enabled groups.",
+      "photondashboard": "Photon dashboard",
+      "photonlinesetup": "Photon line setup",
+      "reconnectkeepsthisprojectand": "Reconnect keeps this project and",
+      "shareddmallocation": "shared DM allocation",
+      "dedicatednumber": "dedicated number",
+      "leavethesecretblanktoreusethe": ". Leave the secret blank to reuse the saved connection.",
+      "projectid": "Project ID",
+      "projectsecret": "Project secret",
+      "inspectingphoton": "Inspecting Photon…",
+      "inspectphotonproject": "Inspect Photon project",
+      "shareddms": "Shared DMs",
+      "dedicatednumbers": "Dedicated numbers",
+      "in": "in",
+      "thissharedprojectalreadybelongstoanother": "This shared project already belongs to another channel. Use a separate Photon project for each agent.",
+      "noeligiblededicatednumberisavailablecheck": "No eligible dedicated number is available. Check the line allocation in Photon and existing Paperclip channels.",
+      "directmessagesonlyenrolleachtestsender": "Direct messages only. Enroll each test sender in your Photon project's Users page, then use the number Photon assigns to that sender. Paperclip identity linking is still required. Groups cannot be enabled on this channel.",
+      "connecting": "Connecting…",
+      "reconnectphoton": "Reconnect Photon",
+      "connectshareddms": "Connect shared DMs",
+      "connectselectednumber": "Connect selected number"
+    }
+  },
   "common": {
     "actions": {
       "retry": "Retry",

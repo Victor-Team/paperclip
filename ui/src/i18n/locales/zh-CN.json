@@ -307,6 +307,56 @@
       "waitingfortask": "等待任务"
     }
   },
+  "chatidentityconfirm": {
+    "general": {
+      "thisidentitylinkisunavailable": "此身份关联不可用",
+      "thelinkisinvalidexpiredalreadyused": "该链接无效、已过期、已被使用，或属于另一个 Paperclip 组织。",
+      "checkingidentitylink": "正在检查身份关联…",
+      "thesignedinaccount": "当前登录帐户",
+      "identitylinked": "身份已关联",
+      "futuremessagesfrom": "来自",
+      "useyourcurrentpaperclippermissionsin": "的后续消息将使用您当前在",
+      "returntoconnection": "返回连接",
+      "linkyourexternalidentity": "关联您的外部身份",
+      "provider": "提供商",
+      "externalidentity": "外部身份",
+      "paperclipaccount": "Paperclip 帐户",
+      "agent": "智能体",
+      "paperclipagent": "Paperclip 智能体",
+      "confirmonlyifthisisyour": "请仅在这是您的",
+      "identitypaperclipwillcheckyourcurrentorganization": "身份时确认。Paperclip 会在每次操作时检查您当前的组织成员资格。",
+      "thislinkcouldnotbeconfirmedit": "无法确认此链接。它可能已过期或被撤销。",
+      "confirmidentity": "确认身份"
+    }
+  },
+  "photonconnectstep": {
+    "general": {
+      "connectimessagephoton": "连接 iMessage Photon",
+      "connect": "连接",
+      "tophotoncloudprosupportsdirectmessages": "至 Photon Cloud。Pro 支持通过共享线路发送直接消息；专用号码还支持单独启用的群组。",
+      "connectagenttophotoncloud": "将 {{agentName}} 连接到 Photon Cloud。Pro 支持通过共享线路发送直接消息；专用号码还支持单独启用的群组。",
+      "photondashboard": "Photon 控制台",
+      "photonlinesetup": "Photon 线路设置",
+      "reconnectkeepsthisprojectand": "重新连接会保留此项目和",
+      "shareddmallocation": "共享直接消息分配",
+      "dedicatednumber": "专用号码",
+      "leavethesecretblanktoreusethe": "。将密钥留空可复用已保存的连接。",
+      "projectid": "项目 ID",
+      "projectsecret": "项目密钥",
+      "inspectingphoton": "正在检查 Photon…",
+      "inspectphotonproject": "检查 Photon 项目",
+      "shareddms": "共享直接消息",
+      "dedicatednumbers": "专用号码",
+      "in": "位于",
+      "thissharedprojectalreadybelongstoanother": "此共享项目已属于另一个频道。请为每个智能体使用单独的 Photon 项目。",
+      "noeligiblededicatednumberisavailablecheck": "没有可用的专用号码。请检查 Photon 和现有 Paperclip 频道中的线路分配。",
+      "directmessagesonlyenrolleachtestsender": "仅支持直接消息。请在 Photon 项目的“用户”页面中注册每位测试发送者，然后使用 Photon 分配给该发送者的号码。仍需要进行 Paperclip 身份关联。此频道无法启用群组。",
+      "connecting": "正在连接…",
+      "reconnectphoton": "重新连接 Photon",
+      "connectshareddms": "连接共享直接消息",
+      "connectselectednumber": "连接所选号码"
+    }
+  },
   "common": {
     "actions": {
       "retry": "重试",
