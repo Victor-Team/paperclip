@@ -3467,5 +3467,32 @@
     "general": {
       "unverifiedserver": "Unverified server"
     }
+  },
+  "appnotconnected": {
+    "general": {
+      "app": "App",
+      "connectors": "Connectors",
+      "selectanorganizationtomanageapps": "Select an organization to manage apps.",
+      "thisappdoesntexistanymore": "This app doesn't exist anymore.",
+      "backtoconnectors": "Back to connectors",
+      "checkingwhocanreconnectthisidentity": "Checking who can reconnect this identity…",
+      "wecouldntverifywhocanreconnectthisidentity": "We couldn't verify who can reconnect this identity. Reload the page to try again.",
+      "thepersonthisconnectionbelongstomustreconnectit": "The person this connection belongs to must reconnect it.",
+      "youdonthavepermissiontoreconnectthisidentity": "You don't have permission to reconnect this identity.",
+      "nothingiswaitingforyouokrightnow": "Nothing is waiting for your OK right now.",
+      "reviewrequestswillappearhereafterthisappisconnected": "Review requests will appear here after this app is connected.",
+      "connected_one": "{{count}} connected",
+      "connected_other": "{{count}} connected",
+      "notconnected": "Not connected",
+      "needsattention": "Needs attention",
+      "signintoapplicationnameagaintorestoreaccess": "Sign in to {{applicationName}} again to restore access.",
+      "addaworkingapplicationnamekeytorestoreaccess": "Add a working {{applicationName}} key to restore access.",
+      "connectapplicationnamesoagentscanuseit": "Connect {{applicationName}} so agents can use it.",
+      "reconnect": "Reconnect",
+      "connect": "Connect",
+      "permissionspaused": "Permissions paused",
+      "reconnectthisapptoeditwhocanuseit": "Reconnect this app to edit who can use it and which actions need a human first.",
+      "previoussetupisretainedforreconnect": "Previous setup is retained for reconnect, but access controls stay read-only until the app is online."
+    }
   }
 }

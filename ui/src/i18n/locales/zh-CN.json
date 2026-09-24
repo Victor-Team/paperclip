@@ -3467,5 +3467,32 @@
     "general": {
       "unverifiedserver": "未验证服务器"
     }
+  },
+  "appnotconnected": {
+    "general": {
+      "app": "应用",
+      "connectors": "连接器",
+      "selectanorganizationtomanageapps": "请选择组织以管理应用。",
+      "thisappdoesntexistanymore": "此应用已不存在。",
+      "backtoconnectors": "返回连接器",
+      "checkingwhocanreconnectthisidentity": "正在检查谁可以重新连接此身份…",
+      "wecouldntverifywhocanreconnectthisidentity": "无法验证谁可以重新连接此身份。请重新加载页面后重试。",
+      "thepersonthisconnectionbelongstomustreconnectit": "此连接所属的人员必须重新连接。",
+      "youdonthavepermissiontoreconnectthisidentity": "您没有重新连接此身份的权限。",
+      "nothingiswaitingforyouokrightnow": "当前没有等待您确认的事项。",
+      "reviewrequestswillappearhereafterthisappisconnected": "此应用连接后，审查请求会显示在这里。",
+      "connected_one": "已连接 {{count}} 项",
+      "connected_other": "已连接 {{count}} 项",
+      "notconnected": "未连接",
+      "needsattention": "需要关注",
+      "signintoapplicationnameagaintorestoreaccess": "请重新登录 {{applicationName}} 以恢复访问权限。",
+      "addaworkingapplicationnamekeytorestoreaccess": "请添加可用的 {{applicationName}} 密钥以恢复访问权限。",
+      "connectapplicationnamesoagentscanuseit": "连接 {{applicationName}}，以便智能体可以使用它。",
+      "reconnect": "重新连接",
+      "connect": "连接",
+      "permissionspaused": "权限已暂停",
+      "reconnectthisapptoeditwhocanuseit": "重新连接此应用后，您才能编辑谁可以使用它以及哪些操作需要先由人工确认。",
+      "previoussetupisretainedforreconnect": "已保留先前设置以供重新连接，但在应用恢复在线前，访问控制保持只读。"
+    }
   }
 }
