@@ -500,7 +500,7 @@ export function AuditFeed({
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-1 md:space-y-4">
       {!hideHeader ? (
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
@@ -659,7 +659,7 @@ export function AuditFeed({
         </Card>
       ) : feed.error ? (
         <Card>
-          <CardContent className="flex flex-col items-center gap-3 py-14 text-center">
+          <CardContent className="flex flex-col items-center gap-3 py-6 text-center md:py-14">
             <p className="text-sm text-muted-foreground">
               {feed.error instanceof Error ? feed.error.message : t("auditfeed.general.failedtoloadtheauditlog")}
             </p>
@@ -668,8 +668,8 @@ export function AuditFeed({
           </CardContent>
         </Card>
       ) : items.length === 0 ? (
-        <Card>
-          <CardContent className="flex flex-col items-center gap-3 py-14 text-center">
+        <Card className="py-0 md:py-6">
+          <CardContent className="flex flex-col items-center gap-2 py-0 text-center md:gap-3 md:py-14">
             <ScrollText className="h-10 w-10 text-muted-foreground/40" />
             <div>
               <p className="text-sm font-medium text-foreground">
