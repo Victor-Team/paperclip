@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import type { TOptions } from "i18next";
 import {
   humanizeConnectionDisplayName,
   type Agent,
@@ -9,8 +10,11 @@ import { Link } from "@/lib/router";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { timeAgo } from "@/lib/timeAgo";
+import { t, useTranslation } from "@/i18n";
 import { appTabHref } from "../app-tabs";
 import type { ActivityPanelProps } from "./types";
+
+type ActivityTranslator = (key: string, options?: TOptions) => string;
 
 export function ActivityPanel(props: ActivityPanelProps) {
   return <RecentActivity {...props} />;
@@ -38,6 +42,7 @@ function RecentActivity({
   appName,
   userLabelById,
 }: ActivityPanelProps) {
+  const { t } = useTranslation();
   const nameById = useMemo(() => new Map(agents.map((a) => [a.id, a.name])), [agents]);
 
   const rows = useMemo<TimelineRow[]>(() => {
@@ -49,6 +54,7 @@ function RecentActivity({
           nameById.get(event.agentId ?? "") ?? null,
           event.actionRequestId ? actionRequests[event.actionRequestId] : undefined,
           isTestEvent(event) ? resolveActorLabel(event.actorId, userLabelById) : null,
+          t,
         );
         return {
           key: `call:${event.id}`,
@@ -63,20 +69,20 @@ function RecentActivity({
     const lifecycleRows: TimelineRow[] = lifecycleEvents.map((event) => ({
       key: `lifecycle:${event.id}`,
       createdAt: event.createdAt,
-      primary: humanizeLifecycleEvent(event, appName, nameById.get(event.agentId ?? "") ?? null),
+      primary: humanizeLifecycleEvent(event, appName, nameById.get(event.agentId ?? "") ?? null, t),
       dotClass: lifecycleDotColor(event),
-      link: { to: permissionsHref, label: lifecycleLinkLabel(event) },
+      link: { to: permissionsHref, label: lifecycleLinkLabel(event, t) },
     }));
 
     return [...callRows, ...lifecycleRows].sort(
       (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
     );
-  }, [events, lifecycleEvents, issues, actionRequests, nameById, connectionId, appName, userLabelById]);
+  }, [events, lifecycleEvents, issues, actionRequests, nameById, connectionId, appName, userLabelById, t]);
 
   return (
     <section className="space-y-5">
       <div>
-        <h2 className="text-lg font-semibold text-foreground">Recent activity</h2>
+        <h2 className="text-lg font-semibold text-foreground">{t("activitypanel.general.recentactivity")}</h2>
       </div>
       {loading ? (
         <div className="space-y-2 py-4">
@@ -84,7 +90,7 @@ function RecentActivity({
           <Skeleton className="h-4 w-2/3" />
         </div>
       ) : rows.length === 0 ? (
-        <p className="py-5 text-sm text-muted-foreground">No activity yet.</p>
+        <p className="py-5 text-sm text-muted-foreground">{t("activitypanel.general.noactivityyet")}</p>
       ) : (
         <ul className="divide-y divide-border">
           {rows.map((row) => (
@@ -95,7 +101,7 @@ function RecentActivity({
                 <span className="block truncate text-xs text-muted-foreground">
                   {row.issue ? (
                     <>
-                      while working on{" "}
+                      {t("activitypanel.general.whileworkingon")}{" "}
                       <Link
                         to={`/issues/${row.issue.identifier}`}
                         className="font-medium text-muted-foreground hover:text-foreground hover:underline"
@@ -147,13 +153,14 @@ export function isTestEvent(event: ToolCallEvent): boolean {
 export function resolveActorLabel(
   actorId: string | null,
   userLabelById: Map<string, string> | undefined,
+  translate: ActivityTranslator = t,
 ): string {
   if (actorId) {
     const label = userLabelById?.get(actorId);
     if (label) return label;
-    if (actorId === "local-board") return "Board";
+    if (actorId === "local-board") return translate("activitypanel.general.board");
   }
-  return "Someone";
+  return translate("activitypanel.general.someone");
 }
 
 export function humanizeEvent(
@@ -162,47 +169,58 @@ export function humanizeEvent(
   actionRequest?: ActivityPanelProps["actionRequests"][string],
   /** When set, this row is a Test-tab call run by the named user; prefix accordingly. */
   testRunnerLabel?: string | null,
+  translate: ActivityTranslator = t,
 ): { primary: string } {
   // For Test-tab calls, surface "<User> tested as <Agent>" so prosumer test runs are
   // distinguishable from real heartbeat agent activity in the audit trail (PAP-11415).
   const who = testRunnerLabel
-    ? `${testRunnerLabel} tested as ${agentName ?? "an agent"}`
-    : agentName ?? "An agent";
+    ? translate("activitypanel.general.testedas", {
+      runner: testRunnerLabel,
+      agent: agentName ?? translate("activitypanel.general.anagent"),
+    })
+    : agentName ?? translate("activitypanel.general.anagent");
   // The raw gateway tool name is prefixed (e.g. `mcp.app-gallery-link-…:kv-set`);
   // humanize it to "Kv Set" to match the cross-app Activity view (PAP-11105).
-  const action = event.toolName ? humanizeConnectionDisplayName(event.toolName) : "an action";
+  const action = event.toolName
+    ? humanizeConnectionDisplayName(event.toolName)
+    : translate("activitypanel.general.anaction");
   switch (event.eventType) {
     case "call_completed":
       return {
         primary: event.outcome === "success"
-          ? `${who} used ${action}`
-          : `${who} ran ${action}, but it didn't finish`,
+          ? translate("activitypanel.general.used", { who, action })
+          : translate("activitypanel.general.ranbutdidntfinish", { who, action }),
       };
     case "call_failed":
-      return { primary: `${action} didn't work for ${lower(who)}` };
+      return { primary: translate("activitypanel.general.didntworkfor", { action, who }) };
     case "call_denied":
       return {
         primary: testRunnerLabel
-          ? `${who} - ${action} is turned off`
-          : `Blocked ${action} - it isn't turned on`,
+          ? translate("activitypanel.general.turnedoff", { who, action })
+          : translate("activitypanel.general.blockednotturnedon", { action }),
       };
     case "approval_requested":
-      return { primary: `${who} asked before running ${action}` };
+      return { primary: translate("activitypanel.general.askedbeforerunning", { who, action }) };
     case "approval_resolved":
-      return { primary: humanizeApprovalResolved(action, actionRequest) };
+      return { primary: humanizeApprovalResolved(action, actionRequest, translate) };
     default:
-      return { primary: `${who} used ${action}` };
+      return { primary: translate("activitypanel.general.used", { who, action }) };
   }
 }
 
 function humanizeApprovalResolved(
   action: string,
   actionRequest?: ActivityPanelProps["actionRequests"][string],
+  translate: ActivityTranslator = t,
 ): string {
-  const resolver = actionRequest?.resolverDisplayName ?? "Someone";
-  if (actionRequest?.status === "approved") return `${resolver} approved ${action}`;
-  if (actionRequest?.status === "rejected") return `${resolver} said no to ${action}`;
-  return `${resolver} reviewed ${action}`;
+  const resolver = actionRequest?.resolverDisplayName ?? translate("activitypanel.general.someone");
+  if (actionRequest?.status === "approved") {
+    return translate("activitypanel.general.approved", { resolver, action });
+  }
+  if (actionRequest?.status === "rejected") {
+    return translate("activitypanel.general.saidnoto", { resolver, action });
+  }
+  return translate("activitypanel.general.reviewed", { resolver, action });
 }
 
 /** Humanize a connection lifecycle event into a prosumer sentence (PAP-11284). */
@@ -210,56 +228,59 @@ function humanizeLifecycleEvent(
   event: ToolConnectionLifecycleEvent,
   appName: string,
   agentName: string | null,
+  translate: ActivityTranslator = t,
 ): string {
-  const who = event.actorDisplayName ?? agentName ?? "Someone";
+  const who = event.actorDisplayName ?? agentName ?? translate("activitypanel.general.someone");
   switch (event.type) {
     case "app_connected":
-      return `${who} connected ${appName}`;
+      return translate("activitypanel.general.connected", { who, appName });
     case "app_paused":
-      return `${who} paused this app`;
+      return translate("activitypanel.general.pausedthisapp", { who });
     case "app_resumed":
-      return `${who} resumed this app`;
+      return translate("activitypanel.general.resumedthisapp", { who });
     case "reconnected":
-      return `${who} reconnected ${appName}`;
+      return translate("activitypanel.general.reconnected", { who, appName });
     case "disconnected":
-      return `${who} disconnected ${appName}`;
+      return translate("activitypanel.general.disconnected", { who, appName });
     case "allowlist_changed":
-      return humanizeAllowlistChange(who, event.details);
+      return humanizeAllowlistChange(who, event.details, translate);
     case "actions_quarantined": {
       const count = numberFrom(event.details?.count);
-      return `${count} new ${count === 1 ? "action" : "actions"} need review`;
+      return translate("activitypanel.general.newactionsneedreview", { count });
     }
     default:
-      return `${who} updated this app`;
+      return translate("activitypanel.general.updatedthisapp", { who });
   }
 }
 
-function humanizeAllowlistChange(who: string, details: Record<string, unknown> | null): string {
+function humanizeAllowlistChange(
+  who: string,
+  details: Record<string, unknown> | null,
+  translate: ActivityTranslator = t,
+): string {
   const added = numberFrom(details?.added);
   const removed = numberFrom(details?.removed);
   if (added > 0 && removed === 0) {
-    return `${who} added ${added} ${added === 1 ? "sheet" : "sheets"} to the allowlist`;
+    return translate("activitypanel.general.addedtoallowlist", { who, count: added });
   }
   if (removed > 0 && added === 0) {
-    return `${who} removed ${removed} ${removed === 1 ? "sheet" : "sheets"} from the allowlist`;
+    return translate("activitypanel.general.removedfromallowlist", { who, count: removed });
   }
   if (added > 0 && removed > 0) {
-    return `${who} updated the allowlist (added ${added}, removed ${removed})`;
+    return translate("activitypanel.general.updatedallowlistaddedremoved", { who, added, removed });
   }
-  return `${who} updated the allowlist`;
+  return translate("activitypanel.general.updatedallowlist", { who });
 }
 
-function lifecycleLinkLabel(event: ToolConnectionLifecycleEvent): string {
-  return event.type === "actions_quarantined" ? "Review permissions" : "View permissions";
+function lifecycleLinkLabel(event: ToolConnectionLifecycleEvent, translate: ActivityTranslator = t): string {
+  return event.type === "actions_quarantined"
+    ? translate("activitypanel.general.reviewpermissions")
+    : translate("activitypanel.general.viewpermissions");
 }
 
 function numberFrom(value: unknown): number {
   const n = Number(value ?? 0);
   return Number.isFinite(n) ? n : 0;
-}
-
-function lower(who: string): string {
-  return who === "An agent" ? "an agent" : who;
 }
 
 function dotColor(event: ToolCallEvent): string {

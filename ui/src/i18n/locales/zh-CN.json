@@ -3558,6 +3558,43 @@
       "containeraccesscouldntbeupdated": "无法更新容器访问。"
     }
   },
+  "activitypanel": {
+    "general": {
+      "recentactivity": "近期活动",
+      "noactivityyet": "暂无活动。",
+      "whileworkingon": "处理任务时",
+      "board": "董事会",
+      "someone": "某人",
+      "anagent": "某个智能体",
+      "testedas": "{{runner}} 以 {{agent}} 身份进行了测试",
+      "anaction": "某项操作",
+      "used": "{{who}} 使用了 {{action}}",
+      "ranbutdidntfinish": "{{who}} 运行了 {{action}}，但未完成",
+      "didntworkfor": "{{action}} 未能为 {{who}} 正常运行",
+      "turnedoff": "{{who}}：{{action}} 已关闭",
+      "blockednotturnedon": "{{action}} 已被阻止，尚未开启",
+      "askedbeforerunning": "{{who}} 在运行 {{action}} 前请求了确认",
+      "approved": "{{resolver}} 批准了 {{action}}",
+      "saidnoto": "{{resolver}} 拒绝了 {{action}}",
+      "reviewed": "{{resolver}} 审查了 {{action}}",
+      "connected": "{{who}} 已连接 {{appName}}",
+      "pausedthisapp": "{{who}} 已暂停此应用",
+      "resumedthisapp": "{{who}} 已恢复此应用",
+      "reconnected": "{{who}} 已重新连接 {{appName}}",
+      "disconnected": "{{who}} 已断开 {{appName}}",
+      "newactionsneedreview_one": "{{count}} 个新操作需要审查",
+      "newactionsneedreview_other": "{{count}} 个新操作需要审查",
+      "updatedthisapp": "{{who}} 已更新此应用",
+      "addedtoallowlist_one": "{{who}} 已将 {{count}} 份表格添加到允许列表",
+      "addedtoallowlist_other": "{{who}} 已将 {{count}} 份表格添加到允许列表",
+      "removedfromallowlist_one": "{{who}} 已从允许列表移除 {{count}} 份表格",
+      "removedfromallowlist_other": "{{who}} 已从允许列表移除 {{count}} 份表格",
+      "updatedallowlistaddedremoved": "{{who}} 已更新允许列表（添加 {{added}}，移除 {{removed}}）",
+      "updatedallowlist": "{{who}} 已更新允许列表",
+      "reviewpermissions": "审查权限",
+      "viewpermissions": "查看权限"
+    }
+  },
   "setuppanel": {
     "general": {
       "agents": "智能体",

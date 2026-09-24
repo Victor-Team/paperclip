@@ -3664,5 +3664,42 @@
       "saving": "Saving…",
       "savechoices": "Save choices"
     }
+  },
+  "activitypanel": {
+    "general": {
+      "recentactivity": "Recent activity",
+      "noactivityyet": "No activity yet.",
+      "whileworkingon": "while working on",
+      "board": "Board",
+      "someone": "Someone",
+      "anagent": "an agent",
+      "testedas": "{{runner}} tested as {{agent}}",
+      "anaction": "an action",
+      "used": "{{who}} used {{action}}",
+      "ranbutdidntfinish": "{{who}} ran {{action}}, but it didn't finish",
+      "didntworkfor": "{{action}} didn't work for {{who}}",
+      "turnedoff": "{{who}} — {{action}} is turned off",
+      "blockednotturnedon": "Blocked {{action}} — it isn't turned on",
+      "askedbeforerunning": "{{who}} asked before running {{action}}",
+      "approved": "{{resolver}} approved {{action}}",
+      "saidnoto": "{{resolver}} said no to {{action}}",
+      "reviewed": "{{resolver}} reviewed {{action}}",
+      "connected": "{{who}} connected {{appName}}",
+      "pausedthisapp": "{{who}} paused this app",
+      "resumedthisapp": "{{who}} resumed this app",
+      "reconnected": "{{who}} reconnected {{appName}}",
+      "disconnected": "{{who}} disconnected {{appName}}",
+      "newactionsneedreview_one": "{{count}} new action needs review",
+      "newactionsneedreview_other": "{{count}} new actions need review",
+      "updatedthisapp": "{{who}} updated this app",
+      "addedtoallowlist_one": "{{who}} added {{count}} sheet to the allowlist",
+      "addedtoallowlist_other": "{{who}} added {{count}} sheets to the allowlist",
+      "removedfromallowlist_one": "{{who}} removed {{count}} sheet from the allowlist",
+      "removedfromallowlist_other": "{{who}} removed {{count}} sheets from the allowlist",
+      "updatedallowlistaddedremoved": "{{who}} updated the allowlist (added {{added}}, removed {{removed}})",
+      "updatedallowlist": "{{who}} updated the allowlist",
+      "reviewpermissions": "Review permissions",
+      "viewpermissions": "View permissions"
+    }
   }
 }
