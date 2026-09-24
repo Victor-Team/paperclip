@@ -12,6 +12,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { copyTextToClipboard } from "@/lib/clipboard";
 import { MCP_CONFIG_HELP_INSTRUCTIONS, MCP_CONFIG_HELP_PROMPT } from "@paperclipai/shared";
+import { useTranslation } from "@/i18n";
 
 const COPIED_RESET_MS = 2_000;
 
@@ -24,6 +25,7 @@ const COPIED_RESET_MS = 2_000;
  * anything the operator has typed.
  */
 export function McpConfigHelpDialog() {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [copyState, setCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const resetTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -57,18 +59,16 @@ export function McpConfigHelpDialog() {
           variant="ghost"
           size="icon"
           className="h-6 w-6 shrink-0 text-muted-foreground hover:text-foreground"
-          aria-label="Get help creating an MCP config"
+          aria-label={t("mcpconfighelpdialog.general.gethelpcreatinganmcpconfig")}
         >
           <HelpCircle className="h-4 w-4" />
         </Button>
       </DialogTrigger>
       <DialogContent className="max-h-(--sz-85vh) overflow-y-auto sm:max-w-2xl">
         <DialogHeader>
-          <DialogTitle>Ask an agent for an MCP config</DialogTitle>
+          <DialogTitle>{t("mcpconfighelpdialog.general.askanagentforanmcpconfig")}</DialogTitle>
           <DialogDescription>
-            Don't know the URL or headers a tool needs? Hand this request to an agent and paste back what it
-            gives you.
-          </DialogDescription>
+            {t("mcpconfighelpdialog.general.dontknowtheurlorheaders")}</DialogDescription>
         </DialogHeader>
 
         <ol className="list-decimal space-y-1.5 pl-5 text-sm text-muted-foreground">
@@ -79,8 +79,7 @@ export function McpConfigHelpDialog() {
 
         <div className="space-y-2">
           <label htmlFor="mcp-config-help-prompt" className="text-sm font-medium text-foreground">
-            Prompt to send
-          </label>
+            {t("mcpconfighelpdialog.general.prompttosend")}</label>
           <Textarea
             id="mcp-config-help-prompt"
             readOnly
@@ -95,15 +94,14 @@ export function McpConfigHelpDialog() {
         <div className="flex flex-wrap items-center gap-3">
           <Button type="button" onClick={() => void copyPrompt()}>
             {copyState === "copied" ? <Check className="mr-2 h-4 w-4" /> : <Copy className="mr-2 h-4 w-4" />}
-            Copy prompt
-          </Button>
+            {t("mcpconfighelpdialog.general.copyprompt")}</Button>
           {/* aria-live so a screen reader hears the outcome without moving focus
               off the button the operator just pressed. */}
           <span aria-live="polite" className="text-xs text-muted-foreground">
             {copyState === "copied"
-              ? "Copied to clipboard."
+              ? t("mcpconfighelpdialog.general.copiedtoclipboard")
               : copyState === "failed"
-                ? "Couldn't copy automatically — select the text above and copy it."
+                ? t("mcpconfighelpdialog.general.couldntcopyautomaticallyselectthetext")
                 : null}
           </span>
         </div>

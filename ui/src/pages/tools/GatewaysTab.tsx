@@ -16,6 +16,7 @@ import { useToast } from "@/context/ToastContext";
 import { queryKeys } from "@/lib/queryKeys";
 import { copyTextToClipboard } from "@/lib/clipboard";
 import { ErrorState, LoadingState, RelativeTime, ToolsPageHeader } from "./shared";
+import { useTranslation } from "@/i18n";
 
 type CreateGatewayDraft = {
   name: string;
@@ -113,6 +114,7 @@ function buildTokenExpiresAt(value: string) {
 }
 
 export function GatewaysTab({ companyId }: { companyId: string }) {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const { pushToast } = useToast();
   const [creating, setCreating] = useState(false);
@@ -252,7 +254,7 @@ export function GatewaysTab({ companyId }: { companyId: string }) {
     createTokenMutation.mutate(gatewayId);
   }
 
-  if (gatewaysQuery.isLoading) return <LoadingState label="Loading gateways..." />;
+  if (gatewaysQuery.isLoading) return <LoadingState label={t("gatewaystab.general.loadinggateways")} />;
   if (gatewaysQuery.isError) return <ErrorState error={gatewaysQuery.error} />;
 
   const gateways = gatewaysQuery.data?.gateways ?? [];
@@ -263,7 +265,7 @@ export function GatewaysTab({ companyId }: { companyId: string }) {
     <div className="space-y-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <ToolsPageHeader
-          title="Named MCP gateways"
+          title={t("gatewaystab.general.namedmcpgateways")}
           description="Stable endpoints for external clients that use the same profiles, rules, and audit trail as agent tool access."
         />
         <Button
@@ -276,25 +278,24 @@ export function GatewaysTab({ companyId }: { companyId: string }) {
           disabled={profileLoading}
         >
           <Plus className="mr-1.5 h-3.5 w-3.5" />
-          Create gateway
-        </Button>
+          {t("gatewaystab.general.creategateway")}</Button>
       </div>
 
       {creating ? (
         <form className="space-y-3 rounded-md border border-border p-4" onSubmit={submitCreateGateway}>
           <div className="grid gap-3 md:grid-cols-(--gtc-60)">
             <label className="space-y-1.5 text-sm">
-              <span className="text-xs font-medium text-muted-foreground">Gateway name</span>
+              <span className="text-xs font-medium text-muted-foreground">{t("gatewaystab.general.gatewayname")}</span>
               <input
                 className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                 value={createDraft.name}
                 onChange={(event) => setCreateDraft((current) => ({ ...current, name: event.target.value }))}
-                placeholder="Engineering laptops"
+                placeholder={t("gatewaystab.general.engineeringlaptops")}
                 required
               />
             </label>
             <label className="space-y-1.5 text-sm">
-              <span className="text-xs font-medium text-muted-foreground">Access profile</span>
+              <span className="text-xs font-medium text-muted-foreground">{t("gatewaystab.general.accessprofile")}</span>
               <select
                 className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                 value={createDraft.profileId}
@@ -303,7 +304,7 @@ export function GatewaysTab({ companyId }: { companyId: string }) {
                 disabled={activeProfiles.length === 0}
               >
                 <option value="" disabled>
-                  {profileLoading ? "Loading profiles..." : "Choose a profile"}
+                  {profileLoading ? t("gatewaystab.general.loadingprofiles") : t("gatewaystab.general.chooseaprofile")}
                 </option>
                 {activeProfiles.map((profile) => (
                   <option key={profile.id} value={profile.id}>
@@ -314,23 +315,22 @@ export function GatewaysTab({ companyId }: { companyId: string }) {
             </label>
           </div>
           <label className="space-y-1.5 text-sm">
-            <span className="text-xs font-medium text-muted-foreground">Description</span>
+            <span className="text-xs font-medium text-muted-foreground">{t("gatewaystab.general.description")}</span>
             <textarea
               className="min-h-20 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
               value={createDraft.description}
               onChange={(event) => setCreateDraft((current) => ({ ...current, description: event.target.value }))}
-              placeholder="Who this endpoint is for and when it should be rotated."
+              placeholder={t("gatewaystab.general.whothisendpointisforandwhen")}
             />
           </label>
           {activeProfiles.length === 0 && !profileLoading ? (
-            <p className="text-xs text-muted-foreground">Create an access profile before adding a gateway.</p>
+            <p className="text-xs text-muted-foreground">{t("gatewaystab.general.createanaccessprofilebeforeaddinga")}</p>
           ) : null}
           <div className="flex flex-wrap justify-end gap-2">
             <Button type="button" variant="ghost" size="sm" onClick={() => setCreating(false)}>
-              Cancel
-            </Button>
+              {t("gatewaystab.general.cancel")}</Button>
             <Button type="submit" size="sm" disabled={createDisabled || !createDraft.name.trim() || !createDraft.profileId}>
-              {createGatewayMutation.isPending ? "Creating..." : "Create gateway"}
+              {createGatewayMutation.isPending ? t("gatewaystab.general.creating") : t("gatewaystab.general.creategateway1")}
             </Button>
           </div>
         </form>
@@ -338,8 +338,7 @@ export function GatewaysTab({ companyId }: { companyId: string }) {
 
       {gateways.length === 0 ? (
         <div className="rounded-md border border-dashed border-border p-5 text-sm text-muted-foreground">
-          No named gateways yet. Create one here, then issue a token for the client that will connect to it.
-        </div>
+          {t("gatewaystab.general.nonamedgatewaysyetcreateonehere")}</div>
       ) : (
         <div className="divide-y divide-border rounded-md border border-border">
           {gateways.map((gateway) => {
@@ -365,12 +364,10 @@ export function GatewaysTab({ companyId }: { companyId: string }) {
                   <div className="flex flex-wrap gap-2">
                     <Button type="button" variant="outline" size="sm" onClick={() => void copyText(endpoint, "Gateway endpoint")}>
                       <Copy className="mr-1.5 h-3.5 w-3.5" />
-                      Copy endpoint
-                    </Button>
+                      {t("gatewaystab.general.copyendpoint")}</Button>
                     <Button type="button" variant="outline" size="sm" onClick={() => startIssuing(gateway.id)}>
                       <KeyRound className="mr-1.5 h-3.5 w-3.5" />
-                      Issue token
-                    </Button>
+                      {t("gatewaystab.general.issuetoken")}</Button>
                   </div>
                 </div>
 
@@ -380,21 +377,21 @@ export function GatewaysTab({ companyId }: { companyId: string }) {
 
                 <dl className="grid gap-x-4 gap-y-2 text-sm sm:grid-cols-2 lg:grid-cols-4">
                   <div>
-                    <dt className="text-xs font-medium text-muted-foreground">Owner</dt>
+                    <dt className="text-xs font-medium text-muted-foreground">{t("gatewaystab.general.owner")}</dt>
                     <dd className="mt-0.5 text-foreground">{formatOwner(gateway, agentNames)}</dd>
                   </div>
                   <div>
-                    <dt className="text-xs font-medium text-muted-foreground">Scope</dt>
+                    <dt className="text-xs font-medium text-muted-foreground">{t("gatewaystab.general.scope")}</dt>
                     <dd className="mt-0.5 text-foreground">{formatScope(gateway, projectNames, agentNames)}</dd>
                   </div>
                   <div>
-                    <dt className="text-xs font-medium text-muted-foreground">Allowed tools</dt>
+                    <dt className="text-xs font-medium text-muted-foreground">{t("gatewaystab.general.allowedtools")}</dt>
                     <dd className="mt-0.5 text-foreground">
                       {profile ? `${formatAllowedTools(profile)} via ${profile.name}` : `Profile ${shortId(gateway.profileId)}`}
                     </dd>
                   </div>
                   <div>
-                    <dt className="text-xs font-medium text-muted-foreground">Last activity</dt>
+                    <dt className="text-xs font-medium text-muted-foreground">{t("gatewaystab.general.lastactivity")}</dt>
                     <dd className="mt-0.5 text-foreground">
                       {lastActivity ? <RelativeTime value={lastActivity} /> : "Never used"}
                     </dd>
@@ -405,7 +402,7 @@ export function GatewaysTab({ companyId }: { companyId: string }) {
                   <form className="space-y-3 rounded-md border border-border p-3" onSubmit={(event) => submitCreateToken(event, gateway.id)}>
                     <div className="grid gap-3 md:grid-cols-2">
                       <label className="space-y-1.5 text-sm">
-                        <span className="text-xs font-medium text-muted-foreground">Token name</span>
+                        <span className="text-xs font-medium text-muted-foreground">{t("gatewaystab.general.tokenname")}</span>
                         <input
                           className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                           value={tokenDraft.name}
@@ -415,12 +412,12 @@ export function GatewaysTab({ companyId }: { companyId: string }) {
                               [gateway.id]: { ...tokenDraft, name: event.target.value },
                             }))
                           }
-                          placeholder="Dotta's MacBook"
+                          placeholder={t("gatewaystab.general.dottasmacbook")}
                           required
                         />
                       </label>
                       <label className="space-y-1.5 text-sm">
-                        <span className="text-xs font-medium text-muted-foreground">Client label</span>
+                        <span className="text-xs font-medium text-muted-foreground">{t("gatewaystab.general.clientlabel")}</span>
                         <input
                           className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                           value={tokenDraft.clientLabel}
@@ -430,14 +427,14 @@ export function GatewaysTab({ companyId }: { companyId: string }) {
                               [gateway.id]: { ...tokenDraft, clientLabel: event.target.value },
                             }))
                           }
-                          placeholder="Cursor on work laptop"
+                          placeholder={t("gatewaystab.general.cursoronworklaptop")}
                           required
                         />
                       </label>
                     </div>
                     <div className="grid gap-3 md:grid-cols-[1fr_auto]">
                       <label className="space-y-1.5 text-sm">
-                        <span className="text-xs font-medium text-muted-foreground">Owner note</span>
+                        <span className="text-xs font-medium text-muted-foreground">{t("gatewaystab.general.ownernote")}</span>
                         <input
                           className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                           value={tokenDraft.ownerNote}
@@ -447,12 +444,12 @@ export function GatewaysTab({ companyId }: { companyId: string }) {
                               [gateway.id]: { ...tokenDraft, ownerNote: event.target.value },
                             }))
                           }
-                          placeholder="Who owns this token and why it exists"
+                          placeholder={t("gatewaystab.general.whoownsthistokenandwhyit")}
                           required
                         />
                       </label>
                       <label className="space-y-1.5 text-sm">
-                        <span className="text-xs font-medium text-muted-foreground">Expires</span>
+                        <span className="text-xs font-medium text-muted-foreground">{t("gatewaystab.general.expires")}</span>
                         <input
                           className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                           type="date"
@@ -486,8 +483,7 @@ export function GatewaysTab({ companyId }: { companyId: string }) {
                     </div>
                     <div className="flex flex-wrap justify-end gap-2">
                       <Button type="button" variant="ghost" size="sm" onClick={() => setIssuingGatewayId(null)}>
-                        Cancel
-                      </Button>
+                        {t("gatewaystab.general.cancel2")}</Button>
                       <Button
                         type="submit"
                         size="sm"
@@ -508,11 +504,10 @@ export function GatewaysTab({ companyId }: { companyId: string }) {
                 {createdToken ? (
                   <div className="space-y-2 rounded-md border border-border bg-muted/40 p-3 text-sm">
                     <div className="flex flex-wrap items-center justify-between gap-2">
-                      <div className="font-medium text-foreground">New token for {createdToken.name}</div>
+                      <div className="font-medium text-foreground">{t("gatewaystab.general.newtokenfor")} {createdToken.name}</div>
                       <Button type="button" variant="outline" size="sm" onClick={() => void copyText(createdToken.token, "Gateway bearer token")}>
                         <Copy className="mr-1.5 h-3.5 w-3.5" />
-                        Copy token
-                      </Button>
+                        {t("gatewaystab.general.copytoken")}</Button>
                     </div>
                     <div className="break-all rounded bg-background px-3 py-2 font-mono text-xs text-muted-foreground">
                       {createdToken.token}
@@ -524,11 +519,10 @@ export function GatewaysTab({ companyId }: { companyId: string }) {
                   <div>
                     <div className="mb-1.5 flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
                       <KeyRound className="h-3.5 w-3.5" />
-                      Tokens
-                    </div>
+                      {t("gatewaystab.general.tokens")}</div>
                     <div className="space-y-1 text-sm">
                       {gateway.tokens.length === 0 ? (
-                        <p className="text-muted-foreground">No tokens issued.</p>
+                        <p className="text-muted-foreground">{t("gatewaystab.general.notokensissued")}</p>
                       ) : (
                         gateway.tokens.map((token) => {
                           const revoked = Boolean(token.revokedAt);
@@ -546,11 +540,11 @@ export function GatewaysTab({ companyId }: { companyId: string }) {
                                   <span className="text-xs text-muted-foreground">
                                     {token.revokedAt ? (
                                       <>
-                                        revoked <RelativeTime value={token.revokedAt} />
+                                        {t("gatewaystab.general.revoked")}<RelativeTime value={token.revokedAt} />
                                       </>
                                     ) : token.expiresAt ? (
                                       <>
-                                        expires <RelativeTime value={token.expiresAt} />
+                                        {t("gatewaystab.general.expires3")}<RelativeTime value={token.expiresAt} />
                                       </>
                                     ) : (
                                       "no expiry"
@@ -566,14 +560,13 @@ export function GatewaysTab({ companyId }: { companyId: string }) {
                                       aria-label={`Revoke ${token.name}`}
                                     >
                                       <RotateCcw className="mr-1 h-3.5 w-3.5" />
-                                      Revoke
-                                    </Button>
+                                      {t("gatewaystab.general.revoke")}</Button>
                                   ) : null}
                                 </div>
                               </div>
                               {confirming ? (
                                 <div className="flex flex-wrap items-center justify-end gap-2 text-xs text-muted-foreground">
-                                  <span>Revoke this token now?</span>
+                                  <span>{t("gatewaystab.general.revokethistokennow")}</span>
                                   <Button
                                     type="button"
                                     variant="ghost"
@@ -582,8 +575,7 @@ export function GatewaysTab({ companyId }: { companyId: string }) {
                                     onClick={() => setConfirmingRevokeTokenId(null)}
                                   >
                                     <X className="mr-1 h-3.5 w-3.5" />
-                                    Cancel
-                                  </Button>
+                                    {t("gatewaystab.general.cancel4")}</Button>
                                   <Button
                                     type="button"
                                     variant="destructive"
@@ -593,8 +585,7 @@ export function GatewaysTab({ companyId }: { companyId: string }) {
                                     disabled={revokeTokenMutation.isPending}
                                   >
                                     <Check className="mr-1 h-3.5 w-3.5" />
-                                    Confirm
-                                  </Button>
+                                    {t("gatewaystab.general.confirm")}</Button>
                                 </div>
                               ) : null}
                             </div>
@@ -605,10 +596,10 @@ export function GatewaysTab({ companyId }: { companyId: string }) {
                   </div>
 
                   <div>
-                    <div className="mb-1.5 text-xs font-medium text-muted-foreground">Client snippets</div>
+                    <div className="mb-1.5 text-xs font-medium text-muted-foreground">{t("gatewaystab.general.clientsnippets")}</div>
                     <div className="space-y-1 text-sm">
                       {snippets.length === 0 ? (
-                        <p className="text-muted-foreground">No snippets available.</p>
+                        <p className="text-muted-foreground">{t("gatewaystab.general.nosnippetsavailable")}</p>
                       ) : (
                         snippets.map((snippet) => (
                           <details key={snippet.client} className="rounded px-2 py-1 open:bg-muted/40">
@@ -628,8 +619,7 @@ export function GatewaysTab({ companyId }: { companyId: string }) {
                                 }}
                               >
                                 <Copy className="mr-1 h-3.5 w-3.5" />
-                                Copy
-                              </Button>
+                                {t("gatewaystab.general.copy")}</Button>
                             </summary>
                             <pre className="mt-2 max-h-56 overflow-auto whitespace-pre-wrap break-words rounded bg-background p-3 text-xs text-muted-foreground">
                               {formatSnippetConfig(snippet.config)}
