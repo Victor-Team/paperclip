@@ -6,6 +6,7 @@ import { Link } from "@/lib/router";
 import { issuesApi } from "../api/issues";
 import { queryKeys } from "../lib/queryKeys";
 import { cn, formatDateTime, relativeTime } from "../lib/utils";
+import { useTranslation } from "@/i18n";
 
 interface IssuePlanDecompositionsSectionProps {
   issueId: string;
@@ -14,19 +15,18 @@ interface IssuePlanDecompositionsSectionProps {
 }
 
 function StatusBadge({ status }: { status: AcceptedPlanDecompositionSummary["status"] }) {
+  const { t } = useTranslation();
   if (status === "completed") {
     return (
       <span className="inline-flex items-center gap-1 rounded-sm border border-emerald-500/50 bg-emerald-500/10 px-2 py-0.5 text-(length:--text-micro) font-medium text-emerald-900 dark:text-emerald-100">
         <CheckCircle2 className="h-3 w-3" />
-        Completed
-      </span>
+        {t("issueplandecompositionssection.general.completed")}</span>
     );
   }
   return (
     <span className="inline-flex items-center gap-1 rounded-sm border border-amber-500/50 bg-amber-500/10 px-2 py-0.5 text-(length:--text-micro) font-medium text-amber-900 dark:text-amber-100">
       <Loader2 className="h-3 w-3 animate-spin" />
-      In flight
-    </span>
+      {t("issueplandecompositionssection.general.inflight")}</span>
   );
 }
 
@@ -35,6 +35,7 @@ export function IssuePlanDecompositionsSection({
   issueIdentifier,
   agentMap,
 }: IssuePlanDecompositionsSectionProps) {
+  const { t } = useTranslation();
   const { data: decompositions } = useQuery({
     queryKey: queryKeys.issues.acceptedPlanDecompositions(issueId),
     queryFn: () => issuesApi.listAcceptedPlanDecompositions(issueId),
@@ -46,9 +47,9 @@ export function IssuePlanDecompositionsSection({
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between gap-2">
-        <h3 className="text-sm font-medium text-muted-foreground">Plan decomposition</h3>
+        <h3 className="text-sm font-medium text-muted-foreground">{t("issueplandecompositionssection.general.plandecomposition")}</h3>
         <span className="text-(length:--text-micro) text-muted-foreground/80">
-          {items.length === 1 ? "1 accepted plan revision" : `${items.length} accepted plan revisions`}
+          {items.length === 1 ? t("issueplandecompositionssection.general.1acceptedplanrevision") : `${items.length} accepted plan revisions`}
         </span>
       </div>
 
@@ -91,41 +92,38 @@ export function IssuePlanDecompositionsSection({
               <div className="flex flex-wrap items-center gap-2">
                 <StatusBadge status={record.status} />
                 <span className="text-xs text-muted-foreground">
-                  Plan {revisionLabel}
+                  {t("issueplandecompositionssection.general.plan")} {revisionLabel}
                 </span>
                 <span className="text-xs text-muted-foreground/70">·</span>
                 <span className="inline-flex items-center gap-1 text-xs text-foreground">
                   <GitBranch className="h-3 w-3 text-muted-foreground" />
-                  {created} of {requested} child {requested === 1 ? "task" : "tasks"} created
-                </span>
+                  {created} {t("issueplandecompositionssection.general.of")} {requested} {t("issueplandecompositionssection.general.child")} {requested === 1 ? "task" : "tasks"} {t("issueplandecompositionssection.general.created")}</span>
                 {record.status === "completed" && requested > 0 ? (
                   <span
                     className="inline-flex items-center gap-1 rounded-sm border border-sky-500/40 bg-sky-500/10 px-1.5 py-0.5 text-(length:--text-nano) font-medium text-sky-900 dark:text-sky-100"
-                    title="Repeat attempts with this fingerprint reuse this record instead of creating new children"
+                    title={t("issueplandecompositionssection.general.repeatattemptswiththisfingerprintreusethis")}
                   >
                     <Repeat className="h-3 w-3" />
-                    Idempotent claim
-                  </span>
+                    {t("issueplandecompositionssection.general.idempotentclaim")}</span>
                 ) : null}
               </div>
 
               <div className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-(length:--text-micro) text-muted-foreground">
-                {ownerName ? <span>Owner: {ownerName}</span> : null}
+                {ownerName ? <span>{t("issueplandecompositionssection.general.owner")} {ownerName}</span> : null}
                 {startedAt ? (
-                  <span title={formatDateTime(startedAt)}>Started {relativeTime(startedAt)}</span>
+                  <span title={formatDateTime(startedAt)}>{t("issueplandecompositionssection.general.started")} {relativeTime(startedAt)}</span>
                 ) : null}
                 {completedAt ? (
-                  <span title={formatDateTime(completedAt)}>Completed {relativeTime(completedAt)}</span>
+                  <span title={formatDateTime(completedAt)}>{t("issueplandecompositionssection.general.completed1")} {relativeTime(completedAt)}</span>
                 ) : updatedAt ? (
-                  <span title={formatDateTime(updatedAt)}>Updated {relativeTime(updatedAt)}</span>
+                  <span title={formatDateTime(updatedAt)}>{t("issueplandecompositionssection.general.updated")} {relativeTime(updatedAt)}</span>
                 ) : null}
                 {issueIdentifier ? (
                   <Link
                     to={`/issues/${issueIdentifier}#document-plan`}
                     className="underline-offset-2 hover:underline"
                   >
-                    Plan document
-                  </Link>
+                    {t("issueplandecompositionssection.general.plandocument")}</Link>
                 ) : null}
               </div>
 

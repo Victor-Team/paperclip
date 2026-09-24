@@ -64,8 +64,10 @@ export function BillerSpendCard({
               {providerDisplayName(row.biller)}
             </CardTitle>
             <CardDescription className="text-xs mt-0.5">
-              <span className="font-mono">{formatTokens(row.inputTokens + row.cachedInputTokens)}</span> {t("billerspendcard.general.in")}              {" · "}
-              <span className="font-mono">{formatTokens(row.outputTokens)}</span> {t("billerspendcard.general.out")}              {" · "}
+              <span className="font-mono">{formatTokens(row.inputTokens + row.cachedInputTokens)}</span> {t("billerspendcard.general.in")}
+              {" · "}
+              <span className="font-mono">{formatTokens(row.outputTokens)}</span> {t("billerspendcard.general.out")}
+              {" · "}
               {row.providerCount} {t("billerspendcard.general.provider")}{row.providerCount === 1 ? "" : t("billerspendcard.general.s")}
               {" · "}
               {row.modelCount} {t("billerspendcard.general.model")}{row.modelCount === 1 ? "" : t("billerspendcard.general.s1")}
@@ -94,7 +96,7 @@ export function BillerSpendCard({
             ? `${row.subscriptionRunCount} subscription run${row.subscriptionRunCount === 1 ? "" : t("billerspendcard.general.s3")}`
             : t("billerspendcard.general.0subscriptionruns")}
           {" · "}
-          {formatCents(weekSpendCents)} t{t("billerspendcard.general.thisweek")}</div>
+          {formatCents(weekSpendCents)} {t("billerspendcard.general.thisweek")}</div>
 
         {billingTypeBreakdown.length > 0 && (
           <>
@@ -127,7 +129,7 @@ export function BillerSpendCard({
                     <div className="text-right tabular-nums">
                       <div className="font-medium">{formatCents(entry.costCents)}</div>
                       <div className="text-muted-foreground">
-                        {formatTokens(entry.inputTokens + entry.outputTokens)} t{t("billerspendcard.general.tok")}</div>
+                        {formatTokens(entry.inputTokens + entry.outputTokens)} {t("billerspendcard.general.tok")}</div>
                     </div>
                   </div>
                 ))}

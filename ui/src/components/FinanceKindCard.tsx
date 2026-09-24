@@ -27,7 +27,7 @@ export function FinanceKindCard({ rows }: FinanceKindCardProps) {
               <div className="min-w-0">
                 <div className="truncate text-sm font-medium">{financeEventKindDisplayName(row.eventKind)}</div>
                 <div className="text-xs text-muted-foreground">
-                  {row.eventCount} {t("financekindcard.general.event")}t{row.eventCount === 1 ? "" : "s"} · {row.billerCount} {t("financekindcard.general.biller")}{row.billerCount === 1 ? "" : "s"}
+                  {row.eventCount} {t("financekindcard.general.event")}{row.eventCount === 1 ? "" : "s"} · {row.billerCount} {t("financekindcard.general.biller")}{row.billerCount === 1 ? "" : "s"}
                 </div>
               </div>
               <div className="text-right tabular-nums">

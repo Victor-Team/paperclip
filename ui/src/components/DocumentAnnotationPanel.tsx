@@ -444,7 +444,7 @@ export function ThreadCard(props: {
         ) : (
           <p className="px-3 py-2 text-xs text-muted-foreground">
             <span className="font-medium text-foreground">
-              {thread.comments.length} {t("documentannotationpanel.general.comment2")}t{thread.comments.length === 1 ? "" : t("documentannotationpanel.general.s")}
+              {thread.comments.length} {t("documentannotationpanel.general.comment2")}{thread.comments.length === 1 ? "" : t("documentannotationpanel.general.s")}
             </span>
             {latestComment ? <span className="ml-1">· {truncate(latestComment.body, 120)}</span> : null}
           </p>

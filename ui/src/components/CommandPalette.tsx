@@ -246,7 +246,7 @@ export function CommandPalette() {
             <span>
               {t("commandpalette.general.noquicktaskmatchespress")}{" "}
               <kbd className="rounded border border-border bg-muted px-1 py-0.5 text-(length:--text-nano)">↵</kbd>{" "}
-              t{t("commandpalette.general.to")}<span className="font-medium">{t("commandpalette.general.searchall")}</span> {t("commandpalette.general.orkeeptypingtorefine")}</span>
+              {t("commandpalette.general.to")}<span className="font-medium">{t("commandpalette.general.searchall")}</span> {t("commandpalette.general.orkeeptypingtorefine")}</span>
           ) : (
             t("commandpalette.general.noresultsfound")
           )}
@@ -262,7 +262,7 @@ export function CommandPalette() {
             >
               <Search className="mr-2 h-4 w-4" />
               <span className="flex-1 truncate">
-                {t("commandpalette.general.searchallfor")}<span className="font-semibold">{t("commandpalette.general.ldquo")}{searchQuery}{t("commandpalette.general.rdquo")}</span>
+                {t("commandpalette.general.searchallfor")} <span className="font-semibold">{t("commandpalette.general.ldquo")}{searchQuery}{t("commandpalette.general.rdquo")}</span>
               </span>
               <span className="ml-auto inline-flex items-center gap-1 text-xs text-muted-foreground">
                 <span>{t("commandpalette.general.openfullsearch")}</span>

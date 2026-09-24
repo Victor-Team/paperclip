@@ -70,7 +70,7 @@ export function BudgetPolicyCard({
           {summary.amount > 0 ? formatCents(summary.amount) : "Disabled"}
         </div>
         <div className="mt-1 text-xs text-muted-foreground">
-          {t("budgetpolicycard.general.softalertat")}t {summary.warnPercent}%{summary.paused && summary.pauseReason ? ` · ${summary.pauseReason} pause` : ""}
+          {t("budgetpolicycard.general.softalertat")} {summary.warnPercent}%{summary.paused && summary.pauseReason ? ` · ${summary.pauseReason} pause` : ""}
         </div>
       </div>
     </div>
@@ -89,7 +89,7 @@ export function BudgetPolicyCard({
           {summary.amount > 0 ? formatCents(summary.amount) : "Disabled"}
         </div>
         <div className="mt-1 text-xs text-muted-foreground">
-          {t("budgetpolicycard.general.softalertat3")}t {summary.warnPercent}%{summary.paused && summary.pauseReason ? ` · ${summary.pauseReason} pause` : ""}
+          {t("budgetpolicycard.general.softalertat3")} {summary.warnPercent}%{summary.paused && summary.pauseReason ? ` · ${summary.pauseReason} pause` : ""}
         </div>
       </div>
     </div>

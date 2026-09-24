@@ -1,4 +1,5 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useTranslation } from "@/i18n";
 
 interface ShortcutEntry {
   keys: string[];
@@ -70,6 +71,7 @@ function KeyCap({ children }: { children: string }) {
 }
 
 export function KeyboardShortcutsCheatsheetContent() {
+  const { t } = useTranslation();
   return (
     <>
       <div className="divide-y divide-border border-t border-border">
@@ -105,8 +107,7 @@ export function KeyboardShortcutsCheatsheetContent() {
       </div>
       <div className="border-t border-border px-5 py-3">
         <p className="text-xs text-muted-foreground">
-          Press <KeyCap>Esc</KeyCap> to close &middot; Shortcuts are disabled in text fields
-        </p>
+          {t("keyboardshortcutscheatsheet.general.press")}<KeyCap>{t("keyboardshortcutscheatsheet.general.esc")}</KeyCap> {t("keyboardshortcutscheatsheet.general.toclosemiddotshortcutsaredisabledin")}</p>
       </div>
     </>
   );
@@ -119,11 +120,12 @@ export function KeyboardShortcutsCheatsheet({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
+  const { t } = useTranslation();
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md gap-0 p-0 overflow-hidden" showCloseButton={false}>
         <DialogHeader className="px-5 pt-5 pb-3">
-          <DialogTitle className="text-base">Keyboard shortcuts</DialogTitle>
+          <DialogTitle className="text-base">{t("keyboardshortcutscheatsheet.general.keyboardshortcuts")}</DialogTitle>
         </DialogHeader>
         <KeyboardShortcutsCheatsheetContent />
       </DialogContent>

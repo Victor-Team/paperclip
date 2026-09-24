@@ -144,7 +144,7 @@ export function BudgetOverridePayload({ payload }: { payload: Record<string, unk
       <PayloadField label={t("approvalpayload.general.metric")} value={payload.metric} />
       {(budgetAmount !== null || observedAmount !== null) ? (
         <div className="rounded-md bg-muted/40 px-3 py-2 text-xs text-muted-foreground">
-          {t("approvalpayload.general.limit")}t {budgetAmount !== null ? formatCents(budgetAmount) : "—"} {t("approvalpayload.general.observed")} {observedAmount !== null ? formatCents(observedAmount) : "—"}
+          {t("approvalpayload.general.limit")} {budgetAmount !== null ? formatCents(budgetAmount) : "—"} {t("approvalpayload.general.observed")} {observedAmount !== null ? formatCents(observedAmount) : "—"}
         </div>
       ) : null}
       {!!payload.guidance && (

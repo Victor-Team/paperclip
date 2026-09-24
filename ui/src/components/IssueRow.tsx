@@ -473,8 +473,7 @@ export function IssueRow({
           {mobileMeta ? (
             <>
               <span className="text-xs text-muted-foreground sm:hidden" aria-hidden="true">
-                &middot;
-              </span>
+                {t("issuerow.general.middot")}</span>
               <span className="text-xs text-muted-foreground sm:hidden">{mobileMeta}</span>
             </>
           ) : null}

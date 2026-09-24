@@ -22,6 +22,7 @@ import { timeAgo } from "../lib/timeAgo";
 import { Identity } from "./Identity";
 import { StatusIcon } from "./StatusIcon";
 import { Badge } from "@/components/ui/badge";
+import { useTranslation } from "@/i18n";
 
 export const issueTrailingColumns: InboxIssueColumn[] = ["assignee", "kickedOffBy", "project", "workspace", "parent", "labels", "updated"];
 
@@ -105,6 +106,7 @@ export function IssueColumnPicker({
   iconOnly?: boolean;
   rowPresentation?: "legacy" | "task";
 }) {
+  const { t } = useTranslation();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -113,7 +115,7 @@ export function IssueColumnPicker({
           variant={iconOnly ? "outline" : "ghost"}
           size={iconOnly ? "icon" : "sm"}
           className={iconOnly ? "h-8 w-8 shrink-0" : "hidden h-8 shrink-0 px-2 text-xs sm:inline-flex"}
-          title="Columns"
+          title={t("issuecolumns.general.columns")}
         >
           <Columns3 className={iconOnly ? "h-3.5 w-3.5" : "mr-1 h-3.5 w-3.5"} />
           {!iconOnly && "Columns"}
@@ -123,8 +125,7 @@ export function IssueColumnPicker({
         <DropdownMenuLabel className="px-2 pb-1 pt-1.5">
           <div className="space-y-1">
             <div className="text-(length:--text-nano) font-semibold uppercase tracking-(--tracking-caps) text-muted-foreground">
-              Desktop task rows
-            </div>
+              {t("issuecolumns.general.desktoptaskrows")}</div>
             <div className="text-sm font-medium text-foreground">
               {title}
             </div>
@@ -158,11 +159,9 @@ export function IssueColumnPicker({
           >
             <span className="flex flex-col gap-0.5">
               <span className="text-sm font-medium text-foreground">
-                Date group separators
-              </span>
+                {t("issuecolumns.general.dategroupseparators")}</span>
               <span className="text-xs leading-relaxed text-muted-foreground">
-                Show Today, Yesterday, and Earlier rules on newest-first task lists.
-              </span>
+                {t("issuecolumns.general.showtodayyesterdayandearlierruleson")}</span>
             </span>
           </DropdownMenuCheckboxItem>
         ) : null}
@@ -171,8 +170,7 @@ export function IssueColumnPicker({
           onSelect={onResetColumns}
           className="rounded-lg px-3 py-2 text-sm"
         >
-          Reset defaults
-          <span className="ml-auto text-xs text-muted-foreground">status, id, updated</span>
+          {t("issuecolumns.general.resetdefaults")}<span className="ml-auto text-xs text-muted-foreground">{t("issuecolumns.general.statusidupdated")}</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -198,6 +196,7 @@ export function InboxIssueMetaLeading({
   statusSlot?: ReactNode;
   checklistStepNumber?: number | string | null;
 }) {
+  const { t } = useTranslation();
   return (
     <>
       {showStatus ? (
@@ -237,8 +236,7 @@ export function InboxIssueMetaLeading({
               "text-blue-600 dark:text-blue-400",
             )}
           >
-            Live
-          </span>
+            {t("issuecolumns.general.live")}</span>
         </Badge>
       )}
       {showSubtreeLiveChip && !isLive && subtreeLiveCount > 0 && (
@@ -257,8 +255,7 @@ export function InboxIssueMetaLeading({
             aria-hidden="true"
           />
           <span className="hidden text-(length:--text-micro) font-medium text-muted-foreground sm:inline">
-            {subtreeLiveCount} live below
-          </span>
+            {subtreeLiveCount} {t("issuecolumns.general.livebelow")}</span>
         </Badge>
       )}
     </>
@@ -308,6 +305,7 @@ export function InboxIssueTrailingColumns({
   assigneeContent?: ReactNode;
   onFilterWorkspace?: (workspaceId: string) => void;
 }) {
+  const { t } = useTranslation();
   const activityText = issueActivityTimestamp(issue);
   const userLabel = assigneeUserName ?? formatAssigneeUserLabel(issue.assigneeUserId, currentUserId) ?? "User";
   const originatingActor = deriveOriginatingActor(issue);
@@ -352,8 +350,7 @@ export function InboxIssueTrailingColumns({
 
           return (
             <span key={column} className="min-w-0 truncate text-xs text-muted-foreground">
-              Unassigned
-            </span>
+              {t("issuecolumns.general.unassigned")}</span>
           );
         }
 
@@ -397,8 +394,7 @@ export function InboxIssueTrailingColumns({
 
           return (
             <span key={column} className="min-w-0 truncate text-xs text-muted-foreground">
-              Unknown
-            </span>
+              {t("issuecolumns.general.unknown")}</span>
           );
         }
 
@@ -423,8 +419,7 @@ export function InboxIssueTrailingColumns({
 
           return (
             <span key={column} className="min-w-0 truncate text-xs text-muted-foreground">
-              No project
-            </span>
+              {t("issuecolumns.general.noproject")}</span>
           );
         }
 
@@ -480,8 +475,7 @@ export function InboxIssueTrailingColumns({
                     </button>
                   </TooltipTrigger>
                   <TooltipContent side="top" sideOffset={6}>
-                    Filter by workspace
-                  </TooltipContent>
+                    {t("issuecolumns.general.filterbyworkspace")}</TooltipContent>
                 </Tooltip>
               ) : (
                 workspaceName
@@ -500,7 +494,7 @@ export function InboxIssueTrailingColumns({
               {parentIdentifier ? (
                 <span className="font-mono">{parentIdentifier}</span>
               ) : (
-                <span className="italic">Sub-task</span>
+                <span className="italic">{t("issuecolumns.general.subtask")}</span>
               )}
             </span>
           );
