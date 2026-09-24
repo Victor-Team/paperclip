@@ -688,7 +688,7 @@ export function WhatNeedsMe() {
               onToggle={() => setAgingOpen((prev) => !prev)}
             >
               <p className="text-xs text-muted-foreground">
-                {t("whatneedsme.general.idlepast")}t {ATTENTION_AGING_DAYS} {t("whatneedsme.general.dayskeptoffthedeskkeepany")}</p>
+                {t("whatneedsme.general.idlepast")} {ATTENTION_AGING_DAYS} {t("whatneedsme.general.dayskeptoffthedeskkeepany")}</p>
               {agingItems.map((item) => (
                 <AgingItemRow
                   key={item.id}

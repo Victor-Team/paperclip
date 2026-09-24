@@ -528,7 +528,7 @@ export function Timeline({ embedded = false }: { embedded?: boolean } = {}) {
             <div className="flex flex-wrap items-center justify-between gap-3">
               <p className="text-xs text-muted-foreground">
                 {data.spans.length} {t("timeline.general.run")}{data.spans.length === 1 ? "" : t("timeline.general.s")} ·{" "}
-                {new Date(data.window.from).toLocaleString()} t{t("timeline.general.to4")} {new Date(data.window.to).toLocaleString()}
+                {new Date(data.window.from).toLocaleString()} {t("timeline.general.to4")} {new Date(data.window.to).toLocaleString()}
                 {data.window.capped ? t("timeline.general.windowcapped") : ""}
               </p>
               {rangeControls}
