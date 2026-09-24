@@ -133,25 +133,25 @@ function FinanceSummaryCard({
         <MetricTile
           label={t("costs.general.debits")}
           value={formatCents(debitCents)}
-          subtitle={`${eventCount} total event${eventCount === 1 ? "" : "s"} in range`}
+          subtitle={t("costs.general.eventcountinrange", { count: eventCount })}
           icon={ArrowUpRight}
         />
         <MetricTile
           label={t("costs.general.credits")}
           value={formatCents(creditCents)}
-          subtitle="Refunds, offsets, and credit returns"
+          subtitle={t("costs.general.refundsoffsetscreditreturns")}
           icon={ArrowDownLeft}
         />
         <MetricTile
           label={t("costs.general.net")}
           value={formatCents(netCents)}
-          subtitle="Debit minus credit for the selected period"
+          subtitle={t("costs.general.debitminuscredit")}
           icon={ReceiptText}
         />
         <MetricTile
           label={t("costs.general.estimated")}
           value={formatCents(estimatedDebitCents)}
-          subtitle="Estimated debits that are not yet invoice-authoritative"
+          subtitle={t("costs.general.estimateddebitsnotinvoiced")}
           icon={Coins}
         />
       </CardContent>
@@ -188,8 +188,8 @@ export function Costs({
   } = useDateRange();
 
   useEffect(() => {
-    if (!embedded) setBreadcrumbs([{ label: "Costs" }]);
-  }, [embedded, setBreadcrumbs]);
+    if (!embedded) setBreadcrumbs([{ label: t("costs.general.costsbreadcrumb") }]);
+  }, [embedded, setBreadcrumbs, t]);
 
   useEffect(() => {
     setMainTab(initialTab);
@@ -553,7 +553,7 @@ export function Costs({
   }), [budgetPolicies]);
 
   if (!selectedCompanyId) {
-    return <EmptyState icon={DollarSign} message="Select an organization to view costs." />;
+    return <EmptyState icon={DollarSign} message={t("costs.general.selectcompanyforcosts")} />;
   }
 
   const showCustomPrompt = preset === "custom" && !customReady;
@@ -583,7 +583,7 @@ export function Costs({
                   onClick={() => setPreset(key)}
                   aria-pressed={preset === key}
                 >
-                  {PRESET_LABELS[key]}
+                  {t(`costs.general.preset${key}`, { defaultValue: PRESET_LABELS[key] })}
                 </Button>
               ))}
             </div>
@@ -593,6 +593,7 @@ export function Costs({
             <div className="flex flex-wrap items-center gap-2 border border-border p-3">
               <input
                 type="date"
+                aria-label={t("costs.general.startdate")}
                 value={customFrom}
                 onChange={(event) => setCustomFrom(event.target.value)}
                 className="h-9 rounded-md border border-input bg-background px-3 text-sm text-foreground"
@@ -600,6 +601,7 @@ export function Costs({
               <span className="text-sm text-muted-foreground">{t("costs.general.to")}</span>
               <input
                 type="date"
+                aria-label={t("costs.general.enddate")}
                 value={customTo}
                 onChange={(event) => setCustomTo(event.target.value)}
                 className="h-9 rounded-md border border-input bg-background px-3 text-sm text-foreground"
@@ -611,7 +613,7 @@ export function Costs({
             <MetricTile
               label={t("costs.general.inferencespend")}
               value={formatCents(spendData?.summary.spendCents ?? 0)}
-              subtitle={`${formatTokens(inferenceTokenTotal)} tokens across request-scoped events`}
+              subtitle={t("costs.general.requestscopedtokens", { count: formatTokens(inferenceTokenTotal) })}
               icon={DollarSign}
             />
             <MetricTile
@@ -619,27 +621,27 @@ export function Costs({
               value={activeBudgetIncidents.length > 0 ? String(activeBudgetIncidents.length) : (
                 spendData?.summary.budgetCents && spendData.summary.budgetCents > 0
                   ? `${spendData.summary.utilizationPercent}%`
-                  : "Open"
+                  : t("costs.general.openbudget")
               )}
               subtitle={
                 activeBudgetIncidents.length > 0
-                  ? `${budgetData?.pausedAgentCount ?? 0} agents paused · ${budgetData?.pausedProjectCount ?? 0} projects paused`
+                  ? t("costs.general.pausedagentsprojects", { agents: budgetData?.pausedAgentCount ?? 0, projects: budgetData?.pausedProjectCount ?? 0 })
                   : spendData?.summary.budgetCents && spendData.summary.budgetCents > 0
-                    ? `${formatCents(spendData.summary.spendCents)} of ${formatCents(spendData.summary.budgetCents)}`
-                    : "No monthly cap configured"
+                    ? t("costs.general.spentofbudget", { spent: formatCents(spendData.summary.spendCents), budget: formatCents(spendData.summary.budgetCents) })
+                    : t("costs.general.nomonthlycap")
               }
               icon={Coins}
             />
             <MetricTile
               label={t("costs.general.financenet")}
               value={formatCents(financeData?.summary.netCents ?? 0)}
-              subtitle={`${formatCents(financeData?.summary.debitCents ?? 0)} debits · ${formatCents(financeData?.summary.creditCents ?? 0)} credits`}
+              subtitle={t("costs.general.debitscredits", { debits: formatCents(financeData?.summary.debitCents ?? 0), credits: formatCents(financeData?.summary.creditCents ?? 0) })}
               icon={ReceiptText}
             />
             <MetricTile
               label={t("costs.general.financeevents")}
               value={String(financeData?.summary.eventCount ?? 0)}
-              subtitle={`${formatCents(financeData?.summary.estimatedDebitCents ?? 0)} estimated in range`}
+              subtitle={t("costs.general.estimatedinrange", { amount: formatCents(financeData?.summary.estimatedDebitCents ?? 0) })}
               icon={ArrowUpRight}
             />
           </div>
@@ -700,7 +702,7 @@ export function Costs({
                         </div>
                         <div className="mt-1 text-sm text-muted-foreground">
                           {spendData?.summary.budgetCents && spendData.summary.budgetCents > 0
-                            ? `Budget ${formatCents(spendData.summary.budgetCents)}`
+                            ? t("costs.general.budgetamount", { amount: formatCents(spendData.summary.budgetCents) })
                             : t("costs.general.unlimitedbudget")}
                         </div>
                       </div>
@@ -727,7 +729,7 @@ export function Costs({
                           />
                         </div>
                         <div className="text-xs text-muted-foreground">
-                          {spendData.summary.utilizationPercent}{t("costs.general.ofmonthlybudgetconsumedinthisrange")}</div>
+                          {t("costs.general.monthlybudgetused", { percent: spendData.summary.utilizationPercent })}</div>
                       </div>
                     ) : null}
                   </CardContent>
@@ -776,15 +778,13 @@ export function Costs({
                               <div className="text-right text-sm tabular-nums">
                                 <div className="font-medium">{formatCents(row.costCents)}</div>
                                 <div className="text-xs text-muted-foreground">
-                                  {t("costs.general.in")} {formatTokens(row.inputTokens + row.cachedInputTokens)} {t("costs.general.out")} {formatTokens(row.outputTokens)}
+                                  {t("costs.general.inputoutputtokens", { input: formatTokens(row.inputTokens + row.cachedInputTokens), output: formatTokens(row.outputTokens) })}
                                 </div>
                                 {(row.apiRunCount > 0 || row.subscriptionRunCount > 0) ? (
                                   <div className="text-xs text-muted-foreground">
-                                    {row.apiRunCount > 0 ? `${row.apiRunCount} api` : "0 api"}
+                                    {t("costs.general.apiruncount", { count: row.apiRunCount })}
                                     {" · "}
-                                    {row.subscriptionRunCount > 0
-                                      ? `${row.subscriptionRunCount} subscription`
-                                      : "0 subscription"}
+                                    {t("costs.general.subscriptionruncount", { count: row.subscriptionRunCount })}
                                   </div>
                                 ) : null}
                               </div>
@@ -806,7 +806,7 @@ export function Costs({
                                           <span className="font-mono">{modelRow.model}</span>
                                         </div>
                                         <div className="truncate text-muted-foreground">
-                                          {providerDisplayName(modelRow.biller)} · {billingTypeDisplayName(modelRow.billingType)}
+                                          {providerDisplayName(modelRow.biller)} · {t(`costs.general.billingtype${modelRow.billingType.replaceAll("_", "")}`, { defaultValue: billingTypeDisplayName(modelRow.billingType) })}
                                         </div>
                                       </div>
                                       <div className="text-right tabular-nums">
@@ -844,7 +844,7 @@ export function Costs({
                             key={row.projectId ?? `unattributed-${index}`}
                             className="flex items-center justify-between gap-3 border border-border px-3 py-2 text-sm"
                           >
-                            <span className="truncate">{row.projectName ?? row.projectId ?? "Unattributed"}</span>
+                            <span className="truncate">{row.projectName ?? row.projectId ?? t("costs.general.unattributed")}</span>
                             <span className="font-medium tabular-nums">{formatCents(row.costCents)}</span>
                           </div>
                         ))
@@ -852,7 +852,7 @@ export function Costs({
                     </CardContent>
                   </Card>
 
-                  <FinanceTimelineCard rows={topFinanceEvents.slice(0, 6)} emptyMessage="No finance events yet. Add account-level charges once biller invoices or credits land." />
+                  <FinanceTimelineCard rows={topFinanceEvents.slice(0, 6)} emptyMessage={t("costs.general.financeeventshelp")} />
                 </div>
               </div>
             </>
@@ -876,25 +876,25 @@ export function Costs({
                   <MetricTile
                     label={t("costs.general.activeincidents")}
                     value={String(activeBudgetIncidents.length)}
-                    subtitle="Open soft or hard threshold crossings"
+                    subtitle={t("costs.general.thresholdcrossings")}
                     icon={ReceiptText}
                   />
                   <MetricTile
                     label={t("costs.general.pendingapprovals")}
                     value={String(budgetData?.pendingApprovalCount ?? 0)}
-                    subtitle="Budget override approvals awaiting board action"
+                    subtitle={t("costs.general.budgetapprovals")}
                     icon={ArrowUpRight}
                   />
                   <MetricTile
                     label={t("costs.general.pausedagents")}
                     value={String(budgetData?.pausedAgentCount ?? 0)}
-                    subtitle="Agent heartbeats blocked by budget"
+                    subtitle={t("costs.general.agentheartbeatsblocked")}
                     icon={Coins}
                   />
                   <MetricTile
                     label={t("costs.general.pausedprojects")}
                     value={String(budgetData?.pausedProjectCount ?? 0)}
-                    subtitle="Project execution blocked by budget"
+                    subtitle={t("costs.general.projectexecutionblocked")}
                     icon={DollarSign}
                   />
                 </CardContent>
@@ -933,13 +933,13 @@ export function Costs({
                   return (
                     <section key={scopeType} className="space-y-3">
                       <div>
-                        <h2 className="text-lg font-semibold capitalize">{scopeType === "company" ? "organization" : scopeType} {t("costs.general.budgets3")}</h2>
+                        <h2 className="text-lg font-semibold capitalize">{t(`costs.general.${scopeType}budgets`)}</h2>
                         <p className="text-sm text-muted-foreground">
                           {scopeType === "company"
-                            ? "Organization-wide monthly policy."
+                            ? t("costs.general.companymonthlypolicy")
                             : scopeType === "agent"
-                              ? "Recurring monthly spend policies for individual agents."
-                              : "Lifetime spend policies for execution-bound projects."}
+                              ? t("costs.general.agentmonthlypolicies")
+                              : t("costs.general.projectlifetimepolicies")}
                         </p>
                       </div>
                       <div className="grid gap-4 xl:grid-cols-2">
