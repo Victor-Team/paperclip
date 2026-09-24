@@ -10,6 +10,7 @@ import { cn } from "../lib/utils";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
+import { useTranslation } from "@/i18n";
 
 interface StalledReviewActionsProps {
   issueId: string;
@@ -51,6 +52,7 @@ export function StalledReviewActions({
   reviewPolicy,
   className,
 }: StalledReviewActionsProps) {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const { pushToast } = useToastActions();
   const [note, setNote] = useState("");
@@ -104,7 +106,7 @@ export function StalledReviewActions({
       <Textarea
         value={note}
         onChange={(event) => setNote(event.target.value)}
-        placeholder="Add a note — required to request changes, optional otherwise…"
+        placeholder={t("stalledreviewactions.general.addanoterequiredtorequestchanges")}
         className="min-h-16 text-sm"
         data-testid="stalled-review-note"
         disabled={pending}
@@ -126,8 +128,7 @@ export function StalledReviewActions({
             ) : (
               <Undo2 className="h-3.5 w-3.5" aria-hidden />
             )}
-            Send back to work
-          </Button>
+            {t("stalledreviewactions.general.sendbacktowork")}</Button>
           <Button
             type="button"
             variant="outline"
@@ -143,8 +144,7 @@ export function StalledReviewActions({
             ) : (
               <RotateCcw className="h-3.5 w-3.5" aria-hidden />
             )}
-            Request changes
-          </Button>
+            {t("stalledreviewactions.general.requestchanges")}</Button>
           <Button
             type="button"
             size="sm"
@@ -158,8 +158,7 @@ export function StalledReviewActions({
             ) : (
               <CheckCircle2 className="h-3.5 w-3.5" aria-hidden />
             )}
-            Approve
-          </Button>
+            {t("stalledreviewactions.general.approve")}</Button>
         </div>
       </div>
     </div>

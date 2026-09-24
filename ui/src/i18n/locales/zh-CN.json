@@ -2828,7 +2828,10 @@
     "general": {
       "motiontweakpanel": "动效微调面板",
       "resetall": "全部重置",
-      "copyastheme": "复制为 @theme"
+      "copyastheme": "复制为 @theme",
+      "copiedtoclipboard": "已复制到剪贴板",
+      "copyfailedselectthetextandcopy": "复制失败——请选中文本手动复制",
+      "clicktheboxtocopy": "点击方框即可复制"
     }
   },
   "actioncard": {
@@ -10499,6 +10502,383 @@
       "leaving": "正在退出…",
       "leaveproject": "退出项目",
       "projects": "项目"
+    }
+  },
+  "skillscontextualsidebar": {
+    "general": {
+      "skills": "技能",
+      "skills1": "技能",
+      "installed": "已安装",
+      "discover": "发现",
+      "author": "作者",
+      "skillsyoucreateeditandtest": "你创建、编辑和测试的技能。",
+      "myskills": "我的技能"
+    }
+  },
+  "smokelabdashboardcard": {
+    "general": {
+      "integrationsmoke": "集成冒烟",
+      "runonefromthesmokelabtab": "在「冒烟实验室」标签页中运行一个"
+    }
+  },
+  "sourceresolvedfoldbadge": {
+    "general": {
+      "sourceresolvedwatchdogfold": "来源已核实的看门狗折叠",
+      "sourceresolved": "来源已核实"
+    }
+  },
+  "sourceresolvedfoldcallout": {
+    "general": {
+      "sourceresolvedwatchdogfold": "来源已核实的看门狗折叠",
+      "sourceresolvedfold": "来源已核实折叠",
+      "systemaudit": "系统审计",
+      "thisrunwasfoldedasasource": "此运行因来源已核实的误报而被折叠。",
+      "sourcetask": "来源任务",
+      "samerunevidence": "同次运行证据",
+      "at": "于",
+      "silenceagebeforefold": "折叠前的静默时长",
+      "silencestarted": "（静默始于",
+      "unknown": "未知",
+      "processcleanup": "进程清理",
+      "evaluationtask": "评估任务"
+    }
+  },
+  "stagesecretspanel": {
+    "general": {
+      "theseenvvarsareinjectedwhen": "这些环境变量会在",
+      "runsthissteptheyoverridematchingproject": "运行此步骤时注入。冲突时它们会覆盖同名的项目和智能体环境变量。",
+      "paperclip": "PAPERCLIP_*",
+      "namesarereserved": "前缀的名称为系统保留。",
+      "loadingsecrets": "正在加载密钥…",
+      "saving": "正在保存…",
+      "savesecrets": "保存密钥",
+      "unsavedchanges": "未保存的更改"
+    }
+  },
+  "stalledreviewactions": {
+    "general": {
+      "addanoterequiredtorequestchanges": "添加备注——请求更改时必填，其他情况可选…",
+      "sendbacktowork": "退回继续工作",
+      "requestchanges": "请求更改",
+      "approve": "批准"
+    }
+  },
+  "standalonebrowsercontrols": {
+    "general": {
+      "refresh": "刷新",
+      "share": "分享",
+      "openinbrowser": "在浏览器中打开"
+    }
+  },
+  "summaryslotcard": {
+    "general": {
+      "generating": "正在生成",
+      "historicalrevision": "历史修订",
+      "latestrevision": "最新修订",
+      "latest": "最新",
+      "refresh": "刷新",
+      "summarizersetupispendingapproval": "摘要器设置待批准",
+      "setupthesummarizer": "设置摘要器",
+      "summariesaregeneratedbypaperclipsbuilt": "摘要由 Paperclip 内置的摘要器智能体生成。请求此摘要前，请先配置其适配器和模型。",
+      "setupsummarizer": "设置摘要器",
+      "summarizerispaused": "摘要器已暂停",
+      "existingsummariesremainreadablebutnewsummaries": "已有摘要仍可查看，但在智能体恢复之前不会生成新摘要。",
+      "summaryrequestfailed": "摘要请求失败",
+      "summarycouldnotbeloaded": "无法加载摘要",
+      "retry": "重试",
+      "tryloadingthesummaryagain": "重新尝试加载摘要。",
+      "summarygenerationfailed": "摘要生成失败",
+      "thegenerationtaskendedbeforewritinga": "生成任务在写出摘要前就结束了。",
+      "generatingsummary": "正在生成摘要",
+      "summarizerisworkingin": "摘要器正在处理",
+      "nosummaryyet": "暂无摘要",
+      "generateaconcisestatussnapshotforthis": "为此呈现面生成一份简明的状态快照。",
+      "generating1": "正在生成…",
+      "generatesummary": "生成摘要",
+      "updated": "更新于",
+      "selectsummaryrevision": "选择摘要修订",
+      "revisions": "个修订"
+    }
+  },
+  "swipetoarchive": {
+    "general": {
+      "archive": "归档"
+    }
+  },
+  "systemnotice": {
+    "general": {
+      "hidedetails": "隐藏详情",
+      "details": "详情"
+    }
+  },
+  "taskchatthread": {
+    "general": {
+      "sometaskhistorycouldnotbeloaded": "部分任务历史无法加载。",
+      "retry": "重试",
+      "loadingconversation": "正在加载会话"
+    }
+  },
+  "tasktreecontrols": {
+    "general": {
+      "pausework": "暂停工作",
+      "pausesubtree": "暂停子树",
+      "resumework": "恢复工作",
+      "resumesubtree": "恢复子树",
+      "cancelsubtree": "取消子树…",
+      "restoresubtree": "恢复子树…",
+      "loading": "正在加载…",
+      "berestored": "被恢复",
+      "resume": "恢复",
+      "retrypreview": "重试预览",
+      "wakeaffectedagents": "唤醒受影响的智能体（",
+      "keeptasks": "保留任务",
+      "close": "关闭",
+      "applying": "正在应用…",
+      "subtreeispaused": "子树已暂停。",
+      "taskispaused": "任务已暂停。",
+      "resumesubtree1": "恢复子树",
+      "resumework2": "恢复工作"
+    }
+  },
+  "toastviewport": {
+    "general": {
+      "dismissnotification": "关闭通知"
+    }
+  },
+  "trustpresetsection": {
+    "general": {
+      "trust": "信任",
+      "trustpreset": "信任预设",
+      "containmentactive": "遏制已生效",
+      "containmentnotconfigured": "未配置遏制",
+      "thisagentcanonlyreadandmutate": "此智能体只能读取和修改其指定审查边界内的工作。其原始输出会被隔离，不与更高信任级的智能体接触，直到受信任的审查者将其提升。",
+      "thisagentissettolowtrust": "此智能体被设为低信任审查，但核心策略中没有设置任何项目、根议题或议题范围。请先添加范围，此智能体才能在不被拒绝的情况下运行。",
+      "boundarytype": "边界类型",
+      "project": "项目",
+      "rootissue": "根议题",
+      "issue": "议题",
+      "loading": "正在加载…",
+      "projects": "个项目",
+      "issues": "个议题",
+      "selectboundary": "选择边界",
+      "cesavesonecontainmentboundaryata": "CE 一次只保存一个遏制边界。保存的策略会包含此组织 ID。",
+      "clearboundary": "清除边界",
+      "managedbyeeapi": "由 EE/API 管理",
+      "thispolicyhas": "此策略包含",
+      "andcannotbeeditedbythece": "，无法用 CE 的单边界编辑器修改。",
+      "wanttosetmorethanonecontainment": "需要设置多个遏制边界？",
+      "getpaperclipee": "获取 Paperclip EE。",
+      "viewpolicy": "查看策略",
+      "preset": "预设",
+      "rawoutput": "原始输出",
+      "projects1": "项目",
+      "rootissue2": "根议题",
+      "explicitissues": "指定议题",
+      "allowedagents": "允许的智能体",
+      "allowedtools": "允许的工具",
+      "allowedsecrets": "允许的密钥",
+      "promotiontarget": "提升目标",
+      "eefields": "EE 字段",
+      "advancedpermissionsremaineditablethroughtheee": "安装 EE 权限扩展后，高级权限仍可通过该扩展编辑。"
+    }
+  },
+  "workspaceaccesscard": {
+    "general": {
+      "signsinwiththesnapshotlocalcredentials": "使用创建此克隆时捕获的快照本地凭据登录。",
+      "usesasingleuseloginhandoffno": "使用一次性登录交接——无需密码。"
+    }
+  },
+  "workspacefilebrowser": {
+    "general": {
+      "currentfolder": "当前文件夹",
+      "loadingfolder": "正在加载文件夹…",
+      "loadmorefromthisfolder": "加载此文件夹的更多内容",
+      "workspacefiles": "工作区文件",
+      "noorganizationselected": "未选择组织",
+      "loadingprojectworkspaces": "正在加载项目工作区",
+      "noprojectworkspaces": "无项目工作区",
+      "retry": "重试",
+      "searchfilesbynameorpath": "按名称或路径搜索文件…",
+      "searchworkspacefiles": "搜索工作区文件",
+      "refreshworkspacefiles": "刷新工作区文件",
+      "refreshworkspacefiles1": "刷新工作区文件",
+      "loadmorefromthisfolder2": "加载此文件夹的更多内容",
+      "showingfirst": "已显示前",
+      "refinethesearchtonarrow": "——请优化搜索以缩小范围。"
+    }
+  },
+  "workspaceruntimecontrols": {
+    "general": {
+      "port": "端口",
+      "workspacecommands": "工作区命令",
+      "noservicesrunning": "没有正在运行的服务",
+      "s": "秒",
+      "eachcommandcanbecontrolledindependently": "每个命令都可以独立控制。",
+      "services": "服务",
+      "jobs": "作业",
+      "untrackedservices": "未纳管的服务"
+    }
+  },
+  "workspaceservicecontrolbar": {
+    "general": {
+      "nourl": "无 URL",
+      "openinnewtab": "在新标签页打开",
+      "openinnewtab1": "在新标签页打开",
+      "start": "启动",
+      "start2": "启动",
+      "start3": "启动",
+      "start4": "启动",
+      "start5": "启动",
+      "restart": "重启",
+      "restart6": "重启",
+      "stop": "停止",
+      "stop7": "停止",
+      "restart8": "重启",
+      "restart9": "重启",
+      "viewlogs": "查看日志",
+      "running": "运行中",
+      "services": "服务 ·",
+      "startall": "全部启动",
+      "stopall": "全部停止",
+      "restartall": "全部重启",
+      "manageinservicestab": "在「服务」标签页中管理 →",
+      "nourl10": "无 URL"
+    }
+  },
+  "worktreebanner": {
+    "general": {
+      "worktree": "Worktree",
+      "clicktocopyworktreename": "点击复制 worktree 名称",
+      "copied": "已复制！",
+      "copyfailed": "复制失败"
+    }
+  },
+  "mediaartifactcard": {
+    "general": {
+      "video": "视频",
+      "image": "图片"
+    }
+  },
+  "chatdetailsidebar": {
+    "general": {
+      "chatconnection": "聊天连接",
+      "settings": "设置",
+      "access": "访问",
+      "reviews": "审查",
+      "conversations": "会话",
+      "activity": "活动"
+    }
+  },
+  "routinetriggers": {
+    "general": {
+      "thistriggerisnolongeravailable": "此触发器已不可用。",
+      "backtotriggers": "返回触发器",
+      "thistriggerisready": "此触发器已就绪。",
+      "backtotriggers1": "返回触发器",
+      "connectionstatusisunavailableretrying": "连接状态不可用。正在重试…",
+      "trigger": "个触发器",
+      "triggers": "个触发器",
+      "addtrigger": "添加触发器",
+      "removed": "已移除。",
+      "undo": "撤销",
+      "webhookurl": "Webhook URL",
+      "secretkey": "密钥",
+      "done": "完成",
+      "runthisroutineonascheduleor": "按计划运行此例程，或在其他应用发送 Webhook 时运行。",
+      "resumesetup": "继续设置",
+      "thistriggerstartstheroutinethroughthe": "此触发器通过 API 启动例程。",
+      "timezone": "时区",
+      "saveschedule": "保存计划",
+      "cancel": "取消",
+      "webhookurl2": "Webhook URL",
+      "thesecretkeyishidden": "密钥已隐藏。",
+      "replacekey": "更换密钥",
+      "hidekey": "隐藏密钥",
+      "thiswebhookusesitsurlasthe": "此 Webhook 将其 URL 用作共享密钥。",
+      "signthetimestampaperiodandthe": "用 HMAC-SHA256 对「时间戳 + 英文句点 + 精确的 JSON 正文」签名。发送 X-Paperclip-Timestamp 和 X-Paperclip-Signature: sha256=<签名>。",
+      "checkconnection": "检查连接",
+      "replacethewebhookkey": "更换 Webhook 密钥？",
+      "theoldkeywillstopworkingupdate": "旧密钥将立即失效。请用新密钥更新你的发送应用。",
+      "replacekey3": "更换密钥",
+      "checkconnection4": "检查连接",
+      "thiswebhookisalreadyenabledeventssent": "此 Webhook 已启用。现在发送的事件即可启动例程。从你的应用发送一个事件来检验投递。",
+      "eventreceivedauthenticationpassed": "已收到事件 · 认证通过",
+      "eventarrivedbutauthenticationfailedcheckthe": "事件已到达，但认证失败。请检查你应用中的密钥。",
+      "waitingforaneventfromyourapp": "正在等待来自你应用的事件…"
+    }
+  },
+  "triggercard": {
+    "general": {
+      "close": "关闭"
+    }
+  },
+  "triggerwizard": {
+    "general": {
+      "back": "返回",
+      "triggertype": "触发器类型",
+      "repeat": "重复",
+      "everyday": "每天",
+      "weekdaysmondayfriday": "工作日（周一至周五）",
+      "everyweek": "每周",
+      "time": "时间",
+      "day": "日",
+      "timezone": "时区",
+      "thetimefollowsthiszoneincludingdaylight": "时间遵循此时区，包括夏令时切换。",
+      "eachscheduledruncreatesataskfor": "每次计划运行都会为例程的指定智能体创建一个任务。已有的 Webhook 触发器将继续工作。",
+      "whatssendingthewebhook": "谁在发送 Webhook？",
+      "publicservicesneedapubliclyreachablehttps": "公共服务需要一个可公开访问的 HTTPS Webhook URL。",
+      "pastethiskeyintoyourapps": "将此密钥粘贴到你应用的签名密钥字段。",
+      "ifyourappusescustomheadersinstead": "如果你的应用改用自定义请求头，请将 Authorization 设为 Bearer，后接一个空格和此密钥。",
+      "thekeyishiddenafterleavingsetup": "离开设置后密钥将不再显示。如果尚未保存到你的应用，请生成替换密钥。",
+      "generatenewkey": "生成新密钥",
+      "connectiontestonly": "仅测试连接",
+      "eventsreceivedduringsetupwontstart": "设置期间收到的事件不会启动例程，也不会创建任务。",
+      "sendaneventfrom": "从",
+      "github": "GitHub",
+      "yourapp": "你的应用",
+      "openthiswebhookinyourrepositorysettings": "在仓库设置中打开此 Webhook。在「最近投递」下选择某个事件的「重新投递」。",
+      "lookforsendtestinyourapp": "在你应用的 Webhook 设置里找找「发送测试」。如果没有，就执行一次应触发该 Webhook 的操作——例如完成一次部署。",
+      "keepthispageopentoseethe": "保持此页面打开以查看测试结果。",
+      "testeventreceivedconnectionworking": "已收到测试事件 · 连接正常",
+      "eventarrivedbutthekeywasrejected": "事件已到达，但密钥被拒绝",
+      "noeventreceivedyet": "尚未收到事件",
+      "waitingforaneventfromyourapp": "正在等待来自你应用的事件…",
+      "authenticationpassednoroutinerunortask": "认证已通过。未创建例程运行或任务。",
+      "gobacktoconnectyourappupdate": "请返回「连接你的应用」，更新发送应用中的密钥后重新发送。未创建任务。",
+      "waitingtoverifydeliveryandauthenticationthe": "正在等待验证投递与认证。例程尚未运行。",
+      "troubleshootdelivery": "排查投递问题",
+      "checkthatthewebhookisenabledin": "请检查 Webhook 是否已在你的发送应用中启用、URL 是否匹配。脚本必须发送带 JSON 正文的 POST 请求。",
+      "webhookurl": "Webhook URL",
+      "finishsetuptoenablethiswebhookfuture": "完成设置即可启用此 Webhook。之后的事件将启动例程；这条测试事件不会被重放。",
+      "finishsetuptosavethiswebhookthe": "完成设置即可保存此 Webhook。例程处于暂停状态，准备好后请启用其自动触发器。这条测试事件不会被重放。",
+      "theroutineispausedenableitsautomatic": "例程处于暂停状态。准备好使用此计划时，请启用其自动触发器。",
+      "continue": "继续",
+      "reviewschedule": "查看计划",
+      "addschedule": "添加计划",
+      "checkconnection": "检查连接",
+      "finishsetup": "完成设置",
+      "finishwithoutchecking": "跳过检查并完成"
+    }
+  },
+  "webhookfields": {
+    "general": {
+      "copied": "已复制",
+      "copy": "复制",
+      "copyfailedselectandcopythetext": "复制失败。请选中下方文本手动复制。",
+      "agentinstructions": "智能体指令",
+      "agentinstructions1": "智能体指令",
+      "giveyouragenteverythingitneedsto": "把连接此 Webhook 所需的一切交给你的智能体：URL、认证密钥和分步说明。",
+      "copyforyouragent": "复制给你的智能体",
+      "copiedinstructions": "已复制指令",
+      "copyforyouragent2": "复制给你的智能体",
+      "copyfailedselectandcopytheinstructions": "复制失败。请选中下方指令手动复制。",
+      "agentinstructionstext": "智能体指令文本"
+    }
+  },
+  "webhookurlwarning": {
+    "general": {
+      "youcancontinueforlocalorprivate": "你可以继续用于本地或私网场景。公共发送方请使用可公开访问的 HTTPS URL。",
+      "learnhowtosetuphttpsand": "了解如何配置 HTTPS 与公网访问"
     }
   }
 }
