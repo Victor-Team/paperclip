@@ -237,7 +237,7 @@ export function PluginManager() {
                 <Label htmlFor="packageName">{t("pluginmanager.general.npmPackageName")}</Label>
                 <Input
                   id="packageName"
-                  placeholder="@paperclipai/plugin-example"
+                  placeholder={t("pluginmanager.general.paperclipaipluginexample")}
                   value={installPackage}
                   onChange={(e) => setInstallPackage(e.target.value)}
                 />
@@ -424,7 +424,7 @@ export function PluginManager() {
                     </div>
                     <div>
                       <p className="text-xs text-muted-foreground mt-0.5 truncate" title={plugin.packageName}>
-                        {plugin.packageName} · v{plugin.manifestJson.version ?? plugin.version}
+                        {plugin.packageName} {t("pluginmanager.general.v")}{plugin.manifestJson.version ?? plugin.version}
                       </p>
                     </div>
                     <p className="text-sm text-muted-foreground truncate mt-0.5" title={plugin.manifestJson.description}>

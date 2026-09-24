@@ -91,7 +91,7 @@ function AdapterRow({
             )}
             {adapter.version && (
               <Badge variant="secondary" className="font-mono text-(length:--text-nano)">
-                v{adapter.version}
+                {t("adaptermanager.general.v")}{adapter.version}
               </Badge>
             )}
             {adapter.overriddenBuiltin && (
@@ -430,7 +430,7 @@ export function AdapterManager() {
               <DialogTitle>{t("adaptermanager.general.installExternalAdapter")}</DialogTitle>
               <DialogDescription>
                 {t("adaptermanager.general.addAnAdapterFrom")}{" "}
-                <code className="text-xs bg-muted px-1 py-0.5 rounded">createServerAdapter()</code>.
+                <code className="text-xs bg-muted px-1 py-0.5 rounded">{t("adaptermanager.general.createserveradapter")}</code>.
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
@@ -489,7 +489,7 @@ export function AdapterManager() {
                     <Label htmlFor="adapterPackageName">{t("adaptermanager.general.packageName")}</Label>
                     <Input
                       id="adapterPackageName"
-                      placeholder="my-paperclip-adapter"
+                      placeholder={t("adaptermanager.general.mypaperclipadapter")}
                       value={installPackage}
                       onChange={(e) => setInstallPackage(e.target.value)}
                     />
@@ -498,7 +498,7 @@ export function AdapterManager() {
                     <Label htmlFor="adapterVersion">{t("adaptermanager.general.versionOptional")}</Label>
                     <Input
                       id="adapterVersion"
-                      placeholder="latest"
+                      placeholder={t("adaptermanager.general.latest")}
                       value={installVersion}
                       onChange={(e) => setInstallVersion(e.target.value)}
                     />

@@ -3,6 +3,7 @@ import { Loader2, ShieldCheck, Terminal, TriangleAlert } from "lucide-react";
 import { BOOTSTRAP_FALLBACK_COMMAND } from "@/bootstrapSetup";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { useTranslation } from "@/i18n";
 
 type LabFixtureKey =
   | "signed-out-private"
@@ -31,16 +32,17 @@ const FIXTURE_ORDER: LabFixtureKey[] = [
 ];
 
 function CliFallback({ hasActiveInvite }: { hasActiveInvite: boolean }) {
+  const { t } = useTranslation();
   return (
     <div className="mt-6 border-t border-border pt-5">
       <div className="flex items-center gap-2 text-sm font-medium">
         <Terminal className="size-4 text-muted-foreground" aria-hidden />
-        <span>Prefer to finish setup from the host?</span>
+        <span>{t("bootstrapsetupuxlab.general.prefertofinishsetupfromthehost")}</span>
       </div>
       <p className="mt-2 text-sm text-muted-foreground">
         {hasActiveInvite
-          ? "A bootstrap invite is already active. Check your Paperclip startup logs for the first‑admin URL, or run this command on the host to rotate it:"
-          : "Run this command on the host that runs Paperclip to print a one‑time first‑admin invite URL:"}
+          ? t("bootstrapsetupuxlab.general.abootstrapinviteisalreadyactivecheck")
+          : t("bootstrapsetupuxlab.general.runthiscommandonthehostthat")}
       </p>
       <pre className="mt-3 overflow-x-auto rounded-md border border-border bg-muted/30 p-3 font-mono text-xs">
 {BOOTSTRAP_FALLBACK_COMMAND}
@@ -58,16 +60,15 @@ function StateChrome({ children }: { children: ReactNode }) {
 }
 
 function SignedOutPrivate() {
+  const { t } = useTranslation();
   return (
     <StateChrome>
-      <h1 className="text-xl font-semibold">Finish setting up this Paperclip</h1>
+      <h1 className="text-xl font-semibold">{t("bootstrapsetupuxlab.general.finishsettingupthispaperclip")}</h1>
       <p className="mt-2 text-sm text-muted-foreground">
-        No admin has claimed this instance yet. Sign in or create your Paperclip account to become the first
-        admin from this browser.
-      </p>
+        {t("bootstrapsetupuxlab.general.noadminhasclaimedthisinstanceyet")}</p>
       <div className="mt-5">
         <Button asChild>
-          <a href="/auth?next=/">Sign in / Create account</a>
+          <a href="/auth?next=/">{t("bootstrapsetupuxlab.general.signincreateaccount")}</a>
         </Button>
       </div>
       <CliFallback hasActiveInvite={false} />
@@ -76,23 +77,22 @@ function SignedOutPrivate() {
 }
 
 function SignedInPrivate() {
+  const { t } = useTranslation();
   return (
     <StateChrome>
-      <h1 className="text-xl font-semibold">Finish setting up this Paperclip</h1>
+      <h1 className="text-xl font-semibold">{t("bootstrapsetupuxlab.general.finishsettingupthispaperclip1")}</h1>
       <p className="mt-2 text-sm text-muted-foreground">
-        No admin has claimed this instance yet. Claim it now to become the first admin and start onboarding.
-      </p>
+        {t("bootstrapsetupuxlab.general.noadminhasclaimedthisinstanceyet2")}</p>
       <div className="mt-5 flex flex-wrap items-center gap-3">
-        <Button>Claim this instance</Button>
+        <Button>{t("bootstrapsetupuxlab.general.claimthisinstance")}</Button>
         <span className="text-sm text-muted-foreground">
-          Signed in as <span className="font-medium text-foreground">jane@appliance.local</span>
+          {t("bootstrapsetupuxlab.general.signedinas")}<span className="font-medium text-foreground">{t("bootstrapsetupuxlab.general.janeappliancelocal")}</span>
         </span>
       </div>
       <p className="mt-3 text-xs text-muted-foreground">
-        Wrong account?{" "}
+        {t("bootstrapsetupuxlab.general.wrongaccount")}{" "}
         <a href="/auth?next=/" className="underline underline-offset-2">
-          Switch account
-        </a>
+          {t("bootstrapsetupuxlab.general.switchaccount")}</a>
         .
       </p>
       <CliFallback hasActiveInvite={false} />
@@ -101,19 +101,18 @@ function SignedInPrivate() {
 }
 
 function ClaimingPrivate() {
+  const { t } = useTranslation();
   return (
     <StateChrome>
-      <h1 className="text-xl font-semibold">Finish setting up this Paperclip</h1>
+      <h1 className="text-xl font-semibold">{t("bootstrapsetupuxlab.general.finishsettingupthispaperclip3")}</h1>
       <p className="mt-2 text-sm text-muted-foreground">
-        No admin has claimed this instance yet. Claim it now to become the first admin and start onboarding.
-      </p>
+        {t("bootstrapsetupuxlab.general.noadminhasclaimedthisinstanceyet4")}</p>
       <div className="mt-5 flex flex-wrap items-center gap-3">
         <Button disabled>
           <Loader2 className="mr-2 size-4 animate-spin" aria-hidden />
-          Claiming…
-        </Button>
+          {t("bootstrapsetupuxlab.general.claiming")}</Button>
         <span className="text-sm text-muted-foreground">
-          Signed in as <span className="font-medium text-foreground">jane@appliance.local</span>
+          {t("bootstrapsetupuxlab.general.signedinas5")}<span className="font-medium text-foreground">{t("bootstrapsetupuxlab.general.janeappliancelocal6")}</span>
         </span>
       </div>
       <CliFallback hasActiveInvite={false} />
@@ -122,16 +121,16 @@ function ClaimingPrivate() {
 }
 
 function ClaimErrorPrivate() {
+  const { t } = useTranslation();
   return (
     <StateChrome>
-      <h1 className="text-xl font-semibold">Finish setting up this Paperclip</h1>
+      <h1 className="text-xl font-semibold">{t("bootstrapsetupuxlab.general.finishsettingupthispaperclip7")}</h1>
       <p className="mt-2 text-sm text-muted-foreground">
-        No admin has claimed this instance yet. Claim it now to become the first admin and start onboarding.
-      </p>
+        {t("bootstrapsetupuxlab.general.noadminhasclaimedthisinstanceyet8")}</p>
       <div className="mt-5 flex flex-wrap items-center gap-3">
-        <Button>Claim this instance</Button>
+        <Button>{t("bootstrapsetupuxlab.general.claimthisinstance9")}</Button>
         <span className="text-sm text-muted-foreground">
-          Signed in as <span className="font-medium text-foreground">jane@appliance.local</span>
+          {t("bootstrapsetupuxlab.general.signedinas10")}<span className="font-medium text-foreground">{t("bootstrapsetupuxlab.general.janeappliancelocal11")}</span>
         </span>
       </div>
       <div
@@ -140,10 +139,10 @@ function ClaimErrorPrivate() {
       >
         <TriangleAlert className="mt-0.5 size-4 flex-shrink-0" aria-hidden />
         <div>
-          <p className="font-medium">Someone else has already claimed this instance.</p>
+          <p className="font-medium">{t("bootstrapsetupuxlab.general.someoneelsehasalreadyclaimedthisinstance")}</p>
           <p className="mt-1 text-destructive/90">
-            Refresh to sign in, or ask the existing admin to invite you from{" "}
-            <span className="font-mono">Settings → Access</span>.
+            {t("bootstrapsetupuxlab.general.refreshtosigninoraskthe")}{" "}
+            <span className="font-mono">{t("bootstrapsetupuxlab.general.settingsaccess")}</span>.
           </p>
         </div>
       </div>
@@ -153,6 +152,7 @@ function ClaimErrorPrivate() {
 }
 
 function ClaimSuccess() {
+  const { t } = useTranslation();
   return (
     <StateChrome>
       <div className="flex items-start gap-3">
@@ -160,19 +160,18 @@ function ClaimSuccess() {
           <ShieldCheck className="size-5" aria-hidden />
         </div>
         <div>
-          <h1 className="text-xl font-semibold">You&rsquo;re the instance admin</h1>
+          <h1 className="text-xl font-semibold">{t("bootstrapsetupuxlab.general.yoursquoretheinstanceadmin")}</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Setup is complete. Taking you to onboarding to create your first organization&hellip;
-          </p>
+            {t("bootstrapsetupuxlab.general.setupiscompletetakingyoutoonboarding")}</p>
         </div>
       </div>
       <div className="mt-5 flex items-center gap-3">
         <Loader2 className="size-4 animate-spin text-muted-foreground" aria-hidden />
-        <span className="text-sm text-muted-foreground">Redirecting&hellip;</span>
+        <span className="text-sm text-muted-foreground">{t("bootstrapsetupuxlab.general.redirectinghellip")}</span>
       </div>
       <div className="mt-5">
         <Button asChild variant="outline">
-          <a href="/">Continue to dashboard</a>
+          <a href="/">{t("bootstrapsetupuxlab.general.continuetodashboard")}</a>
         </Button>
       </div>
     </StateChrome>
@@ -180,18 +179,15 @@ function ClaimSuccess() {
 }
 
 function PublicInviteOnly() {
+  const { t } = useTranslation();
   return (
     <StateChrome>
-      <h1 className="text-xl font-semibold">This Paperclip is waiting on its first admin</h1>
+      <h1 className="text-xl font-semibold">{t("bootstrapsetupuxlab.general.thispaperclipiswaitingonitsfirst")}</h1>
       <p className="mt-2 text-sm text-muted-foreground">
-        This instance runs in invite‑only mode. The operator must generate a one‑time first‑admin invite URL
-        from the host. Once you have the link, open it from this browser to finish setup.
-      </p>
+        {t("bootstrapsetupuxlab.general.thisinstancerunsininviteonlymode")}</p>
       <CliFallback hasActiveInvite />
       <p className="mt-4 text-xs text-muted-foreground">
-        Browser‑based claim is intentionally disabled in public mode so anyone on the network can&rsquo;t
-        promote themselves.
-      </p>
+        {t("bootstrapsetupuxlab.general.browserbasedclaimisintentionallydisabledin")}</p>
     </StateChrome>
   );
 }
@@ -206,25 +202,23 @@ const FIXTURE_BODIES: Record<LabFixtureKey, ReactElement> = {
 };
 
 export function BootstrapSetupUxLab() {
+  const { t } = useTranslation();
   return (
     <div className="bg-background min-h-screen pb-16">
       <header className="border-b border-border bg-muted/20">
         <div className="mx-auto max-w-3xl px-6 py-6">
-          <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">UX Lab</p>
-          <h1 className="mt-1 text-2xl font-semibold">Bootstrap-pending setup states</h1>
+          <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{t("bootstrapsetupuxlab.general.uxlab")}</p>
+          <h1 className="mt-1 text-2xl font-semibold">{t("bootstrapsetupuxlab.general.bootstrappendingsetupstates")}</h1>
           <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-            Fixtures for the bootstrap-pending screen in <span className="font-mono">CloudAccessGate</span>. Used
-            as the UX spec for{" "}
+            {t("bootstrapsetupuxlab.general.fixturesforthebootstrappendingscreenin")}<span className="font-mono">{t("bootstrapsetupuxlab.general.cloudaccessgate")}</span>{t("bootstrapsetupuxlab.general.usedastheuxspecfor")}{" "}
             <a className="underline underline-offset-2" href="/PAP/issues/PAP-10113">
-              PAP-10113
-            </a>{" "}
-            and the implementation reference for{" "}
+              {t("bootstrapsetupuxlab.general.pap10113")}</a>{" "}
+            {t("bootstrapsetupuxlab.general.andtheimplementationreferencefor")}{" "}
             <a className="underline underline-offset-2" href="/PAP/issues/PAP-10114">
-              PAP-10114
-            </a>
-            . The browser claim CTA only appears when{" "}
-            <span className="font-mono">deploymentMode === &quot;authenticated&quot;</span> and{" "}
-            <span className="font-mono">deploymentExposure === &quot;private&quot;</span>.
+              {t("bootstrapsetupuxlab.general.pap10114")}</a>
+            {t("bootstrapsetupuxlab.general.thebrowserclaimctaonlyappearswhen")}{" "}
+            <span className="font-mono">{t("bootstrapsetupuxlab.general.deploymentmodequotauthenticatedquot")}</span> {t("bootstrapsetupuxlab.general.and")}{" "}
+            <span className="font-mono">{t("bootstrapsetupuxlab.general.deploymentexposurequotprivatequot")}</span>.
           </p>
         </div>
       </header>

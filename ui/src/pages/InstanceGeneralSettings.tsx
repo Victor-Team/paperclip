@@ -369,9 +369,9 @@ export function InstanceGeneralSettings({ embedded = false }: { embedded?: boole
           </div>
           <p className="text-xs text-muted-foreground">
             {t("instancegeneralsettings.general.toRetestTheFirstUse")}{" "}
-            <code>feedbackDataSharingPreference</code>{t("instancegeneralsettings.general.keyFromThe")}{" "}
+            <code>{t("instancegeneralsettings.general.feedbackdatasharingpreference")}</code>{t("instancegeneralsettings.general.keyFromThe")}{" "}
             <code>instance_settings.general</code>{t("instancegeneralsettings.general.jsonRowForThis")}{" "}
-            <code>"prompt"</code>{t("instancegeneralsettings.general.unsetAnd")} <code>"prompt"</code>{t("instancegeneralsettings.general.bothMeanNoDefault")}
+            <code>{t("instancegeneralsettings.general.prompt")}</code>{t("instancegeneralsettings.general.unsetAnd")} <code>{t("instancegeneralsettings.general.prompt1")}</code>{t("instancegeneralsettings.general.bothMeanNoDefault")}
           </p>
         </div>
       </section>

@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { ResponsibleUserDenialNotice } from "@/components/ResponsibleUserDenialNotice";
 import { cn } from "@/lib/utils";
 import { Card } from "@/components/ui/card";
+import { useTranslation } from "@/i18n";
 
 /**
  * UX lab for PAP-12462 (P7): run "on behalf of {user}" surfacing + responsible-user
@@ -48,31 +49,30 @@ function RunLedgerRow({
   onBehalfOf?: string | null;
   denial?: ReactNode;
 }) {
+  const { t } = useTranslation();
   return (
     <article className="space-y-1.5 rounded-lg border border-border/60 px-3 py-2 text-xs text-muted-foreground">
       <div className="flex flex-wrap items-center gap-1.5">
-        <span className="font-medium text-foreground">Run</span>
-        <span className="min-w-0 max-w-full truncate font-mono text-foreground">a1b2c3d4</span>
-        <span>by CodexCoder</span>
+        <span className="font-medium text-foreground">{t("responsibleuserdenialuxlab.general.run")}</span>
+        <span className="min-w-0 max-w-full truncate font-mono text-foreground">{t("responsibleuserdenialuxlab.general.a1b2c3d4")}</span>
+        <span>{t("responsibleuserdenialuxlab.general.bycodexcoder")}</span>
         {onBehalfOf ? (
           <span className="min-w-0 max-w-full truncate text-muted-foreground">
-            on behalf of <span className="text-foreground">{onBehalfOf}</span>
+            {t("responsibleuserdenialuxlab.general.onbehalfof")}<span className="text-foreground">{onBehalfOf}</span>
           </span>
         ) : null}
         <span className="rounded-md border border-border px-1.5 py-0.5 text-(length:--text-micro) capitalize text-muted-foreground">
-          {denial ? "Failed" : "Succeeded"}
+          {denial ? t("responsibleuserdenialuxlab.general.failed") : t("responsibleuserdenialuxlab.general.succeeded")}
         </span>
-        <span className="ml-auto shrink-0">2m ago</span>
+        <span className="ml-auto shrink-0">{t("responsibleuserdenialuxlab.general.2mago")}</span>
       </div>
       <div className="grid gap-2 text-xs text-muted-foreground sm:grid-cols-3">
         <div className="min-w-0">
-          <span className="text-foreground">Elapsed</span> 1m 4s
-        </div>
+          <span className="text-foreground">{t("responsibleuserdenialuxlab.general.elapsed")}</span> {t("responsibleuserdenialuxlab.general.1m4s")}</div>
         <div className="min-w-0">
-          <span className="text-foreground">Last useful action</span> 2m ago
-        </div>
+          <span className="text-foreground">{t("responsibleuserdenialuxlab.general.lastusefulaction")}</span> {t("responsibleuserdenialuxlab.general.2mago1")}</div>
         <div className="min-w-0">
-          <span className="text-foreground">Stop</span> {denial ? "Denied" : "Completed"}
+          <span className="text-foreground">{t("responsibleuserdenialuxlab.general.stop")}</span> {denial ? t("responsibleuserdenialuxlab.general.denied") : t("responsibleuserdenialuxlab.general.completed")}
         </div>
       </div>
       {denial}
@@ -82,23 +82,23 @@ function RunLedgerRow({
 
 /** A faithful copy of the run-detail header identity block (see AgentDetail.tsx RunDetail). */
 function RunDetailHeader({ onBehalfOf, denial }: { onBehalfOf?: string | null; denial?: ReactNode }) {
+  const { t } = useTranslation();
   return (
     <div className="space-y-2">
       <div className="flex items-center gap-2">
-        <span className="text-lg font-semibold text-foreground">Run a1b2c3d4</span>
+        <span className="text-lg font-semibold text-foreground">{t("responsibleuserdenialuxlab.general.runa1b2c3d4")}</span>
         <span className="rounded-md border border-border px-1.5 py-0.5 text-(length:--text-micro) capitalize text-muted-foreground">
-          {denial ? "failed" : "succeeded"}
+          {denial ? t("responsibleuserdenialuxlab.general.failed2") : t("responsibleuserdenialuxlab.general.succeeded3")}
         </span>
       </div>
       <div className="flex flex-wrap items-center gap-1.5 font-mono text-(length:--text-micro) text-muted-foreground">
         <span className="rounded bg-muted px-1.5 py-0.5 text-(length:--text-nano) font-medium uppercase tracking-wide">
-          codex local
-        </span>
-        <span>anthropic/claude-opus-4-8</span>
+          {t("responsibleuserdenialuxlab.general.codexlocal")}</span>
+        <span>{t("responsibleuserdenialuxlab.general.anthropicclaudeopus48")}</span>
       </div>
       {onBehalfOf ? (
         <div className="text-xs text-muted-foreground">
-          On behalf of <span className="text-foreground">{onBehalfOf}</span>
+          {t("responsibleuserdenialuxlab.general.onbehalfof4")}<span className="text-foreground">{onBehalfOf}</span>
         </div>
       ) : null}
       {denial}
@@ -107,52 +107,49 @@ function RunDetailHeader({ onBehalfOf, denial }: { onBehalfOf?: string | null; d
 }
 
 export function ResponsibleUserDenialUxLab() {
+  const { t } = useTranslation();
   return (
     <div className="min-h-screen bg-muted/20 p-6">
       <div className="mx-auto max-w-5xl space-y-6">
         <header>
           <div className="text-(length:--text-micro) font-semibold uppercase tracking-(--tracking-caps) text-muted-foreground">
-            PAP-12462 · P7
-          </div>
+            {t("responsibleuserdenialuxlab.general.pap12462p7")}</div>
           <h1 className="mt-1 text-xl font-semibold text-foreground">
-            Run "on behalf of" surfacing + denial copy
-          </h1>
+            {t("responsibleuserdenialuxlab.general.runonbehalfofsurfacingdenialcopy")}</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Before/after of the two run surfaces and the four denial-related states.
-          </p>
+            {t("responsibleuserdenialuxlab.general.beforeafterofthetworunsurfaces")}</p>
         </header>
 
         <LabSection
-          title="1 · Run identity — “on behalf of {user}”"
+          title={t("responsibleuserdenialuxlab.general.1runidentityonbehalfofuser")}
           description="A run acting for a human now names that user on both the issue run ledger and the run detail header."
         >
-          <BeforeAfter label="Before — run ledger">
+          <BeforeAfter label={t("responsibleuserdenialuxlab.general.beforerunledger")}>
             <RunLedgerRow />
           </BeforeAfter>
-          <BeforeAfter label="After — run ledger">
+          <BeforeAfter label={t("responsibleuserdenialuxlab.general.afterrunledger")}>
             <RunLedgerRow onBehalfOf="Ada Lovelace" />
           </BeforeAfter>
-          <BeforeAfter label="Before — run detail">
+          <BeforeAfter label={t("responsibleuserdenialuxlab.general.beforerundetail")}>
             <RunDetailHeader />
           </BeforeAfter>
-          <BeforeAfter label="After — run detail">
+          <BeforeAfter label={t("responsibleuserdenialuxlab.general.afterrundetail")}>
             <RunDetailHeader onBehalfOf="Ada Lovelace" />
           </BeforeAfter>
         </LabSection>
 
         <LabSection
-          title="2 · Denial state — responsible user not authorized"
+          title={t("responsibleuserdenialuxlab.general.2denialstateresponsibleusernotauthorized")}
           description="The agent is allowed, but the user the run acts for is not. Distinct from a plain agent-lacks-permission failure."
         >
-          <BeforeAfter label="Before — generic failure text">
+          <BeforeAfter label={t("responsibleuserdenialuxlab.general.beforegenericfailuretext")}>
             <div className="text-xs">
               <span className="text-red-600 dark:text-red-400">
-                Forbidden: action not permitted
-              </span>
-              <span className="ml-1 text-muted-foreground">(RESPONSIBLE_USER_UNAUTHORIZED)</span>
+                {t("responsibleuserdenialuxlab.general.forbiddenactionnotpermitted")}</span>
+              <span className="ml-1 text-muted-foreground">{t("responsibleuserdenialuxlab.general.responsibleuserunauthorized")}</span>
             </div>
           </BeforeAfter>
-          <BeforeAfter label="After — actionable denial copy">
+          <BeforeAfter label={t("responsibleuserdenialuxlab.general.afteractionabledenialcopy")}>
             <ResponsibleUserDenialNotice
               code="RESPONSIBLE_USER_UNAUTHORIZED"
               userName="Ada Lovelace"
@@ -161,37 +158,34 @@ export function ResponsibleUserDenialUxLab() {
         </LabSection>
 
         <LabSection
-          title="3 · Denial state — agent lacks permission (unchanged)"
+          title={t("responsibleuserdenialuxlab.general.3denialstateagentlackspermissionunchanged")}
           description="A denial that is NOT a responsible-user code keeps the existing generic error copy — no responsible-user notice."
         >
-          <BeforeAfter label="Agent-lacks-permission failure">
+          <BeforeAfter label={t("responsibleuserdenialuxlab.general.agentlackspermissionfailure")}>
             <div className="text-xs">
               <span className="text-red-600 dark:text-red-400">
-                Forbidden: agent is not permitted to perform this action
-              </span>
-              <span className="ml-1 text-muted-foreground">(deny_missing_membership)</span>
+                {t("responsibleuserdenialuxlab.general.forbiddenagentisnotpermittedtoperform")}</span>
+              <span className="ml-1 text-muted-foreground">{t("responsibleuserdenialuxlab.general.denymissingmembership")}</span>
             </div>
           </BeforeAfter>
-          <BeforeAfter label="No responsible-user notice rendered">
+          <BeforeAfter label={t("responsibleuserdenialuxlab.general.noresponsibleusernoticerendered")}>
             <div className="text-xs text-muted-foreground">
-              Responsible-user denial notice intentionally absent for non-responsible-user codes.
-            </div>
+              {t("responsibleuserdenialuxlab.general.responsibleuserdenialnoticeintentionallyabsentfor")}</div>
           </BeforeAfter>
         </LabSection>
 
         <LabSection
-          title="4 · Denial state — responsible user unavailable"
+          title={t("responsibleuserdenialuxlab.general.4denialstateresponsibleuserunavailable")}
           description="The user this run acts for was removed or deactivated. Steers the agent to mark work blocked."
         >
-          <BeforeAfter label="Before — generic failure text">
+          <BeforeAfter label={t("responsibleuserdenialuxlab.general.beforegenericfailuretext5")}>
             <div className="text-xs">
               <span className="text-red-600 dark:text-red-400">
-                Forbidden: responsible user unavailable
-              </span>
-              <span className="ml-1 text-muted-foreground">(RESPONSIBLE_USER_UNAVAILABLE)</span>
+                {t("responsibleuserdenialuxlab.general.forbiddenresponsibleuserunavailable")}</span>
+              <span className="ml-1 text-muted-foreground">{t("responsibleuserdenialuxlab.general.responsibleuserunavailable")}</span>
             </div>
           </BeforeAfter>
-          <BeforeAfter label="After — actionable denial copy">
+          <BeforeAfter label={t("responsibleuserdenialuxlab.general.afteractionabledenialcopy6")}>
             <ResponsibleUserDenialNotice
               code="RESPONSIBLE_USER_UNAVAILABLE"
               userName="Grace Hopper"
@@ -200,10 +194,10 @@ export function ResponsibleUserDenialUxLab() {
         </LabSection>
 
         <LabSection
-          title="In-context — denial inside a failed run ledger row"
+          title={t("responsibleuserdenialuxlab.general.incontextdenialinsideafailedrun")}
           description="How the notice reads within a run row on the issue timeline."
         >
-          <BeforeAfter label="Unauthorized">
+          <BeforeAfter label={t("responsibleuserdenialuxlab.general.unauthorized")}>
             <RunLedgerRow
               onBehalfOf="Ada Lovelace"
               denial={
@@ -214,7 +208,7 @@ export function ResponsibleUserDenialUxLab() {
               }
             />
           </BeforeAfter>
-          <BeforeAfter label="Unavailable">
+          <BeforeAfter label={t("responsibleuserdenialuxlab.general.unavailable")}>
             <RunLedgerRow
               onBehalfOf="Grace Hopper"
               denial={
@@ -228,8 +222,7 @@ export function ResponsibleUserDenialUxLab() {
         </LabSection>
 
         <p className={cn("text-center text-(length:--text-micro) text-muted-foreground")}>
-          Copy is sourced from the shared <code>describeResponsibleUserDenial</code> contract.
-        </p>
+          {t("responsibleuserdenialuxlab.general.copyissourcedfromtheshared")}<code>{t("responsibleuserdenialuxlab.general.describeresponsibleuserdenial")}</code> {t("responsibleuserdenialuxlab.general.contract")}</p>
       </div>
     </div>
   );

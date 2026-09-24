@@ -244,7 +244,7 @@ export function ProfileSettings() {
               value={name}
               onChange={(event) => setName(event.target.value)}
               maxLength={120}
-              placeholder="Board"
+              placeholder={t("profilesettings.general.board")}
             />
             <p className="text-xs text-muted-foreground">
               {t("profilesettings.general.shownInTheSidebar")}
