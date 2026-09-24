@@ -7104,5 +7104,626 @@
       "retry": "Retry",
       "trackedin": "Tracked in"
     }
+  },
+  "accountingmodelcard": {
+    "general": {
+      "accountingmodel": "Accounting model",
+      "paperclipnowseparatesrequestlevelinferenceusage": "Paperclip now separates request-level inference usage from account-level finance events.\n          That keeps provider reporting honest when the biller is OpenRouter, Cloudflare, Bedrock, or another intermediary."
+    }
+  },
+  "activityfeed": {
+    "general": {
+      "made": "made",
+      "updatesto": "updates to",
+      "earlier": "Earlier",
+      "agentfeed": "Agent Feed",
+      "liveactivityfromyouragents": "Live activity from your agents",
+      "groupbytask": "group by task",
+      "groupbytask1": "Group by task",
+      "showflat": "Show flat",
+      "filterby": "filter by",
+      "filterby2": "Filter by",
+      "showallactivity": "Show all activity",
+      "activityfromyouragentswillappearhere": "Activity from your agents will appear here."
+    }
+  },
+  "adapterloginchrome": {
+    "general": {
+      "preparingthesignin": "Preparing the sign-in",
+      "copied": "Copied!",
+      "copythecode": "Copy the code",
+      "signinto": "Sign in to",
+      "apikey": "API key",
+      "checkinglocal": "Checking local",
+      "signin": "sign-in…",
+      "issignedinclickconnecttouse": "is signed in. Click Connect to use this account.",
+      "useadifferentaccount": "Use a different account",
+      "runthisinaterminalonthat": "Run this in a terminal on that machine and finish signing in in your browser. We’ll check automatically when you return.",
+      "copysignincommand": "Copy sign-in command",
+      "startsigninagain": "Start sign-in again",
+      "checkagain": "Check again"
+    }
+  },
+  "agentactionbuttons": {
+    "general": {
+      "resume": "Resume",
+      "pause": "Pause",
+      "clearerrorandreturnagenttoidle": "Clear error and return agent to idle",
+      "clearerror": "Clear error",
+      "exactprovidertrafficwillbecapturedfor": "Exact provider traffic will be captured for future runs and retained for up to 24 hours.",
+      "rawtracingon": "Raw tracing on",
+      "captureexactprovidertrafficforthisrun": "Capture exact provider traffic for this run (expires after 24 hours)",
+      "runwithprovidertrace": "Run with provider trace",
+      "cancel": "Cancel",
+      "pauseanyway": "Pause anyway",
+      "duplicateagent": "Duplicate Agent",
+      "copyagentid": "Copy Agent ID",
+      "resetsessions": "Reset Sessions",
+      "terminate": "Terminate"
+    }
+  },
+  "agentbubbleactionrow": {
+    "general": {
+      "moreactions": "More actions",
+      "moreactions1": "More actions",
+      "copymessage": "Copy message",
+      "helpful": "Helpful",
+      "helpful2": "Helpful",
+      "needswork": "Needs work",
+      "needswork3": "Needs work",
+      "whatcouldhavebeenbetter": "What could have been better?",
+      "addashortnote": "Add a short note",
+      "dismiss": "Dismiss",
+      "saving": "Saving...",
+      "savenote": "Save note",
+      "saveyourfeedbacksharingpreference": "Save your feedback sharing preference",
+      "choosewhethervotedaioutputscanbe": "Choose whether voted AI outputs can be shared with Paperclip Labs. This\n              answer becomes the default for future thumbs up and thumbs down votes.",
+      "thisvoteisalwayssavedlocally": "This vote is always saved locally.",
+      "choose": "Choose",
+      "alwaysallow": "Always allow",
+      "tosharethisvoteandfuturevoted": "to share\n              this vote and future voted AI outputs. Choose",
+      "dontallow": "Don't allow",
+      "tokeepthisvoteandfuturevotes": "to keep this vote\n              and future votes local.",
+      "youcanchangethislaterinsettings": "You can change this later in Settings &gt; General.",
+      "readourtermsofservice": "Read our terms of service",
+      "saving4": "Saving...",
+      "dontallow5": "Don't allow",
+      "saving6": "Saving...",
+      "alwaysallow7": "Always allow"
+    }
+  },
+  "agentchatpicker": {
+    "general": {
+      "chatwithanagent": "Chat with an agent",
+      "searchagentsbynameorrole": "Search agents by name or role",
+      "searchbynameorrole": "Search by name or role…",
+      "couldntloadagentstryagain": "Couldn’t load agents. Try again.",
+      "retry": "Retry",
+      "loadingagents": "Loading agents…",
+      "noagentsyet": "No agents yet.",
+      "tryanothernameorrole": "Try another name or role.",
+      "clearsearch": "Clear search",
+      "createanagentfromtheagentspage": "Create an agent from the Agents page to start chatting.",
+      "paused": "Paused",
+      "terminated": "Terminated",
+      "awaitingapproval": "Awaiting approval"
+    }
+  },
+  "agentchatsidebar": {
+    "general": {
+      "chats": "Chats",
+      "chats1": "Chats",
+      "chatwithanagent": "Chat with an agent",
+      "chatwithanagent2": "Chat with an agent"
+    }
+  },
+  "agentconfigform": {
+    "general": {
+      "unsavedchanges": "Unsaved changes",
+      "saving": "Saving...",
+      "save": "Save",
+      "environmentvariables": "Environment variables",
+      "environmentvariables1": "Environment variables",
+      "secretaccess": "Secret access",
+      "secretaccess2": "Secret access",
+      "unsavedchanges3": "Unsaved changes",
+      "saving4": "Saving...",
+      "save5": "Save",
+      "identity": "identity",
+      "identity6": "Identity",
+      "identity7": "Identity",
+      "name": "Name",
+      "agentname": "Agent name",
+      "title": "Title",
+      "egvpofengineering": "e.g. VP of Engineering",
+      "reportsto": "Reports to",
+      "prompttemplate": "Prompt Template",
+      "youareagentagentnameyourrole": "You are agent {{ agent.name }}. Your role is {{ agent.role }}...",
+      "prompttemplateisreplayedoneveryheartbeat": "Prompt template is replayed on every heartbeat. Keep it compact and dynamic to avoid recurring token cost and cache churn.",
+      "environment": "Environment",
+      "environment8": "Environment",
+      "defaultenvironment": "Default environment",
+      "kubernetessandbox": "· Kubernetes sandbox",
+      "thisinstancerequiresthekubernetessandboxbut": "This instance requires the Kubernetes sandbox, but no managed Kubernetes\n                  environment is available for this organization yet. Configure one before creating\n                  agents; execution will not fall back to local.",
+      "environment9": "Environment",
+      "environment10": "Environment",
+      "environmentoverride": "Environment override",
+      "default": "Default:",
+      "adapter": "adapter",
+      "adapter11": "Adapter",
+      "adapter12": "Adapter",
+      "adaptertype": "Adapter type",
+      "environmenttestfailed": "Environment test failed",
+      "workingdirectorydeprecated": "Working directory (deprecated)",
+      "failedtoloadadaptermodels": "Failed to load adapter models.",
+      "liveopencodemodeldiscoveryonlyrunsfor": "Live OpenCode model discovery only runs for Local environments. Using the curated list and manual entry for",
+      "codexmayrejectminimalthinkingwhensearch": "Codex may reject `minimal` thinking when search is enabled.",
+      "configuration": "Configuration",
+      "configuration13": "Configuration",
+      "bootstrappromptlegacy": "Bootstrap prompt (legacy)",
+      "optionalinitialsetuppromptforthefirst": "Optional initial setup prompt for the first run",
+      "bootstrappromptislegacyandwillbe": "Bootstrap prompt is legacy and will be removed in a future release. Consider moving this content into the agent&apos;s prompt template or instructions file instead.",
+      "advanced": "Advanced",
+      "command": "Command",
+      "extraargscommaseparated": "Extra args (comma-separated)",
+      "egverbosefoobar": "e.g. --verbose, --foo=bar",
+      "environmentvariables14": "Environment variables",
+      "environmentvariables15": "Environment variables",
+      "runpolicy": "Run Policy",
+      "runpolicy16": "Run Policy",
+      "heartbeatoninterval": "Heartbeat on interval",
+      "advancedrunpolicy": "Advanced Run Policy",
+      "runpolicy17": "Run Policy",
+      "runpolicy18": "Run Policy",
+      "heartbeatoninterval19": "Heartbeat on interval",
+      "advancedrunpolicy20": "Advanced Run Policy",
+      "timeoutsec": "Timeout (sec)",
+      "interruptgraceperiodsec": "Interrupt grace period (sec)",
+      "wakeondemand": "Wake on demand",
+      "cooldownsec": "Cooldown (sec)",
+      "maxconcurrentruns": "Max concurrent runs",
+      "continueaftermaxturnstop": "Continue after max-turn stop",
+      "continuationattempts": "Continuation attempts",
+      "continuationdelaysec": "Continuation delay (sec)",
+      "debugging": "Debugging",
+      "debugging21": "Debugging",
+      "capturerawprovidertraces": "Capture raw provider traces",
+      "rawtracingisonforfutureruns": "Raw tracing is on for future runs. Paperclip keeps at most 64 MiB per run and automatically deletes it after 24 hours.",
+      "authenticatedtheenvironmenthascredentialsnow": "Authenticated. The environment has credentials now.",
+      "thelogintimedoutstartitagain": "The login timed out. Start it again.",
+      "theloginwascancelled": "The login was cancelled.",
+      "thelogindidnotfinishstartit": "The login did not finish. Start it again.",
+      "cancel": "Cancel",
+      "signin": "Sign in",
+      "preparing": "Preparing...",
+      "copythecodethenopentheauthentication": "Copy the code, then open the authentication page.",
+      "1code": "1. Code",
+      "copycode": "Copy code",
+      "2authenticationurl": "2. Authentication URL",
+      "copyurl": "Copy URL",
+      "opentheauthenticationpage": "Open the authentication page",
+      "opentheauthenticationpage22": "Open the authentication page",
+      "bindingthisagenttothesignedin": "Binding this agent to the signed-in account...",
+      "agentboundtothesignedinaccount": "Agent bound to the signed-in account.",
+      "couldnotbindthisagenttothe": "Could not bind this agent to the signed-in account.",
+      "retry": "Retry",
+      "thisconnectionisnotencryptedthelogin": "This connection is not encrypted. The login code travels in clear text on this\n            network. Continue only on a network you trust.",
+      "cancel23": "Cancel",
+      "usesavedlogin": "Use saved login",
+      "signintoreplace": "Sign in to replace",
+      "signin24": "Sign in",
+      "youhaveasavedclaudeloginuse": "You have a saved Claude login. Use it to bind this agent, or log in again to replace the\n          stored token.",
+      "thesavedclaudeloginisboundto": "The saved Claude login is bound to this agent now.",
+      "preparing25": "Preparing...",
+      "thisconnectionisnotencryptedthelogin26": "This connection is not encrypted. The login code travels in clear text on this\n                  network. Continue only on a network you trust.",
+      "opentheauthorizationpagethenenterthe": "Open the authorization page, then enter the browser code it shows.",
+      "1authorizationurl": "1. Authorization URL",
+      "copyurl27": "Copy URL",
+      "opentheauthorizationpage": "Open the authorization page",
+      "opentheauthorizationpage28": "Open the authorization page",
+      "2browsercode": "2. Browser code",
+      "browsercode": "Browser code",
+      "submit": "Submit",
+      "completingthelogin": "Completing the login…",
+      "authenticatedtheenvironmenthascredentialsnow29": "Authenticated. The environment has credentials now.",
+      "hint": "Hint:",
+      "comingsoon": "Coming soon",
+      "experimental": "Experimental",
+      "model": "Model",
+      "detecting": "Detecting...",
+      "redetectfromconfig": "Re-detect from config",
+      "detectfromconfig": "Detect from config",
+      "refreshing": "Refreshing...",
+      "refreshmodels": "Refresh models",
+      "current": "current",
+      "detected": "detected",
+      "config": "config",
+      "default30": "Default",
+      "usemanualmodel": "Use manual model",
+      "nomodeldetectedyetenteraprovider": "No model detected yet. Enter a provider/model manually.",
+      "nomodelsfound": "No models found.",
+      "thinkingeffort": "Thinking effort",
+      "auto": "Auto"
+    }
+  },
+  "agentcontextualsidebar": {
+    "general": {
+      "audit": "Audit",
+      "loadingauditlinks": "Loading audit links…"
+    }
+  },
+  "agenticonpicker": {
+    "general": {
+      "searchicons": "Search icons...",
+      "noiconsmatch": "No icons match"
+    }
+  },
+  "agentidentity": {
+    "general": {
+      "agent": "Agent"
+    }
+  },
+  "agentproperties": {
+    "general": {
+      "status": "Status",
+      "errorreason": "Error reason",
+      "role": "Role",
+      "title": "Title",
+      "adapter": "Adapter",
+      "session": "Session",
+      "lastheartbeat": "Last Heartbeat",
+      "reportsto": "Reports To",
+      "created": "Created"
+    }
+  },
+  "agentsecretaccesseditor": {
+    "general": {
+      "envvar": "Env var",
+      "apiaccess": "API access",
+      "nosecretsareboundtothisagent": "No secrets are bound to this agent yet.",
+      "proposedaccess": "Proposed access",
+      "proposedby": "proposed by",
+      "apiaccessnoenvvar": "API access (no env var)",
+      "accessalias": "Access alias",
+      "version": "Version",
+      "latest": "latest",
+      "v": "v",
+      "removeapiaccess": "Remove API access",
+      "invalidaliasuselettersdigitsand": "Invalid alias — use letters, digits and _",
+      "duplicatealias": "Duplicate alias",
+      "addapiaccess": "Add API access",
+      "theagentreadsthembyaliasthrough": "The agent reads them by alias through",
+      "getagentsmesecrets": "GET /agents/me/secrets"
+    }
+  },
+  "animatedpaperclipicon": {
+    "general": {
+      "loading": "Loading…"
+    }
+  },
+  "announcementcard": {
+    "general": {
+      "dismissannouncement": "Dismiss announcement"
+    }
+  },
+  "announcementwell": {
+    "general": {
+      "paperclipannouncements": "Paperclip announcements"
+    }
+  },
+  "approvalcard": {
+    "general": {
+      "requestedby": "Requested by",
+      "approvalrequestcreated": "Approval request created",
+      "decisionnote": "Decision note.",
+      "approving": "Approving...",
+      "approve": "Approve",
+      "rejecting": "Rejecting...",
+      "reject": "Reject",
+      "viewdetails": "View details",
+      "viewdetails1": "View details"
+    }
+  },
+  "approvalpayload": {
+    "general": {
+      "skills": "Skills",
+      "name": "Name",
+      "role": "Role",
+      "title": "Title",
+      "icon": "Icon",
+      "capabilities": "Capabilities",
+      "adapter": "Adapter",
+      "title1": "Title",
+      "scope": "Scope",
+      "window": "Window",
+      "metric": "Metric",
+      "limit": "Limit",
+      "observed": "· Observed",
+      "title2": "Title",
+      "summary": "Summary",
+      "recommendedaction": "Recommended action",
+      "onapproval": "On approval",
+      "risks": "Risks",
+      "proposedcomment": "Proposed comment"
+    }
+  },
+  "appssidebarproduction": {
+    "general": {
+      "company": "Company",
+      "connectors": "Connectors",
+      "connectors1": "Connectors",
+      "browse": "Browse",
+      "review": "Review",
+      "developer": "Developer",
+      "advancedsetupfordevelopersmostteamsnever": "Advanced setup for developers. Most teams never open this.",
+      "connections": "Connections"
+    }
+  },
+  "appssidebar": {
+    "general": {
+      "connectors": "Connectors",
+      "browse": "Browse",
+      "review": "Review",
+      "developer": "Developer",
+      "advancedsetupfordevelopers": "Advanced setup for developers."
+    }
+  },
+  "artifactspanel": {
+    "general": {
+      "artifacts": "Artifacts",
+      "loading": "Loading...",
+      "yourteamsdeliverablesandplanswill": "Your team's deliverables and plans will appear here as they're produced.",
+      "noartifactsmatchthisfilter": "No artifacts match this filter.",
+      "generating": "Generating...",
+      "loadingdocument": "Loading document...",
+      "documentnotavailableyet": "Document not available yet.",
+      "documentisempty": "Document is empty.",
+      "thisdocumentneedsyourreview": "This document needs your review.",
+      "approve": "Approve",
+      "reject": "Reject",
+      "approvedhiretaskscreated": "Approved — hire tasks created",
+      "changesrequestedceoisrevising": "Changes requested — CEO is revising"
+    }
+  },
+  "attentioninteractionresolver": {
+    "general": {
+      "loadingdecision": "Loading decision…",
+      "thisdecisionisnolongeravailableit": "This decision is no longer available — it may have been resolved elsewhere."
+    }
+  },
+  "attentionqueuerow": {
+    "general": {
+      "open": "Open",
+      "restore": "Restore",
+      "setby": "· set by",
+      "reappears": "Reappears",
+      "rowactions": "Row actions",
+      "dismiss": "Dismiss",
+      "opensource": "Open source",
+      "decisionactions": "Decision actions",
+      "more": "more",
+      "viewissue": "View issue",
+      "more1": "more",
+      "snooze": "Snooze",
+      "custom": "Custom",
+      "snoozeuntil": "Snooze until…",
+      "missingissuereferenceforthisdecision": "Missing issue reference for this decision.",
+      "optionaldecisionnote": "Optional decision note…",
+      "requestrevision": "Request revision",
+      "reject": "Reject",
+      "approve": "Approve",
+      "reject2": "Reject",
+      "approve3": "Approve"
+    }
+  },
+  "billerspendcard": {
+    "general": {
+      "in": "in",
+      "out": "out",
+      "provider": "provider",
+      "s": "s",
+      "model": "model",
+      "s1": "s",
+      "periodspend": "Period spend",
+      "s2": "s",
+      "0meteredruns": "0 metered runs",
+      "s3": "s",
+      "0subscriptionruns": "0 subscription runs",
+      "thisweek": "this week",
+      "billingtypes": "Billing types",
+      "upstreamproviders": "Upstream providers",
+      "tok": "tok"
+    }
+  },
+  "blockedinboxview": {
+    "general": {
+      "couldntloadtheblockedtab": "Couldn't load the Blocked tab.",
+      "otherinboxtabsstillwork": "Other Inbox tabs still work.",
+      "trying": "Trying…",
+      "tryagain": "Try again",
+      "noworkisstopped": "No work is stopped.",
+      "tasksthatneedadecisionrecoveryor": "Tasks that need a decision, recovery, or external action will appear here.",
+      "nostoppeditemsmatchyoursearch": "No stopped items match your search."
+    }
+  },
+  "bootstrappendingpage": {
+    "general": {
+      "prefertofinishsetupfromthehost": "Prefer to finish setup from the host?",
+      "abootstrapinviteisalreadyactivecheck": "A bootstrap invite is already active. Check your Paperclip startup logs for the first-admin URL, or run this command on the host to rotate it:",
+      "runthiscommandonthehostthat": "Run this command on the host that runs Paperclip to print a one-time first-admin invite URL:",
+      "thispaperclipiswaitingonitsfirst": "This Paperclip is waiting on its first admin",
+      "thisinstancerunsininviteonlymode": "This instance runs in invite-only mode. The operator must generate a one-time first-admin invite URL\n          from the host. Once you have the link, open it from this browser to finish setup.",
+      "browserbasedclaimisintentionallydisabledin": "Browser-based claim is intentionally disabled in public mode so anyone on the network can't promote\n          themselves.",
+      "youretheinstanceadmin": "You're the instance admin",
+      "setupiscompletetakingyoutoonboarding": "Setup is complete. Taking you to onboarding to create your first organization...",
+      "redirecting": "Redirecting...",
+      "continuetodashboard": "Continue to dashboard",
+      "finishsettingupthispaperclip": "Finish setting up this Paperclip",
+      "noadminhasclaimedthisinstanceyet": "No admin has claimed this instance yet. Sign in or create your Paperclip account to become the first\n          admin from this browser.",
+      "signincreateaccount": "Sign in / Create account",
+      "finishsettingupthispaperclip1": "Finish setting up this Paperclip",
+      "noadminhasclaimedthisinstanceyet2": "No admin has claimed this instance yet. Claim it now to become the first admin and start onboarding.",
+      "claiming": "Claiming...",
+      "claimthisinstance": "Claim this instance",
+      "signedinas": "Signed in as",
+      "wrongaccount": "Wrong account?",
+      "switchaccount": "Switch account"
+    }
+  },
+  "budgetincidentcard": {
+    "general": {
+      "hardstop": "hard stop",
+      "spendingreached": "Spending reached",
+      "againstalimitof": "against a limit of",
+      "projectexecutionispausednewworkin": "Project execution is paused. New work in this project will not start until you resolve the budget incident.",
+      "thisscopeispausednewheartbeatswill": "This scope is paused. New heartbeats will not start until you resolve the budget incident.",
+      "newbudgetusd": "New budget (USD)",
+      "applying": "Applying...",
+      "raisebudgetresume": "Raise budget & resume",
+      "thenewbudgetmustexceedcurrentobserved": "The new budget must exceed current observed spend.",
+      "keeppaused": "Keep paused"
+    }
+  },
+  "budgetpolicycard": {
+    "general": {
+      "observed": "Observed",
+      "budget": "Budget",
+      "softalertat": "Soft alert at",
+      "observed1": "Observed",
+      "budget2": "Budget",
+      "softalertat3": "Soft alert at",
+      "remaining": "Remaining",
+      "budgetusd": "Budget (USD)",
+      "paused": "Paused",
+      "warning": "Warning",
+      "hardstop": "Hard stop",
+      "healthy": "Healthy",
+      "enteravalidnonnegativedollaramount": "Enter a valid non-negative dollar amount.",
+      "paused4": "Paused",
+      "warning5": "Warning",
+      "hardstop6": "Hard stop",
+      "healthy7": "Healthy",
+      "enteravalidnonnegativedollaramount8": "Enter a valid non-negative dollar amount."
+    }
+  },
+  "builtinagentbadges": {
+    "general": {
+      "approval": "Approval",
+      "pendingapproval": "Pending approval",
+      "setup": "Setup",
+      "needssetup": "Needs setup"
+    }
+  },
+  "builtinagentgate": {
+    "general": {
+      "viewagent": "View agent",
+      "itsbuiltinagentwaspaused": "Its built-in agent was paused",
+      "sonew": ", so new",
+      "isntbeinggenerated": "isn't being generated."
+    }
+  },
+  "builtinbundlepanel": {
+    "general": {
+      "working": "Working…",
+      "cancel": "Cancel",
+      "working1": "Working…",
+      "cancel2": "Cancel",
+      "view": "View",
+      "bundlestatus": "Bundle status",
+      "bundlestatus3": "Bundle status",
+      "adapter": "Adapter",
+      "configure": "Configure",
+      "routine": "Routine",
+      "runreflectioncoachonce": "Run Reflection Coach once?",
+      "disabletheweeklyschedule": "Disable the weekly schedule?",
+      "enabletheweeklyschedule": "Enable the weekly schedule?",
+      "routine4": "routine",
+      "proposal": "Proposal",
+      "reviewproposal": "Review proposal"
+    }
+  },
+  "caseactivityfeed": {
+    "general": {
+      "noactivityyet": "No activity yet.",
+      "of": "of",
+      "events": "events",
+      "activityfilter": "Activity filter",
+      "allactivity": "All activity",
+      "noeventsmatchthisfilter": "No events match this filter."
+    }
+  },
+  "caseattachmentsgallery": {
+    "general": {
+      "noattachments": "No attachments."
+    }
+  },
+  "casechildrentree": {
+    "general": {
+      "nochildcases": "No child cases.",
+      "caseid": "case ID",
+      "show": "Show",
+      "more": "more"
+    }
+  },
+  "casefieldspanel": {
+    "general": {
+      "copied": "Copied",
+      "true": "true",
+      "fields": "Fields",
+      "fromtheskillapossschemarendered": "from the skill&apos;s schema — rendered generically",
+      "nofieldsset": "No fields set"
+    }
+  },
+  "caseidentifierkey": {
+    "general": {
+      "copied": "Copied",
+      "caseid": "case ID",
+      "casekey": "case key"
+    }
+  },
+  "caserevisionrail": {
+    "general": {
+      "via": "via",
+      "diff": "Diff -",
+      "old": "Old",
+      "selectrevision": "Select revision",
+      "new": "New",
+      "selectrevision1": "Select revision",
+      "selecttworevisionstocompare": "Select two revisions to compare.",
+      "bothsidesarethesamerevision": "Both sides are the same revision.",
+      "old2": "Old",
+      "new3": "New",
+      "content": "Content",
+      "loadingrevisions": "Loading revisions…",
+      "couldnotloadrevisions": "Could not load revisions.",
+      "norevisionsyet": "No revisions yet.",
+      "revisions": "Revisions",
+      "diff4": "Diff",
+      "rev": "rev",
+      "latest": "latest",
+      "rev5": "rev",
+      "thisrevisionhasnobody": "This revision has no body."
+    }
+  },
+  "chatcomposer": {
+    "general": {
+      "droptoattach": "Drop to attach",
+      "attachfiles": "Attach files",
+      "attachfiles1": "Attach files"
+    }
+  },
+  "claudesubscriptionpanel": {
+    "general": {
+      "anthropicsubscription": "Anthropic subscription",
+      "liveclaudequotawindows": "Live Claude quota windows.",
+      "used": "% used"
+    }
+  },
+  "apperrorboundary": {
+    "general": {
+      "papercliphitanerror": "Paperclip hit an error",
+      "somethingwentwrongwhilerunningtheapp": "Something went wrong while running the app. Reloading usually fixes this.",
+      "reloadpage": "Reload page"
+    }
   }
 }

@@ -25,6 +25,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Check, Copy, MoreHorizontal, ThumbsDown, ThumbsUp, X } from "lucide-react";
+import { useTranslation } from "@/i18n";
 
 const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 
@@ -111,6 +112,7 @@ export function AgentBubbleActionRow({
   menuItems?: ReactNode;
   className?: string;
 }) {
+  const { t } = useTranslation();
   // The menu closes on click, so its copy confirmation has to outlive it.
   const copyWithToast = useCopyToast();
   return (
@@ -145,8 +147,8 @@ export function AgentBubbleActionRow({
             variant="ghost"
             size="icon-xs"
             className="text-muted-foreground hover:text-foreground"
-            title="More actions"
-            aria-label="More actions"
+            title={t("agentbubbleactionrow.general.moreactions")}
+            aria-label={t("agentbubbleactionrow.general.moreactions1")}
           >
             <MoreHorizontal className="h-3.5 w-3.5" />
           </Button>
@@ -158,8 +160,7 @@ export function AgentBubbleActionRow({
             }}
           >
             <Copy className="mr-2 h-3.5 w-3.5" />
-            Copy message
-          </DropdownMenuItem>
+            {t("agentbubbleactionrow.general.copymessage")}</DropdownMenuItem>
           {menuItems}
         </DropdownMenuContent>
       </DropdownMenu>
@@ -183,6 +184,7 @@ export function IssueChatFeedbackButtons({
   termsUrl: string | null;
   onVote: (vote: FeedbackVoteValue, options?: { allowSharing?: boolean; reason?: string }) => Promise<void>;
 }) {
+  const { t } = useTranslation();
   const [isSaving, setIsSaving] = useState(false);
   const [optimisticVote, setOptimisticVote] = useState<FeedbackVoteValue | null>(null);
   const [reasonOpen, setReasonOpen] = useState(false);
@@ -262,8 +264,8 @@ export function IssueChatFeedbackButtons({
             ? "text-green-600 dark:text-green-400"
             : "text-muted-foreground hover:bg-accent hover:text-foreground",
         )}
-        title="Helpful"
-        aria-label="Helpful"
+        title={t("agentbubbleactionrow.general.helpful")}
+        aria-label={t("agentbubbleactionrow.general.helpful2")}
         onClick={handleThumbsUp}
       >
         <ThumbsUp className="h-3.5 w-3.5" />
@@ -279,19 +281,19 @@ export function IssueChatFeedbackButtons({
                 ? "text-amber-600 dark:text-amber-400"
                 : "text-muted-foreground hover:bg-accent hover:text-foreground",
             )}
-            title="Needs work"
-            aria-label="Needs work"
+            title={t("agentbubbleactionrow.general.needswork")}
+            aria-label={t("agentbubbleactionrow.general.needswork3")}
             onClick={handleThumbsDown}
           >
             <ThumbsDown className="h-3.5 w-3.5" />
           </button>
         </PopoverTrigger>
         <PopoverContent side="top" align="start" className="w-80 p-3">
-          <div className="mb-2 text-sm font-medium">What could have been better?</div>
+          <div className="mb-2 text-sm font-medium">{t("agentbubbleactionrow.general.whatcouldhavebeenbetter")}</div>
           <Textarea
             value={downvoteReason}
             onChange={(event) => setDownvoteReason(event.target.value)}
-            placeholder="Add a short note"
+            placeholder={t("agentbubbleactionrow.general.addashortnote")}
             className="min-h-20 resize-y bg-background text-sm"
             disabled={isSaving}
           />
@@ -306,15 +308,14 @@ export function IssueChatFeedbackButtons({
                 setDownvoteReason("");
               }}
             >
-              Dismiss
-            </Button>
+              {t("agentbubbleactionrow.general.dismiss")}</Button>
             <Button
               type="button"
               size="sm"
               disabled={isSaving || !downvoteReason.trim()}
               onClick={handleSubmitReason}
             >
-              {isSaving ? "Saving..." : "Save note"}
+              {isSaving ? t("agentbubbleactionrow.general.saving") : t("agentbubbleactionrow.general.savenote")}
             </Button>
           </div>
         </PopoverContent>
@@ -331,21 +332,16 @@ export function IssueChatFeedbackButtons({
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Save your feedback sharing preference</DialogTitle>
+            <DialogTitle>{t("agentbubbleactionrow.general.saveyourfeedbacksharingpreference")}</DialogTitle>
             <DialogDescription>
-              Choose whether voted AI outputs can be shared with Paperclip Labs. This
-              answer becomes the default for future thumbs up and thumbs down votes.
-            </DialogDescription>
+              {t("agentbubbleactionrow.general.choosewhethervotedaioutputscanbe")}</DialogDescription>
           </DialogHeader>
           <div className="space-y-3 text-sm text-muted-foreground">
-            <p>This vote is always saved locally.</p>
+            <p>{t("agentbubbleactionrow.general.thisvoteisalwayssavedlocally")}</p>
             <p>
-              Choose <span className="font-medium text-foreground">Always allow</span> to share
-              this vote and future voted AI outputs. Choose{" "}
-              <span className="font-medium text-foreground">Don't allow</span> to keep this vote
-              and future votes local.
-            </p>
-            <p>You can change this later in Settings &gt; General.</p>
+              {t("agentbubbleactionrow.general.choose")}<span className="font-medium text-foreground">{t("agentbubbleactionrow.general.alwaysallow")}</span> {t("agentbubbleactionrow.general.tosharethisvoteandfuturevoted")}{" "}
+              <span className="font-medium text-foreground">{t("agentbubbleactionrow.general.dontallow")}</span> {t("agentbubbleactionrow.general.tokeepthisvoteandfuturevotes")}</p>
+            <p>{t("agentbubbleactionrow.general.youcanchangethislaterinsettings")}</p>
             {termsUrl ? (
               <a
                 href={termsUrl}
@@ -353,8 +349,7 @@ export function IssueChatFeedbackButtons({
                 rel="noreferrer"
                 className="inline-flex text-sm text-foreground underline underline-offset-4"
               >
-                Read our terms of service
-              </a>
+                {t("agentbubbleactionrow.general.readourtermsofservice")}</a>
             ) : null}
           </div>
           <DialogFooter>
@@ -370,7 +365,7 @@ export function IssueChatFeedbackButtons({
                 ).then(() => setPendingSharingDialog(null));
               }}
             >
-              {isSaving ? "Saving..." : "Don't allow"}
+              {isSaving ? t("agentbubbleactionrow.general.saving4") : t("agentbubbleactionrow.general.dontallow5")}
             </Button>
             <Button
               type="button"
@@ -383,7 +378,7 @@ export function IssueChatFeedbackButtons({
                 }).then(() => setPendingSharingDialog(null));
               }}
             >
-              {isSaving ? "Saving..." : "Always allow"}
+              {isSaving ? t("agentbubbleactionrow.general.saving6") : t("agentbubbleactionrow.general.alwaysallow7")}
             </Button>
           </DialogFooter>
         </DialogContent>

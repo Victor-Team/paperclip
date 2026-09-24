@@ -7104,5 +7104,626 @@
       "retry": "重试",
       "trackedin": "Tracked in"
     }
+  },
+  "accountingmodelcard": {
+    "general": {
+      "accountingmodel": "记账模型",
+      "paperclipnowseparatesrequestlevelinferenceusage": "Paperclip 现在将请求级推理用量与账户级财务事件分开记录。\n          这样当计费方是 OpenRouter、Cloudflare、Bedrock 或其他中间商时，供应商上报数据依然准确。"
+    }
+  },
+  "activityfeed": {
+    "general": {
+      "made": "进行了",
+      "updatesto": "次更新，对象为",
+      "earlier": "更早",
+      "agentfeed": "智能体动态",
+      "liveactivityfromyouragents": "来自你的智能体的实时动态",
+      "groupbytask": "按任务分组",
+      "groupbytask1": "按任务分组",
+      "showflat": "平铺显示",
+      "filterby": "筛选",
+      "filterby2": "筛选",
+      "showallactivity": "显示全部动态",
+      "activityfromyouragentswillappearhere": "你的智能体的动态会显示在这里。"
+    }
+  },
+  "adapterloginchrome": {
+    "general": {
+      "preparingthesignin": "正在准备登录",
+      "copied": "已复制！",
+      "copythecode": "复制验证码",
+      "signinto": "登录",
+      "apikey": "API 密钥",
+      "checkinglocal": "正在检查本地",
+      "signin": "登录中…",
+      "issignedinclickconnecttouse": "已登录。点击「连接」以使用该账号。",
+      "useadifferentaccount": "使用其他账号",
+      "runthisinaterminalonthat": "在该机器的终端里运行此命令，并在浏览器中完成登录。你返回后我们会自动检查。",
+      "copysignincommand": "复制登录命令",
+      "startsigninagain": "重新开始登录",
+      "checkagain": "再次检查"
+    }
+  },
+  "agentactionbuttons": {
+    "general": {
+      "resume": "恢复",
+      "pause": "暂停",
+      "clearerrorandreturnagenttoidle": "清除错误并将智能体恢复为空闲",
+      "clearerror": "清除错误",
+      "exactprovidertrafficwillbecapturedfor": "本次及后续运行将捕获精确的供应商流量，并保留最长 24 小时。",
+      "rawtracingon": "原始追踪已开启",
+      "captureexactprovidertrafficforthisrun": "为本次运行捕获精确的供应商流量（24 小时后失效）",
+      "runwithprovidertrace": "以供应商追踪方式运行",
+      "cancel": "取消",
+      "pauseanyway": "仍然暂停",
+      "duplicateagent": "复制智能体",
+      "copyagentid": "复制智能体 ID",
+      "resetsessions": "重置会话",
+      "terminate": "终止"
+    }
+  },
+  "agentbubbleactionrow": {
+    "general": {
+      "moreactions": "更多操作",
+      "moreactions1": "更多操作",
+      "copymessage": "复制消息",
+      "helpful": "有帮助",
+      "helpful2": "有帮助",
+      "needswork": "需要改进",
+      "needswork3": "需要改进",
+      "whatcouldhavebeenbetter": "哪些地方本可以做得更好？",
+      "addashortnote": "添加简短备注",
+      "dismiss": "忽略",
+      "saving": "保存中…",
+      "savenote": "保存备注",
+      "saveyourfeedbacksharingpreference": "保存你的反馈共享偏好",
+      "choosewhethervotedaioutputscanbe": "选择被点赞/点踩的 AI 输出是否可以与 Paperclip Labs 共享。这个\n              选择将作为今后点赞和点踩的默认设置。",
+      "thisvoteisalwayssavedlocally": "此次投票始终会保存在本地。",
+      "choose": "选择",
+      "alwaysallow": "始终允许",
+      "tosharethisvoteandfuturevoted": "以共享\n              此次投票及今后被投票的 AI 输出。选择",
+      "dontallow": "不允许",
+      "tokeepthisvoteandfuturevotes": "以将此次\n              投票及今后的投票保留在本地。",
+      "youcanchangethislaterinsettings": "你可以稍后在「设置 &gt; 通用」中更改此项。",
+      "readourtermsofservice": "阅读我们的服务条款",
+      "saving4": "保存中…",
+      "dontallow5": "不允许",
+      "saving6": "保存中…",
+      "alwaysallow7": "始终允许"
+    }
+  },
+  "agentchatpicker": {
+    "general": {
+      "chatwithanagent": "与智能体聊天",
+      "searchagentsbynameorrole": "按名称或角色搜索智能体",
+      "searchbynameorrole": "按名称或角色搜索…",
+      "couldntloadagentstryagain": "无法加载智能体，请重试。",
+      "retry": "重试",
+      "loadingagents": "正在加载智能体…",
+      "noagentsyet": "暂无智能体。",
+      "tryanothernameorrole": "请尝试其他名称或角色。",
+      "clearsearch": "清除搜索",
+      "createanagentfromtheagentspage": "在「智能体」页面创建一个智能体即可开始聊天。",
+      "paused": "已暂停",
+      "terminated": "已终止",
+      "awaitingapproval": "等待审批"
+    }
+  },
+  "agentchatsidebar": {
+    "general": {
+      "chats": "聊天",
+      "chats1": "聊天",
+      "chatwithanagent": "与智能体聊天",
+      "chatwithanagent2": "与智能体聊天"
+    }
+  },
+  "agentconfigform": {
+    "general": {
+      "unsavedchanges": "有未保存的更改",
+      "saving": "保存中…",
+      "save": "保存",
+      "environmentvariables": "环境变量",
+      "environmentvariables1": "环境变量",
+      "secretaccess": "密钥访问",
+      "secretaccess2": "密钥访问",
+      "unsavedchanges3": "有未保存的更改",
+      "saving4": "保存中…",
+      "save5": "保存",
+      "identity": "身份",
+      "identity6": "身份",
+      "identity7": "身份",
+      "name": "名称",
+      "agentname": "智能体名称",
+      "title": "职位",
+      "egvpofengineering": "例如：工程副总裁",
+      "reportsto": "汇报对象",
+      "prompttemplate": "提示词模板",
+      "youareagentagentnameyourrole": "你是智能体 {{ agent.name }}，你的角色是 {{ agent.role }}……",
+      "prompttemplateisreplayedoneveryheartbeat": "提示词模板会在每次心跳时重新加载。请保持简洁、动态，以避免重复的 token 开销和缓存失效。",
+      "environment": "环境",
+      "environment8": "环境",
+      "defaultenvironment": "默认环境",
+      "kubernetessandbox": "· Kubernetes 沙箱",
+      "thisinstancerequiresthekubernetessandboxbut": "此实例要求使用 Kubernetes 沙箱，但该组织目前还没有可用的\n                  受管 Kubernetes 环境。请先配置好再创建智能体；执行不会回退到本地。",
+      "environment9": "环境",
+      "environment10": "环境",
+      "environmentoverride": "环境覆盖",
+      "default": "默认：",
+      "adapter": "适配器",
+      "adapter11": "适配器",
+      "adapter12": "适配器",
+      "adaptertype": "适配器类型",
+      "environmenttestfailed": "环境测试失败",
+      "workingdirectorydeprecated": "工作目录（已弃用）",
+      "failedtoloadadaptermodels": "加载适配器模型失败。",
+      "liveopencodemodeldiscoveryonlyrunsfor": "实时 OpenCode 模型发现仅适用于本地环境。当前环境使用精选列表和手动输入：",
+      "codexmayrejectminimalthinkingwhensearch": "启用搜索时，Codex 可能会拒绝 `minimal` 思考强度。",
+      "configuration": "配置",
+      "configuration13": "配置",
+      "bootstrappromptlegacy": "启动提示词（旧版）",
+      "optionalinitialsetuppromptforthefirst": "首次运行时的可选初始设置提示词",
+      "bootstrappromptislegacyandwillbe": "启动提示词已是旧版功能，将在未来版本中移除。建议将其内容改放到智能体的提示词模板或说明文件中。",
+      "advanced": "高级",
+      "command": "命令",
+      "extraargscommaseparated": "额外参数（用逗号分隔）",
+      "egverbosefoobar": "例如：--verbose, --foo=bar",
+      "environmentvariables14": "环境变量",
+      "environmentvariables15": "环境变量",
+      "runpolicy": "运行策略",
+      "runpolicy16": "运行策略",
+      "heartbeatoninterval": "按间隔发送心跳",
+      "advancedrunpolicy": "高级运行策略",
+      "runpolicy17": "运行策略",
+      "runpolicy18": "运行策略",
+      "heartbeatoninterval19": "按间隔发送心跳",
+      "advancedrunpolicy20": "高级运行策略",
+      "timeoutsec": "超时时间（秒）",
+      "interruptgraceperiodsec": "中断宽限期（秒）",
+      "wakeondemand": "按需唤醒",
+      "cooldownsec": "冷却时间（秒）",
+      "maxconcurrentruns": "最大并发运行数",
+      "continueaftermaxturnstop": "达到最大轮次后继续",
+      "continuationattempts": "续跑尝试次数",
+      "continuationdelaysec": "续跑延迟（秒）",
+      "debugging": "调试",
+      "debugging21": "调试",
+      "capturerawprovidertraces": "捕获原始供应商追踪",
+      "rawtracingisonforfutureruns": "原始追踪已针对后续运行开启。Paperclip 每次运行最多保留 64 MiB，并在 24 小时后自动删除。",
+      "authenticatedtheenvironmenthascredentialsnow": "已认证。该环境现在已获得凭据。",
+      "thelogintimedoutstartitagain": "登录已超时，请重新开始。",
+      "theloginwascancelled": "登录已取消。",
+      "thelogindidnotfinishstartit": "登录未完成，请重新开始。",
+      "cancel": "取消",
+      "signin": "登录",
+      "preparing": "准备中…",
+      "copythecodethenopentheauthentication": "复制验证码，然后打开认证页面。",
+      "1code": "1. 验证码",
+      "copycode": "复制验证码",
+      "2authenticationurl": "2. 认证 URL",
+      "copyurl": "复制 URL",
+      "opentheauthenticationpage": "打开认证页面",
+      "opentheauthenticationpage22": "打开认证页面",
+      "bindingthisagenttothesignedin": "正在将该智能体绑定到已登录账号…",
+      "agentboundtothesignedinaccount": "智能体已绑定到已登录账号。",
+      "couldnotbindthisagenttothe": "无法将该智能体绑定到已登录账号。",
+      "retry": "重试",
+      "thisconnectionisnotencryptedthelogin": "此连接未加密。登录验证码将以明文方式在此\n            网络中传输，请仅在你信任的网络中继续。",
+      "cancel23": "取消",
+      "usesavedlogin": "使用已保存的登录",
+      "signintoreplace": "重新登录以替换",
+      "signin24": "登录",
+      "youhaveasavedclaudeloginuse": "你已保存 Claude 登录信息。可用它绑定此智能体，或重新登录以替换\n          已保存的令牌。",
+      "thesavedclaudeloginisboundto": "已保存的 Claude 登录信息现已绑定到此智能体。",
+      "preparing25": "准备中…",
+      "thisconnectionisnotencryptedthelogin26": "此连接未加密。登录验证码将以明文方式在此\n                  网络中传输，请仅在你信任的网络中继续。",
+      "opentheauthorizationpagethenenterthe": "打开授权页面，然后输入页面显示的浏览器验证码。",
+      "1authorizationurl": "1. 授权 URL",
+      "copyurl27": "复制 URL",
+      "opentheauthorizationpage": "打开授权页面",
+      "opentheauthorizationpage28": "打开授权页面",
+      "2browsercode": "2. 浏览器验证码",
+      "browsercode": "浏览器验证码",
+      "submit": "提交",
+      "completingthelogin": "正在完成登录…",
+      "authenticatedtheenvironmenthascredentialsnow29": "已认证。该环境现在已获得凭据。",
+      "hint": "提示：",
+      "comingsoon": "即将推出",
+      "experimental": "实验性",
+      "model": "模型",
+      "detecting": "检测中…",
+      "redetectfromconfig": "从配置重新检测",
+      "detectfromconfig": "从配置检测",
+      "refreshing": "刷新中…",
+      "refreshmodels": "刷新模型",
+      "current": "当前",
+      "detected": "已检测到",
+      "config": "配置",
+      "default30": "默认",
+      "usemanualmodel": "使用手动指定的模型",
+      "nomodeldetectedyetenteraprovider": "尚未检测到模型，请手动输入 provider/model。",
+      "nomodelsfound": "未找到模型。",
+      "thinkingeffort": "思考强度",
+      "auto": "Auto"
+    }
+  },
+  "agentcontextualsidebar": {
+    "general": {
+      "audit": "审计",
+      "loadingauditlinks": "正在加载审计链接…"
+    }
+  },
+  "agenticonpicker": {
+    "general": {
+      "searchicons": "搜索图标…",
+      "noiconsmatch": "没有匹配的图标"
+    }
+  },
+  "agentidentity": {
+    "general": {
+      "agent": "智能体"
+    }
+  },
+  "agentproperties": {
+    "general": {
+      "status": "状态",
+      "errorreason": "错误原因",
+      "role": "角色",
+      "title": "职位",
+      "adapter": "适配器",
+      "session": "会话",
+      "lastheartbeat": "上次心跳",
+      "reportsto": "汇报对象",
+      "created": "创建时间"
+    }
+  },
+  "agentsecretaccesseditor": {
+    "general": {
+      "envvar": "环境变量",
+      "apiaccess": "API 访问",
+      "nosecretsareboundtothisagent": "该智能体尚未绑定任何密钥。",
+      "proposedaccess": "提议的访问权限",
+      "proposedby": "提议人",
+      "apiaccessnoenvvar": "API 访问（无环境变量）",
+      "accessalias": "访问别名",
+      "version": "版本",
+      "latest": "最新",
+      "v": "v",
+      "removeapiaccess": "移除 API 访问权限",
+      "invalidaliasuselettersdigitsand": "别名无效——请使用字母、数字和 _",
+      "duplicatealias": "别名重复",
+      "addapiaccess": "添加 API 访问权限",
+      "theagentreadsthembyaliasthrough": "智能体通过以下接口按别名读取它们：",
+      "getagentsmesecrets": "GET /agents/me/secrets"
+    }
+  },
+  "animatedpaperclipicon": {
+    "general": {
+      "loading": "加载中…"
+    }
+  },
+  "announcementcard": {
+    "general": {
+      "dismissannouncement": "关闭公告"
+    }
+  },
+  "announcementwell": {
+    "general": {
+      "paperclipannouncements": "Paperclip 公告"
+    }
+  },
+  "approvalcard": {
+    "general": {
+      "requestedby": "请求人",
+      "approvalrequestcreated": "审批请求已创建",
+      "decisionnote": "决策备注。",
+      "approving": "批准中…",
+      "approve": "批准",
+      "rejecting": "拒绝中…",
+      "reject": "拒绝",
+      "viewdetails": "查看详情",
+      "viewdetails1": "查看详情"
+    }
+  },
+  "approvalpayload": {
+    "general": {
+      "skills": "技能",
+      "name": "名称",
+      "role": "角色",
+      "title": "职位",
+      "icon": "图标",
+      "capabilities": "能力",
+      "adapter": "适配器",
+      "title1": "职位",
+      "scope": "范围",
+      "window": "窗口",
+      "metric": "指标",
+      "limit": "限额",
+      "observed": "· 观测值",
+      "title2": "标题",
+      "summary": "摘要",
+      "recommendedaction": "建议操作",
+      "onapproval": "批准后",
+      "risks": "风险",
+      "proposedcomment": "拟发布的评论"
+    }
+  },
+  "appssidebarproduction": {
+    "general": {
+      "company": "公司",
+      "connectors": "连接器",
+      "connectors1": "连接器",
+      "browse": "浏览",
+      "review": "审核",
+      "developer": "开发者",
+      "advancedsetupfordevelopersmostteamsnever": "面向开发者的高级设置，大多数团队用不到。",
+      "connections": "连接"
+    }
+  },
+  "appssidebar": {
+    "general": {
+      "connectors": "连接器",
+      "browse": "浏览",
+      "review": "审核",
+      "developer": "开发者",
+      "advancedsetupfordevelopers": "面向开发者的高级设置。"
+    }
+  },
+  "artifactspanel": {
+    "general": {
+      "artifacts": "产出物",
+      "loading": "加载中…",
+      "yourteamsdeliverablesandplanswill": "你团队的交付物和方案在产出后会显示在这里。",
+      "noartifactsmatchthisfilter": "没有符合该筛选条件的产出物。",
+      "generating": "生成中…",
+      "loadingdocument": "文档加载中…",
+      "documentnotavailableyet": "文档暂不可用。",
+      "documentisempty": "文档为空。",
+      "thisdocumentneedsyourreview": "该文档需要你审核。",
+      "approve": "批准",
+      "reject": "拒绝",
+      "approvedhiretaskscreated": "已批准——已创建招聘任务",
+      "changesrequestedceoisrevising": "已要求修改——CEO 正在修订"
+    }
+  },
+  "attentioninteractionresolver": {
+    "general": {
+      "loadingdecision": "正在加载决策…",
+      "thisdecisionisnolongeravailableit": "该决策已不可用——可能已在别处被处理。"
+    }
+  },
+  "attentionqueuerow": {
+    "general": {
+      "open": "打开",
+      "restore": "恢复",
+      "setby": "· 设置人",
+      "reappears": "重新出现",
+      "rowactions": "行操作",
+      "dismiss": "忽略",
+      "opensource": "打开来源",
+      "decisionactions": "决策操作",
+      "more": "更多",
+      "viewissue": "查看工单",
+      "more1": "更多",
+      "snooze": "稍后提醒",
+      "custom": "自定义",
+      "snoozeuntil": "稍后提醒至…",
+      "missingissuereferenceforthisdecision": "该决策缺少工单引用。",
+      "optionaldecisionnote": "可选的决策备注…",
+      "requestrevision": "要求修改",
+      "reject": "拒绝",
+      "approve": "批准",
+      "reject2": "拒绝",
+      "approve3": "批准"
+    }
+  },
+  "billerspendcard": {
+    "general": {
+      "in": "输入",
+      "out": "输出",
+      "provider": "供应商",
+      "s": "s",
+      "model": "模型",
+      "s1": "s",
+      "periodspend": "周期支出",
+      "s2": "s",
+      "0meteredruns": "0 次计量运行",
+      "s3": "s",
+      "0subscriptionruns": "0 次订阅运行",
+      "thisweek": "本周",
+      "billingtypes": "计费类型",
+      "upstreamproviders": "上游供应商",
+      "tok": "tok"
+    }
+  },
+  "blockedinboxview": {
+    "general": {
+      "couldntloadtheblockedtab": "无法加载「已阻塞」标签页。",
+      "otherinboxtabsstillwork": "收件箱的其他标签页仍可正常使用。",
+      "trying": "正在重试…",
+      "tryagain": "重试",
+      "noworkisstopped": "当前没有被停止的工作。",
+      "tasksthatneedadecisionrecoveryor": "需要决策、恢复或外部操作的任务会显示在这里。",
+      "nostoppeditemsmatchyoursearch": "没有匹配搜索条件的已停止项目。"
+    }
+  },
+  "bootstrappendingpage": {
+    "general": {
+      "prefertofinishsetupfromthehost": "想改在主机上完成设置吗？",
+      "abootstrapinviteisalreadyactivecheck": "启动邀请已处于生效状态。请查看 Paperclip 启动日志获取首位管理员链接，或在主机上运行以下命令重新生成：",
+      "runthiscommandonthehostthat": "在运行 Paperclip 的主机上运行此命令，以打印一次性首位管理员邀请链接：",
+      "thispaperclipiswaitingonitsfirst": "此 Paperclip 正在等待首位管理员",
+      "thisinstancerunsininviteonlymode": "此实例运行于仅邀请模式。操作员必须在主机上生成一次性\n          首位管理员邀请链接。拿到链接后，请在此浏览器中打开以完成设置。",
+      "browserbasedclaimisintentionallydisabledin": "在公共模式下，基于浏览器的认领功能被有意禁用，\n          以防止网络中的任何人自我提升为管理员。",
+      "youretheinstanceadmin": "你是本实例的管理员",
+      "setupiscompletetakingyoutoonboarding": "设置已完成，正在带你前往引导流程以创建你的第一个组织……",
+      "redirecting": "正在跳转…",
+      "continuetodashboard": "继续前往仪表盘",
+      "finishsettingupthispaperclip": "完成此 Paperclip 的设置",
+      "noadminhasclaimedthisinstanceyet": "尚无管理员认领此实例。请登录或创建 Paperclip 账号，\n          从此浏览器成为首位管理员。",
+      "signincreateaccount": "登录 / 创建账号",
+      "finishsettingupthispaperclip1": "完成此 Paperclip 的设置",
+      "noadminhasclaimedthisinstanceyet2": "尚无管理员认领此实例。现在认领即可成为首位管理员并开始引导流程。",
+      "claiming": "正在认领…",
+      "claimthisinstance": "认领此实例",
+      "signedinas": "已登录为",
+      "wrongaccount": "账号不对？",
+      "switchaccount": "切换账号"
+    }
+  },
+  "budgetincidentcard": {
+    "general": {
+      "hardstop": "硬性停止",
+      "spendingreached": "支出已达到",
+      "againstalimitof": "超出限额",
+      "projectexecutionispausednewworkin": "项目执行已暂停。在你解决该预算事件之前，此项目不会开始新工作。",
+      "thisscopeispausednewheartbeatswill": "该范围已暂停。在你解决该预算事件之前，不会发起新的心跳。",
+      "newbudgetusd": "新预算（美元）",
+      "applying": "应用中…",
+      "raisebudgetresume": "提高预算并恢复",
+      "thenewbudgetmustexceedcurrentobserved": "新预算必须超过当前观测到的支出。",
+      "keeppaused": "保持暂停"
+    }
+  },
+  "budgetpolicycard": {
+    "general": {
+      "observed": "观测值",
+      "budget": "预算",
+      "softalertat": "软告警阈值",
+      "observed1": "观测值",
+      "budget2": "预算",
+      "softalertat3": "软告警阈值",
+      "remaining": "剩余",
+      "budgetusd": "预算（美元）",
+      "paused": "已暂停",
+      "warning": "警告",
+      "hardstop": "硬性停止",
+      "healthy": "正常",
+      "enteravalidnonnegativedollaramount": "请输入有效的非负美元金额。",
+      "paused4": "已暂停",
+      "warning5": "警告",
+      "hardstop6": "硬性停止",
+      "healthy7": "正常",
+      "enteravalidnonnegativedollaramount8": "请输入有效的非负美元金额。"
+    }
+  },
+  "builtinagentbadges": {
+    "general": {
+      "approval": "审批",
+      "pendingapproval": "待审批",
+      "setup": "设置",
+      "needssetup": "需要设置"
+    }
+  },
+  "builtinagentgate": {
+    "general": {
+      "viewagent": "查看智能体",
+      "itsbuiltinagentwaspaused": "其内置智能体已被暂停",
+      "sonew": "，因此新的",
+      "isntbeinggenerated": "不会再生成。"
+    }
+  },
+  "builtinbundlepanel": {
+    "general": {
+      "working": "处理中…",
+      "cancel": "取消",
+      "working1": "处理中…",
+      "cancel2": "取消",
+      "view": "查看",
+      "bundlestatus": "捆绑包状态",
+      "bundlestatus3": "捆绑包状态",
+      "adapter": "适配器",
+      "configure": "配置",
+      "routine": "例行任务",
+      "runreflectioncoachonce": "运行一次 Reflection Coach？",
+      "disabletheweeklyschedule": "禁用每周计划？",
+      "enabletheweeklyschedule": "启用每周计划？",
+      "routine4": "例行任务",
+      "proposal": "提案",
+      "reviewproposal": "审核提案"
+    }
+  },
+  "caseactivityfeed": {
+    "general": {
+      "noactivityyet": "暂无动态。",
+      "of": "/",
+      "events": "个事件",
+      "activityfilter": "动态筛选",
+      "allactivity": "全部动态",
+      "noeventsmatchthisfilter": "没有符合该筛选条件的事件。"
+    }
+  },
+  "caseattachmentsgallery": {
+    "general": {
+      "noattachments": "没有附件。"
+    }
+  },
+  "casechildrentree": {
+    "general": {
+      "nochildcases": "没有子案例。",
+      "caseid": "案例 ID",
+      "show": "显示",
+      "more": "更多"
+    }
+  },
+  "casefieldspanel": {
+    "general": {
+      "copied": "已复制",
+      "true": "true",
+      "fields": "字段",
+      "fromtheskillapossschemarendered": "来自该技能的 schema——通用渲染",
+      "nofieldsset": "未设置任何字段"
+    }
+  },
+  "caseidentifierkey": {
+    "general": {
+      "copied": "已复制",
+      "caseid": "案例 ID",
+      "casekey": "案例键"
+    }
+  },
+  "caserevisionrail": {
+    "general": {
+      "via": "经由",
+      "diff": "差异 -",
+      "old": "旧版",
+      "selectrevision": "选择版本",
+      "new": "新版",
+      "selectrevision1": "选择版本",
+      "selecttworevisionstocompare": "请选择两个版本进行比较。",
+      "bothsidesarethesamerevision": "两侧是同一个版本。",
+      "old2": "旧版",
+      "new3": "新版",
+      "content": "内容",
+      "loadingrevisions": "正在加载版本…",
+      "couldnotloadrevisions": "无法加载版本。",
+      "norevisionsyet": "暂无版本。",
+      "revisions": "版本",
+      "diff4": "差异",
+      "rev": "版本",
+      "latest": "最新",
+      "rev5": "版本",
+      "thisrevisionhasnobody": "该版本没有正文内容。"
+    }
+  },
+  "chatcomposer": {
+    "general": {
+      "droptoattach": "拖放以附加",
+      "attachfiles": "附加文件",
+      "attachfiles1": "附加文件"
+    }
+  },
+  "claudesubscriptionpanel": {
+    "general": {
+      "anthropicsubscription": "Anthropic 订阅",
+      "liveclaudequotawindows": "实时 Claude 配额窗口。",
+      "used": "% 已用"
+    }
+  },
+  "apperrorboundary": {
+    "general": {
+      "papercliphitanerror": "Paperclip 出错了",
+      "somethingwentwrongwhilerunningtheapp": "应用运行时出现问题，刷新通常可以解决。",
+      "reloadpage": "刷新页面"
+    }
   }
 }

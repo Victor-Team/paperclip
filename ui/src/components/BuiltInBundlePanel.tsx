@@ -20,6 +20,7 @@ import type {
   BuiltInManagedResourceKind,
   BuiltInManagedResourceState,
 } from "@/api/builtInAgents";
+import { useTranslation } from "@/i18n";
 
 /**
  * Bundle status panel for a bundle-backed built-in agent (Reflection Coach —
@@ -111,13 +112,14 @@ function ResourceActionButton({
   onConfirm: () => void;
   pending: boolean;
 }) {
+  const { t } = useTranslation();
   const copy = resourceActionCopy(resource, label);
   if (!copy) return null;
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
         <Button variant="outline" size="sm" disabled={pending}>
-          {pending ? "Working…" : copy.triggerLabel}
+          {pending ? t("builtinbundlepanel.general.working") : copy.triggerLabel}
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
@@ -126,7 +128,7 @@ function ResourceActionButton({
           <AlertDialogDescription>{copy.body}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogCancel>{t("builtinbundlepanel.general.cancel")}</AlertDialogCancel>
           <AlertDialogAction onClick={onConfirm}>{copy.confirmLabel}</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
@@ -149,11 +151,12 @@ function ConfirmActionButton({
   pending: boolean;
   onConfirm: () => void;
 }) {
+  const { t } = useTranslation();
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
         <Button variant="outline" size="sm" disabled={pending}>
-          {pending ? "Working…" : triggerLabel}
+          {pending ? t("builtinbundlepanel.general.working1") : triggerLabel}
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
@@ -162,7 +165,7 @@ function ConfirmActionButton({
           <AlertDialogDescription>{body}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogCancel>{t("builtinbundlepanel.general.cancel2")}</AlertDialogCancel>
           <AlertDialogAction onClick={onConfirm}>{confirmLabel}</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
@@ -251,6 +254,7 @@ export function BuiltInBundlePanel({
   routineActionPending = null,
   className,
 }: BuiltInBundlePanelProps) {
+  const { t } = useTranslation();
   const { status, definition, resources } = state;
   const bundle = definition.bundle;
   if (!bundle) return null;
@@ -302,7 +306,7 @@ export function BuiltInBundlePanel({
         actions={
           <>
             <Button asChild variant="link" size="sm">
-              <Link to={viewHref}>View</Link>
+              <Link to={viewHref}>{t("builtinbundlepanel.general.view")}</Link>
             </Button>
             <ResourceActionButton
               resource={resource}
@@ -317,19 +321,18 @@ export function BuiltInBundlePanel({
   };
 
   return (
-    <section className={cn("space-y-2", className)} aria-label="Bundle status">
-      <h3 className="text-sm font-medium">Bundle status</h3>
+    <section className={cn("space-y-2", className)} aria-label={t("builtinbundlepanel.general.bundlestatus")}>
+      <h3 className="text-sm font-medium">{t("builtinbundlepanel.general.bundlestatus3")}</h3>
 
       <div className="divide-y rounded-lg border px-4">
         {/* Adapter — no resource entry; readiness is the agent lifecycle. */}
         <BundleRow
-          label="Adapter"
+          label={t("builtinbundlepanel.general.adapter")}
           chips={<ResourceStatusChip variant={adapterChip} />}
           detail={adapterDetail}
           actions={
             <Button variant="outline" size="sm" onClick={onConfigure}>
-              Configure
-            </Button>
+              {t("builtinbundlepanel.general.configure")}</Button>
           }
         />
 
@@ -353,7 +356,7 @@ export function BuiltInBundlePanel({
 
         {/* Routine — zero-token-by-default; the weekly schedule ships off. */}
         <BundleRow
-          label="Routine"
+          label={t("builtinbundlepanel.general.routine")}
           secondary={bundle.routine.title}
           chips={
             <>
@@ -376,7 +379,7 @@ export function BuiltInBundlePanel({
               <>
                 {onRunRoutine && (
                   <ConfirmActionButton
-                    title="Run Reflection Coach once?"
+                    title={t("builtinbundlepanel.general.runreflectioncoachonce")}
                     body="Paperclip will create one routine task now. This does not enable the weekly schedule or turn on background work."
                     triggerLabel="Run once"
                     confirmLabel="Run once"
@@ -387,7 +390,7 @@ export function BuiltInBundlePanel({
                 {scheduleEnabled
                   ? onDisableSchedule && (
                     <ConfirmActionButton
-                      title="Disable the weekly schedule?"
+                      title={t("builtinbundlepanel.general.disabletheweeklyschedule")}
                       body="Paperclip will stop future scheduled Reflection Coach runs. Manual Run once remains available."
                       triggerLabel="Disable schedule"
                       confirmLabel="Disable schedule"
@@ -397,7 +400,7 @@ export function BuiltInBundlePanel({
                   )
                   : onEnableSchedule && (
                     <ConfirmActionButton
-                      title="Enable the weekly schedule?"
+                      title={t("builtinbundlepanel.general.enabletheweeklyschedule")}
                       body="Paperclip will allow Reflection Coach to create routine tasks on the weekly schedule. It can spend tokens when those tasks run."
                       triggerLabel="Enable weekly"
                       confirmLabel="Enable weekly"
@@ -408,7 +411,7 @@ export function BuiltInBundlePanel({
                 {driftVariant(routine) && (
                   <ResourceActionButton
                     resource={routine}
-                    label="routine"
+                    label={t("builtinbundlepanel.general.routine4")}
                     onConfirm={() => onResetResource("routine")}
                     pending={resettingResource === "routine"}
                   />
@@ -419,12 +422,12 @@ export function BuiltInBundlePanel({
         />
         {proposalHref && (
           <BundleRow
-            label="Proposal"
+            label={t("builtinbundlepanel.general.proposal")}
             chips={<ResourceStatusChip variant="proposal_pending" />}
             detail="A proposed Reflection Coach update is waiting for review."
             actions={
               <Button asChild variant="link" size="sm">
-                <Link to={proposalHref}>Review proposal</Link>
+                <Link to={proposalHref}>{t("builtinbundlepanel.general.reviewproposal")}</Link>
               </Button>
             }
           />

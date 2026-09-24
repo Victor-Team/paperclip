@@ -51,6 +51,7 @@ import { AttentionInteractionResolver } from "./AttentionInteractionResolver";
 import { DecisionResolver } from "./DecisionResolver";
 import { StalledReviewActions } from "./StalledReviewActions";
 import { readIssueReviewPolicyMetadata } from "../lib/review-policy";
+import { useTranslation } from "@/i18n";
 
 const HOUR_MS = 60 * 60 * 1000;
 const DAY_MS = 24 * HOUR_MS;
@@ -122,6 +123,7 @@ export const AttentionQueueRow = memo(function AttentionQueueRow({
   userLabelMap,
   selected = false,
 }: AttentionQueueRowProps) {
+  const { t } = useTranslation();
   const meta = sourceMeta(item.sourceKind);
   // Colour + glyph are borrowed wholesale from the task status system, so a
   // blocking decision reads exactly like a blocked task (DESIGN.md principle 5).
@@ -215,8 +217,7 @@ export const AttentionQueueRow = memo(function AttentionQueueRow({
           {showOpen && (
             <Button asChild variant="default" size="xs" className={ACTION_BTN}>
               <Link to={href!}>
-                Open
-                <ExternalLink className="h-3 w-3" />
+                {t("attentionqueuerow.general.open")}<ExternalLink className="h-3 w-3" />
               </Link>
             </Button>
           )}
@@ -224,8 +225,7 @@ export const AttentionQueueRow = memo(function AttentionQueueRow({
           {showRestore && (
             <Button type="button" variant="outline" size="xs" className={ACTION_BTN} onClick={() => onRestore(item)}>
               <RotateCcw className="h-3 w-3" />
-              Restore
-            </Button>
+              {t("attentionqueuerow.general.restore")}</Button>
           )}
         </div>
       </div>
@@ -282,7 +282,7 @@ export const AttentionQueueRow = memo(function AttentionQueueRow({
                 <CalendarClock className="h-3 w-3" />
                 {decideByLabel(item.decideBy)}
                 {decideByProvenance(item) && (
-                  <span className="text-muted-foreground/80">· set by {decideByProvenance(item)}</span>
+                  <span className="text-muted-foreground/80">{t("attentionqueuerow.general.setby")} {decideByProvenance(item)}</span>
                 )}
               </span>
             </>
@@ -295,7 +295,7 @@ export const AttentionQueueRow = memo(function AttentionQueueRow({
               className="text-(length:--text-nano) text-muted-foreground"
               title={`Reappears ${new Date(snoozedUntil).toLocaleString()}`}
             >
-              Reappears {reappearLabel(snoozedUntil)}
+              {t("attentionqueuerow.general.reappears")} {reappearLabel(snoozedUntil)}
             </span>
           ) : (
             <span className="text-(length:--text-nano) text-muted-foreground">{relativeTime(item.activityAt)}</span>
@@ -307,7 +307,7 @@ export const AttentionQueueRow = memo(function AttentionQueueRow({
                   variant="ghost"
                   size="icon-xs"
                   className="text-muted-foreground"
-                  aria-label="Row actions"
+                  aria-label={t("attentionqueuerow.general.rowactions")}
                 >
                   <MoreHorizontal className="h-4 w-4" />
                 </Button>
@@ -316,13 +316,12 @@ export const AttentionQueueRow = memo(function AttentionQueueRow({
                 {onSnooze && <SnoozeSubmenu onSnooze={(iso) => onSnooze(item, iso)} />}
                 <DropdownMenuItem onClick={() => onDismiss(item)}>
                   <X className="h-4 w-4" />
-                  Dismiss
-                </DropdownMenuItem>
+                  {t("attentionqueuerow.general.dismiss")}</DropdownMenuItem>
                 {href && (
                   <>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem asChild>
-                      <Link to={href}>Open source</Link>
+                      <Link to={href}>{t("attentionqueuerow.general.opensource")}</Link>
                     </DropdownMenuItem>
                   </>
                 )}
@@ -484,6 +483,7 @@ function CompactDecisionActions({
   audience: InteractionAudienceDescription | null;
   onOpen: () => void;
 }) {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const { pushToast } = useToastActions();
   const actions = collectCompactActions(item);
@@ -534,7 +534,7 @@ function CompactDecisionActions({
   if (actions.length === 0) return null;
 
   return (
-    <div className="flex w-full flex-wrap items-center gap-2 @xl:w-auto @xl:justify-end @xl:gap-1" aria-label="Decision actions">
+    <div className="flex w-full flex-wrap items-center gap-2 @xl:w-auto @xl:justify-end @xl:gap-1" aria-label={t("attentionqueuerow.general.decisionactions")}>
       {actions.map(({ action, id, label, description }) => (
         <Button
           key={id}
@@ -612,6 +612,7 @@ function ThumbnailStack({ images }: { images: AttentionDetailImage[] }) {
  * links through to the issue where the full set lives.
  */
 function ExpandedImages({ images, issueHref }: { images: AttentionDetailImage[]; issueHref: string | null }) {
+  const { t } = useTranslation();
   const visible = images.slice(0, 3);
   const extra = images.length - visible.length;
   return (
@@ -656,16 +657,14 @@ function ExpandedImages({ images, issueHref }: { images: AttentionDetailImage[];
           onClick={(e) => e.stopPropagation()}
           className="flex h-32 w-24 flex-col items-center justify-center rounded-md border border-dashed border-border bg-muted/40 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-ring focus-visible:ring-(length:--rad-3) focus-visible:outline-none"
         >
-          <span className="text-base font-semibold">{extra} more</span>
+          <span className="text-base font-semibold">{extra} {t("attentionqueuerow.general.more")}</span>
           <span className="mt-0.5 inline-flex items-center gap-1 text-(length:--text-nano)">
-            View issue
-            <ExternalLink className="h-3 w-3" />
+            {t("attentionqueuerow.general.viewissue")}<ExternalLink className="h-3 w-3" />
           </span>
         </Link>
       ) : (
         <span className="flex h-32 w-24 items-center justify-center rounded-md border border-dashed border-border bg-muted/40 text-sm font-semibold text-muted-foreground">
-          {extra} more
-        </span>
+          {extra} {t("attentionqueuerow.general.more1")}</span>
       ))}
     </div>
   );
@@ -673,6 +672,7 @@ function ExpandedImages({ images, issueHref }: { images: AttentionDetailImage[];
 
 /** Snooze submenu: presets + a custom date-time (plan §6). */
 function SnoozeSubmenu({ onSnooze }: { onSnooze: (snoozedUntil: string) => void }) {
+  const { t } = useTranslation();
   const [customValue, setCustomValue] = useState("");
   const applyCustom = () => {
     if (!customValue) return;
@@ -684,8 +684,7 @@ function SnoozeSubmenu({ onSnooze }: { onSnooze: (snoozedUntil: string) => void 
     <DropdownMenuSub>
       <DropdownMenuSubTrigger>
         <AlarmClock className="h-4 w-4" />
-        Snooze
-      </DropdownMenuSubTrigger>
+        {t("attentionqueuerow.general.snooze")}</DropdownMenuSubTrigger>
       <DropdownMenuSubContent>
         {SNOOZE_PRESETS.map((preset) => (
           <DropdownMenuItem key={preset.label} onClick={() => onSnooze(preset.resolve())}>
@@ -701,8 +700,7 @@ function SnoozeSubmenu({ onSnooze }: { onSnooze: (snoozedUntil: string) => void 
           onClick={(e) => e.stopPropagation()}
         >
           <span className="text-(length:--text-nano) font-medium uppercase tracking-(--tracking-eyebrow) text-muted-foreground">
-            Custom
-          </span>
+            {t("attentionqueuerow.general.custom")}</span>
           <input
             type="datetime-local"
             value={customValue}
@@ -710,8 +708,7 @@ function SnoozeSubmenu({ onSnooze }: { onSnooze: (snoozedUntil: string) => void 
             className="w-full rounded-sm border border-border bg-background px-2 py-1 text-xs"
           />
           <Button type="button" size="xs" disabled={!customValue} onClick={applyCustom}>
-            Snooze until…
-          </Button>
+            {t("attentionqueuerow.general.snoozeuntil")}</Button>
         </div>
       </DropdownMenuSubContent>
     </DropdownMenuSub>
@@ -763,6 +760,7 @@ function InlineResolver({
   userLabelMap?: ReadonlyMap<string, string> | null;
   toggle: ReactNode;
 }) {
+  const { t } = useTranslation();
   if (item.sourceKind === "decision") {
     return (
       <DecisionResolver
@@ -777,7 +775,7 @@ function InlineResolver({
   if (item.sourceKind === "issue_thread_interaction") {
     const issueId = (item.subject.metadata?.issueId as string | undefined) ?? item.relatedIssue?.id;
     if (!issueId) {
-      return <p className="text-xs text-muted-foreground">Missing issue reference for this decision.</p>;
+      return <p className="text-xs text-muted-foreground">{t("attentionqueuerow.general.missingissuereferenceforthisdecision")}</p>;
     }
     return (
       <>
@@ -829,6 +827,7 @@ function ResolverFooter({ toggle, children }: { toggle: ReactNode; children: Rea
 }
 
 function ApprovalResolver({ item, companyId, toggle }: { item: AttentionItem; companyId: string; toggle: ReactNode }) {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [note, setNote] = useState("");
   const invalidate = () => {
@@ -856,28 +855,26 @@ function ApprovalResolver({ item, companyId, toggle }: { item: AttentionItem; co
       <Textarea
         value={note}
         onChange={(e) => setNote(e.target.value)}
-        placeholder="Optional decision note…"
+        placeholder={t("attentionqueuerow.general.optionaldecisionnote")}
         className="min-h-16 text-sm"
       />
       <ResolverFooter toggle={toggle}>
         <Button size="sm" variant="outline" onClick={() => revise.mutate()} disabled={pending}>
           {revise.isPending && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
-          Request revision
-        </Button>
+          {t("attentionqueuerow.general.requestrevision")}</Button>
         <Button size="sm" variant="destructive" onClick={() => reject.mutate()} disabled={pending}>
           {reject.isPending && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
-          Reject
-        </Button>
+          {t("attentionqueuerow.general.reject")}</Button>
         <Button size="sm" onClick={() => approve.mutate()} disabled={pending}>
           {approve.isPending && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
-          Approve
-        </Button>
+          {t("attentionqueuerow.general.approve")}</Button>
       </ResolverFooter>
     </>
   );
 }
 
 function JoinRequestResolver({ item, companyId, toggle }: { item: AttentionItem; companyId: string; toggle: ReactNode }) {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const invalidate = () => {
     queryClient.invalidateQueries({ queryKey: queryKeys.attention(companyId) });
@@ -897,12 +894,10 @@ function JoinRequestResolver({ item, companyId, toggle }: { item: AttentionItem;
     <ResolverFooter toggle={toggle}>
       <Button size="sm" variant="destructive" onClick={() => reject.mutate()} disabled={pending}>
         {reject.isPending && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
-        Reject
-      </Button>
+        {t("attentionqueuerow.general.reject2")}</Button>
       <Button size="sm" onClick={() => approve.mutate()} disabled={pending}>
         {approve.isPending && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
-        Approve
-      </Button>
+        {t("attentionqueuerow.general.approve3")}</Button>
     </ResolverFooter>
   );
 }

@@ -3,6 +3,7 @@ import type { CostByBiller, CostByProviderModel } from "@paperclipai/shared";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { QuotaBar } from "./QuotaBar";
 import { billingTypeDisplayName, formatCents, formatTokens, providerDisplayName } from "@/lib/utils";
+import { useTranslation } from "@/i18n";
 
 interface BillerSpendCardProps {
   row: CostByBiller;
@@ -19,6 +20,7 @@ export function BillerSpendCard({
   totalCompanySpendCents,
   providerRows,
 }: BillerSpendCardProps) {
+  const { t } = useTranslation();
   const providerBreakdown = useMemo(() => {
     const map = new Map<string, { provider: string; costCents: number; inputTokens: number; outputTokens: number }>();
     for (const entry of providerRows) {
@@ -62,13 +64,11 @@ export function BillerSpendCard({
               {providerDisplayName(row.biller)}
             </CardTitle>
             <CardDescription className="text-xs mt-0.5">
-              <span className="font-mono">{formatTokens(row.inputTokens + row.cachedInputTokens)}</span> in
+              <span className="font-mono">{formatTokens(row.inputTokens + row.cachedInputTokens)}</span> {t("billerspendcard.general.in")}              {" · "}
+              <span className="font-mono">{formatTokens(row.outputTokens)}</span> {t("billerspendcard.general.out")}              {" · "}
+              {row.providerCount} {t("billerspendcard.general.provider")}{row.providerCount === 1 ? "" : t("billerspendcard.general.s")}
               {" · "}
-              <span className="font-mono">{formatTokens(row.outputTokens)}</span> out
-              {" · "}
-              {row.providerCount} provider{row.providerCount === 1 ? "" : "s"}
-              {" · "}
-              {row.modelCount} model{row.modelCount === 1 ? "" : "s"}
+              {row.modelCount} {t("billerspendcard.general.model")}{row.modelCount === 1 ? "" : t("billerspendcard.general.s1")}
             </CardDescription>
           </div>
           <span className="text-xl font-bold tabular-nums shrink-0">
@@ -80,7 +80,7 @@ export function BillerSpendCard({
       <CardContent className="px-4 pb-4 pt-3 space-y-4">
         {budgetMonthlyCents > 0 && (
           <QuotaBar
-            label="Period spend"
+            label={t("billerspendcard.general.periodspend")}
             percentUsed={budgetPct}
             leftLabel={formatCents(row.costCents)}
             rightLabel={`${Math.round(budgetPct)}% of allocation`}
@@ -88,22 +88,20 @@ export function BillerSpendCard({
         )}
 
         <div className="text-xs text-muted-foreground">
-          {row.apiRunCount > 0 ? `${row.apiRunCount} metered run${row.apiRunCount === 1 ? "" : "s"}` : "0 metered runs"}
+          {row.apiRunCount > 0 ? `${row.apiRunCount} metered run${row.apiRunCount === 1 ? "" : t("billerspendcard.general.s2")}` : t("billerspendcard.general.0meteredruns")}
           {" · "}
           {row.subscriptionRunCount > 0
-            ? `${row.subscriptionRunCount} subscription run${row.subscriptionRunCount === 1 ? "" : "s"}`
-            : "0 subscription runs"}
+            ? `${row.subscriptionRunCount} subscription run${row.subscriptionRunCount === 1 ? "" : t("billerspendcard.general.s3")}`
+            : t("billerspendcard.general.0subscriptionruns")}
           {" · "}
-          {formatCents(weekSpendCents)} this week
-        </div>
+          {formatCents(weekSpendCents)} t{t("billerspendcard.general.thisweek")}</div>
 
         {billingTypeBreakdown.length > 0 && (
           <>
             <div className="border-t border-border" />
             <div className="space-y-2">
               <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                Billing types
-              </p>
+                {t("billerspendcard.general.billingtypes")}</p>
               <div className="space-y-1.5">
                 {billingTypeBreakdown.map(([billingType, costCents]) => (
                   <div key={billingType} className="flex items-center justify-between gap-2 text-xs">
@@ -121,8 +119,7 @@ export function BillerSpendCard({
             <div className="border-t border-border" />
             <div className="space-y-2">
               <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                Upstream providers
-              </p>
+                {t("billerspendcard.general.upstreamproviders")}</p>
               <div className="space-y-1.5">
                 {providerBreakdown.map((entry) => (
                   <div key={entry.provider} className="flex items-center justify-between gap-2 text-xs">
@@ -130,8 +127,7 @@ export function BillerSpendCard({
                     <div className="text-right tabular-nums">
                       <div className="font-medium">{formatCents(entry.costCents)}</div>
                       <div className="text-muted-foreground">
-                        {formatTokens(entry.inputTokens + entry.outputTokens)} tok
-                      </div>
+                        {formatTokens(entry.inputTokens + entry.outputTokens)} t{t("billerspendcard.general.tok")}</div>
                     </div>
                   </div>
                 ))}
