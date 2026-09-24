@@ -8184,7 +8184,24 @@
       "comments": "Comments (",
       "addacomment": "Add a comment...",
       "posting": "Posting…",
-      "postcomment": "Post comment"
+      "postcomment": "Post comment",
+      "approvalsBreadcrumb": "Approvals",
+      "approvalBreadcrumb": "Approval",
+      "approveFailed": "Approve failed",
+      "rejectFailed": "Reject failed",
+      "revisionFailed": "Revision request failed",
+      "resubmitFailed": "Resubmit failed",
+      "commentFailed": "Comment failed",
+      "deleteFailed": "Delete failed",
+      "reviewLinkedTasks": "Review linked tasks",
+      "reviewLinkedTask": "Review linked task",
+      "openHiredAgent": "Open hired agent",
+      "backToApprovals": "Back to approvals",
+      "agent": "Agent",
+      "board": "Board",
+      "budgetStopOutro": ".",
+      "deleteAgentConfirm": "Delete this disapproved agent? This cannot be undone.",
+      "commentsCount": "Comments ({{count}})"
     }
   },
   "boardchat": {
