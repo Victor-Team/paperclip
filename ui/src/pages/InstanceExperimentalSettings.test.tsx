@@ -9,6 +9,7 @@ import type {
   InstanceExperimentalSettingsWithManaged,
 } from "@paperclipai/shared";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { i18n } from "@/i18n";
 import { InstanceExperimentalSettings } from "./InstanceExperimentalSettings";
 import { queryKeys } from "../lib/queryKeys";
 
@@ -202,6 +203,19 @@ describe("InstanceExperimentalSettings — Conference Room Chat card (PAP-11233)
     );
     expect(warning?.textContent).toContain("Experimental features may break at any time.");
     expect(warning?.textContent).toContain("no compatibility guarantees");
+  });
+
+  it("updates warning, card copy, and switch labels when language changes", async () => {
+    await renderPage();
+    try {
+      await act(async () => { await i18n.changeLanguage("zh-CN"); });
+      await flushReact();
+      expect(container.textContent).toContain("实验性功能可能随时发生变化或无法使用");
+      expect(container.textContent).toContain("与每个智能体保持一段持续的对话");
+      expect(container.querySelector('button[aria-label="切换智能体对话"]')).not.toBeNull();
+    } finally {
+      await act(async () => { await i18n.changeLanguage("en"); });
+    }
   });
 
   it("does not render an Apps experimental setting", async () => {
@@ -558,6 +572,14 @@ describe("InstanceExperimentalSettings — Conference Room Chat card (PAP-11233)
     expect(container.textContent).not.toContain("Execution is suppressed");
     const toggle = container.querySelector<HTMLButtonElement>(WORKTREE_RUN_EXECUTION_TOGGLE_SELECTOR);
     expect(toggle?.getAttribute("aria-checked")).toBe("true");
+    try {
+      await act(async () => { await i18n.changeLanguage("zh-CN"); });
+      await flushReact();
+      expect(container.textContent).toMatch(/正在运行创建于.+之后的工单。/);
+      expect(container.querySelector('button[aria-label="切换工作树运行执行设置"]')).not.toBeNull();
+    } finally {
+      await act(async () => { await i18n.changeLanguage("en"); });
+    }
   });
 
   it("fails closed with a re-enable hint when the flag was armed in another instance", async () => {
