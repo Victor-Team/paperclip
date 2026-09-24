@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { i18n } from "@/i18n";
 import { queryKeys } from "../lib/queryKeys";
 import {
   getPipelineStageColumnTone,
@@ -69,6 +70,17 @@ describe("groupCasesByBuiltFor", () => {
         cases: [expect.objectContaining({ id: "standalone" })],
       },
     ]);
+  });
+
+  it("updates fallback group labels when the operator switches to Chinese", async () => {
+    const originalLocale = i18n.language;
+    await i18n.changeLanguage("zh-CN");
+    try {
+      expect(groupCasesByBuiltFor([{ id: "standalone", pipelineId: "pipeline-1", stageId: "stage-1", title: "Example", parentCase: null }])[0]?.label)
+        .toBe("没有下游目标事项");
+    } finally {
+      await i18n.changeLanguage(originalLocale);
+    }
   });
 });
 
