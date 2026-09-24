@@ -473,6 +473,38 @@
       "continue": "继续",
       "connectionfailed": "连接失败",
       "saveampexit": "保存并退出"
+    },
+    "discord": {
+      "title": "将 {{agentName}} 连接到 Discord",
+      "reconnectdescription": "重新连接会验证同一 Discord 应用和服务器安装。它不会在服务器中添加或移除机器人。字段留空即可复用已保存的凭据。",
+      "createdescription": "请为此 Paperclip 智能体创建一个专用的 Discord 应用和机器人。",
+      "step1": "在 Discord Developer Portal 中创建应用，并从 General Information 复制 Application ID。",
+      "step2": "打开 Bot，创建机器人，启用 Message Content Intent，然后重置并复制令牌。",
+      "step3": "在 Discord 中启用开发者模式，右键单击目标服务器并复制其 Server ID。",
+      "step4": "在下方输入这些值，然后使用生成的安装链接将机器人添加到该服务器。",
+      "opendeveloperportal": "打开 Discord Developer Portal",
+      "applicationid": "Application ID",
+      "serverid": "Server ID",
+      "bottoken": "机器人令牌",
+      "installbot": "在此服务器中安装机器人",
+      "installpermissions": "安装链接仅授予查看频道、发送消息、创建公开线程、在线程中发送消息、读取消息历史、添加回应、嵌入链接和附加文件的权限。仍需在“访问权限”中逐个启用已发现的频道。",
+      "reconnectbot": "重新连接 Discord 机器人",
+      "connectbot": "连接 Discord 机器人"
+    },
+    "telegram": {
+      "title": "在 Telegram 中创建 {{agentName}}",
+      "reconnectdescription": "重新连接会验证同一 BotFather 机器人，并自动刷新其 Paperclip Webhook 和命令菜单。它不会重新创建机器人或更改其聊天成员关系。令牌留空即可复用已保存的凭据。",
+      "createdescription": "请使用 BotFather 创建机器人，然后粘贴它提供的令牌。",
+      "openbotfather": "打开 BotFather 并发送",
+      "enterdisplayname": "输入机器人的显示名称。",
+      "chooseusername": "选择一个以此结尾的可用用户名",
+      "groupnoticebefore": "Paperclip 支持 Telegram 默认的机器人隐私模式，并会自动注册命令菜单。在群组中，普通提及不会发送给机器人：请使用",
+      "groupnoticeafter": "开始或继续工作，或直接回复机器人的消息。",
+      "openbotfatherbutton": "打开 BotFather",
+      "bottoken": "机器人令牌",
+      "publichttpsrequired": "连接 Telegram 前，请为此 Paperclip 实例配置公开的 HTTPS URL。",
+      "reconnectbot": "重新连接机器人",
+      "connectbot": "连接机器人"
     }
   },
   "common": {

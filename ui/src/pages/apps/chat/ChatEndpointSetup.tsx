@@ -559,6 +559,7 @@ function ProviderConnectStep({
     values?: Record<string, string>,
   ) => void;
 }) {
+  const { t } = useTranslation();
   const { pushToast } = useToast();
   const reportCopyFailure = () =>
     pushToast({
@@ -782,30 +783,20 @@ settings:
     return (
       <div className="space-y-5">
         <div>
-          <h1 className="text-xl font-bold">Connect {agentName} to Discord</h1>
+          <h1 className="text-xl font-bold">
+            {t("chatendpointsetup.discord.title", { agentName })}
+          </h1>
           <p className="mt-1 text-sm text-muted-foreground">
             {repairing
-              ? "Reconnect verifies this same Discord application and server installation. It does not add or remove the bot from the server. Leave fields blank to reuse saved credentials."
-              : "Create one dedicated Discord application and bot for this Paperclip agent."}
+              ? t("chatendpointsetup.discord.reconnectdescription")
+              : t("chatendpointsetup.discord.createdescription")}
           </p>
         </div>
-      <ol className="list-decimal space-y-2 pl-5 text-sm">
-          <li>
-            In Discord Developer Portal, create an application. Copy its
-            Application ID from General Information.
-          </li>
-          <li>
-            Open Bot, create the bot, enable Message Content Intent, then reset
-            and copy its token.
-          </li>
-          <li>
-            Enable Developer Mode in Discord, right-click the target server, and
-            copy its Server ID.
-          </li>
-          <li>
-            Enter those values below, then use the generated install link to add
-            the bot to that server.
-          </li>
+        <ol className="list-decimal space-y-2 pl-5 text-sm">
+          <li>{t("chatendpointsetup.discord.step1")}</li>
+          <li>{t("chatendpointsetup.discord.step2")}</li>
+          <li>{t("chatendpointsetup.discord.step3")}</li>
+          <li>{t("chatendpointsetup.discord.step4")}</li>
         </ol>
         <Button
           variant="outline"
@@ -813,23 +804,20 @@ settings:
             openProviderSetup("https://discord.com/developers/applications")
           }
         >
-          Open Discord Developer Portal <ExternalLink />
+          {t("chatendpointsetup.discord.opendeveloperportal")} <ExternalLink />
         </Button>
-        {field("applicationId", "Application ID", "text")}
-        {field("guildId", "Server ID", "text")}
-        {field("botToken", "Bot token")}
+        {field("applicationId", t("chatendpointsetup.discord.applicationid"), "text")}
+        {field("guildId", t("chatendpointsetup.discord.serverid"), "text")}
+        {field("botToken", t("chatendpointsetup.discord.bottoken"))}
         {installUrl && (
           <Button asChild variant="outline">
             <a href={installUrl} target="_blank" rel="noreferrer">
-              Install bot in this server <ExternalLink />
+              {t("chatendpointsetup.discord.installbot")} <ExternalLink />
             </a>
           </Button>
         )}
         <p className="text-sm text-muted-foreground">
-          The install link grants only View Channels, Send Messages, Create
-          Public Threads, Send Messages in Threads, Read Message History, Add
-          Reactions, Embed Links, and Attach Files. Paperclip still requires
-          each discovered channel to be enabled in Access.
+          {t("chatendpointsetup.discord.installpermissions")}
         </p>
         <Button
           disabled={
@@ -844,7 +832,9 @@ settings:
           }
         >
           {pending && <Loader2 className="h-4 w-4 animate-spin" />}
-          {repairing ? "Reconnect Discord bot" : "Connect Discord bot"}
+          {repairing
+            ? t("chatendpointsetup.discord.reconnectbot")
+            : t("chatendpointsetup.discord.connectbot")}
         </Button>
       </div>
     );
@@ -853,40 +843,39 @@ settings:
     return (
       <div className="space-y-5">
         <div>
-          <h1 className="text-xl font-bold">Create {agentName} in Telegram</h1>
+          <h1 className="text-xl font-bold">
+            {t("chatendpointsetup.telegram.title", { agentName })}
+          </h1>
           <p className="mt-1 text-sm text-muted-foreground">
             {repairing
-              ? "Reconnect verifies this same BotFather bot and automatically refreshes its Paperclip webhook and command menu. It does not recreate the bot or change its chat memberships. Leave the token blank to reuse the saved credential."
-              : "Create a bot with BotFather, then paste the token it gives you."}
+              ? t("chatendpointsetup.telegram.reconnectdescription")
+              : t("chatendpointsetup.telegram.createdescription")}
           </p>
         </div>
         <ol className="list-decimal space-y-2 pl-5 text-sm">
           <li>
-            Open BotFather and send <code>/newbot</code>.
+            {t("chatendpointsetup.telegram.openbotfather")} <code>/newbot</code>.
           </li>
-          <li>Enter the bot display name.</li>
+          <li>{t("chatendpointsetup.telegram.enterdisplayname")}</li>
           <li>
-            Choose an available username ending in <code>bot</code>.
+            {t("chatendpointsetup.telegram.chooseusername")} <code>bot</code>.
           </li>
         </ol>
         <p className="rounded-md border border-border bg-muted/40 p-3 text-sm text-muted-foreground">
-          Paperclip works with Telegram&apos;s default bot privacy mode and
-          registers its command menu automatically. In a group, ordinary
-          mentions are not delivered to bots: start or continue work with{" "}
-          <code>/task@bot_username &lt;request&gt;</code>, or reply directly to
-          a message from the bot.
+          {t("chatendpointsetup.telegram.groupnoticebefore")} {" "}
+          <code>/task@bot_username &lt;request&gt;</code>
+          {t("chatendpointsetup.telegram.groupnoticeafter")}
         </p>
         <Button
           variant="outline"
           onClick={() => openProviderSetup("https://t.me/BotFather")}
         >
-          Open BotFather <ExternalLink />
+          {t("chatendpointsetup.telegram.openbotfatherbutton")} <ExternalLink />
         </Button>
-        {field("botToken", "Bot token")}
+        {field("botToken", t("chatendpointsetup.telegram.bottoken"))}
         {!endpoint.setup?.webhookUrl && (
           <p className="text-sm text-destructive">
-            Configure a public HTTPS URL for this Paperclip instance before
-            connecting Telegram.
+            {t("chatendpointsetup.telegram.publichttpsrequired")}
           </p>
         )}
         <Button
@@ -900,7 +889,9 @@ settings:
           }
         >
           {pending && <Loader2 className="h-4 w-4 animate-spin" />}
-          {repairing ? "Reconnect bot" : "Connect bot"}
+          {repairing
+            ? t("chatendpointsetup.telegram.reconnectbot")
+            : t("chatendpointsetup.telegram.connectbot")}
         </Button>
       </div>
     );

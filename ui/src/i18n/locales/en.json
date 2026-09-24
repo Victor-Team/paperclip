@@ -473,6 +473,38 @@
       "continue": "Continue",
       "connectionfailed": "Connection failed",
       "saveampexit": "Save & exit"
+    },
+    "discord": {
+      "title": "Connect {{agentName}} to Discord",
+      "reconnectdescription": "Reconnect verifies this same Discord application and server installation. It does not add or remove the bot from the server. Leave fields blank to reuse saved credentials.",
+      "createdescription": "Create one dedicated Discord application and bot for this Paperclip agent.",
+      "step1": "In Discord Developer Portal, create an application. Copy its Application ID from General Information.",
+      "step2": "Open Bot, create the bot, enable Message Content Intent, then reset and copy its token.",
+      "step3": "Enable Developer Mode in Discord, right-click the target server, and copy its Server ID.",
+      "step4": "Enter those values below, then use the generated install link to add the bot to that server.",
+      "opendeveloperportal": "Open Discord Developer Portal",
+      "applicationid": "Application ID",
+      "serverid": "Server ID",
+      "bottoken": "Bot token",
+      "installbot": "Install bot in this server",
+      "installpermissions": "The install link grants only View Channels, Send Messages, Create Public Threads, Send Messages in Threads, Read Message History, Add Reactions, Embed Links, and Attach Files. Paperclip still requires each discovered channel to be enabled in Access.",
+      "reconnectbot": "Reconnect Discord bot",
+      "connectbot": "Connect Discord bot"
+    },
+    "telegram": {
+      "title": "Create {{agentName}} in Telegram",
+      "reconnectdescription": "Reconnect verifies this same BotFather bot and automatically refreshes its Paperclip webhook and command menu. It does not recreate the bot or change its chat memberships. Leave the token blank to reuse the saved credential.",
+      "createdescription": "Create a bot with BotFather, then paste the token it gives you.",
+      "openbotfather": "Open BotFather and send",
+      "enterdisplayname": "Enter the bot display name.",
+      "chooseusername": "Choose an available username ending in",
+      "groupnoticebefore": "Paperclip works with Telegram's default bot privacy mode and registers its command menu automatically. In a group, ordinary mentions are not delivered to bots: start or continue work with",
+      "groupnoticeafter": ", or reply directly to a message from the bot.",
+      "openbotfatherbutton": "Open BotFather",
+      "bottoken": "Bot token",
+      "publichttpsrequired": "Configure a public HTTPS URL for this Paperclip instance before connecting Telegram.",
+      "reconnectbot": "Reconnect bot",
+      "connectbot": "Connect bot"
     }
   },
   "common": {
