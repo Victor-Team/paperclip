@@ -1,12 +1,10 @@
 import { useEffect, useState, type ReactNode } from "react";
+import type { TFunction } from "i18next";
 import type { IssueExternalObjectGroup } from "../../hooks/useIssueExternalObjects";
 import {
-  externalObjectDisplayStatusLabel,
-  externalObjectDisplayLabel,
   externalObjectIconForKey,
   externalObjectProviderLabel,
   externalObjectToneSeverity,
-  externalObjectTypeLabel,
 } from "../../lib/external-objects";
 import {
   externalObjectStatusIcon,
@@ -20,6 +18,38 @@ import { useTranslation } from "@/i18n";
 
 const EXTERNAL_OBJECT_PROPERTY_PREVIEW_COUNT = 5;
 
+const EXTERNAL_OBJECT_STATUS_KEYS: Record<string, string> = {
+  unknown: "externalobjectrows.general.statusnotyetresolved",
+  open: "externalobjectrows.general.statusopen",
+  waiting: "externalobjectrows.general.statuswaiting",
+  running: "externalobjectrows.general.statusrunning",
+  succeeded: "externalobjectrows.general.statussucceeded",
+  failed: "externalobjectrows.general.statusfailed",
+  blocked: "externalobjectrows.general.statusblocked",
+  closed: "externalobjectrows.general.statusclosed",
+  archived: "externalobjectrows.general.statusarchived",
+  auth_required: "externalobjectrows.general.statusauthorizationrequired",
+  unreachable: "externalobjectrows.general.statusunreachable",
+};
+
+const EXTERNAL_OBJECT_LIVENESS_KEYS: Record<string, string> = {
+  unknown: "externalobjectrows.general.livenessnotyetrefreshed",
+  fresh: "externalobjectrows.general.livenessfresh",
+  stale: "externalobjectrows.general.livenessstale",
+  auth_required: "externalobjectrows.general.livenessrequiresauth",
+  unreachable: "externalobjectrows.general.statusunreachable",
+};
+
+const EXTERNAL_OBJECT_TYPE_KEYS: Record<string, string> = {
+  pull_request: "externalobjectrows.general.pullrequest",
+  issue: "externalobjectrows.general.issue",
+  deployment: "externalobjectrows.general.deployment",
+  workflow_run: "externalobjectrows.general.workflowrun",
+  ticket: "externalobjectrows.general.ticket",
+  lead: "externalobjectrows.general.lead",
+  url_link: "externalobjectrows.general.url",
+};
+
 function sortExternalObjectGroups(groups: IssueExternalObjectGroup[]) {
   return [...groups].sort((a, b) => {
     const aTone = externalObjectToneSeverity(a.group.object?.statusTone);
@@ -28,20 +58,61 @@ function sortExternalObjectGroups(groups: IssueExternalObjectGroup[]) {
   });
 }
 
-function externalObjectRowDisplayKey(group: IssueExternalObjectGroup): string {
+function externalObjectProviderDisplayLabel(
+  providerKey: string | null | undefined,
+  t: TFunction,
+): string {
+  return providerKey ? externalObjectProviderLabel(providerKey) : t("externalobjectrows.general.external");
+}
+
+function externalObjectTypeDisplayLabel(
+  objectType: string | null | undefined,
+  t: TFunction,
+): string {
+  if (!objectType) return t("externalobjectrows.general.object");
+  const key = EXTERNAL_OBJECT_TYPE_KEYS[objectType];
+  return key
+    ? t(key)
+    : t("externalobjectrows.general.objecttypefallback", { type: objectType.replace(/_/g, " ") });
+}
+
+function externalObjectStatusLabel(group: IssueExternalObjectGroup, t: TFunction): string {
+  const { pill } = group;
+  const trimmedStatusLabel = pill.statusLabel?.trim();
+  if (trimmedStatusLabel) return trimmedStatusLabel;
+
+  const isGenericUrl = pill.providerKey === "url" && pill.objectType === "link";
+  const hasKnownObjectType = Boolean(pill.providerKey && pill.objectType);
+  if (pill.statusCategory === "unknown" && hasKnownObjectType && !isGenericUrl) {
+    return pill.liveness === "fresh"
+      ? t("externalobjectrows.general.statusunavailable")
+      : t(EXTERNAL_OBJECT_LIVENESS_KEYS[pill.liveness] ?? "externalobjectrows.general.livenessfallback", {
+          state: pill.liveness.replace(/_/g, " "),
+        });
+  }
+
+  return t(EXTERNAL_OBJECT_STATUS_KEYS[pill.statusCategory] ?? "externalobjectrows.general.statusfallback", {
+    status: pill.statusCategory.replace(/_/g, " "),
+  });
+}
+
+function externalObjectRowDisplayKey(group: IssueExternalObjectGroup, t: TFunction): string {
   const { pill } = group;
   const displayKey = pill.displayKey?.trim();
   if (displayKey) return displayKey;
   if (pill.providerKey === "github") {
-    if (pill.objectType === "pull_request") return "Github PR";
-    if (pill.objectType === "issue") return "Github Issue";
+    if (pill.objectType === "pull_request") return t("externalobjectrows.general.githubpullrequest");
+    if (pill.objectType === "issue") return t("externalobjectrows.general.githubissue");
   }
-  return externalObjectDisplayLabel(pill.providerKey, pill.objectType);
+  return t("externalobjectrows.general.providerobject", {
+    provider: externalObjectProviderDisplayLabel(pill.providerKey, t),
+    type: externalObjectTypeDisplayLabel(pill.objectType, t),
+  });
 }
 
-function externalObjectRowLabel(group: IssueExternalObjectGroup): ReactNode {
+function externalObjectRowLabel(group: IssueExternalObjectGroup, t: TFunction): ReactNode {
   const { pill } = group;
-  const displayKey = externalObjectRowDisplayKey(group);
+  const displayKey = externalObjectRowDisplayKey(group, t);
   const Icon = externalObjectIconForKey(pill.iconKey);
   return (
     <span className="inline-flex min-w-0 items-start gap-1" title={displayKey}>
@@ -51,77 +122,76 @@ function externalObjectRowLabel(group: IssueExternalObjectGroup): ReactNode {
   );
 }
 
-function githubObjectPropertyValue(url: string | null | undefined): string | null {
+function githubObjectPropertyValue(url: string | null | undefined, t: TFunction): string | null {
   if (!url) return null;
   try {
     const parsed = new URL(url);
     if (parsed.hostname !== "github.com") return null;
     const [, owner, repo, kind, number] = parsed.pathname.split("/");
     if (!owner || !repo || !number) return null;
-    if (kind === "pull") return `PR ${number}`;
-    if (kind === "issues") return `Issue ${number}`;
+    if (kind === "pull") return t("externalobjectrows.general.pullrequestnumber", { number });
+    if (kind === "issues") return t("externalobjectrows.general.issuenumber", { number });
     return null;
   } catch {
     return null;
   }
 }
 
-function externalObjectPropertyStatusLabel(group: IssueExternalObjectGroup): string {
-  return externalObjectDisplayStatusLabel(group.pill);
-}
-
-function externalObjectPropertyValue(group: IssueExternalObjectGroup): string {
+function externalObjectPropertyValue(group: IssueExternalObjectGroup, t: TFunction): string {
   const { pill } = group;
-  const statusLabel = externalObjectPropertyStatusLabel(group);
-  const githubLabel = pill.providerKey === "github" ? githubObjectPropertyValue(pill.url) : null;
-  const base = githubLabel ?? pill.displayTitle?.trim() ?? externalObjectRowDisplayKey(group);
-  return statusLabel ? `${base} - ${statusLabel}` : base;
+  const statusLabel = externalObjectStatusLabel(group, t);
+  const githubLabel = pill.providerKey === "github" ? githubObjectPropertyValue(pill.url, t) : null;
+  const base = githubLabel ?? pill.displayTitle?.trim() ?? externalObjectRowDisplayKey(group, t);
+  return statusLabel ? t("externalobjectrows.general.objectwithstatus", { base, status: statusLabel }) : base;
 }
 
-function isMergedExternalObject(group: IssueExternalObjectGroup): boolean {
-  const statusLabel = externalObjectPropertyStatusLabel(group);
+function isMergedExternalObject(group: IssueExternalObjectGroup, t: TFunction): boolean {
+  const statusLabel = externalObjectStatusLabel(group, t);
   return group.pill.statusIconKey === "git-merge" || statusLabel.toLowerCase() === "merged";
 }
 
-function externalObjectPropertyTone(group: IssueExternalObjectGroup): string {
-  const tone = isMergedExternalObject(group)
+function externalObjectPropertyTone(group: IssueExternalObjectGroup, t: TFunction): string {
+  const tone = isMergedExternalObject(group, t)
     ? externalObjectStatusIcon.merged
     : externalObjectStatusIcon[group.pill.statusCategory] ?? externalObjectStatusIconDefault;
   return tone.split(" ").filter((c) => c.startsWith("text-")).join(" ");
 }
 
-function externalObjectPropertyStatusIconKey(group: IssueExternalObjectGroup): string | null | undefined {
-  if (isMergedExternalObject(group)) return group.pill.statusIconKey ?? "git-merge";
+function externalObjectPropertyStatusIconKey(group: IssueExternalObjectGroup, t: TFunction): string | null | undefined {
+  if (isMergedExternalObject(group, t)) return group.pill.statusIconKey ?? "git-merge";
   return group.pill.statusIconKey;
 }
 
-function externalObjectPropertyTitle(group: IssueExternalObjectGroup): string {
+function externalObjectPropertyTitle(group: IssueExternalObjectGroup, t: TFunction): string {
   const { pill, sourceLabels } = group;
-  const base = pill.displayTitle ?? externalObjectPropertyValue(group);
-  return sourceLabels.length > 0 ? `${base} - ${sourceLabels.join(", ")}` : base;
+  const base = pill.displayTitle ?? externalObjectPropertyValue(group, t);
+  return sourceLabels.length > 0
+    ? t("externalobjectrows.general.objectwithsources", { base, sources: sourceLabels.join(", ") })
+    : base;
 }
 
 function ExternalObjectPropertyValue({ group }: { group: IssueExternalObjectGroup }) {
+  const { t } = useTranslation();
   const { pill } = group;
-  const statusLabel = externalObjectPropertyStatusLabel(group);
-  const providerLabel = externalObjectProviderLabel(pill.providerKey);
-  const typeLabel = externalObjectTypeLabel(pill.objectType);
-  const value = externalObjectPropertyValue(group);
+  const statusLabel = externalObjectStatusLabel(group, t);
+  const providerLabel = externalObjectProviderDisplayLabel(pill.providerKey, t);
+  const typeLabel = externalObjectTypeDisplayLabel(pill.objectType, t);
+  const value = externalObjectPropertyValue(group, t);
   const content = (
     <>
       <ExternalObjectStatusIcon
         category={pill.statusCategory}
         liveness={pill.liveness}
-        statusIconKey={externalObjectPropertyStatusIconKey(group)}
+        statusIconKey={externalObjectPropertyStatusIconKey(group, t)}
         sizeClassName="h-3.5 w-3.5"
-        label={`${providerLabel}: ${statusLabel}`}
+        label={t("externalobjectrows.general.providerstatus", { provider: providerLabel, status: statusLabel })}
       />
       <span className="min-w-0 truncate">{value}</span>
     </>
   );
   const className = cn(
     "inline-flex min-w-0 max-w-full items-center gap-1.5 text-sm no-underline",
-    externalObjectPropertyTone(group),
+    externalObjectPropertyTone(group, t),
     pill.url ? "hover:underline focus-visible:outline-none focus-visible:ring-(length:--rad-3) focus-visible:ring-ring" : "",
   );
 
@@ -135,8 +205,13 @@ function ExternalObjectPropertyValue({ group }: { group: IssueExternalObjectGrou
         data-external-status={pill.statusCategory}
         data-external-liveness={pill.liveness}
         className={className}
-        title={externalObjectPropertyTitle(group)}
-        aria-label={`${providerLabel} ${typeLabel} - ${statusLabel}: ${pill.displayTitle ?? value}`}
+        title={externalObjectPropertyTitle(group, t)}
+        aria-label={t("externalobjectrows.general.objectaria", {
+          provider: providerLabel,
+          type: typeLabel,
+          status: statusLabel,
+          title: pill.displayTitle ?? value,
+        })}
       >
         {content}
       </a>
@@ -149,8 +224,13 @@ function ExternalObjectPropertyValue({ group }: { group: IssueExternalObjectGrou
       data-external-status={pill.statusCategory}
       data-external-liveness={pill.liveness}
       className={className}
-      title={externalObjectPropertyTitle(group)}
-      aria-label={`${providerLabel} ${typeLabel} - ${statusLabel}: ${pill.displayTitle ?? value}`}
+      title={externalObjectPropertyTitle(group, t)}
+      aria-label={t("externalobjectrows.general.objectaria", {
+        provider: providerLabel,
+        type: typeLabel,
+        status: statusLabel,
+        title: pill.displayTitle ?? value,
+      })}
     >
       {content}
     </span>
@@ -219,7 +299,7 @@ export function ExternalObjectRows({
           return (
             <PropertyRow
               key={group.object?.id ?? `${pill.providerKey}:${pill.objectType}:${pill.url ?? "anon"}`}
-              label={externalObjectRowLabel(externalObject)}
+              label={externalObjectRowLabel(externalObject, t)}
             >
               <ExternalObjectPropertyValue group={externalObject} />
             </PropertyRow>
