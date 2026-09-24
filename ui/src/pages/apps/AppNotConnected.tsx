@@ -132,7 +132,7 @@ export function AppNotConnected() {
   const logoUrl = appDefinitionLogoUrl(logoEntry);
   const darkLogoUrl = appDefinitionDarkLogoUrl(logoEntry);
 
-  const previousAddress = previousConnection ? connectionAddress(previousConnection) : null;
+  const previousAddress = previousConnection ? connectionAddress(previousConnection, t) : null;
   const retainedPersonalGrant = previousConnection?.credentialPolicy === "per_user"
     ? grantsQuery.data?.grants.find((grant) => (
       grant.kind === "user" && grant.subjectUserId === previousConnection.createdByUserId
