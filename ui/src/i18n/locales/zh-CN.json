@@ -447,6 +447,34 @@
       "alreadyassigned": "——已分配"
     }
   },
+  "chatendpointsetup": {
+    "general": {
+      "connectionsetupprogress": "连接设置进度",
+      "chooseagent": "选择智能体",
+      "connectprovider": "连接提供商",
+      "tryit": "试用",
+      "couldntstartsetup": "无法开始设置",
+      "tryagain": "请重试。",
+      "couldntgeneratewebhooksecret": "无法生成 Webhook 密钥",
+      "testnotcomplete": "测试未完成",
+      "sendtheprovidermessagethentryagain": "请发送提供商消息后重试。",
+      "thischatproviderisnotsupported": "不支持此聊天提供商。",
+      "selectanorganizationtoconnectchat": "请选择一个组织以连接聊天。",
+      "choosehowtoconnect": "选择连接方式",
+      "whatshouldthisconnectiondo": "此 {{providerName}} 连接应执行什么操作？",
+      "chatwithanagent": "与智能体聊天",
+      "peopleincanstartandcontinue": "{{providerName}} 中的人员可以启动和继续 Paperclip 任务。",
+      "usethisconnectionasanagenttool": "将此连接用作智能体工具",
+      "letagentsuseactionsanddata": "让智能体在工作时使用 {{providerName}} 的操作和数据。",
+      "whichagentdoyouwanttochat": "要与哪个智能体聊天？",
+      "thisagentispermanentfortheconnection": "此智能体会固定用于该连接。请连接另一个频道来代表不同的智能体。",
+      "chooseanactiveagent": "选择活跃智能体",
+      "noactiveagentsareavailable": "没有可用的活跃智能体。",
+      "continue": "继续",
+      "connectionfailed": "连接失败",
+      "saveampexit": "保存并退出"
+    }
+  },
   "common": {
     "actions": {
       "retry": "重试",

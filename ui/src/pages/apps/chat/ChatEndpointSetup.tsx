@@ -31,6 +31,7 @@ import { queryKeys } from "@/lib/queryKeys";
 import { copyTextToClipboard } from "@/lib/clipboard";
 import { isAgentStatusInvokable } from "@paperclipai/shared";
 import { sanitizedSetupErrorMessage } from "./chat-setup-error";
+import { useTranslation } from "@/i18n";
 import {
   createGitHubPrivateKeyReadGuard,
   readGitHubPrivateKeyFile,
@@ -101,9 +102,17 @@ export function isChatEndpointRepairing(
 }
 
 function SetupRail({ step }: { step: number }) {
+  const { t } = useTranslation();
   return (
-    <ol className="space-y-2 text-sm" aria-label="Connection setup progress">
-      {["Choose agent", "Connect provider", "Try it"].map((label, index) => (
+    <ol
+      className="space-y-2 text-sm"
+      aria-label={t("chatendpointsetup.general.connectionsetupprogress")}
+    >
+      {[
+        t("chatendpointsetup.general.chooseagent"),
+        t("chatendpointsetup.general.connectprovider"),
+        t("chatendpointsetup.general.tryit"),
+      ].map((label, index) => (
         <li key={label} className="flex items-center gap-2">
           <span
             className={`flex h-6 w-6 items-center justify-center rounded-full border ${index < step ? "border-primary bg-primary text-primary-foreground" : index === step ? "border-foreground text-foreground" : "border-border text-muted-foreground"}`}
@@ -130,6 +139,7 @@ export function ChatEndpointSetup() {
   return params.get("provider") === "agentmail" ? <EmailEndpointSetup /> : <ChatSdkEndpointSetup />;
 }
 function ChatSdkEndpointSetup() {
+  const { t } = useTranslation();
   const [params, setParams] = useSearchParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -245,8 +255,8 @@ function ChatSdkEndpointSetup() {
     },
     onError: (error) =>
       pushToast({
-        title: "Couldn't start setup",
-        body: error instanceof Error ? error.message : "Try again.",
+        title: t("chatendpointsetup.general.couldntstartsetup"),
+        body: error instanceof Error ? error.message : t("chatendpointsetup.general.tryagain"),
         tone: "error",
       }),
   });
@@ -330,8 +340,8 @@ function ChatSdkEndpointSetup() {
     },
     onError: (error) =>
       pushToast({
-        title: "Couldn't generate webhook secret",
-        body: error instanceof Error ? error.message : "Try again.",
+        title: t("chatendpointsetup.general.couldntgeneratewebhooksecret"),
+        body: error instanceof Error ? error.message : t("chatendpointsetup.general.tryagain"),
         tone: "error",
       }),
   });
@@ -343,11 +353,11 @@ function ChatSdkEndpointSetup() {
     },
     onError: (error) =>
       pushToast({
-        title: "Test not complete",
+        title: t("chatendpointsetup.general.testnotcomplete"),
         body:
           error instanceof Error
             ? error.message
-            : "Send the provider message, then try again.",
+            : t("chatendpointsetup.general.sendtheprovidermessagethentryagain"),
         tone: "error",
       }),
   });
@@ -355,13 +365,13 @@ function ChatSdkEndpointSetup() {
   if (!provider)
     return (
       <p className="text-sm text-destructive">
-        This chat provider is not supported.
+        {t("chatendpointsetup.general.thischatproviderisnotsupported")}
       </p>
     );
   if (!selectedCompanyId)
     return (
       <p className="text-sm text-muted-foreground">
-        Select an organization to connect chat.
+        {t("chatendpointsetup.general.selectanorganizationtoconnectchat")}
       </p>
     );
 
@@ -369,9 +379,13 @@ function ChatSdkEndpointSetup() {
     return (
       <div className="max-w-2xl space-y-6">
         <div>
-          <h1 className="text-xl font-bold">Choose how to connect</h1>
+          <h1 className="text-xl font-bold">
+            {t("chatendpointsetup.general.choosehowtoconnect")}
+          </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            What should this {providerNames[provider]} connection do?
+            {t("chatendpointsetup.general.whatshouldthisconnectiondo", {
+              providerName: providerNames[provider],
+            })}
           </p>
         </div>
         <div className="grid gap-3">
@@ -381,11 +395,12 @@ function ChatSdkEndpointSetup() {
             onClick={() => setPurpose("chat")}
           >
             <span className="block text-sm font-semibold">
-              Chat with an agent
+              {t("chatendpointsetup.general.chatwithanagent")}
             </span>
             <span className="mt-1 block text-sm text-muted-foreground">
-              People in {providerNames[provider]} can start and continue
-              Paperclip tasks.
+              {t("chatendpointsetup.general.peopleincanstartandcontinue", {
+                providerName: providerNames[provider],
+              })}
             </span>
           </button>
           <button
@@ -394,11 +409,12 @@ function ChatSdkEndpointSetup() {
             onClick={() => navigate(toolHref)}
           >
             <span className="block text-sm font-semibold">
-              Use this connection as an agent tool
+              {t("chatendpointsetup.general.usethisconnectionasanagenttool")}
             </span>
             <span className="mt-1 block text-sm text-muted-foreground">
-              Let agents use {providerNames[provider]} actions and data while
-              they work.
+              {t("chatendpointsetup.general.letagentsuseactionsanddata", {
+                providerName: providerNames[provider],
+              })}
             </span>
           </button>
         </div>
@@ -426,19 +442,18 @@ function ChatSdkEndpointSetup() {
           <>
             <div>
               <h1 className="text-xl font-bold">
-                Which agent do you want to chat with?
+                {t("chatendpointsetup.general.whichagentdoyouwanttochat")}
               </h1>
               <p className="mt-1 text-sm text-muted-foreground">
-                This agent is permanent for the connection. Connect another
-                channel to represent a different agent.
+                {t("chatendpointsetup.general.thisagentispermanentfortheconnection")}
               </p>
             </div>
             <AgentSelect
               agents={activeAgents}
               value={agentId}
               onChange={setAgentId}
-              placeholder="Choose an active agent"
-              emptyMessage="No active agents are available."
+              placeholder={t("chatendpointsetup.general.chooseanactiveagent")}
+              emptyMessage={t("chatendpointsetup.general.noactiveagentsareavailable")}
             />
             <div className="flex justify-end">
               <Button
@@ -448,7 +463,7 @@ function ChatSdkEndpointSetup() {
                 {createEndpoint.isPending && (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 )}
-                Continue
+                {t("chatendpointsetup.general.continue")}
               </Button>
             </div>
           </>
@@ -459,7 +474,9 @@ function ChatSdkEndpointSetup() {
                 role="alert"
                 className="rounded-lg border border-destructive/30 bg-destructive/10 p-4 text-sm text-destructive"
               >
-                <p className="font-medium">Connection failed</p>
+                <p className="font-medium">
+                  {t("chatendpointsetup.general.connectionfailed")}
+                </p>
                 <p className="mt-1">{setupError}</p>
               </div>
             ) : null}
@@ -506,7 +523,7 @@ function ChatSdkEndpointSetup() {
         )}
         <div className="flex justify-start">
           <Button variant="ghost" onClick={() => navigate("/apps")}>
-            Save &amp; exit
+            {t("chatendpointsetup.general.saveampexit")}
           </Button>
         </div>
       </main>

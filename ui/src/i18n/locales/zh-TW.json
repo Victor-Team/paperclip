@@ -447,6 +447,34 @@
       "alreadyassigned": " — already assigned"
     }
   },
+  "chatendpointsetup": {
+    "general": {
+      "connectionsetupprogress": "Connection setup progress",
+      "chooseagent": "Choose agent",
+      "connectprovider": "Connect provider",
+      "tryit": "Try it",
+      "couldntstartsetup": "Couldn't start setup",
+      "tryagain": "Try again.",
+      "couldntgeneratewebhooksecret": "Couldn't generate webhook secret",
+      "testnotcomplete": "Test not complete",
+      "sendtheprovidermessagethentryagain": "Send the provider message, then try again.",
+      "thischatproviderisnotsupported": "This chat provider is not supported.",
+      "selectanorganizationtoconnectchat": "Select an organization to connect chat.",
+      "choosehowtoconnect": "Choose how to connect",
+      "whatshouldthisconnectiondo": "What should this {{providerName}} connection do?",
+      "chatwithanagent": "Chat with an agent",
+      "peopleincanstartandcontinue": "People in {{providerName}} can start and continue Paperclip tasks.",
+      "usethisconnectionasanagenttool": "Use this connection as an agent tool",
+      "letagentsuseactionsanddata": "Let agents use {{providerName}} actions and data while they work.",
+      "whichagentdoyouwanttochat": "Which agent do you want to chat with?",
+      "thisagentispermanentfortheconnection": "This agent is permanent for the connection. Connect another channel to represent a different agent.",
+      "chooseanactiveagent": "Choose an active agent",
+      "noactiveagentsareavailable": "No active agents are available.",
+      "continue": "Continue",
+      "connectionfailed": "Connection failed",
+      "saveampexit": "Save & exit"
+    }
+  },
   "common": {
     "actions": {
       "retry": "Retry",
