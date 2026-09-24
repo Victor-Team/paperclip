@@ -83,48 +83,48 @@ export function ProfilesIndex({
 
   const duplicate = useMutation({
     mutationFn: (profile: ToolProfileWithDetails) =>
-      toolsApi.duplicateProfile(profile.id, { name: `${profile.name} (copy)` }),
+      toolsApi.duplicateProfile(profile.id, { name: t("profiledetail.general.copyNameParenthesized", { name: profile.name }) }),
     onSuccess: () => {
-      pushToast({ title: "Profile duplicated", body: "The copy is not assigned to anyone yet.", tone: "success" });
+      pushToast({ title: t("profiledetail.general.profileDuplicated"), body: t("profiledetail.general.copyUnassigned"), tone: "success" });
       invalidate();
     },
     onError: (error: unknown) =>
-      pushToast({ title: "Could not duplicate", body: errorBody(error), tone: "error" }),
+      pushToast({ title: t("profiledetail.general.couldNotDuplicate"), body: errorBody(error), tone: "error" }),
   });
 
   const archive = useMutation({
     mutationFn: (profile: ToolProfileWithDetails) =>
       toolsApi.updateProfile(profile.id, { status: "archived" }),
     onSuccess: () => {
-      pushToast({ title: "Profile archived", tone: "success" });
+      pushToast({ title: t("profiledetail.general.profileArchived"), tone: "success" });
       invalidate();
     },
-    onError: (error: unknown) => pushToast({ title: "Could not archive", body: errorBody(error), tone: "error" }),
+    onError: (error: unknown) => pushToast({ title: t("profiledetail.general.couldNotArchive"), body: errorBody(error), tone: "error" }),
   });
 
   const restore = useMutation({
     mutationFn: (profile: ToolProfileWithDetails) =>
       toolsApi.updateProfile(profile.id, { status: "active" }),
     onSuccess: () => {
-      pushToast({ title: "Profile restored", tone: "success" });
+      pushToast({ title: t("profiledetail.general.profileRestored"), tone: "success" });
       invalidate();
     },
-    onError: (error: unknown) => pushToast({ title: "Could not restore", body: errorBody(error), tone: "error" }),
+    onError: (error: unknown) => pushToast({ title: t("profiledetail.general.couldNotRestore"), body: errorBody(error), tone: "error" }),
   });
 
   const remove = useMutation({
     mutationFn: (profile: ToolProfileWithDetails) => toolsApi.deleteProfile(profile.id),
     onSuccess: () => {
-      pushToast({ title: "Profile deleted", tone: "success" });
+      pushToast({ title: t("profiledetail.general.profileDeleted"), tone: "success" });
       invalidate();
     },
-    onError: (error: unknown) => pushToast({ title: "Could not delete", body: errorBody(error), tone: "error" }),
+    onError: (error: unknown) => pushToast({ title: t("profiledetail.general.couldNotDelete"), body: errorBody(error), tone: "error" }),
   });
 
   const header = (
     <ToolsPageHeader
       title={t("profilesindex.general.accessprofiles")}
-      description="Decide which tools your agents can use. Build a profile once, then assign it to the agents that need it."
+      description={t("profiledetail.general.profilesDescription")}
       actions={
         <>
           <Button variant="outline" onClick={() => setResolverOpen(true)}>
@@ -188,7 +188,7 @@ export function ProfilesIndex({
               statusFilter === key ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground",
             )}
           >
-            {key === "active" ? "Active" : "Archived"}
+            {t(`profiledetail.general.status.${key}`)}
           </button>
         ))}
       </div>
@@ -267,7 +267,7 @@ export function ProfilesIndex({
                     </td>
                     <td className="px-3 py-1.5">
                       <span className="inline-flex items-center gap-2">
-                        <Badge variant={statusVariant(profile.status)}>{STATUS_LABEL[profile.status]}</Badge>
+                        <Badge variant={statusVariant(profile.status)}>{t(`profiledetail.general.status.${profile.status}`, { defaultValue: STATUS_LABEL[profile.status] })}</Badge>
                         {draft ? (
                           <button
                             type="button"

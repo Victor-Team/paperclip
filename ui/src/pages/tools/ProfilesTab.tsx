@@ -727,10 +727,10 @@ export function ProfilesTab({ companyId }: { companyId: string }) {
       setSelectedId(created.id);
       resetProfileForm();
       resetEntryForm();
-      pushToast({ title: "Profile created", tone: "success" });
+      pushToast({ title: t("profilestab.general.profileCreated"), tone: "success" });
     },
     onError: (error) => pushToast({
-      title: "Could not create profile",
+      title: t("profilestab.general.couldNotCreateProfile"),
       body: error instanceof ApiError ? error.message : String(error),
       tone: "error",
     }),
@@ -743,10 +743,10 @@ export function ProfilesTab({ companyId }: { companyId: string }) {
       invalidateProfiles();
       setEditProfile(null);
       resetProfileForm();
-      pushToast({ title: "Profile updated", tone: "success" });
+      pushToast({ title: t("profilestab.general.profileUpdated"), tone: "success" });
     },
     onError: (error) => pushToast({
-      title: "Could not update profile",
+      title: t("profilestab.general.couldNotUpdateProfile"),
       body: error instanceof ApiError ? error.message : String(error),
       tone: "error",
     }),
@@ -759,10 +759,10 @@ export function ProfilesTab({ companyId }: { companyId: string }) {
       invalidateProfiles();
       setEntryProfile(null);
       resetEntryForm();
-      pushToast({ title: "Entry added", tone: "success" });
+      pushToast({ title: t("profilestab.general.entryAdded"), tone: "success" });
     },
     onError: (error) => pushToast({
-      title: "Could not add entry",
+      title: t("profilestab.general.couldNotAddEntry"),
       body: error instanceof ApiError ? error.message : String(error),
       tone: "error",
     }),
@@ -772,10 +772,10 @@ export function ProfilesTab({ companyId }: { companyId: string }) {
     mutationFn: (entryId: string) => toolsApi.deleteProfileEntry(entryId),
     onSuccess: () => {
       invalidateProfiles();
-      pushToast({ title: "Entry removed", tone: "success" });
+      pushToast({ title: t("profilestab.general.entryRemoved"), tone: "success" });
     },
     onError: (error) => pushToast({
-      title: "Could not remove entry",
+      title: t("profilestab.general.couldNotRemoveEntry"),
       body: error instanceof ApiError ? error.message : String(error),
       tone: "error",
     }),
@@ -789,10 +789,10 @@ export function ProfilesTab({ companyId }: { companyId: string }) {
       setBindProfileFor(null);
       setTargetType("agent");
       setPriority("100");
-      pushToast({ title: "Profile bound", tone: "success" });
+      pushToast({ title: t("profilestab.general.profileBound"), tone: "success" });
     },
     onError: (error) => pushToast({
-      title: "Could not bind profile",
+      title: t("profilestab.general.couldNotBindProfile"),
       body: error instanceof ApiError ? error.message : String(error),
       tone: "error",
     }),
@@ -806,10 +806,10 @@ export function ProfilesTab({ companyId }: { companyId: string }) {
     }) => toolsApi.unbindProfile(companyId, profileId, { targetType, targetId }),
     onSuccess: () => {
       invalidateProfiles();
-      pushToast({ title: "Binding removed", tone: "success" });
+      pushToast({ title: t("profilestab.general.bindingRemoved"), tone: "success" });
     },
     onError: (error) => pushToast({
-      title: "Could not remove binding",
+      title: t("profilestab.general.couldNotRemoveBinding"),
       body: error instanceof ApiError ? error.message : String(error),
       tone: "error",
     }),
@@ -877,7 +877,7 @@ export function ProfilesTab({ companyId }: { companyId: string }) {
       riskLevel,
     });
     if (!entry) {
-      pushToast({ title: "Entry target required", tone: "error" });
+      pushToast({ title: t("profilestab.general.entryTargetRequired"), tone: "error" });
       return;
     }
     addEntry.mutate({ profileId: entryProfile.id, input: entry });
@@ -894,7 +894,7 @@ export function ProfilesTab({ companyId }: { companyId: string }) {
       issueId: targetIssueId,
     });
     if (!targetId) {
-      pushToast({ title: "Binding target required", tone: "error" });
+      pushToast({ title: t("profilestab.general.bindingTargetRequired"), tone: "error" });
       return;
     }
     bind.mutate({
@@ -911,7 +911,7 @@ export function ProfilesTab({ companyId }: { companyId: string }) {
     <div className="space-y-4">
       <ToolsPageHeader
         title={t("profilestab.general.accessprofiles4")}
-        description="Reusable bundles of allowed applications, connections, and tools, assignable to agents, projects, routines, or issues."
+        description={t("profilestab.general.profilesDescription")}
         actions={
           <Button size="sm" onClick={() => setCreateOpen(true)}>
             <Plus className="mr-1 h-4 w-4" />
@@ -924,9 +924,9 @@ export function ProfilesTab({ companyId }: { companyId: string }) {
       {list.length === 0 ? (
         <EmptyState
           icon={Layers}
-          message="No access profiles yet"
-          description="Create a profile to group tool selectors, then bind it to the organization or a specific agent."
-          action="New profile"
+          message={t("profilestab.general.noProfilesYet")}
+          description={t("profilestab.general.createProfileDescription")}
+          action={t("profilestab.general.newProfileAction")}
           onAction={() => setCreateOpen(true)}
         />
       ) : (

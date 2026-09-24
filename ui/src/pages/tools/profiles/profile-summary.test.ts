@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { ToolProfileSummary } from "@paperclipai/shared";
+import { i18n } from "@/i18n";
 import { allowsLabel, assignedLabel, STATUS_LABEL } from "./profile-summary";
 
 function summary(partial: Partial<ToolProfileSummary>): ToolProfileSummary {
@@ -56,4 +57,16 @@ describe("STATUS_LABEL", () => {
     expect(STATUS_LABEL.draft).toBe("Draft");
     expect(STATUS_LABEL.disabled).toBe("Off");
   });
+});
+
+it("updates access and assignment summaries when the language changes", async () => {
+  const previousLanguage = i18n.language;
+  try {
+    await i18n.changeLanguage("zh-CN");
+    expect(allowsLabel(summary({ allowedToolCount: 9, allowedApplicationCount: 3 }))).toBe("9 个工具 · 3 个应用");
+    expect(assignedLabel(summary({ appliesToAgentCount: 2 })).text).toBe("2 个智能体");
+    expect(allowsLabel(summary({ accessMode: "all_except", excludedToolCount: 2 }))).toBe("除2 个工具外的全部工具");
+  } finally {
+    await i18n.changeLanguage(previousLanguage);
+  }
 });

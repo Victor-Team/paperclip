@@ -173,11 +173,11 @@ export function GatewaysTab({ companyId }: { companyId: string }) {
     onSuccess: async (gateway) => {
       setCreateDraft({ name: "", description: "", profileId: activeProfiles[0]?.id ?? "" });
       setCreating(false);
-      pushToast({ title: "Gateway created", body: gateway.name, tone: "success" });
+      pushToast({ title: t("gatewaystab.general.gatewayCreated"), body: gateway.name, tone: "success" });
       await invalidateGateways();
     },
     onError: (error) => {
-      pushToast({ title: "Gateway was not created", body: error instanceof Error ? error.message : String(error), tone: "error" });
+      pushToast({ title: t("gatewaystab.general.gatewayNotCreated"), body: error instanceof Error ? error.message : String(error), tone: "error" });
     },
   });
 
@@ -196,11 +196,11 @@ export function GatewaysTab({ companyId }: { companyId: string }) {
       setCreatedTokens((current) => ({ ...current, [token.gatewayId]: token }));
       setIssuingGatewayId(null);
       setTokenDrafts((current) => ({ ...current, [token.gatewayId]: defaultTokenDraft() }));
-      pushToast({ title: "Token issued", body: `${token.name} was created. Copy it now; it will not be shown again.`, tone: "success" });
+      pushToast({ title: t("gatewaystab.general.tokenIssued"), body: t("gatewaystab.general.tokenCreatedCopyNow", { name: token.name }), tone: "success" });
       await invalidateGateways();
     },
     onError: (error) => {
-      pushToast({ title: "Token was not issued", body: error instanceof Error ? error.message : String(error), tone: "error" });
+      pushToast({ title: t("gatewaystab.general.tokenNotIssued"), body: error instanceof Error ? error.message : String(error), tone: "error" });
     },
   });
 
@@ -208,20 +208,20 @@ export function GatewaysTab({ companyId }: { companyId: string }) {
     mutationFn: (tokenId: string) => toolsApi.revokeGatewayToken(companyId, tokenId),
     onSuccess: async (token) => {
       setConfirmingRevokeTokenId(null);
-      pushToast({ title: "Token revoked", body: token.name, tone: "success" });
+      pushToast({ title: t("gatewaystab.general.tokenRevoked"), body: token.name, tone: "success" });
       await invalidateGateways();
     },
     onError: (error) => {
-      pushToast({ title: "Token was not revoked", body: error instanceof Error ? error.message : String(error), tone: "error" });
+      pushToast({ title: t("gatewaystab.general.tokenNotRevoked"), body: error instanceof Error ? error.message : String(error), tone: "error" });
     },
   });
 
   async function copyText(value: string, label: string) {
     try {
       await copyTextToClipboard(value);
-      pushToast({ title: "Copied to clipboard", body: label, tone: "success" });
+      pushToast({ title: t("gatewaystab.general.copiedToClipboard"), body: label, tone: "success" });
     } catch (error) {
-      pushToast({ title: "Copy failed", body: error instanceof Error ? error.message : "Clipboard access is unavailable.", tone: "error" });
+      pushToast({ title: t("gatewaystab.general.copyFailed"), body: error instanceof Error ? error.message : t("gatewaystab.general.clipboardUnavailable"), tone: "error" });
     }
   }
 
@@ -238,7 +238,7 @@ export function GatewaysTab({ companyId }: { companyId: string }) {
   function submitCreateGateway(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!createDraft.profileId) {
-      pushToast({ title: "Pick a profile", body: "A gateway needs an access profile before it can be created.", tone: "warn" });
+      pushToast({ title: t("gatewaystab.general.pickProfile"), body: t("gatewaystab.general.profileRequiredForGateway"), tone: "warn" });
       return;
     }
     createGatewayMutation.mutate();
@@ -248,7 +248,7 @@ export function GatewaysTab({ companyId }: { companyId: string }) {
     event.preventDefault();
     const draft = tokenDrafts[gatewayId] ?? defaultTokenDraft();
     if (draft.allowedActions.length === 0) {
-      pushToast({ title: "Pick token actions", body: "Gateway tokens need at least one allowed MCP action.", tone: "warn" });
+      pushToast({ title: t("gatewaystab.general.pickTokenActions"), body: t("gatewaystab.general.tokenActionRequired"), tone: "warn" });
       return;
     }
     createTokenMutation.mutate(gatewayId);
@@ -266,7 +266,7 @@ export function GatewaysTab({ companyId }: { companyId: string }) {
       <div className="flex flex-wrap items-start justify-between gap-3">
         <ToolsPageHeader
           title={t("gatewaystab.general.namedmcpgateways")}
-          description="Stable endpoints for external clients that use the same profiles, rules, and audit trail as agent tool access."
+          description={t("gatewaystab.general.gatewaysDescription")}
         />
         <Button
           type="button"

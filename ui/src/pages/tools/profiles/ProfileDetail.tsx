@@ -13,7 +13,7 @@ import type {
 import { useNavigate, useSearchParams } from "@/lib/router";
 import { toolsApi } from "@/api/tools";
 import { queryKeys } from "@/lib/queryKeys";
-import { cn, formatShortDate } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -32,7 +32,7 @@ import { ErrorState, LoadingState, RelativeTime, ToolsPageHeader } from "../shar
 import { ProfileActionDialog, type ProfileActionDialogKind } from "./ProfileActionDialog";
 import { allowsLabel, STATUS_LABEL } from "./profile-summary";
 import { useProfilesData } from "./useProfilesData";
-import { useTranslation } from "@/i18n";
+import { i18n, t as translate, useTranslation } from "@/i18n";
 
 type DialogKind = "edit" | "duplicate" | "archive" | "delete" | "restore" | null;
 
@@ -42,6 +42,7 @@ interface AllowRow {
   tool: string;
   capabilities: string;
   source: string;
+  sourceByRule: boolean;
   autoAddedAt: Date | string | null;
   degraded: boolean;
   connectionId: string | null;
@@ -58,7 +59,7 @@ export function ProfileDetail({
   initialCreated?: boolean;
   initialReviewOpen?: boolean;
 }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const queryClient = useQueryClient();
@@ -86,7 +87,7 @@ export function ProfileDetail({
 
   const allowRows = useMemo(
     () => (profile ? buildAllowRows(profile, data.catalog, data.maps.applicationsById, data.maps.connectionsById, data.connections.data?.connections ?? []) : []),
-    [profile, data.catalog, data.maps.applicationsById, data.maps.connectionsById, data.connections.data?.connections],
+    [profile, data.catalog, data.maps.applicationsById, data.maps.connectionsById, data.connections.data?.connections, i18n.resolvedLanguage],
   );
   const reviewItems = newTools.data?.tools ?? [];
 
@@ -109,29 +110,29 @@ export function ProfileDetail({
     mutationFn: (input: Parameters<typeof toolsApi.updateProfile>[1]) => toolsApi.updateProfile(profileId, input),
     onSuccess: () => {
       invalidate();
-      pushToast({ title: "Profile updated", tone: "success" });
+      pushToast({ title: t("profiledetail.general.profileUpdated"), tone: "success" });
     },
-    onError: (error: unknown) => pushToast({ title: "Could not update profile", body: errorBody(error), tone: "error" }),
+    onError: (error: unknown) => pushToast({ title: t("profiledetail.general.couldNotUpdateProfile"), body: errorBody(error), tone: "error" }),
   });
 
   const duplicateProfile = useMutation({
     mutationFn: (input: { name: string; includeAssignments: boolean }) => toolsApi.duplicateProfile(profileId, input),
     onSuccess: (copy) => {
       invalidate();
-      pushToast({ title: "Profile duplicated", body: "The copy is not assigned to anyone yet.", tone: "success" });
+      pushToast({ title: t("profiledetail.general.profileDuplicated"), body: t("profiledetail.general.copyUnassigned"), tone: "success" });
       navigate(`/apps/advanced/profiles/${copy.id}?created=1`);
     },
-    onError: (error: unknown) => pushToast({ title: "Could not duplicate", body: errorBody(error), tone: "error" }),
+    onError: (error: unknown) => pushToast({ title: t("profiledetail.general.couldNotDuplicate"), body: errorBody(error), tone: "error" }),
   });
 
   const deleteProfile = useMutation({
     mutationFn: () => toolsApi.deleteProfile(profileId),
     onSuccess: () => {
       invalidate();
-      pushToast({ title: "Profile deleted", tone: "success" });
+      pushToast({ title: t("profiledetail.general.profileDeleted"), tone: "success" });
       navigate("/apps/advanced/profiles");
     },
-    onError: (error: unknown) => pushToast({ title: "Could not delete", body: errorBody(error), tone: "error" }),
+    onError: (error: unknown) => pushToast({ title: t("profiledetail.general.couldNotDelete"), body: errorBody(error), tone: "error" }),
   });
 
   const removeAssignment = useMutation({
@@ -140,9 +141,9 @@ export function ProfileDetail({
     onSuccess: () => {
       setAssignmentToRemove(null);
       invalidate();
-      pushToast({ title: "Assignment removed", tone: "success" });
+      pushToast({ title: t("profiledetail.general.assignmentRemoved"), tone: "success" });
     },
-    onError: (error: unknown) => pushToast({ title: "Could not remove assignment", body: errorBody(error), tone: "error" }),
+    onError: (error: unknown) => pushToast({ title: t("profiledetail.general.couldNotRemoveAssignment"), body: errorBody(error), tone: "error" }),
   });
 
   const reviewNewTools = useMutation({
@@ -158,9 +159,9 @@ export function ProfileDetail({
       setSearchParams({});
       queryClient.invalidateQueries({ queryKey: queryKeys.tools.profiles(companyId) });
       queryClient.invalidateQueries({ queryKey: queryKeys.tools.profileNewTools(profileId) });
-      pushToast({ title: "New tools reviewed", tone: "success" });
+      pushToast({ title: t("profiledetail.general.newToolsReviewed"), tone: "success" });
     },
-    onError: (error: unknown) => pushToast({ title: "Could not submit review", body: errorBody(error), tone: "error" }),
+    onError: (error: unknown) => pushToast({ title: t("profiledetail.general.couldNotSubmitReview"), body: errorBody(error), tone: "error" }),
   });
 
   if (data.profiles.isLoading) return <LoadingState label={t("profiledetail.general.loadingprofile")} />;
@@ -168,7 +169,7 @@ export function ProfileDetail({
   if (!profile) {
     return (
       <div className="space-y-4">
-        <ToolsPageHeader title={t("profiledetail.general.profilenotfound")} description="This access profile may have been deleted." />
+        <ToolsPageHeader title={t("profiledetail.general.profilenotfound")} description={t("profiledetail.general.profileMayBeDeleted")} />
         <Button variant="outline" onClick={() => navigate("/apps/advanced/profiles")}>{t("profiledetail.general.backtoprofiles")}</Button>
       </div>
     );
@@ -181,7 +182,7 @@ export function ProfileDetail({
     <div className="space-y-6">
       <ToolsPageHeader
         title={profile.name}
-        description={profile.description ?? "No description yet."}
+        description={profile.description ?? t("profiledetail.general.noDescriptionYet")}
         actions={
           <div className="flex flex-wrap gap-2">
             <Button variant="outline" disabled={archived} onClick={() => setDialog("edit")}>
@@ -205,7 +206,7 @@ export function ProfileDetail({
       />
 
       <div className="flex flex-wrap items-center gap-3 text-sm">
-        <Badge variant={archived ? "outline" : "default"}>{STATUS_LABEL[profile.status]}</Badge>
+        <Badge variant={archived ? "outline" : "default"}>{t(`profiledetail.general.status.${profile.status}`, { defaultValue: STATUS_LABEL[profile.status] })}</Badge>
         <span className="text-muted-foreground">{t("profiledetail.general.updated")}<RelativeTime value={profile.updatedAt} /></span>
         <span className="text-muted-foreground">{allowsLabel(profile.summary)}</span>
       </div>
@@ -334,7 +335,7 @@ function NewToolsReviewBanner({
     <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-950">
       <div>
         <p className="font-medium">
-          {loading ? t("profiledetail.general.newtoolsneedreview") : `${appLabel} added ${count} new ${count === 1 ? t("profiledetail.general.tool") : t("profiledetail.general.tools")} since your last review`}
+          {loading ? t("profiledetail.general.newtoolsneedreview") : t("profiledetail.general.newToolSinceReview", { app: appLabel, count })}
         </p>
         <p className="text-amber-900/80">{t("profiledetail.general.choosewhichonesthisprofileshouldallow")}</p>
       </div>
@@ -397,7 +398,7 @@ function NewToolsReviewDialog({
                     <p className="mt-1 text-sm text-muted-foreground">{tool.description}</p>
                   ) : null}
                   <p className="mt-1 text-xs text-muted-foreground">
-                    {tool.applicationName ?? tool.connectionName ?? "App tool"} {t("profiledetail.general.added")} {formatShortDate(tool.addedAt)}
+                    {t("profiledetail.general.appToolAddedOn", { app: tool.applicationName ?? tool.connectionName ?? t("profiledetail.general.appTool"), date: formatLocalizedShortDate(tool.addedAt) })}
                   </p>
                 </div>
                 <div className="flex items-center gap-2 sm:justify-end">
@@ -466,18 +467,18 @@ function AllowList({ rows, total }: { rows: AllowRow[]; total: number }) {
               </td>
               <td className="px-3 py-2">
                 <span>{row.app}</span>
-                {row.degraded ? <span className="ml-2 text-xs text-muted-foreground">{row.app} {t("profiledetail.general.isdisconnected")}</span> : null}
+                {row.degraded ? <span className="ml-2 text-xs text-muted-foreground">{t("profiledetail.general.appDisconnected", { app: row.app })}</span> : null}
               </td>
               <td className="px-3 py-2 text-muted-foreground">{row.capabilities}</td>
               <td className="px-3 py-2">
-                {row.source.startsWith("added by rule") ? (
+                {row.sourceByRule ? (
                   <span className="rounded bg-amber-100 px-1.5 py-0.5 text-xs text-amber-950">{row.source}</span>
                 ) : (
                   <span className="text-muted-foreground">{row.source}</span>
                 )}
                 {row.autoAddedAt ? (
                   <div className="mt-0.5 text-xs text-muted-foreground">
-                    {t("profiledetail.general.addedautomatically")} {formatShortDate(row.autoAddedAt)}
+                    {t("profiledetail.general.addedAutomaticallyOn", { date: formatLocalizedShortDate(row.autoAddedAt) })}
                   </div>
                 ) : null}
               </td>
@@ -549,9 +550,10 @@ function NewToolsSetting({
   disabled: boolean;
   onChange: (value: ToolProfileDefaultAction) => void;
 }) {
+  const { t } = useTranslation();
   const options: Array<{ value: ToolProfileDefaultAction; title: string; body: string }> = [
-    { value: "deny", title: "Stay blocked until reviewed", body: "New tools do not become available automatically." },
-    { value: "allow", title: "Allowed automatically", body: "New tools from selected apps become available right away." },
+    { value: "deny", title: t("profiledetail.general.stayBlockedUntilReviewed"), body: t("profiledetail.general.newToolsNotAvailableAutomatically") },
+    { value: "allow", title: t("profiledetail.general.allowedAutomatically"), body: t("profiledetail.general.newToolsAvailableRightAway") },
   ];
   return (
     <div className="grid gap-2 sm:grid-cols-2">
@@ -608,7 +610,7 @@ function ProfileDialogs({
   const [name, setName] = useState(profile.name);
   const [description, setDescription] = useState(profile.description ?? "");
   const [profileKey, setProfileKey] = useState(profile.profileKey);
-  const [copyName, setCopyName] = useState(`${profile.name} copy`);
+  const [copyName, setCopyName] = useState(() => t("profiledetail.general.copyName", { name: profile.name }));
   const [copyAssignments, setCopyAssignments] = useState(false);
   const [advancedOpen, setAdvancedOpen] = useState(false);
 
@@ -718,7 +720,7 @@ function RemoveAssignmentDialog({
           <DialogDescription>
             {binding?.targetType === "company"
               ? t("profiledetail.general.removingtheorganizationdefaultchangesaccessfor")
-              : `Remove this profile from ${label}.`}
+              : t("profiledetail.general.removeProfileFrom", { label })}
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
@@ -745,7 +747,7 @@ function buildAllowRows(
     .filter((tool) => includeAllExcept || included.some((entry) => entryMatchesTool(entry, tool)))
     .map((tool) => {
       const match = includeAllExcept ? null : included.find((entry) => entryMatchesTool(entry, tool)) ?? null;
-      const app = appNames.get(tool.applicationId ?? "") ?? connectionNames.get(tool.connectionId) ?? "Unknown app";
+      const app = appNames.get(tool.applicationId ?? "") ?? connectionNames.get(tool.connectionId) ?? translate("profiledetail.general.unknownApp");
       const connection = connections.find((item) => item.id === tool.connectionId);
       return {
         id: tool.id,
@@ -753,6 +755,7 @@ function buildAllowRows(
         tool: tool.title || tool.toolName,
         capabilities: capabilityLabel(tool),
         source: sourceLabel(match, app),
+        sourceByRule: Boolean(match && (match.selectorType === "application" || match.selectorType === "connection" || match.selectorType === "risk_level")),
         autoAddedAt: profile.defaultAction === "allow" && isRecentTool(tool) ? (tool.addedAt ?? tool.firstSeenAt) : null,
         degraded: Boolean(connection && (connection.status !== "active" || connection.healthStatus === "error")),
         connectionId: tool.connectionId,
@@ -778,31 +781,31 @@ function entryMatchesTool(entry: ToolProfileEntry, tool: ToolCatalogEntry): bool
 }
 
 function sourceLabel(entry: ToolProfileEntry | null, app: string): string {
-  if (!entry) return "added directly";
-  if (entry.selectorType === "application" || entry.selectorType === "connection") return `added by rule: all ${app}`;
-  if (entry.selectorType === "risk_level" && entry.riskLevel) return `added by rule: ${entry.riskLevel} tools`;
-  return "added directly";
+  if (!entry) return translate("profiledetail.general.addedDirectly");
+  if (entry.selectorType === "application" || entry.selectorType === "connection") return translate("profiledetail.general.addedByAppRule", { app });
+  if (entry.selectorType === "risk_level" && entry.riskLevel) return translate("profiledetail.general.addedByRiskRule", { risk: entry.riskLevel });
+  return translate("profiledetail.general.addedDirectly");
 }
 
 function capabilityLabel(tool: ToolCatalogEntry): string {
-  if (tool.isDestructive) return "Destructive";
-  if (tool.isWrite) return "Write";
-  return "Read";
+  if (tool.isDestructive) return translate("profiledetail.general.capability.destructive");
+  if (tool.isWrite) return translate("profiledetail.general.capability.write");
+  return translate("profiledetail.general.capability.read");
 }
 
 function capabilityText(tool: ToolProfileNewToolReviewItem): string {
-  if (tool.riskLevel === "destructive") return "Destructive";
-  if (tool.riskLevel === "write") return "Write";
-  if (tool.riskLevel === "read") return "Read";
+  if (tool.riskLevel === "destructive") return translate("profiledetail.general.capability.destructive");
+  if (tool.riskLevel === "write") return translate("profiledetail.general.capability.write");
+  if (tool.riskLevel === "read") return translate("profiledetail.general.capability.read");
   return tool.capability;
 }
 
 function newToolsAppLabel(tools: ToolProfileNewToolReviewItem[]): string {
   const names = [...new Set(tools.map((tool) => tool.applicationName ?? tool.connectionName).filter(Boolean))] as string[];
-  if (names.length === 0) return "An app";
-  if (names.length === 1) return names[0] ?? "An app";
-  if (names.length === 2) return `${names[0]} and ${names[1]}`;
-  return `${names[0]} and ${names.length - 1} more apps`;
+  if (names.length === 0) return translate("profiledetail.general.anApp");
+  if (names.length === 1) return names[0] ?? translate("profiledetail.general.anApp");
+  if (names.length === 2) return translate("profiledetail.general.twoApps", { first: names[0], second: names[1] });
+  return translate("profiledetail.general.moreApps", { first: names[0], count: names.length - 1 });
 }
 
 function isRecentTool(tool: ToolCatalogEntry): boolean {
@@ -818,18 +821,25 @@ function assignmentLabel(
   companyId: string,
   maps: ReturnType<typeof useProfilesData>["maps"],
 ): string {
-  if (binding.targetType === "company") return "Organization default";
-  if (binding.targetType === "agent") return maps.agentsById.get(binding.targetId) ?? "Unknown agent";
-  if (binding.targetType === "project") return maps.projectsById.get(binding.targetId) ?? "Unknown project";
-  if (binding.targetType === "routine") return maps.routinesById.get(binding.targetId) ?? "Unknown routine";
-  if (binding.targetId === companyId) return "Organization";
+  if (binding.targetType === "company") return translate("profiledetail.general.organizationDefault");
+  if (binding.targetType === "agent") return maps.agentsById.get(binding.targetId) ?? translate("profiledetail.general.unknownAgent");
+  if (binding.targetType === "project") return maps.projectsById.get(binding.targetId) ?? translate("profiledetail.general.unknownProject");
+  if (binding.targetType === "routine") return maps.routinesById.get(binding.targetId) ?? translate("profiledetail.general.unknownRoutine");
+  if (binding.targetId === companyId) return translate("profiledetail.general.organization");
   return binding.targetId;
 }
 
 function assignmentTypeLabel(type: ToolProfileBinding["targetType"]): string {
-  if (type === "company") return "Organization default";
-  if (type === "agent") return "Agent";
-  if (type === "project") return "Project";
-  if (type === "routine") return "Routine";
-  return "Scoped assignment";
+  if (type === "company") return translate("profiledetail.general.organizationDefault");
+  if (type === "agent") return translate("profiledetail.general.agent");
+  if (type === "project") return translate("profiledetail.general.project");
+  if (type === "routine") return translate("profiledetail.general.routine");
+  return translate("profiledetail.general.scopedAssignment");
+}
+
+function formatLocalizedShortDate(date: Date | string): string {
+  return new Date(date).toLocaleString(i18n.resolvedLanguage === "zh-CN" ? "zh-CN" : "en-US", {
+    month: "short",
+    day: "numeric",
+  });
 }
