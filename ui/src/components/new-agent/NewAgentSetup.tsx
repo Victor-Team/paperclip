@@ -256,7 +256,7 @@ function Setup({
     environmentError =
       cause instanceof Error
         ? cause.message
-        : "Could not resolve the environment.";
+        : t("newagentsetup.general.couldnotresolveenvironment");
   }
   const environment = envs.data?.find((env) => env.id === environmentId);
   const sandboxProvider =
@@ -382,12 +382,12 @@ function Setup({
   }
   function preparedConfig(nextConnection = connection) {
     if (multiProvider && (!model.trim() || !model.includes("/")))
-      throw new Error("Choose or enter a model in provider/model format.");
+      throw new Error(t("newagentsetup.general.chooseorentermodel"));
     if (
       adapterType === "cursor_cloud" &&
       !/^https:\/\/github\.com\/[^/]+\/[^/]+/.test(repository.trim())
     )
-      throw new Error("Enter a GitHub repository URL.");
+      throw new Error(t("newagentsetup.general.entergithubrepositoryurl"));
     if (
       ["cursor_cloud", "hermes_gateway"].includes(adapterType) &&
       !apiKey.trim() &&
@@ -395,19 +395,21 @@ function Setup({
     )
       throw new Error(
         adapterType === "cursor_cloud"
-          ? "Enter a Cursor API key."
-          : `Enter ${envKey} or select an organization secret.`,
+          ? t("newagentsetup.general.entercursorapikey")
+          : t("newagentsetup.general.entercredentialororganizationsecret", {
+              credential: envKey,
+            }),
       );
     if (adapterType === "hermes_gateway") {
       try {
         const url = new URL(gatewayUrl.trim());
         if (!["https:", "http:"].includes(url.protocol)) throw new Error();
       } catch {
-        throw new Error("Enter the Hermes API base URL.");
+        throw new Error(t("newagentsetup.general.enterhermesapibaseurl"));
       }
     }
     if (usingKimiApi && !kimiModel.trim())
-      throw new Error("Enter the Kimi API model name.");
+      throw new Error(t("newagentsetup.general.enterkimimodelname"));
     return buildConfig(nextConnection);
   }
   function pendingCredentials(nextConnection = connection) {
@@ -450,7 +452,9 @@ function Setup({
     } catch (cause) {
       if (run === generation.current) {
         setError(
-          cause instanceof Error ? cause.message : "Could not test the agent.",
+          cause instanceof Error
+            ? cause.message
+            : t("newagentsetup.general.couldnottestagent"),
         );
         setTestState("fail");
       }
@@ -536,7 +540,9 @@ function Setup({
       ]);
     } catch (cause) {
       setError(
-        cause instanceof Error ? cause.message : "Could not create the agent.",
+        cause instanceof Error
+          ? cause.message
+          : t("newagentsetup.general.couldnotcreateagent"),
       );
     } finally {
       if (!hired) {
@@ -545,7 +551,7 @@ function Setup({
         } catch {
           setError(
             (original) =>
-              `${original ? `${original} ` : ""}Could not remove an unused setup credential. Remove it from Secrets before retrying.`,
+              `${original ? `${original} ` : ""}${t("newagentsetup.general.couldnotremoveunusedcredential")}`,
           );
         }
       }
@@ -589,9 +595,9 @@ function Setup({
     "saved" as const,
   ];
   const labels = {
-    connect: "Connect",
-    runtime: "Configure",
-    saved: "Confirmation",
+    connect: t("newagentsetup.general.connect"),
+    runtime: t("newagentsetup.general.configure"),
+    saved: t("newagentsetup.general.confirmation"),
   };
   const confirmationEnvironment = created?.defaultEnvironmentId
     ? envs.data?.find((env) => env.id === created.defaultEnvironmentId)
@@ -605,7 +611,7 @@ function Setup({
       ? createdKimiModel
       : (createdKimiModel as { value?: string } | undefined)?.value) ||
     model ||
-    "Default";
+    t("newagentsetup.general.defaultmodel");
   const environmentLabel =
     adapterType === "cursor_cloud"
       ? "Cursor Cloud"
@@ -613,7 +619,7 @@ function Setup({
         ? "Hermes Gateway"
         : confirmationEnvironment
           ? environmentDisplayLabel(confirmationEnvironment)
-          : "Local machine";
+          : t("newagentsetup.general.localmachine");
   const setupError =
     adapters.error ??
     envs.error ??
@@ -709,7 +715,15 @@ function Setup({
                     <div className="mb-8">
                       <OnboardingHeading
                         title={t("newagentsetup.general.connectamodel")}
-                        lede={`Connect ${name} to ${connectionAdapter === "claude_local" ? "Claude" : connectionAdapter === "grok_local" ? "Grok" : "OpenAI"}.`}
+                        lede={t("newagentsetup.general.connectagenttoprovider", {
+                          name,
+                          provider:
+                            connectionAdapter === "claude_local"
+                              ? "Claude"
+                              : connectionAdapter === "grok_local"
+                                ? "Grok"
+                                : "OpenAI",
+                        })}
                         center
                       />
                     </div>
@@ -878,7 +892,7 @@ function Setup({
                         )}
                         {SETUP_LOGIN_HINTS[adapterType] && (
                           <p className="text-sm text-muted-foreground">
-                            {SETUP_LOGIN_HINTS[adapterType]}
+                            {t(SETUP_LOGIN_HINTS[adapterType])}
                           </p>
                         )}
                         {showModel && models.error && (
@@ -941,13 +955,13 @@ function Setup({
                                     }}
                                     placeholder={
                                       selectedBinding
-                                        ? "Using saved key"
+                                        ? t("newagentsetup.general.usingsavedkey")
                                         : [
                                               "cursor_cloud",
                                               "hermes_gateway",
                                             ].includes(adapterType)
-                                          ? "Required"
-                                          : "Optional if already configured"
+                                          ? t("newagentsetup.general.required")
+                                          : t("newagentsetup.general.optionalifconfigured")
                                     }
                                   />
                                   {adapterType === "cursor_cloud" && (
@@ -993,7 +1007,11 @@ function Setup({
                               </div>
                             )}
                             <p className="text-xs text-muted-foreground sm:col-span-2">
-                              {t("newagentsetup.general.newkeysaresavedasorganizationsecrets")}                              {multiProvider && ` Use a ${provider}/model ID.`}
+                              {t("newagentsetup.general.newkeysaresavedasorganizationsecrets")}
+                              {multiProvider &&
+                                t("newagentsetup.general.useprovidermodelid", {
+                                  provider,
+                                })}
                             </p>
                           </div>
                         )}
@@ -1042,7 +1060,9 @@ function Setup({
                             </Field>
                             <Field
                               label={t("newagentsetup.general.kimiapibaseurl")}
-                              hint="Optional override for your provider endpoint."
+                              hint={t(
+                                "newagentsetup.general.optionalproviderendpointoverride",
+                              )}
                             >
                               <Input
                                 aria-label={t("newagentsetup.general.kimiapibaseurl6")}
