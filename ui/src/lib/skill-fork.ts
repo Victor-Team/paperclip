@@ -5,6 +5,8 @@ import type {
   CompanySkillUsageAgent,
 } from "@paperclipai/shared";
 
+export type SkillForkTranslator = (key: string, options?: Record<string, unknown>) => string;
+
 /**
  * Pure logic for the Skill Studio "Edit a copy" fork flow (PAP-13112). Kept
  * free of React so the dialog's decision logic — lineage labelling, existing-
@@ -24,20 +26,23 @@ export function shortSha(ref: string | null | undefined): string | null {
   return /^[0-9a-f]{8,40}$/i.test(trimmed) ? trimmed.slice(0, 7) : trimmed;
 }
 
-function sourceTypeFallbackLabel(sourceType: CompanySkillSourceType): string {
+function sourceTypeFallbackLabel(
+  sourceType: CompanySkillSourceType,
+  translate?: SkillForkTranslator,
+): string {
   switch (sourceType) {
     case "github":
       return "GitHub";
     case "skills_sh":
       return "skills.sh";
     case "url":
-      return "a URL";
+      return translate?.("skillfork.general.aurl") ?? "a URL";
     case "catalog":
-      return "the catalog";
+      return translate?.("skillfork.general.thecatalog") ?? "the catalog";
     case "local_path":
-      return "a local path";
+      return translate?.("skillfork.general.alocalpath") ?? "a local path";
     default:
-      return "its source";
+      return translate?.("skillfork.general.itssource") ?? "its source";
   }
 }
 
@@ -63,9 +68,9 @@ function prettyUrl(locator: string): string {
 export function formatForkSourceName(source: {
   sourceType: CompanySkillSourceType;
   sourceLocator: string | null;
-}): string {
+}, translate?: SkillForkTranslator): string {
   const locator = source.sourceLocator?.trim() ?? "";
-  if (!locator) return sourceTypeFallbackLabel(source.sourceType);
+  if (!locator) return sourceTypeFallbackLabel(source.sourceType, translate);
   if (source.sourceType === "github") return githubOwnerRepo(locator) ?? locator;
   if (source.sourceType === "url") return prettyUrl(locator);
   return locator;
@@ -75,8 +80,11 @@ export function formatForkSourceName(source: {
  * The lineage chip label: `owner/repo @ <short-sha>` (the `@ sha` clause is
  * dropped when the source has no pinned ref, e.g. skills.sh / URL sources).
  */
-export function formatLineageLabel(original: CompanySkillOriginalSummary): string {
-  const name = formatForkSourceName(original);
+export function formatLineageLabel(
+  original: CompanySkillOriginalSummary,
+  translate?: SkillForkTranslator,
+): string {
+  const name = formatForkSourceName(original, translate);
   const sha = shortSha(original.sourceRef);
   return sha ? `${name} @ ${sha}` : name;
 }
@@ -95,9 +103,10 @@ export function pickReusableFork(
 }
 
 /** Unmissable agent-usage sentence for the dialog body (P3 hard requirement). */
-export function agentUsageSentence(count: number): string {
-  if (count <= 0) return "No agents currently use this skill";
-  return `${count} ${count === 1 ? "agent" : "agents"} currently use${count === 1 ? "s" : ""} this skill`;
+export function agentUsageSentence(count: number, translate?: SkillForkTranslator): string {
+  if (count <= 0) return translate?.("skillfork.general.noagentscurrentlyusethisskill") ?? "No agents currently use this skill";
+  if (count === 1) return translate?.("skillfork.general.agentcurrentlyusesthisskill", { count }) ?? "1 agent currently uses this skill";
+  return translate?.("skillfork.general.agentscurrentlyusethisskill", { count }) ?? `${count} agents currently use this skill`;
 }
 
 /** Agent ids to reassign when the "Switch these agents to the copy" toggle is on. */

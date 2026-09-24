@@ -113,11 +113,11 @@ export function ForkSkillDialog({
       const switched = result.reassignments.length;
       toast?.pushToast({
         tone: "success",
-        title: "Editing a copy",
+        title: t("forkskilldialog.general.editingacopy"),
         body:
           switched > 0
-            ? `Created a copy of ${skill.name} and switched ${switched} ${switched === 1 ? "agent" : "agents"} to it.`
-            : `Created a copy of ${skill.name}. It's now editable.`,
+            ? t("forkskilldialog.general.createdacopyandswitchedagents", { skillName: skill.name, count: switched })
+            : t("forkskilldialog.general.createdacopyeditable", { skillName: skill.name }),
       });
       onOpenChange(false);
       navigate(skillStudioRoute(result.skill.id));
@@ -125,8 +125,8 @@ export function ForkSkillDialog({
     onError: (error) => {
       toast?.pushToast({
         tone: "error",
-        title: "Couldn't create a copy",
-        body: error instanceof Error ? error.message : "The fork request failed.",
+        title: t("forkskilldialog.general.couldntcreateacopy"),
+        body: error instanceof Error ? error.message : t("forkskilldialog.general.theforkrequestfailed"),
       });
     },
   });
@@ -134,8 +134,8 @@ export function ForkSkillDialog({
   const busy = forkMutation.isPending;
   const forkLabel =
     reassign && agentCount > 0
-      ? `Create copy & switch ${agentCount} ${agentCount === 1 ? "agent" : "agents"}`
-      : "Create copy";
+      ? t("forkskilldialog.general.createcopyandswitchagents", { count: agentCount })
+      : t("forkskilldialog.general.createcopy");
 
   const openExisting = () => {
     if (!reusableFork) return;
@@ -180,7 +180,7 @@ export function ForkSkillDialog({
         >
           <div className="flex items-center gap-2 text-sm font-medium text-foreground">
             <Users className="h-4 w-4 shrink-0" />
-            <span>{agentUsageSentence(agentCount)}</span>
+            <span>{agentUsageSentence(agentCount, t)}</span>
           </div>
 
           {agentCount > 0 ? (

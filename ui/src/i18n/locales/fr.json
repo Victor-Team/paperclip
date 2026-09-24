@@ -3415,7 +3415,27 @@
       "switchtheseagentstothecopy1": "Switch these agents to the copy",
       "nothingisassignedtoitsoyour": "Nothing is assigned to it, so your copy won't change any agent's\n              behaviour.",
       "cancel": "Cancel",
-      "createanothercopy": "Create another copy"
+      "createanothercopy": "Create another copy",
+      "editingacopy": "Editing a copy",
+      "createdacopyandswitchedagents_one": "Created a copy of {{skillName}} and switched {{count}} agent to it.",
+      "createdacopyandswitchedagents_other": "Created a copy of {{skillName}} and switched {{count}} agents to it.",
+      "createdacopyeditable": "Created a copy of {{skillName}}. It's now editable.",
+      "couldntcreateacopy": "Couldn't create a copy",
+      "theforkrequestfailed": "The fork request failed.",
+      "createcopyandswitchagents_one": "Create copy & switch {{count}} agent",
+      "createcopyandswitchagents_other": "Create copy & switch {{count}} agents",
+      "createcopy": "Create copy"
+    }
+  },
+  "skillfork": {
+    "general": {
+      "aurl": "a URL",
+      "thecatalog": "the catalog",
+      "alocalpath": "a local path",
+      "itssource": "its source",
+      "noagentscurrentlyusethisskill": "No agents currently use this skill",
+      "agentcurrentlyusesthisskill": "{{count}} agent currently uses this skill",
+      "agentscurrentlyusethisskill": "{{count}} agents currently use this skill"
     }
   },
   "skillpolicysurfaces": {

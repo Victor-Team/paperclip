@@ -3415,7 +3415,27 @@
       "switchtheseagentstothecopy1": "将这些智能体切换至副本",
       "nothingisassignedtoitsoyour": "未分配任何内容，因此您的副本不会改变任何智能体的\n              行为。",
       "cancel": "取消",
-      "createanothercopy": "创建另一个副本"
+      "createanothercopy": "创建另一个副本",
+      "editingacopy": "正在编辑副本",
+      "createdacopyandswitchedagents_one": "已创建 {{skillName}} 的副本，并将 {{count}} 名智能体切换到该副本。",
+      "createdacopyandswitchedagents_other": "已创建 {{skillName}} 的副本，并将 {{count}} 名智能体切换到该副本。",
+      "createdacopyeditable": "已创建 {{skillName}} 的副本，现在可以编辑。",
+      "couldntcreateacopy": "无法创建副本",
+      "theforkrequestfailed": "创建副本请求失败。",
+      "createcopyandswitchagents_one": "创建副本并切换 {{count}} 名智能体",
+      "createcopyandswitchagents_other": "创建副本并切换 {{count}} 名智能体",
+      "createcopy": "创建副本"
+    }
+  },
+  "skillfork": {
+    "general": {
+      "aurl": "一个 URL",
+      "thecatalog": "目录",
+      "alocalpath": "本地路径",
+      "itssource": "其来源",
+      "noagentscurrentlyusethisskill": "当前没有智能体使用此技能",
+      "agentcurrentlyusesthisskill": "当前有 {{count}} 名智能体使用此技能",
+      "agentscurrentlyusethisskill": "当前有 {{count}} 名智能体使用此技能"
     }
   },
   "skillpolicysurfaces": {
