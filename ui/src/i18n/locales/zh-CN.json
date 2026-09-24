@@ -3963,5 +3963,51 @@
       "clearthesearchtoseethemall": "”。清除搜索即可查看全部。",
       "test": "测试"
     }
+  },
+  "connectionowner": {
+    "general": {
+      "unknown": "未知"
+    }
+  },
+  "copyablegatewayurl": {
+    "general": {
+      "copygatewayurl": "复制网关 URL"
+    }
+  },
+  "editgatewaydialog": {
+    "general": {
+      "editgateway": "编辑网关",
+      "changethelabelortheaccessprofile": "更改决定此端点公开哪些工具的标签或访问配置。",
+      "name": "名称",
+      "accessprofile": "访问配置",
+      "descriptionoptional": "说明（可选）",
+      "whothisendpointisfor": "此端点适用对象。",
+      "cancel": "取消",
+      "saving": "正在保存…",
+      "savechanges": "保存更改"
+    }
+  },
+  "gatewaydetail": {
+    "general": {
+      "selectanorganizationtomanagegateways": "请选择一个组织以管理网关。",
+      "wecouldntfindthatgateway": "找不到该网关。",
+      "backtogateways": "返回网关",
+      "appsgateways": "应用 · 网关",
+      "edit": "编辑",
+      "clientsnippets": "客户端代码片段",
+      "gatewaytabs": "网关选项卡"
+    }
+  },
+  "appstoolspanel": {
+    "general": {
+      "theseappsgothroughthisgatewaythe": "这些应用通过此网关。绑定的配置",
+      "decideswhichtoolsareallowed": "决定允许哪些工具",
+      "changetheprofileunderadvanced": "请在“高级”下更改配置。",
+      "noappsareassignedtothisgateway": "尚未有应用分配到此网关的配置。",
+      "app": "应用",
+      "tools": "工具",
+      "status": "状态",
+      "open": "打开 →"
+    }
   }
 }

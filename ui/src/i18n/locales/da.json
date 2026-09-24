@@ -3963,5 +3963,51 @@
       "clearthesearchtoseethemall": "”. Clear the search to see them all.",
       "test": "Test"
     }
+  },
+  "connectionowner": {
+    "general": {
+      "unknown": "Unknown"
+    }
+  },
+  "copyablegatewayurl": {
+    "general": {
+      "copygatewayurl": "Copy gateway URL"
+    }
+  },
+  "editgatewaydialog": {
+    "general": {
+      "editgateway": "Edit gateway",
+      "changethelabelortheaccessprofile": "Change the label or the access profile that controls which tools this endpoint exposes.",
+      "name": "Name",
+      "accessprofile": "Access profile",
+      "descriptionoptional": "Description (optional)",
+      "whothisendpointisfor": "Who this endpoint is for.",
+      "cancel": "Cancel",
+      "saving": "Saving…",
+      "savechanges": "Save changes"
+    }
+  },
+  "gatewaydetail": {
+    "general": {
+      "selectanorganizationtomanagegateways": "Select an organization to manage gateways.",
+      "wecouldntfindthatgateway": "We couldn’t find that gateway.",
+      "backtogateways": "Back to gateways",
+      "appsgateways": "Apps · Gateways",
+      "edit": "Edit",
+      "clientsnippets": "Client snippets",
+      "gatewaytabs": "Gateway tabs"
+    }
+  },
+  "appstoolspanel": {
+    "general": {
+      "theseappsgothroughthisgatewaythe": "These apps go through this gateway. The bound profile",
+      "decideswhichtoolsareallowed": "decides which tools are allowed",
+      "changetheprofileunderadvanced": "Change the profile under Advanced.",
+      "noappsareassignedtothisgateway": "No apps are assigned to this gateway’s profile yet.",
+      "app": "App",
+      "tools": "Tools",
+      "status": "Status",
+      "open": "Open →"
+    }
   }
 }
