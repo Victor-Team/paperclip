@@ -4,6 +4,7 @@ import { useState } from "react";
 import { flushSync } from "react-dom";
 import { createRoot } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { i18n } from "@/i18n";
 import { TriggersSection } from "./editable-sections";
 import {
   RoutineDetailContext,
@@ -73,9 +74,10 @@ describe("TriggersSection", () => {
     document.body.appendChild(container);
   });
 
-  afterEach(() => {
+  afterEach(async () => {
     container.remove();
     document.body.innerHTML = "";
+    await i18n.changeLanguage("en");
   });
 
   it("closes the add-trigger composer and resets the draft after a successful create", () => {
@@ -139,6 +141,20 @@ describe("TriggersSection", () => {
     });
 
     expect(createMutate).not.toHaveBeenCalled();
+
+    act(() => root.unmount());
+  });
+
+  it("localizes the empty trigger state", async () => {
+    await i18n.changeLanguage("zh-CN");
+    const root = createRoot(container);
+
+    act(() => {
+      root.render(<Harness createMutate={vi.fn()} />);
+    });
+
+    expect(container.textContent).toContain("暂无触发器。");
+    expect(container.textContent).toContain("添加计划");
 
     act(() => root.unmount());
   });

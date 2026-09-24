@@ -3116,7 +3116,20 @@
       "signingmodebearerdescription": "在 Authorization 请求头中要求共享 Bearer 令牌。",
       "signingmodehmacsha256description": "要求使用共享密钥对请求生成 HMAC SHA-256 签名。",
       "signingmodegithubhmacdescription": "接受 GitHub 风格的 X-Hub-Signature-256 请求头（对原始正文做 HMAC，无时间戳）。",
-      "signingmodenonedescription": "无需认证——Webhook URL 本身充当共享密钥。"
+      "signingmodenonedescription": "无需认证——Webhook URL 本身充当共享密钥。",
+      "noresponsible": "无负责人",
+      "searchresponsible": "搜索负责人...",
+      "noresponsiblefound": "未找到负责人。",
+      "noproject": "无项目",
+      "searchprojects": "搜索项目...",
+      "noprojectsfound": "未找到项目。",
+      "notriggersyet1": "暂无触发器。",
+      "addaschedule": "添加计划",
+      "novariablesyet": "暂无变量。请在标题或说明中添加 {{placeholder}} 以创建变量。",
+      "webhookurl": "Webhook URL",
+      "concurrencypolicy": "并发策略",
+      "catchuppolicy": "追赶策略",
+      "activitygatescope": "活动门控范围"
     }
   },
   "editablesections": {
@@ -3185,7 +3198,20 @@
       "signingmodebearerdescription": "在 Authorization 请求头中要求共享 Bearer 令牌。",
       "signingmodehmacsha256description": "要求使用共享密钥对请求生成 HMAC SHA-256 签名。",
       "signingmodegithubhmacdescription": "接受 GitHub 风格的 X-Hub-Signature-256 请求头（对原始正文做 HMAC，无时间戳）。",
-      "signingmodenonedescription": "无需认证——Webhook URL 本身充当共享密钥。"
+      "signingmodenonedescription": "无需认证——Webhook URL 本身充当共享密钥。",
+      "noresponsible": "无负责人",
+      "searchresponsible": "搜索负责人...",
+      "noresponsiblefound": "未找到负责人。",
+      "noproject": "无项目",
+      "searchprojects": "搜索项目...",
+      "noprojectsfound": "未找到项目。",
+      "notriggersyet1": "暂无触发器。",
+      "addaschedule": "添加计划",
+      "novariablesyet": "暂无变量。请在标题或说明中添加 {{placeholder}} 以创建变量。",
+      "webhookurl": "Webhook URL",
+      "concurrencypolicy": "并发策略",
+      "catchuppolicy": "追赶策略",
+      "activitygatescope": "活动门控范围"
     }
   },
   "operatesections": {

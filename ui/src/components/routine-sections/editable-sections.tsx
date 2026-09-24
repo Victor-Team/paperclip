@@ -177,9 +177,9 @@ export function OverviewSection({
             options={assigneeOptions}
             recentOptionIds={recentAssigneeIds}
             placeholder={t("editablesections.general.responsible")}
-            noneLabel="No responsible"
-            searchPlaceholder="Search responsible..."
-            emptyMessage="No responsible found."
+            noneLabel={t("editablesections.general.noresponsible")}
+            searchPlaceholder={t("editablesections.general.searchresponsible")}
+            emptyMessage={t("editablesections.general.noresponsiblefound")}
             onChange={(assigneeAgentId) =>
               setEditDraft((current) => ({ ...current, assigneeAgentId }))
             }
@@ -224,9 +224,9 @@ export function OverviewSection({
             options={projectOptions}
             recentOptionIds={recentProjectIds}
             placeholder={t("editablesections.general.project")}
-            noneLabel="No project"
-            searchPlaceholder="Search projects..."
-            emptyMessage="No projects found."
+            noneLabel={t("editablesections.general.noproject")}
+            searchPlaceholder={t("editablesections.general.searchprojects")}
+            emptyMessage={t("editablesections.general.noprojectsfound")}
             onChange={(projectId) => setEditDraft((current) => ({ ...current, projectId }))}
             onConfirm={() => descriptionEditorRef.current?.focus()}
             renderTriggerValue={(option) =>
@@ -566,8 +566,8 @@ export function TriggersSection() {
       {routine.triggers.length === 0 ? (
         <EmptyState
           icon={Clock3}
-          message="No triggers yet."
-          action="Add a schedule"
+          message={t("editablesections.general.notriggersyet1")}
+          action={t("editablesections.general.addaschedule")}
           onAction={() => setAddOpen(true)}
         />
       ) : (
@@ -613,8 +613,8 @@ export function VariablesSection() {
       ) : (
         <EmptyState
           icon={Braces}
-          message="No variables yet. Add a {{placeholder}} in the title or instructions to create one."
-          action="Edit instructions"
+          message={t("editablesections.general.novariablesyet")}
+          action={t("editablesections.general.editinstructions")}
           onAction={() => navigateToSection("overview")}
         />
       )}
@@ -659,7 +659,7 @@ export function SecretsSection() {
               <div key={`${entry.webhookUrl}-${index}`} className="space-y-2">
                 <div className="flex items-center gap-2">
                   <Input value={entry.webhookUrl} readOnly className="flex-1" />
-                  <Button variant="outline" size="sm" onClick={() => copySecretValue("Webhook URL", entry.webhookUrl)}>
+                  <Button variant="outline" size="sm" onClick={() => copySecretValue(t("editablesections.general.webhookurl"), entry.webhookUrl)}>
                     URL
                   </Button>
                 </div>
@@ -703,7 +703,7 @@ export function DeliverySection() {
         <p className="text-xs font-medium uppercase tracking-(--tracking-caps) text-muted-foreground">
           {t("editablesections.general.concurrency")}</p>
         <RadioCardGroup
-          ariaLabel="Concurrency policy"
+          ariaLabel={t("editablesections.general.concurrencypolicy")}
           value={editDraft.concurrencyPolicy}
           onValueChange={(concurrencyPolicy) =>
             setEditDraft((current) => ({ ...current, concurrencyPolicy }))
@@ -715,7 +715,7 @@ export function DeliverySection() {
         <p className="text-xs font-medium uppercase tracking-(--tracking-caps) text-muted-foreground">
           {t("editablesections.general.catchup")}</p>
         <RadioCardGroup
-          ariaLabel="Catch-up policy"
+          ariaLabel={t("editablesections.general.catchuppolicy")}
           value={editDraft.catchUpPolicy}
           onValueChange={(catchUpPolicy) =>
             setEditDraft((current) => ({ ...current, catchUpPolicy }))
@@ -727,7 +727,7 @@ export function DeliverySection() {
         <p className="text-xs font-medium uppercase tracking-(--tracking-caps) text-muted-foreground">
           {t("editablesections.general.advancedrunpolicy")}</p>
         <RadioCardGroup
-          ariaLabel="Advanced run policy"
+          ariaLabel={t("editablesections.general.advancedrunpolicy")}
           value={editDraft.activityGatePolicy}
           onValueChange={(activityGatePolicy) =>
             setEditDraft((current) => ({ ...current, activityGatePolicy }))
@@ -742,7 +742,7 @@ export function DeliverySection() {
           <div className="space-y-2 rounded-lg border border-border p-3">
             <Label className="text-xs font-medium">{t("editablesections.general.activityscope")}</Label>
             <RadioCardGroup
-              ariaLabel="Activity gate scope"
+              ariaLabel={t("editablesections.general.activitygatescope")}
               value={editDraft.activityGateScope}
               onValueChange={(activityGateScope) =>
                 setEditDraft((current) => ({ ...current, activityGateScope }))

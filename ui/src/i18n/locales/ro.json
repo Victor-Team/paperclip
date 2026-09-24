@@ -3116,7 +3116,20 @@
       "signingmodebearerdescription": "Expect a shared bearer token in the Authorization header.",
       "signingmodehmacsha256description": "Expect an HMAC SHA-256 signature over the request using the shared secret.",
       "signingmodegithubhmacdescription": "Accept GitHub-style X-Hub-Signature-256 header (HMAC over raw body, no timestamp).",
-      "signingmodenonedescription": "No authentication — the webhook URL itself acts as a shared secret."
+      "signingmodenonedescription": "No authentication — the webhook URL itself acts as a shared secret.",
+      "noresponsible": "No responsible",
+      "searchresponsible": "Search responsible...",
+      "noresponsiblefound": "No responsible found.",
+      "noproject": "No project",
+      "searchprojects": "Search projects...",
+      "noprojectsfound": "No projects found.",
+      "notriggersyet1": "No triggers yet.",
+      "addaschedule": "Add a schedule",
+      "novariablesyet": "No variables yet. Add a {{placeholder}} in the title or instructions to create one.",
+      "webhookurl": "Webhook URL",
+      "concurrencypolicy": "Concurrency policy",
+      "catchuppolicy": "Catch-up policy",
+      "activitygatescope": "Activity gate scope"
     }
   },
   "editablesections": {
@@ -3185,7 +3198,20 @@
       "signingmodebearerdescription": "Expect a shared bearer token in the Authorization header.",
       "signingmodehmacsha256description": "Expect an HMAC SHA-256 signature over the request using the shared secret.",
       "signingmodegithubhmacdescription": "Accept GitHub-style X-Hub-Signature-256 header (HMAC over raw body, no timestamp).",
-      "signingmodenonedescription": "No authentication — the webhook URL itself acts as a shared secret."
+      "signingmodenonedescription": "No authentication — the webhook URL itself acts as a shared secret.",
+      "noresponsible": "No responsible",
+      "searchresponsible": "Search responsible...",
+      "noresponsiblefound": "No responsible found.",
+      "noproject": "No project",
+      "searchprojects": "Search projects...",
+      "noprojectsfound": "No projects found.",
+      "notriggersyet1": "No triggers yet.",
+      "addaschedule": "Add a schedule",
+      "novariablesyet": "No variables yet. Add a {{placeholder}} in the title or instructions to create one.",
+      "webhookurl": "Webhook URL",
+      "concurrencypolicy": "Concurrency policy",
+      "catchuppolicy": "Catch-up policy",
+      "activitygatescope": "Activity gate scope"
     }
   },
   "operatesections": {
