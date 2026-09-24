@@ -1668,5 +1668,353 @@
       "resultcount": "{{count}} results",
       "clearallfilters": "Clear all filters"
     }
+  },
+  "questionform": {
+    "general": {
+      "recommended": "Recommended",
+      "noanswerablequestionswereprovided": "No answerable questions were provided.",
+      "questionpagination": "Question pagination",
+      "previousquestion": "Previous question",
+      "of": "of",
+      "nextquestion": "Next question",
+      "writeananswer": "Write an answer",
+      "writeyouranswer": "Write your answer",
+      "filterchoices": "Filter choices",
+      "cancel": "Cancel",
+      "skip": "Skip",
+      "submitanswers": "Submit answers",
+      "next": "Next"
+    }
+  },
+  "runnergoalwidget": {
+    "general": {
+      "agentsessiongoal": "Agent session goal",
+      "sessiongoal": "Session goal",
+      "workingnow": "Working now",
+      "typegoalfollowedbyanobjectiveto": "Type /goal followed by an objective to pursue work across turns.",
+      "tokens": "tokens",
+      "iterations": "iterations",
+      "editgoal": "Edit goal",
+      "pausegoal": "Pause goal",
+      "resumegoal": "Resume goal",
+      "cleargoal": "Clear goal",
+      "replacesessiongoal": "Replace session goal?",
+      "editsessiongoal": "Edit session goal",
+      "thisclearstheunfinishedgoalandstarts": "This clears the unfinished goal and starts a new goal with the objective below.",
+      "updatetheobjectivewithoutclearingthegoal": "Update the objective without clearing the goal's progress.",
+      "goalobjective": "Goal objective",
+      "cancel": "Cancel",
+      "saving": "Saving…",
+      "replacegoal": "Replace goal",
+      "savegoal": "Save goal"
+    },
+    "pending": {
+      "starting": "Starting",
+      "saving": "Saving",
+      "replacing": "Replacing",
+      "pausingaftercurrentturn": "Pausing after current turn",
+      "resuming": "Resuming",
+      "clearing": "Clearing",
+      "continuinginnewrun": "Continuing in a new run"
+    }
+  },
+  "taskchatblockerlinks": {
+    "general": {
+      "taskblockers": "Task blockers",
+      "taskswaitingonlivework": "Tasks waiting on live work",
+      "nowrunning": "Now running",
+      "nowrunning1": "Now running"
+    }
+  },
+  "taskchatbubble": {
+    "general": {
+      "images": "Images ·",
+      "files": "Files ·",
+      "verificationcaveat": "Verification caveat",
+      "queued": "Queued",
+      "sending": "Sending…",
+      "sentfromimessage": "Sent from iMessage"
+    }
+  },
+  "taskchatbubbleactions": {
+    "general": {
+      "copymessage": "Copy message",
+      "copymessage1": "Copy message"
+    }
+  },
+  "taskchatcompactinteractioncard": {
+    "general": {
+      "details": "Details",
+      "answer": "Answer:",
+      "answer1": "Answer:",
+      "nooptionsselected": "No options selected",
+      "noverdictssubmitted": "No verdicts submitted",
+      "notaskscreated": "No tasks created",
+      "requestedaccessto": "requested access to",
+      "risk": "risk",
+      "expires": "Expires",
+      "secret": "Secret",
+      "binding": "Binding",
+      "why": "Why",
+      "expires2": "Expires",
+      "reason": "Reason:",
+      "vieworiginalrequestandresolution": "View original request and resolution",
+      "doyouacceptthisplan": "Do you accept this plan?",
+      "risk3": "risk",
+      "expires4": "Expires",
+      "argumentsandaudithash": "Arguments and audit hash",
+      "secret5": "Secret",
+      "binding6": "Binding",
+      "why7": "Why",
+      "expires8": "Expires",
+      "whatshouldchange": "What should change?",
+      "optional": " (optional)",
+      "back": "Back",
+      "reject": "Reject",
+      "reject9": "Reject",
+      "approve": "Approve",
+      "filteroptions": "Filter options",
+      "filteroptions10": "Filter options",
+      "whatshouldchange11": "What should change?",
+      "optional12": " (optional)",
+      "back13": "Back",
+      "decline": "Decline",
+      "decline14": "Decline",
+      "confirmselection": "Confirm selection",
+      "hiddenfollowup": "hidden follow-up",
+      "selectthetaskstocreate": "Select the tasks to create.",
+      "filtersuggestedtasks": "Filter suggested tasks",
+      "filtersuggestedtasks15": "Filter suggested tasks",
+      "suggestedtasks": "Suggested tasks",
+      "whyshouldthesetaskschangeoptional": "Why should these tasks change? (optional)",
+      "addashortnote": "Add a short note",
+      "back16": "Back",
+      "sendback": "Send back",
+      "revise": "Revise",
+      "createselected": "Create selected",
+      "noreviewitemswereprovided": "No review items were provided.",
+      "decided": "decided",
+      "itempagination": "Item pagination",
+      "previousitem": "Previous item",
+      "of": "of",
+      "nextitem": "Next item",
+      "open": "Open",
+      "reason17": "Reason",
+      "addashortreason": "Add a short reason",
+      "submitrejectionreason": "Submit rejection reason",
+      "applydecisions": "Apply decisions"
+    }
+  },
+  "taskchatcomposer": {
+    "general": {
+      "skip": "Skip",
+      "wecouldntconfirmwhetherthiscomment": "We couldn’t confirm whether this comment was saved. It may already\n            be in the conversation. Review it before starting another draft.",
+      "reviewconversation": "Review conversation",
+      "couldntrefreshtheconversationtryreviewing": "Couldn’t refresh the conversation. Try reviewing it again.",
+      "discardingthisdraftdoesnotremoveany": "Discarding this draft does not remove any saved comment or\n                uploaded file.",
+      "discarddraftandstartnew": "Discard draft and start new",
+      "pending": "pending",
+      "pendinginput": "Pending input",
+      "pending1": "pending",
+      "sendnewtostartafreshsession": "Send /new to start a fresh session and resume this conversation.",
+      "attachfile": "Attach file",
+      "attachfile2": "Attach file",
+      "queuedmessagechanged": "Queued message changed",
+      "editingqueuedmessage": "Editing queued message",
+      "assignee": "Assignee",
+      "cancel": "Cancel"
+    }
+  },
+  "taskchatdescriptionbubble": {
+    "general": {
+      "addadescription": "Add a description...",
+      "addadescription1": "Add a description...",
+      "editdescription": "Edit description"
+    }
+  },
+  "taskchatinteractioncard": {
+    "general": {
+      "reviewrequest": "Review request"
+    }
+  },
+  "taskchatmarker": {
+    "general": {
+      "tryingagain": "Trying again...",
+      "tryagain": "Try again",
+      "viewrun": "View run",
+      "tryingagain1": "Trying again...",
+      "tryagain2": "Try again",
+      "tryingagain3": "Trying again...",
+      "tryagain4": "Try again"
+    }
+  },
+  "taskchatpausedtakeover": {
+    "general": {
+      "subtreeispaused": "Subtree is paused.",
+      "taskispaused": "Task is paused.",
+      "resumethissubtreetosendamessage": "Resume this subtree to send a message.",
+      "resumethistasktosendamessage": "Resume this task to send a message.",
+      "yourdraftissaved": "Your draft is saved.",
+      "resumesubtree": "Resume subtree",
+      "resuming": "Resuming…",
+      "resumesubtree1": "Resume subtree",
+      "resumetask": "Resume task"
+    }
+  },
+  "taskchatplanview": {
+    "general": {
+      "plan": "Plan",
+      "rev": "· rev",
+      "done": "done"
+    }
+  },
+  "taskchatprojectcreatedcard": {
+    "general": {
+      "projectcreated": "Project created"
+    }
+  },
+  "taskchatprotocolactivityrow": {
+    "general": {
+      "query": "Query",
+      "result": "result",
+      "results": "results",
+      "researchsources": "Research sources",
+      "show": "Show",
+      "more": "more",
+      "result1": "result",
+      "results2": "results",
+      "showfewerresults": "Show fewer results",
+      "additionalprovideroutputisavailableinrunner": "Additional provider output is available in Runner Inspector.",
+      "plansteps": "Plan steps",
+      "researchsources3": "Research sources",
+      "delegatedagents": "Delegated agents",
+      "outputtruncatedto8kib": "Output truncated to 8 KiB.",
+      "nochangedfiledetailswerereported": "No changed-file details were reported.",
+      "changedfiles": "Changed files",
+      "more4": "more",
+      "file": "file",
+      "files": "files",
+      "notshown": "not shown",
+      "previewunavailable": "Preview unavailable.",
+      "previewtruncatedbytherunner": "Preview truncated by the runner.",
+      "error": "Error",
+      "warning": "Warning"
+    }
+  },
+  "taskchatprotocolcard": {
+    "general": {
+      "plansteps": "Plan steps",
+      "delegatedagents": "Delegated agents",
+      "researchsources": "Research sources",
+      "details": "Details",
+      "outputtruncatedto8kib": "Output truncated to 8 KiB.",
+      "workspacechanges": "Workspace changes",
+      "showfewerfiles": "Show fewer files",
+      "reviewdiff": "Review diff",
+      "workspacediff": "Workspace diff",
+      "changedfiles": "Changed files",
+      "binaryfiletextdiffisunavailable": "Binary file; text diff is unavailable.",
+      "noinlinepatchwasrecordedforthis": "No inline patch was recorded for this file.",
+      "preview": "Preview",
+      "previewunavailabletheverifiedworkspacereferenceis": "Preview unavailable. The verified workspace reference is still\n              available above.",
+      "previewtruncatedbytherunner": "Preview truncated by the runner.",
+      "answerdetailswerenotrecordedbythis": "Answer details were not recorded by this older runtime.",
+      "runtimeinput": "Runtime input",
+      "submitting": "Submitting…",
+      "submitresponse": "Submit response",
+      "deny": "Deny",
+      "cancel": "Cancel",
+      "resolvethisrequestintheactiveruntime": "Resolve this request in the active runtime session.",
+      "runresult": "Run result",
+      "blocked": "Blocked:",
+      "verificationresults": "Verification results",
+      "runended": "Run ended"
+    }
+  },
+  "taskchatqueuedmessages": {
+    "general": {
+      "interrupt": "Interrupt",
+      "steer": "Steer",
+      "discardqueuedmessage": "Discard queued message",
+      "queuedmessageactions": "Queued message actions",
+      "editmessage": "Edit message",
+      "queuedmessages": "Queued messages"
+    }
+  },
+  "taskchatrichinput": {
+    "general": {
+      "attachimage": "Attach image",
+      "ordroppasteanimageintothe": "or drop/paste an image into the note"
+    }
+  },
+  "taskchatrunneractivitygroup": {
+    "general": {
+      "permission": "Permission",
+      "activityhistory": "Activity history"
+    }
+  },
+  "taskchatrunnerturn": {
+    "general": {
+      "thinking": "Thinking",
+      "liverunneractivityistemporarilyunavailableretrying": "Live runner activity is temporarily unavailable. Retrying…"
+    }
+  },
+  "taskchatskillcreatedcard": {
+    "general": {
+      "skillcreated": "Skill created"
+    }
+  },
+  "taskchatstatuspill": {
+    "general": {
+      "ctx": "ctx",
+      "ctx1": "ctx"
+    }
+  },
+  "taskchatsystemnotice": {
+    "general": {
+      "tryingagain": "Trying again...",
+      "tryagain": "Try again",
+      "tryingagain1": "Trying again...",
+      "tryagain2": "Try again"
+    }
+  },
+  "taskchattoolcard": {
+    "general": {
+      "interrupted": "Interrupted",
+      "changed": "Changed"
+    }
+  },
+  "taskchatturn": {
+    "general": {
+      "continuedaftersteering": "Continued after steering · ",
+      "stopped": "Stopped",
+      "worked": "Worked",
+      "stopped1": "Stopped",
+      "worked2": "Worked"
+    }
+  },
+  "taskchatturnstatusisland": {
+    "general": {
+      "step": "Step",
+      "turnplan": "Turn plan",
+      "withinturnchecklist": "Within-turn checklist"
+    }
+  },
+  "taskchatusagereadout": {
+    "general": {
+      "ctx": "ctx ("
+    }
+  },
+  "taskmessagescroller": {
+    "general": {
+      "scrolltolatest": "Scroll to latest"
+    }
+  },
+  "tweakpanel": {
+    "general": {
+      "motiontweakpanel": "Motion tweak panel",
+      "resetall": "Reset all",
+      "copyastheme": "Copy as @theme"
+    }
   }
 }

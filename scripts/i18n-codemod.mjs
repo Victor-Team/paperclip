@@ -143,8 +143,22 @@ function scan(file) {
         keys.add(key);
         candidates.push({ kind, text: normalized, key, line: source.getLineAndCharacterOfPosition(node.getStart()).line + 1, automatic: true });
         const quote = JSON.stringify(key);
+        // JSX text can carry inline separator spaces, e.g. `Images · {count}`
+        // or `{page} of {total}`. Keep those literal spaces outside the
+        // translation call; trimming the key must not join adjacent nodes.
+        const nodeSourceText = sourceText.slice(node.getStart(source), node.getEnd());
+        const siblings = ts.isJsxElement(node.parent) ? node.parent.children : [];
+        const index = siblings.indexOf(node);
+        const previousSibling = index > 0 ? siblings[index - 1] : null;
+        const nextSibling = index >= 0 ? siblings[index + 1] : null;
+        const leadingInlineSpace = ts.isJsxText(node) && Boolean(previousSibling) && ts.isJsxExpression(previousSibling)
+          ? (nodeSourceText.match(/^[ \\t]+/)?.[0] ?? "")
+          : "";
+        const trailingInlineSpace = ts.isJsxText(node) && Boolean(nextSibling) && ts.isJsxExpression(nextSibling)
+          ? (nodeSourceText.match(/[ \\t]+$/)?.[0] ?? "")
+          : "";
         const replacement = ts.isJsxText(node) || ts.isJsxAttribute(node.parent)
-          ? `{t(${quote})}`
+          ? `${leadingInlineSpace}{t(${quote})}${trailingInlineSpace}`
           : `t(${quote})`;
         edits.push({ start: node.getStart(source), end: node.getEnd(), replacement });
         translatedComponents.add(component);

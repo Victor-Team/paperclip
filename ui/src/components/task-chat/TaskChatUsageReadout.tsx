@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
 import { Gauge } from "lucide-react";
 import type { TaskChatUsageItem } from "./task-chat-model";
+import { useTranslation } from "@/i18n";
 
 /**
  * Second-tier live token/cost readout (ACP UsageUpdate). Concrete progress —
@@ -8,6 +9,7 @@ import type { TaskChatUsageItem } from "./task-chat-model";
  * Recedes to metadata weight so it never competes with message content.
  */
 export function TaskChatUsageReadout({ item }: { item: TaskChatUsageItem }) {
+  const { t } = useTranslation();
   const { used, size, inputTokens, outputTokens, costUsd } = item.usage;
   const contextWindowSize = typeof size === "number" && size > 0 ? size : null;
   const pct = contextWindowSize ? Math.min(100, Math.round((used / contextWindowSize) * 100)) : 0;
@@ -18,7 +20,7 @@ export function TaskChatUsageReadout({ item }: { item: TaskChatUsageItem }) {
         {item.label ? <span className="font-medium">{item.label}</span> : null}
         {contextWindowSize ? (
           <span>
-            {used.toLocaleString()}/{contextWindowSize.toLocaleString()} ctx ({pct}%)
+            {used.toLocaleString()}/{contextWindowSize.toLocaleString()} {t("taskchatusagereadout.general.ctx")}{pct}%)
           </span>
         ) : null}
         {inputTokens != null || outputTokens != null ? (

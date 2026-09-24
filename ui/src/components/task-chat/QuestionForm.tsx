@@ -26,6 +26,7 @@ import {
 import { TaskChatRichInput } from "./TaskChatRichInput";
 import { parseCssTimeMs } from "./motion-tokens";
 import { matchSafeQuestionValidationPattern } from "./question-validation-pattern";
+import { useTranslation } from "@/i18n";
 
 type Question = PaperclipQuestionSet["questions"][number];
 type Answer = PaperclipQuestionResponse["answers"][string];
@@ -123,6 +124,7 @@ function SelectOption({
   disabled: boolean;
   onClick: () => void;
 }) {
+  const { t } = useTranslation();
   return (
     <button
       type="button"
@@ -166,8 +168,7 @@ function SelectOption({
           <span>{label}</span>
           {recommended ? (
             <span className="rounded-sm bg-background/70 px-1.5 py-0.5 text-(length:--text-micro) font-medium text-muted-foreground">
-              Recommended
-            </span>
+              {t("questionform.general.recommended")}</span>
           ) : null}
         </span>
         {description ? (
@@ -235,6 +236,7 @@ export function QuestionForm({
   onSubmit,
   onCancel,
 }: QuestionFormProps) {
+  const { t } = useTranslation();
   const takeoverActions = useTaskChatComposerTakeoverActions();
   const initialDraft = draftKey
     ? loadStructuredDraft<{
@@ -344,8 +346,7 @@ export function QuestionForm({
   if (!question)
     return (
       <p className="text-sm text-muted-foreground">
-        No answerable questions were provided.
-      </p>
+        {t("questionform.general.noanswerablequestionswereprovided")}</p>
     );
   const answer = answers[question.id] ?? {};
   const selected = answer.selectedOptionIds ?? [];
@@ -478,26 +479,26 @@ export function QuestionForm({
     questionSet.questions.length > 1 ? (
       <nav
         className="flex shrink-0 items-center gap-1"
-        aria-label="Question pagination"
+        aria-label={t("questionform.general.questionpagination")}
       >
         <Button
           type="button"
           size="icon-xs"
           variant="ghost"
-          aria-label="Previous question"
+          aria-label={t("questionform.general.previousquestion")}
           disabled={disabled || working != null || page === 0}
           onClick={() => setPage((current) => current - 1)}
         >
           <ChevronLeft aria-hidden />
         </Button>
         <span className="min-w-10 text-center tabular-nums">
-          {page + 1} of {questionSet.questions.length}
+          {page + 1} {t("questionform.general.of")} {questionSet.questions.length}
         </span>
         <Button
           type="button"
           size="icon-xs"
           variant="ghost"
-          aria-label="Next question"
+          aria-label={t("questionform.general.nextquestion")}
           // The arrows browse; they do not validate. A send that finds an
           // earlier answer missing returns to that question (see submit).
           disabled={disabled || working != null || isLastPage}
@@ -548,7 +549,7 @@ export function QuestionForm({
       ) : null}
       {question.answerMode === "text" ? (
         <div className="mb-2 flex items-center gap-3 text-xs text-muted-foreground">
-          {question.answerMode === "text" ? <span>Write an answer</span> : null}
+          {question.answerMode === "text" ? <span>{t("questionform.general.writeananswer")}</span> : null}
         </div>
       ) : null}
       {pagination ? (
@@ -590,7 +591,7 @@ export function QuestionForm({
             value={answer.text ?? ""}
             disabled={disabled || working != null}
             onChange={(value) => updateAnswer({ text: value })}
-            placeholder="Write your answer"
+            placeholder={t("questionform.general.writeyouranswer")}
             imageUploadHandler={imageUploadHandler}
             mentions={mentions}
             autoFocus
@@ -621,7 +622,7 @@ export function QuestionForm({
                     [question.id]: event.target.value,
                   }))
                 }
-                placeholder="Filter choices"
+                placeholder={t("questionform.general.filterchoices")}
                 aria-label={`Filter choices for ${question.prompt}`}
                 className="pl-8"
               />
@@ -700,8 +701,7 @@ export function QuestionForm({
             {working === "cancel" ? (
               <Loader2 aria-hidden className="h-4 w-4 animate-spin" />
             ) : null}{" "}
-            Cancel
-          </Button>
+            {t("questionform.general.cancel")}</Button>
         ) : null}
         {!question.required ? (
           <Button
@@ -711,8 +711,7 @@ export function QuestionForm({
             disabled={busy}
             onClick={skipQuestion}
           >
-            Skip
-          </Button>
+            {t("questionform.general.skip")}</Button>
         ) : null}
         <Button
           type="button"
@@ -723,7 +722,7 @@ export function QuestionForm({
           {working === "submit" ? (
             <Loader2 aria-hidden className="h-4 w-4 animate-spin" />
           ) : null}
-          {isLastPage ? (questionSet.submitLabel ?? "Submit answers") : "Next"}
+          {isLastPage ? (questionSet.submitLabel ?? t("questionform.general.submitanswers")) : t("questionform.general.next")}
         </Button>
       </div>
     </div>

@@ -1668,5 +1668,353 @@
       "resultcount": "{{count}} 条结果",
       "clearallfilters": "清除全部筛选条件"
     }
+  },
+  "questionform": {
+    "general": {
+      "recommended": "推荐",
+      "noanswerablequestionswereprovided": "未提供可回答的问题。",
+      "questionpagination": "问题分页",
+      "previousquestion": "上一个问题",
+      "of": "/",
+      "nextquestion": "下一个问题",
+      "writeananswer": "填写答案",
+      "writeyouranswer": "填写你的答案",
+      "filterchoices": "筛选选项",
+      "cancel": "取消",
+      "skip": "跳过",
+      "submitanswers": "提交答案",
+      "next": "下一步"
+    }
+  },
+  "runnergoalwidget": {
+    "general": {
+      "agentsessiongoal": "智能体会话目标",
+      "sessiongoal": "会话目标",
+      "workingnow": "正在处理",
+      "typegoalfollowedbyanobjectiveto": "输入 /goal，然后输入要跨回合完成的目标。",
+      "tokens": "Token 数",
+      "iterations": "迭代次数",
+      "editgoal": "编辑目标",
+      "pausegoal": "暂停目标",
+      "resumegoal": "恢复目标",
+      "cleargoal": "清除目标",
+      "replacesessiongoal": "替换会话目标？",
+      "editsessiongoal": "编辑会话目标",
+      "thisclearstheunfinishedgoalandstarts": "这会清除未完成的目标，并以下方目标开始新目标。",
+      "updatetheobjectivewithoutclearingthegoal": "更新目标，不清除当前进度。",
+      "goalobjective": "目标说明",
+      "cancel": "取消",
+      "saving": "正在保存…",
+      "replacegoal": "替换目标",
+      "savegoal": "保存目标"
+    },
+    "pending": {
+      "starting": "正在启动",
+      "saving": "正在保存",
+      "replacing": "正在替换",
+      "pausingaftercurrentturn": "将在当前回合结束后暂停",
+      "resuming": "正在恢复",
+      "clearing": "正在清除",
+      "continuinginnewrun": "将在新的运行中继续"
+    }
+  },
+  "taskchatblockerlinks": {
+    "general": {
+      "taskblockers": "任务阻塞项",
+      "taskswaitingonlivework": "等待进行中工作的任务",
+      "nowrunning": "正在运行",
+      "nowrunning1": "正在运行"
+    }
+  },
+  "taskchatbubble": {
+    "general": {
+      "images": "图片 ·",
+      "files": "文件 ·",
+      "verificationcaveat": "验证说明",
+      "queued": "已排队",
+      "sending": "正在发送…",
+      "sentfromimessage": "来自 iMessage 的消息"
+    }
+  },
+  "taskchatbubbleactions": {
+    "general": {
+      "copymessage": "复制消息",
+      "copymessage1": "复制消息"
+    }
+  },
+  "taskchatcompactinteractioncard": {
+    "general": {
+      "details": "详情",
+      "answer": "答案：",
+      "answer1": "答案：",
+      "nooptionsselected": "未选择选项",
+      "noverdictssubmitted": "未提交结论",
+      "notaskscreated": "未创建任务",
+      "requestedaccessto": "请求访问",
+      "risk": "风险",
+      "expires": "到期时间",
+      "secret": "机密",
+      "binding": "绑定",
+      "why": "原因",
+      "expires2": "到期时间",
+      "reason": "原因：",
+      "vieworiginalrequestandresolution": "查看原始请求和处理结果",
+      "doyouacceptthisplan": "是否接受此方案？",
+      "risk3": "风险",
+      "expires4": "到期时间",
+      "argumentsandaudithash": "参数和审计哈希",
+      "secret5": "机密",
+      "binding6": "绑定",
+      "why7": "原因",
+      "expires8": "到期时间",
+      "whatshouldchange": "需要修改什么？",
+      "optional": "（可选）",
+      "back": "返回",
+      "reject": "拒绝",
+      "reject9": "拒绝",
+      "approve": "批准",
+      "filteroptions": "筛选选项",
+      "filteroptions10": "筛选选项",
+      "whatshouldchange11": "需要修改什么？",
+      "optional12": "（可选）",
+      "back13": "返回",
+      "decline": "不接受",
+      "decline14": "不接受",
+      "confirmselection": "确认选择",
+      "hiddenfollowup": "隐藏的后续事项",
+      "selectthetaskstocreate": "选择要创建的任务。",
+      "filtersuggestedtasks": "筛选建议任务",
+      "filtersuggestedtasks15": "筛选建议任务",
+      "suggestedtasks": "建议任务",
+      "whyshouldthesetaskschangeoptional": "为什么要修改这些任务？（可选）",
+      "addashortnote": "添加简短说明",
+      "back16": "返回",
+      "sendback": "退回",
+      "revise": "修订",
+      "createselected": "创建所选项",
+      "noreviewitemswereprovided": "未提供复核项。",
+      "decided": "已决定",
+      "itempagination": "项目分页",
+      "previousitem": "上一项",
+      "of": "/",
+      "nextitem": "下一项",
+      "open": "打开",
+      "reason17": "原因",
+      "addashortreason": "添加简短原因",
+      "submitrejectionreason": "提交拒绝原因",
+      "applydecisions": "应用决定"
+    }
+  },
+  "taskchatcomposer": {
+    "general": {
+      "skip": "跳过",
+      "wecouldntconfirmwhetherthiscomment": "无法确认此评论是否已保存。它可能已经在对话中；请在开始另一份草稿前先查看。",
+      "reviewconversation": "查看对话",
+      "couldntrefreshtheconversationtryreviewing": "无法刷新对话，请再次查看。",
+      "discardingthisdraftdoesnotremoveany": "丢弃此草稿不会删除已保存的评论或已上传的文件。",
+      "discarddraftandstartnew": "丢弃草稿并重新开始",
+      "pending": "待处理",
+      "pendinginput": "等待输入",
+      "pending1": "待处理",
+      "sendnewtostartafreshsession": "发送 /new 以开始新会话并继续此对话。",
+      "attachfile": "附加文件",
+      "attachfile2": "附加文件",
+      "queuedmessagechanged": "已排队消息已变更",
+      "editingqueuedmessage": "正在编辑已排队消息",
+      "assignee": "受派人",
+      "cancel": "取消"
+    }
+  },
+  "taskchatdescriptionbubble": {
+    "general": {
+      "addadescription": "添加描述…",
+      "addadescription1": "添加描述…",
+      "editdescription": "编辑描述"
+    }
+  },
+  "taskchatinteractioncard": {
+    "general": {
+      "reviewrequest": "复核请求"
+    }
+  },
+  "taskchatmarker": {
+    "general": {
+      "tryingagain": "正在重试…",
+      "tryagain": "重试",
+      "viewrun": "查看运行记录",
+      "tryingagain1": "正在重试…",
+      "tryagain2": "重试",
+      "tryingagain3": "正在重试…",
+      "tryagain4": "重试"
+    }
+  },
+  "taskchatpausedtakeover": {
+    "general": {
+      "subtreeispaused": "子树已暂停。",
+      "taskispaused": "任务已暂停。",
+      "resumethissubtreetosendamessage": "恢复此子树以发送消息。",
+      "resumethistasktosendamessage": "恢复此任务以发送消息。",
+      "yourdraftissaved": "草稿已保存。",
+      "resumesubtree": "恢复子树",
+      "resuming": "正在恢复…",
+      "resumesubtree1": "恢复子树",
+      "resumetask": "恢复任务"
+    }
+  },
+  "taskchatplanview": {
+    "general": {
+      "plan": "方案",
+      "rev": "· 版本",
+      "done": "已完成"
+    }
+  },
+  "taskchatprojectcreatedcard": {
+    "general": {
+      "projectcreated": "项目已创建"
+    }
+  },
+  "taskchatprotocolactivityrow": {
+    "general": {
+      "query": "查询",
+      "result": "结果",
+      "results": "结果",
+      "researchsources": "研究来源",
+      "show": "显示",
+      "more": "更多",
+      "result1": "结果",
+      "results2": "结果",
+      "showfewerresults": "少显示一些结果",
+      "additionalprovideroutputisavailableinrunner": "Runner Inspector 中提供了更多提供商输出。",
+      "plansteps": "方案步骤",
+      "researchsources3": "研究来源",
+      "delegatedagents": "已委派智能体",
+      "outputtruncatedto8kib": "输出已截断至 8 KiB。",
+      "nochangedfiledetailswerereported": "未报告已变更文件详情。",
+      "changedfiles": "已变更文件",
+      "more4": "更多",
+      "file": "文件",
+      "files": "文件",
+      "notshown": "未显示",
+      "previewunavailable": "预览不可用。",
+      "previewtruncatedbytherunner": "预览已被运行器截断。",
+      "error": "错误",
+      "warning": "警告"
+    }
+  },
+  "taskchatprotocolcard": {
+    "general": {
+      "plansteps": "方案步骤",
+      "delegatedagents": "已委派智能体",
+      "researchsources": "研究来源",
+      "details": "详情",
+      "outputtruncatedto8kib": "输出已截断至 8 KiB。",
+      "workspacechanges": "工作区变更",
+      "showfewerfiles": "少显示一些文件",
+      "reviewdiff": "审查差异",
+      "workspacediff": "工作区差异",
+      "changedfiles": "已变更文件",
+      "binaryfiletextdiffisunavailable": "二进制文件，文本差异不可用。",
+      "noinlinepatchwasrecordedforthis": "此文件未记录内联补丁。",
+      "preview": "预览",
+      "previewunavailabletheverifiedworkspacereferenceis": "预览不可用，已验证的工作区引用仍在上方。",
+      "previewtruncatedbytherunner": "预览已被运行器截断。",
+      "answerdetailswerenotrecordedbythis": "这个旧运行时未记录答案详情。",
+      "runtimeinput": "运行时输入",
+      "submitting": "正在提交…",
+      "submitresponse": "提交响应",
+      "deny": "拒绝",
+      "cancel": "取消",
+      "resolvethisrequestintheactiveruntime": "请在活动运行时会话中处理此请求。",
+      "runresult": "运行结果",
+      "blocked": "已阻塞：",
+      "verificationresults": "验证结果",
+      "runended": "运行已结束"
+    }
+  },
+  "taskchatqueuedmessages": {
+    "general": {
+      "interrupt": "中断",
+      "steer": "引导",
+      "discardqueuedmessage": "丢弃已排队消息",
+      "queuedmessageactions": "已排队消息操作",
+      "editmessage": "编辑消息",
+      "queuedmessages": "已排队消息"
+    }
+  },
+  "taskchatrichinput": {
+    "general": {
+      "attachimage": "附加图片",
+      "ordroppasteanimageintothe": "或将图片拖入/粘贴到备注中"
+    }
+  },
+  "taskchatrunneractivitygroup": {
+    "general": {
+      "permission": "权限",
+      "activityhistory": "活动历史"
+    }
+  },
+  "taskchatrunnerturn": {
+    "general": {
+      "thinking": "思考中",
+      "liverunneractivityistemporarilyunavailableretrying": "实时运行器活动暂时不可用，正在重试…"
+    }
+  },
+  "taskchatskillcreatedcard": {
+    "general": {
+      "skillcreated": "技能已创建"
+    }
+  },
+  "taskchatstatuspill": {
+    "general": {
+      "ctx": "上下文",
+      "ctx1": "上下文"
+    }
+  },
+  "taskchatsystemnotice": {
+    "general": {
+      "tryingagain": "正在重试…",
+      "tryagain": "重试",
+      "tryingagain1": "正在重试…",
+      "tryagain2": "重试"
+    }
+  },
+  "taskchattoolcard": {
+    "general": {
+      "interrupted": "已中断",
+      "changed": "已变更"
+    }
+  },
+  "taskchatturn": {
+    "general": {
+      "continuedaftersteering": "引导后继续 ·",
+      "stopped": "已停止",
+      "worked": "已处理",
+      "stopped1": "已停止",
+      "worked2": "已处理"
+    }
+  },
+  "taskchatturnstatusisland": {
+    "general": {
+      "step": "步骤",
+      "turnplan": "回合方案",
+      "withinturnchecklist": "回合内检查清单"
+    }
+  },
+  "taskchatusagereadout": {
+    "general": {
+      "ctx": "上下文（"
+    }
+  },
+  "taskmessagescroller": {
+    "general": {
+      "scrolltolatest": "滚动到最新消息"
+    }
+  },
+  "tweakpanel": {
+    "general": {
+      "motiontweakpanel": "动效微调面板",
+      "resetall": "全部重置",
+      "copyastheme": "复制为 @theme"
+    }
   }
 }

@@ -6,6 +6,7 @@ import {
   type MentionOption,
 } from "@/components/MarkdownEditor";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "@/i18n";
 
 interface TaskChatRichInputProps {
   value: string;
@@ -39,6 +40,7 @@ export function TaskChatRichInput({
   attachAriaLabel = "Attach image",
   showImageAttachControls = true,
 }: TaskChatRichInputProps) {
+  const { t } = useTranslation();
   const editorRef = useRef<MarkdownEditorRef>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const uploadCountRef = useRef(0);
@@ -132,9 +134,8 @@ export function TaskChatRichInput({
             ) : (
               <ImagePlus aria-hidden className="h-3.5 w-3.5" />
             )}
-            Attach image
-          </Button>
-          <span>or drop/paste an image into the note</span>
+            {t("taskchatrichinput.general.attachimage")}</Button>
+          <span>{t("taskchatrichinput.general.ordroppasteanimageintothe")}</span>
         </div>
       ) : null}
       {uploadError ? (
