@@ -174,13 +174,26 @@ import {
   type RunTemplateSelection,
   type SavedInputDraftState,
 } from "@/lib/skill-studio";
-import { useTranslation } from "@/i18n";
+import { i18n, useTranslation } from "@/i18n";
 
 const PANE_STORAGE_KEY = "skillStudio.paneSizes";
 const RUN_TEMPLATE_STORAGE_KEY_PREFIX = "skillStudio.runTemplate";
 const MOBILE_BREAKPOINT = 900;
 const POLL_MS = 2000;
 const EMPTY_RUN_TEMPLATES: CompanySkillTestRunTemplate[] = [];
+
+function studioRelativeTime(date: Date | string): string {
+  if (i18n.resolvedLanguage !== "zh-CN") return relativeTime(date);
+  const diffMinutes = Math.round((Date.now() - new Date(date).getTime()) / 60_000);
+  const formatter = new Intl.RelativeTimeFormat("zh-CN", { numeric: "auto" });
+  if (diffMinutes < 1) return formatter.format(0, "minute");
+  if (diffMinutes < 60) return formatter.format(-diffMinutes, "minute");
+  const diffHours = Math.round(diffMinutes / 60);
+  if (diffHours < 24) return formatter.format(-diffHours, "hour");
+  const diffDays = Math.round(diffHours / 24);
+  if (diffDays < 30) return formatter.format(-diffDays, "day");
+  return new Date(date).toLocaleDateString("zh-CN", { month: "short", day: "numeric" });
+}
 
 /**
  * Surface a mutation rejection as an error toast. Every Studio mutation routes
@@ -189,6 +202,7 @@ const EMPTY_RUN_TEMPLATES: CompanySkillTestRunTemplate[] = [];
  */
 function useMutationErrorToast() {
   const toast = useOptionalToastActions();
+  const { t } = useTranslation();
   return useCallback(
     (title: string) => (error: unknown) => {
       // Under the open default there is no permission chrome. When an action is
@@ -202,10 +216,10 @@ function useMutationErrorToast() {
         return;
       }
       const body =
-        error instanceof Error && error.message ? error.message : "Please try again.";
+        error instanceof Error && error.message ? error.message : t("skillstudio.general.pleaseTryAgain");
       toast?.pushToast({ tone: "error", title, body });
     },
-    [toast],
+    [toast, t],
   );
 }
 
@@ -271,6 +285,7 @@ function useIsMobile() {
 // ---------------------------------------------------------------------------
 
 export function SkillStudio() {
+  const { t } = useTranslation();
   const { skillId = "" } = useParams<{ skillId: string }>();
   const location = useLocation();
   const [searchParams] = useSearchParams();
@@ -307,22 +322,22 @@ export function SkillStudio() {
     setBreadcrumbs(
       isCreateMode
         ? [
-            { label: "Skills", href: "/skills" },
+            { label: t("skillstudio.general.skillsBreadcrumb"), href: "/skills" },
             { label: "Studio", href: "/skills/studio" },
-            { label: "New skill" },
+            { label: t("skillstudio.general.newskill") },
           ]
         : skill
         ? [
-            { label: "Skills", href: "/skills" },
+            { label: t("skillstudio.general.skillsBreadcrumb"), href: "/skills" },
             { label: "Studio", href: "/skills/studio" },
             { label: skill.name },
           ]
         : [
-            { label: "Skills", href: "/skills" },
+            { label: t("skillstudio.general.skillsBreadcrumb"), href: "/skills" },
             { label: "Studio" },
           ],
     );
-  }, [isCreateMode, setBreadcrumbs, skill]);
+  }, [isCreateMode, setBreadcrumbs, skill, t]);
 
   // Record a per-browser visit whenever a skill successfully opens, powering the
   // landing's "Recently visited" section (PAP-13150).
@@ -331,7 +346,7 @@ export function SkillStudio() {
   }, [skill?.id]);
 
   if (!companyId) {
-    return <StudioMessage message="Select an organization to open Skill Studio." />;
+    return <StudioMessage message={t("skillstudio.general.selectOrganization")} />;
   }
   if (isCreateMode) {
     return (
@@ -360,10 +375,10 @@ export function SkillStudio() {
     );
   }
   if (detailQuery.isLoading) {
-    return <StudioMessage message="Loading skill…" />;
+    return <StudioMessage message={t("skillstudio.general.loadingSkillDetail")} />;
   }
   if (detailQuery.isError || !detailQuery.data) {
-    return <StudioMessage message="Skill not found." />;
+    return <StudioMessage message={t("skillstudio.general.skillNotFound")} />;
   }
 
   return (
@@ -397,6 +412,7 @@ function StudioCreateMode({
   forkError: boolean;
   onSelectSkill: (skillId: string) => void;
 }) {
+  const { t } = useTranslation();
   return (
     <TooltipProvider delayDuration={200}>
       <div className="flex h-full min-h-0 flex-col">
@@ -406,7 +422,7 @@ function StudioCreateMode({
             skills={skills}
             loading={skillsLoading}
             onSelectSkill={onSelectSkill}
-            emptyLabel="New skill"
+            emptyLabel={t("skillstudio.general.newskill")}
           />
         </header>
         <div className="min-h-0 flex-1 overflow-y-auto">
@@ -475,29 +491,29 @@ function StudioNewSkillPanel({
       await queryClient.invalidateQueries({ queryKey: queryKeys.companySkills.list(companyId) });
       toast?.pushToast({
         tone: "success",
-        title: skill.forkedFromSkillId ? "Skill fork created" : "Skill created",
-        body: `${skill.name} is now editable in the Paperclip workspace.`,
+        title: skill.forkedFromSkillId ? t("skillstudio.general.skillForkCreated") : t("skillstudio.general.skillCreated"),
+        body: t("skillstudio.general.skillEditableInWorkspace", { name: skill.name }),
       });
       navigate(skillStudioRoute(skill.id));
     },
     onError: (error) => {
       toast?.pushToast({
         tone: "error",
-        title: "Skill creation failed",
-        body: error instanceof Error ? error.message : "Failed to create skill.",
+        title: t("skillstudio.general.skillCreateFailed"),
+        body: error instanceof Error ? error.message : t("skillstudio.general.skillCreationFallback"),
       });
     },
   });
 
   if (forkFromSkillId && forkLoading) {
-    return <StudioMessage message="Loading fork source..." />;
+    return <StudioMessage message={t("skillstudio.general.loadingForkSource")} />;
   }
 
   const previewCard: DiscoveryCard = {
     key: effectiveSlug || draft.name || "new-skill",
     skillId: null,
     catalogRef: null,
-    name: draft.name || "New Skill",
+    name: draft.name || t("skillstudio.general.newSkillPreview"),
     slug: effectiveSlug || "skill",
     author: "you",
     version: null,
@@ -605,7 +621,7 @@ function StudioNewSkillPanel({
           <SkillCardIcon card={previewCard} size={48} />
           <div className="min-w-0">
             <div className="truncate text-sm font-medium">{previewCard.name}</div>
-            <div className="truncate text-xs text-muted-foreground">{draft.tagline || "No tagline yet."}</div>
+            <div className="truncate text-xs text-muted-foreground">{draft.tagline || t("skillstudio.general.noTagline")}</div>
           </div>
         </div>
         <div className="space-y-2">
@@ -621,7 +637,7 @@ function StudioNewSkillPanel({
                   draft.color === color ? "border-foreground" : "border-border",
                 )}
                 style={{ backgroundColor: color }}
-                aria-label={`Use ${color}`}
+                aria-label={t("skillstudio.general.useColor", { color })}
               />
             ))}
             <Input
@@ -659,9 +675,9 @@ function StudioNewSkillPanel({
                 draft.sharingScope === scope ? "border-foreground bg-accent/50" : "border-border",
               )}
             >
-              <span className="block font-medium">{scope === "company" ? "Organization" : "Private"}</span>
+              <span className="block font-medium">{scope === "company" ? t("skillstudio.general.organizationScope") : t("skillstudio.general.privateScope")}</span>
               <span className="mt-1 block text-xs text-muted-foreground">
-                {scope === "company" ? "Visible inside this organization." : "Only visible in your library."}
+                {scope === "company" ? t("skillstudio.general.visibleInOrganization") : t("skillstudio.general.visibleOnlyInLibrary")}
               </span>
             </button>
           ))}
@@ -716,6 +732,7 @@ function StudioEmptyState({
   onSelectSkill: (skillId: string) => void;
   onCreateNew: () => void;
 }) {
+  const { t } = useTranslation();
   return (
     <TooltipProvider delayDuration={200}>
       <div className="flex h-full min-h-0 flex-col">
@@ -725,14 +742,14 @@ function StudioEmptyState({
             skills={skills}
             loading={skillsLoading}
             onSelectSkill={onSelectSkill}
-            emptyLabel="Select skill"
+            emptyLabel={t("skillstudio.general.selectSkill")}
           />
         </header>
         <div className="flex flex-1 items-center justify-center">
           <EmptyState
             icon={FileCode}
-            message={skillsLoading ? "Loading skills..." : "Select a skill to open Studio."}
-            action="Create a new skill"
+            message={skillsLoading ? t("skillstudio.general.loadingSkills") : t("skillstudio.general.selectSkillForStudio")}
+            action={t("skillstudio.general.createNewSkill")}
             onAction={onCreateNew}
           />
         </div>
@@ -799,7 +816,7 @@ function StudioLanding({
             skills={skills}
             loading={skillsLoading}
             onSelectSkill={onSelectSkill}
-            emptyLabel="Select skill"
+            emptyLabel={t("skillstudio.general.selectSkill")}
           />
           <Button variant="ghost" size="sm" className="ml-auto" onClick={onCreateNew}>
             <Plus className="mr-1.5 h-3.5 w-3.5" />
@@ -877,7 +894,7 @@ function StudioLandingRow({
         ) : null}
       </span>
       <span className="shrink-0 text-xs text-muted-foreground">
-        {t("skillstudio.general.updated")} {relativeTime(skill.updatedAt)}
+        {t("skillstudio.general.updated")} {studioRelativeTime(skill.updatedAt)}
       </span>
       {editor ? (
         <Tooltip>
@@ -1137,13 +1154,13 @@ function StudioHeader({
   const copyShareLink = useCallback(() => {
     const href = typeof window !== "undefined" ? window.location.href : "";
     void copyTextToClipboard(href)
-      .then(() => toast?.pushToast({ tone: "success", title: "Link copied", body: "Skill Studio link copied to clipboard." }))
+      .then(() => toast?.pushToast({ tone: "success", title: t("skillstudio.general.linkCopied"), body: t("skillstudio.general.studioLinkCopied") }))
       .catch((error) => toast?.pushToast({
         tone: "error",
-        title: "Copy failed",
-        body: error instanceof Error ? error.message : "Could not copy the link.",
+        title: t("skillstudio.general.copyFailed"),
+        body: error instanceof Error ? error.message : t("skillstudio.general.copyLinkFallback"),
       }));
-  }, [toast]);
+  }, [toast, t]);
 
   return (
     <header className="flex items-center gap-3 border-b border-border px-3 py-2">
@@ -1198,7 +1215,7 @@ function SkillSwitcher({
   skills,
   loading,
   onSelectSkill,
-  emptyLabel = "Select skill",
+  emptyLabel,
 }: {
   skill: CompanySkillDetail | null;
   skills: CompanySkillListItem[];
@@ -1206,6 +1223,8 @@ function SkillSwitcher({
   onSelectSkill: (skillId: string) => void;
   emptyLabel?: string;
 }) {
+  const { t } = useTranslation();
+  const displayedEmptyLabel = emptyLabel ?? t("skillstudio.general.selectSkill");
   const groups = useMemo<readonly SearchableSelectGroup<string, SkillSwitcherOption>[]>(() => {
     const options: SkillSwitcherOption[] = withCurrentSkill(skills, skill).map((item) => ({
       key: item.id,
@@ -1223,17 +1242,17 @@ function SkillSwitcher({
       value={skill?.id ?? ""}
       groups={groups}
       loading={loading}
-      loadingMessage="Loading skills..."
-      placeholder={emptyLabel}
-      searchPlaceholder="Search skills..."
-      emptyMessage="No matching skills."
+      loadingMessage={t("skillstudio.general.loadingSkills")}
+      placeholder={displayedEmptyLabel}
+      searchPlaceholder={t("skillstudio.general.searchSkills")}
+      emptyMessage={t("skillstudio.general.noMatchingSkills")}
       onValueChange={(value) => {
         if (value !== skill?.id) onSelectSkill(value);
       }}
       triggerClassName="h-8 w-64 border-0 bg-transparent px-0 text-base font-semibold shadow-none hover:bg-accent md:w-80"
       contentClassName="w-80"
       contentWidth="auto"
-      renderValue={(option) => option?.label ?? skill?.name ?? emptyLabel}
+      renderValue={(option) => option?.label ?? skill?.name ?? displayedEmptyLabel}
       renderOption={(option, { selected }) => (
         <span className="flex min-w-0 flex-col">
           <span className={cn("truncate", selected && "font-medium")}>{option.label}</span>
@@ -1325,7 +1344,7 @@ function SkillPane({
     if (
       dirty
       && typeof window !== "undefined"
-      && !window.confirm("Discard unsaved edits and switch files?")
+      && !window.confirm(t("skillstudio.general.discardFileEdits"))
     ) {
       return;
     }
@@ -1346,7 +1365,7 @@ function SkillPane({
         queryKey: queryKeys.companySkills.versions(companyId, skillId),
       });
     },
-    onError: onError("Couldn't save file"),
+    onError: onError(t("skillstudio.general.saveFileFailed")),
   });
 
   const createMutation = useMutation({
@@ -1367,7 +1386,7 @@ function SkillPane({
         queryKey: queryKeys.companySkills.versions(companyId, skillId),
       });
     },
-    onError: onError("Couldn't create file"),
+    onError: onError(t("skillstudio.general.createFileFailed")),
   });
 
   const deleteMutation = useMutation({
@@ -1388,7 +1407,7 @@ function SkillPane({
         queryKey: queryKeys.companySkills.versions(companyId, skillId),
       });
     },
-    onError: onError("Couldn't delete file"),
+    onError: onError(t("skillstudio.general.deleteFileFailed")),
   });
 
   // Read-only skills (bundled Paperclip, remote GitHub, URL, skills.sh) reject
@@ -1414,7 +1433,7 @@ function SkillPane({
           />
         }
       >
-        <EmptyState icon={FileCode} message="This skill has no files yet." />
+        <EmptyState icon={FileCode} message={t("skillstudio.general.skillNoFiles")} />
         <SkillPathDialog
           mode={createDialog}
           open={createDialog !== null}
@@ -1472,7 +1491,7 @@ function SkillPane({
             }
             onSelectFile={selectFile}
             showCheckboxes={false}
-            ariaLabel="Skill files"
+            ariaLabel={t("skillstudio.general.skillFiles")}
           />
         </div>
         {readOnly && (
@@ -1681,7 +1700,7 @@ function SkillFileActions({
               size="icon-sm"
               disabled={deleteDisabled}
               onClick={() => {
-                if (typeof window === "undefined" || window.confirm(`Delete ${selectedFile}?`)) {
+                if (typeof window === "undefined" || window.confirm(t("skillstudio.general.deleteNamedFile", { name: selectedFile }))) {
                   onDeleteFile();
                 }
               }}
@@ -1736,19 +1755,19 @@ function SkillPathDialog({
     setError(null);
   }, [currentFolder, mode, open]);
 
-  const title = mode === "folder" ? "Add folder" : "Add file";
-  const label = mode === "folder" ? "Folder path" : "File path";
+  const title = mode === "folder" ? t("skillstudio.general.addFolderTitle") : t("skillstudio.general.addFileTitle");
+  const label = mode === "folder" ? t("skillstudio.general.folderPath") : t("skillstudio.general.filePath");
 
   function submit() {
     if (!mode) return;
     const normalized = normalizeStudioPath(pathValue);
     if (!normalized) {
-      setError(`${label} is required.`);
+      setError(t("skillstudio.general.pathRequired", { label }));
       return;
     }
     if (mode === "file") {
       if (existingPaths.has(normalized)) {
-        setError("A file already exists at that path.");
+        setError(t("skillstudio.general.fileAlreadyExists"));
         return;
       }
       onSubmit(normalized, "");
@@ -1757,7 +1776,7 @@ function SkillPathDialog({
 
     const folderPath = normalized.replace(/\/+$/, "");
     if ([...existingPaths].some((path) => path.startsWith(`${folderPath}/`))) {
-      setError("A folder already exists at that path.");
+      setError(t("skillstudio.general.folderAlreadyExists"));
       return;
     }
     onSubmit(folderSeedFile(folderPath), folderSeedContent(folderPath));
@@ -1826,16 +1845,16 @@ function DeleteFolderDialog({
   function submit() {
     const normalized = normalizeStudioPath(pathValue).replace(/\/+$/, "");
     if (!normalized) {
-      setError("Folder path is required.");
+      setError(t("skillstudio.general.folderPathRequired"));
       return;
     }
     const matchingFiles = [...existingPaths].filter((path) => path.startsWith(`${normalized}/`));
     if (matchingFiles.length === 0) {
-      setError("No files exist under that folder.");
+      setError(t("skillstudio.general.noFilesInFolder"));
       return;
     }
     if (matchingFiles.includes("SKILL.md")) {
-      setError("SKILL.md cannot be deleted.");
+      setError(t("skillstudio.general.skillmdcannotbedeleted"));
       return;
     }
     onSubmit(normalized);
@@ -1955,9 +1974,9 @@ function InputPane({
     if (!dirty) return true;
     return (
       typeof window === "undefined"
-      || window.confirm("Discard unsaved changes to this input?")
+      || window.confirm(t("skillstudio.general.discardInputEdits"))
     );
-  }, [dirty]);
+  }, [dirty, t]);
 
   const selectSavedInput = useCallback((id: string) => {
     if (!adHocMode && id === selectedInputId) return;
@@ -1987,7 +2006,7 @@ function InputPane({
         queryKey: queryKeys.companySkills.testInputs(companyId, skillId),
       });
     },
-    onError: onError("Couldn't save input"),
+    onError: onError(t("skillstudio.general.saveInputFailed")),
   });
   const deleteMutation = useMutation({
     mutationFn: (inputId: string) => companySkillsApi.deleteTestInput(companyId, skillId, inputId),
@@ -1999,7 +2018,7 @@ function InputPane({
         queryKey: queryKeys.companySkills.testInputs(companyId, skillId),
       });
     },
-    onError: onError("Couldn't delete input"),
+    onError: onError(t("skillstudio.general.deleteInputFailed")),
   });
 
   return (
@@ -2012,7 +2031,7 @@ function InputPane({
                 type="button"
                 variant="ghost"
                 size="icon-xs"
-                aria-label={collapsed ? "Expand input" : "Collapse input"}
+                aria-label={collapsed ? t("skillstudio.general.expandInput") : t("skillstudio.general.collapseInput")}
                 onClick={() => setCollapsed((current) => !current)}
               >
                 {collapsed ? (
@@ -2022,7 +2041,7 @@ function InputPane({
                 )}
               </Button>
             </TooltipTrigger>
-            <TooltipContent>{collapsed ? "Expand input" : "Collapse input"}</TooltipContent>
+            <TooltipContent>{collapsed ? t("skillstudio.general.expandInput") : t("skillstudio.general.collapseInput")}</TooltipContent>
           </Tooltip>
           <span>{t("skillstudio.general.input")}</span>
         </span>
@@ -2086,7 +2105,7 @@ function InputPane({
                           <DropdownMenuTrigger asChild>
                             <button
                               className="rounded p-0.5 text-muted-foreground hover:bg-accent hover:text-foreground"
-                              aria-label={`Input actions for ${node.name}`}
+                              aria-label={t("skillstudio.general.inputActions", { name: node.name })}
                               onClick={(e) => e.stopPropagation()}
                             >
                               <MoreHorizontal className="h-3.5 w-3.5" />
@@ -2096,7 +2115,7 @@ function InputPane({
                             <DropdownMenuItem
                               onClick={() => {
                                 const input = inputs.find((i) => i.id === id);
-                                if (input) void copyWithToast(input.content, "Input content copied");
+                                if (input) void copyWithToast(input.content, t("skillstudio.general.inputCopied"));
                               }}
                             >
                               <Copy className="mr-2 h-4 w-4" /> {t("skillstudio.general.copycontent")}</DropdownMenuItem>
@@ -2110,7 +2129,7 @@ function InputPane({
                         </DropdownMenu>
                       );
                     }}
-                    ariaLabel="Test inputs"
+                    ariaLabel={t("skillstudio.general.testInputs")}
                   />
                 </>
               )}
@@ -2348,8 +2367,8 @@ function RunsPane({
     updateTemplateSelection(resolution.selection);
     toast?.pushToast({
       tone: "warn",
-      title: "Run template reset",
-      body: "The saved run template is no longer available. Default test template is selected.",
+      title: t("skillstudio.general.runTemplateReset"),
+      body: t("skillstudio.general.runTemplateResetBody"),
       dedupeKey: `skill-studio-template-reset:${companyId}`,
     });
   }, [
@@ -2359,6 +2378,7 @@ function RunsPane({
     templatesQuery.isSuccess,
     toast,
     updateTemplateSelection,
+    t,
   ]);
 
   const filterInputId = filterInput?.id ?? null;
@@ -2382,9 +2402,9 @@ function RunsPane({
     hasUnsavedSkillEdits: skillDirty,
   });
   const templateGateReason = templatesQuery.isLoading
-    ? "Loading run templates"
+    ? t("skillstudio.general.loadingRunTemplates")
     : templatesQuery.isError
-      ? "Run templates couldn't load"
+      ? t("skillstudio.general.runTemplatesLoadFailed")
       : null;
 
   const createTemplateMutation = useMutation({
@@ -2398,11 +2418,11 @@ function RunsPane({
       });
       toast?.pushToast({
         tone: "success",
-        title: "Template saved",
-        body: `${template.name} is ready for Skills Studio runs.`,
+        title: t("skillstudio.general.templateSaved"),
+        body: t("skillstudio.general.templateReady", { name: template.name }),
       });
     },
-    onError: onError("Couldn't save template"),
+    onError: onError(t("skillstudio.general.saveTemplateFailed")),
   });
 
   const updateTemplateMutation = useMutation({
@@ -2418,11 +2438,11 @@ function RunsPane({
       });
       toast?.pushToast({
         tone: "success",
-        title: "Template updated",
-        body: `${template.name} is ready for Skills Studio runs.`,
+        title: t("skillstudio.general.templateUpdated"),
+        body: t("skillstudio.general.templateReady", { name: template.name }),
       });
     },
-    onError: onError("Couldn't update template"),
+    onError: onError(t("skillstudio.general.updateTemplateFailed")),
   });
 
   const deleteTemplateMutation = useMutation({
@@ -2437,30 +2457,30 @@ function RunsPane({
       });
       toast?.pushToast({
         tone: "success",
-        title: "Template deleted",
-        body: `${template.name} was removed from Skills Studio runs.`,
+        title: t("skillstudio.general.templateDeleted"),
+        body: t("skillstudio.general.templateRemoved", { name: template.name }),
       });
     },
-    onError: onError("Couldn't delete template"),
+    onError: onError(t("skillstudio.general.deleteTemplateFailed")),
   });
 
   const selectedTemplate = selectedTemplateId === null
     ? null
     : templates.find((template) => template.id === selectedTemplateId) ?? null;
   const selectedTemplateName = selectedTemplateId === null
-    ? "No template"
-    : selectedTemplate?.name ?? "Default test template";
+    ? t("skillstudio.general.noTemplate")
+    : selectedTemplate?.name ?? t("skillstudio.general.defaultTestTemplate");
   const runDisabledReason = gate.reason ?? templateGateReason;
 
   const createRunMutation = useMutation({
     mutationFn: () => {
       if (!templatesQuery.isSuccess) {
-        throw new Error(templateGateReason ?? "Run templates are not ready.");
+        throw new Error(templateGateReason ?? t("skillstudio.general.templatesNotReady"));
       }
       const resolution = resolveRunTemplateSelection(selectedTemplateId, templates);
       if (resolution.recovered) {
         updateTemplateSelection(resolution.selection);
-        throw new Error("Selected run template is no longer available. The selection was reset.");
+        throw new Error(t("skillstudio.general.selectedTemplateReset"));
       }
       return companySkillsApi.createTestRun(companyId, skillId, buildCreateRunRequest({
         agentId: selectedAgentId!,
@@ -2475,7 +2495,7 @@ function RunsPane({
       });
       onSelectRun(run.id);
     },
-    onError: onError("Couldn't start run"),
+    onError: onError(t("skillstudio.general.startRunFailed")),
   });
 
   if (selectedRunId) {
@@ -2535,7 +2555,7 @@ function RunsPane({
           onDeleteTemplate={(template) => {
             if (
               typeof window !== "undefined"
-              && !window.confirm(`Delete run template "${template.name}"?`)
+              && !window.confirm(t("skillstudio.general.deleteNamedTemplate", { name: template.name }))
             ) {
               return;
             }
@@ -2551,7 +2571,7 @@ function RunsPane({
         {filterInput && (
           <div className="px-3 pt-2">
             <FilterBar
-              filters={[{ key: "input", label: "Input", value: filterInput.name }]}
+              filters={[{ key: "input", label: t("skillstudio.general.inputFilter"), value: filterInput.name }]}
               onRemove={onClearFilter}
               onClear={onClearFilter}
             />
@@ -2561,7 +2581,7 @@ function RunsPane({
           {runsQuery.isLoading ? (
             <div className="text-xs text-muted-foreground">{t("skillstudio.general.loadingruns")}</div>
           ) : runs.length === 0 ? (
-            <EmptyState icon={FlaskConical} message="No test runs yet. Pick an agent and Run." />
+            <EmptyState icon={FlaskConical} message={t("skillstudio.general.noTestRuns")} />
           ) : (
             <div className="space-y-1 rounded-md border border-border p-1">
               {runs.map((run) => (
@@ -2645,9 +2665,9 @@ function RunTemplateAdvancedPanel({
     const noTemplateOption: RunTemplateOption = {
       key: "no-template",
       value: NO_TEST_RUN_TEMPLATE_STORAGE_VALUE,
-      label: "No template",
-      title: "No template",
-      description: "Run only the input text.",
+      label: t("skillstudio.general.noTemplate"),
+      title: t("skillstudio.general.noTemplate"),
+      description: t("skillstudio.general.onlyInputText"),
       builtIn: true,
       searchText: "no template plain input",
     };
@@ -2663,10 +2683,10 @@ function RunTemplateAdvancedPanel({
     const builtIn = templates.filter((template) => template.builtIn).map(toOption);
     const custom = templates.filter((template) => !template.builtIn).map(toOption);
     return [
-      { id: "built-in", label: "Built in", options: [noTemplateOption, ...builtIn] },
-      ...(custom.length > 0 ? [{ id: "custom", label: "Custom", options: custom }] : []),
+      { id: "built-in", label: t("skillstudio.general.builtIn"), options: [noTemplateOption, ...builtIn] },
+      ...(custom.length > 0 ? [{ id: "custom", label: t("skillstudio.general.custom"), options: custom }] : []),
     ];
-  }, [templates]);
+  }, [templates, t]);
 
   const selectedValue = runTemplateOptionValue(selectedTemplateId);
   const selectedMissing = selectedTemplateId !== null && !selectedTemplate && !templatesLoading;
@@ -2699,10 +2719,10 @@ function RunTemplateAdvancedPanel({
                 groups={templateGroups}
                 loading={templatesLoading}
                 disabled={templatesLoading || templatesError}
-                loadingMessage="Loading templates..."
+                loadingMessage={t("skillstudio.general.loadingTemplates")}
                 placeholder={t("skillstudio.general.selecttemplate")}
-                searchPlaceholder="Search templates..."
-                emptyMessage="No templates."
+                searchPlaceholder={t("skillstudio.general.searchTemplates")}
+                emptyMessage={t("skillstudio.general.noTemplates")}
                 contentClassName="w-(--sz-320px)"
                 onValueChange={(value) => onSelectTemplate(runTemplateSelectionFromOption(value))}
                 renderValue={(option) => option?.label ?? selectedTemplateName}
@@ -2710,7 +2730,7 @@ function RunTemplateAdvancedPanel({
                   <span className="flex min-w-0 flex-col">
                     <span className={cn("truncate", selected && "font-medium")}>{option.label}</span>
                     <span className="truncate text-(length:--text-micro) text-muted-foreground">
-                      {option.description ?? (option.builtIn ? "Built in" : "Custom")}
+                      {option.description ?? (option.builtIn ? t("skillstudio.general.builtIn") : t("skillstudio.general.custom"))}
                     </span>
                   </span>
                 )}
@@ -2830,19 +2850,19 @@ function RunTemplateDialog({
 
   useEffect(() => {
     if (!state) return;
-    setName(state.mode === "edit" ? source?.name ?? "" : source ? `${source.name} copy` : "");
+    setName(state.mode === "edit" ? source?.name ?? "" : source ? t("skillstudio.general.templateCopyName", { name: source.name }) : "");
     setDescription(source?.description ?? "");
     setBody(source?.body ?? "");
   }, [source, state]);
 
   const title = state?.mode === "edit"
-    ? "Edit run template"
+    ? t("skillstudio.general.editTemplateTitle")
     : source?.builtIn
-      ? "Duplicate built-in template"
-      : "Create run template";
+      ? t("skillstudio.general.duplicateBuiltInTitle")
+      : t("skillstudio.general.createTemplateTitle");
   const descriptionText = state?.mode === "edit"
-    ? "Update the custom run instructions used by Skills Studio."
-    : "Save reusable run instructions for Skills Studio.";
+    ? t("skillstudio.general.updateTemplateDescription")
+    : t("skillstudio.general.saveTemplateDescription");
 
   return (
     <Dialog open={Boolean(state)} onOpenChange={onOpenChange}>
@@ -2913,17 +2933,18 @@ function RunHistoryRow({
   agents: Agent[];
   onSelect: () => void;
 }) {
+  const { t } = useTranslation();
   const agent = agents.find((a) => a.id === run.agentId) ?? null;
   const removed = !agent;
   const snapshotName =
-    (run.agentConfigSnapshot?.name as string | undefined) ?? "Agent";
+    (run.agentConfigSnapshot?.name as string | undefined) ?? t("skillstudio.general.agentFallback");
   const name = agent?.name ?? snapshotName;
   return (
     <EntityRow
       leading={<StatusBadge status={runBadgeStatus(run.status)} />}
       identifier={runShortId(run)}
-      title={removed ? `${name} (removed)` : name}
-      subtitle={relativeTime(run.createdAt)}
+      title={removed ? t("skillstudio.general.removedAgent", { name }) : name}
+      subtitle={studioRelativeTime(run.createdAt)}
       trailing={
         <span className="font-mono text-xs text-muted-foreground">
           {formatCents(run.cost.costCents)}
@@ -3038,7 +3059,7 @@ function RunDetailView({
       queryClient.invalidateQueries({
         queryKey: queryKeys.companySkills.testRunDetail(companyId, skillId, runId),
       }),
-    onError: onError("Couldn't cancel run"),
+    onError: onError(t("skillstudio.general.cancelRunFailed")),
   });
 
   // Re-run reproduces the VIEWED run's snapshots — pinned skill version, saved
@@ -3048,7 +3069,7 @@ function RunDetailView({
   const reRunMutation = useMutation({
     mutationFn: () => {
       const d = detailQuery.data;
-      if (!d) throw new Error("Run details are still loading.");
+      if (!d) throw new Error(t("skillstudio.general.runDetailsLoading"));
       return companySkillsApi.createTestRun(companyId, skillId, buildReRunRequest(d));
     },
     onSuccess: (run) => {
@@ -3057,7 +3078,7 @@ function RunDetailView({
       });
       onSelectRun(run.id);
     },
-    onError: onError("Couldn't re-run"),
+    onError: onError(t("skillstudio.general.rerunFailed")),
   });
 
   const deleteMutation = useMutation({
@@ -3068,7 +3089,7 @@ function RunDetailView({
       });
       onSelectRun(null);
     },
-    onError: onError("Couldn't delete run"),
+    onError: onError(t("skillstudio.general.deleteRunFailed")),
   });
 
   const detail = detailQuery.data ?? null;
@@ -3099,7 +3120,7 @@ function RunDetailView({
 
   const agent = agents.find((a) => a.id === detail.agentId) ?? null;
   const agentName =
-    agent?.name ?? (detail.agentConfigSnapshot?.name as string | undefined) ?? "Agent";
+    agent?.name ?? (detail.agentConfigSnapshot?.name as string | undefined) ?? t("skillstudio.general.agentFallback");
   const removed = !agent;
   const outputMode = runOutputMode(detail);
   const nonTerminal = !isTerminalRunStatus(detail.status);
@@ -3122,10 +3143,10 @@ function RunDetailView({
 
         {/* snapshot property block */}
         <div className="rounded-md border border-border text-xs">
-          <PropRow label={t("skillstudio.general.input26")} value={detail.inputId ? "saved input" : "ad-hoc paste"} />
-          <PropRow label={t("skillstudio.general.template")} value={detail.templateName ?? "No template"} />
+          <PropRow label={t("skillstudio.general.input26")} value={detail.inputId ? t("skillstudio.general.inputSaved") : t("skillstudio.general.inputAdHoc")} />
+          <PropRow label={t("skillstudio.general.template")} value={detail.templateName ?? t("skillstudio.general.noTemplate")} />
           <PropRow label={t("skillstudio.general.skillversion27")} value={`v${detail.skillVersion.revisionNumber}`} />
-          <PropRow label={t("skillstudio.general.created")} value={relativeTime(detail.createdAt)} />
+          <PropRow label={t("skillstudio.general.created")} value={studioRelativeTime(detail.createdAt)} />
         </div>
 
         {showRunErrorCard(detail.status) && (
@@ -3288,7 +3309,7 @@ function RunDocumentsSection({ documents }: { documents: IssueDocument[] }) {
               <span className="truncate font-medium text-foreground">
                 {document.title ?? document.key}
               </span>
-              <span className="ml-auto shrink-0">{relativeTime(document.updatedAt)}</span>
+              <span className="ml-auto shrink-0">{studioRelativeTime(document.updatedAt)}</span>
             </div>
             <MarkdownBody className="paperclip-edit-in-place-content text-sm leading-7" softBreaks={false}>
               {document.body}
@@ -3435,7 +3456,7 @@ function VersionHistorySheet({
         await companySkillsApi.updateFile(companyId, skillId, file.path, file.content);
       }
       return companySkillsApi.createVersion(companyId, skillId, {
-        label: `Restore of v${version.revisionNumber}`,
+        label: t("skillstudio.general.restoreOfVersion", { number: version.revisionNumber }),
       });
     },
     onSuccess: () => {
@@ -3461,15 +3482,15 @@ function VersionHistorySheet({
           {versionsQuery.isLoading ? (
             <div className="text-xs text-muted-foreground">{t("skillstudio.general.loadingversions")}</div>
           ) : versions.length === 0 ? (
-            <EmptyState icon={History} message="No versions yet. Save changes to create the first." />
+            <EmptyState icon={History} message={t("skillstudio.general.noVersions")} />
           ) : (
             <div className="space-y-1 rounded-md border border-border p-1">
               {versions.map((v) => (
                 <EntityRow
                   key={v.id}
                   identifier={`v${v.revisionNumber}`}
-                  title={v.label ?? `Version ${v.revisionNumber}`}
-                  subtitle={relativeTime(v.createdAt)}
+                  title={v.label ?? t("skillstudio.general.versionNumber", { number: v.revisionNumber })}
+                  subtitle={studioRelativeTime(v.createdAt)}
                   selected={v.id === leftId || v.id === rightId}
                   onClick={() => {
                     // click to build a two-version diff selection
