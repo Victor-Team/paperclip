@@ -33,13 +33,15 @@ export function SkillLineageChip({
   if (!forkedFromSkillId) return null;
 
   const original = originalQuery.data;
-  const label = original ? formatLineageLabel(original) : "the original skill";
+  const label = original
+    ? formatLineageLabel(original)
+    : t("skillprovenance.general.theoriginalskill");
 
   return (
     <Link
       to={skillStudioRoute(forkedFromSkillId)}
       className="inline-flex max-w-full items-center gap-1.5 rounded-full border border-border bg-muted px-2.5 py-0.5 text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-      title={`Forked from ${label}`}
+      title={t("skillprovenance.general.forkedfromlabel", { label })}
     >
       <GitFork className="h-3 w-3 shrink-0" />
       <span className="truncate">
@@ -63,7 +65,10 @@ export function ProjectScanNotice({
   onEditACopy: () => void;
 }) {
   const { t } = useTranslation();
-  const location = skill.sourcePath ?? skill.sourceLabel ?? "the project working tree";
+  const location =
+    skill.sourcePath ??
+    skill.sourceLabel ??
+    t("skillprovenance.general.theprojectworkingtree");
 
   return (
     <div className="flex flex-wrap items-start gap-2 border-b border-border bg-muted/40 px-3 py-2 text-xs text-muted-foreground">

@@ -46,7 +46,9 @@ export function RemovableIssueReferencePill({
       <span className="truncate">{issueLabel}</span>
     </>
   );
-  const removeLabel = `Remove ${issueLabel} as blocker`;
+  const removeLabel = t("relationcontrols.general.removeasblocker", {
+    issue: issueLabel,
+  });
   const openRemoveConfirmation = () => setIsConfirmOpen(true);
   const handleRemove = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -69,7 +71,9 @@ export function RemovableIssueReferencePill({
                 data-mention-kind="issue"
                 className={chipClassName}
                 title={issue.title}
-                aria-label={`Actions for blocker ${issueLabel}`}
+                aria-label={t("relationcontrols.general.actionsforblocker", {
+                  issue: issueLabel,
+                })}
               >
                 {content}
               </button>
@@ -104,7 +108,10 @@ export function RemovableIssueReferencePill({
                 data-mention-kind="issue"
                 className={chipClassName}
                 title={issue.title}
-                aria-label={`Task ${issueLabel}: ${issue.title}`}
+                aria-label={t("relationcontrols.general.tasklabelwithtitle", {
+                  issue: issueLabel,
+                  title: issue.title,
+                })}
               >
                 {content}
               </Link>
@@ -113,7 +120,9 @@ export function RemovableIssueReferencePill({
                 data-mention-kind="issue"
                 className={chipClassName}
                 title={issue.title}
-                aria-label={`Task: ${issue.title}`}
+                aria-label={t("relationcontrols.general.tasktitle", {
+                  title: issue.title,
+                })}
               >
                 {content}
               </span>
@@ -157,9 +166,15 @@ export function ExpandRelationListButton({
       type="button"
       className="inline-flex items-center gap-1 rounded-full border border-border px-2 py-0.5 text-xs text-muted-foreground transition-colors hover:bg-accent/50 hover:text-foreground"
       onClick={onClick}
-      aria-label={expanded ? "Show fewer items" : `Show ${hiddenCount} more items`}
+      aria-label={
+        expanded
+          ? t("relationcontrols.general.showfeweritems")
+          : t("relationcontrols.general.showmoreitems", { count: hiddenCount })
+      }
     >
-      {expanded ? t("relationcontrols.general.showless") : `Show ${hiddenCount} more`}
+      {expanded
+        ? t("relationcontrols.general.showless")
+        : t("relationcontrols.general.showmore", { count: hiddenCount })}
     </button>
   );
 }

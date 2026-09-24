@@ -2873,7 +2873,14 @@
       "asablockerforthistask": "as a blocker for this task.",
       "cancel": "Cancel",
       "removeblocker2": "Remove blocker",
-      "showless": "Show less"
+      "showless": "Show less",
+      "removeasblocker": "Remove {{issue}} as blocker",
+      "actionsforblocker": "Actions for blocker {{issue}}",
+      "tasklabelwithtitle": "Task {{issue}}: {{title}}",
+      "tasktitle": "Task: {{title}}",
+      "showfeweritems": "Show fewer items",
+      "showmoreitems": "Show {{count}} more items",
+      "showmore": "Show {{count}} more"
     }
   },
   "agentbasicsdialog": {
@@ -3186,7 +3193,10 @@
       "forkedfrom": "Forked from",
       "thisskilllivesin": "This skill lives in",
       "saveswritetotheprojectworkingtree": ".\n          Saves write to the project working tree and are not committed.",
-      "editacopyinstead": "Edit a copy instead"
+      "editacopyinstead": "Edit a copy instead",
+      "theoriginalskill": "the original skill",
+      "forkedfromlabel": "Forked from {{label}}",
+      "theprojectworkingtree": "the project working tree"
     }
   }
 }

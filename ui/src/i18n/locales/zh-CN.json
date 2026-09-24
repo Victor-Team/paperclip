@@ -2873,7 +2873,14 @@
       "asablockerforthistask": "作为此任务的阻塞项。",
       "cancel": "取消",
       "removeblocker2": "移除阻塞项",
-      "showless": "显示更少"
+      "showless": "显示更少",
+      "removeasblocker": "将 {{issue}} 从阻塞项中移除",
+      "actionsforblocker": "阻塞项 {{issue}} 的操作",
+      "tasklabelwithtitle": "任务 {{issue}}：{{title}}",
+      "tasktitle": "任务：{{title}}",
+      "showfeweritems": "显示更少项目",
+      "showmoreitems": "再显示 {{count}} 项",
+      "showmore": "再显示 {{count}} 项"
     }
   },
   "agentbasicsdialog": {
@@ -3186,7 +3193,10 @@
       "forkedfrom": "分叉自",
       "thisskilllivesin": "此技能位于",
       "saveswritetotheprojectworkingtree": "。\n          保存写入项目工作区，但不提交。",
-      "editacopyinstead": "编辑副本"
+      "editacopyinstead": "编辑副本",
+      "theoriginalskill": "原始技能",
+      "forkedfromlabel": "从 {{label}} 派生",
+      "theprojectworkingtree": "项目工作树"
     }
   }
 }
