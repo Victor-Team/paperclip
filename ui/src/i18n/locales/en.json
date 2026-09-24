@@ -1092,7 +1092,8 @@
       "renameTask": "Rename task",
       "chooseAShortClear": "Choose a short, clear name for this task.",
       "taskName": "Task name",
-      "saving": "Saving..."
+      "saving": "Saving...",
+      "idle": "Idle"
     }
   },
   "sidebarstarredprojects": {
@@ -9778,6 +9779,726 @@
       "local": "local",
       "folder": "folder",
       "remote": "remote"
+    }
+  },
+  "onboardingchat": {
+    "general": {
+      "loadingconversation": "Loading conversation...",
+      "hiringplandetected": "Hiring plan detected",
+      "haspreparedahiringplan": "has prepared a hiring plan",
+      "reviewitmakeeditsthenapprove": "Review it, make edits, then approve.",
+      "reviewplan": "Review plan",
+      "hithanksforbringingmeonto": "Hi! Thanks for bringing me on to lead",
+      "ourmissionis": "Our mission is:",
+      "imreadytoputtogethera": "I'm ready to put together a plan for who we should bring on. Want me to get started?",
+      "letsdiscussfirst": "Let's discuss first",
+      "yesgetstarted": "Yes, get started!"
+    }
+  },
+  "onboardingwizard": {
+    "general": {
+      "paperclipworkswithyoursubscriptionorapi": "Paperclip works with your subscription or API keys.",
+      "name": "Name",
+      "egnorthwindlabs": "e.g. Northwind Labs",
+      "agentname": "Agent name",
+      "egchiefofstaff": "e.g. Chief of staff",
+      "modelsource": "Model source",
+      "savedapi": "saved API",
+      "keyavailable": "key available",
+      "keysavailable": "keys available",
+      "anexistingproviderconnectionisavailable": "An existing provider connection is available.",
+      "apikey": "API key",
+      "enterapikeyhere": "Enter API key here",
+      "thisenvironmentdoesnotsupportbrowsersign": "This environment does not support browser sign-in. Choose another sign-in environment or connect with an API key.",
+      "passed": "Passed",
+      "claudefailedwhile": "Claude failed while",
+      "issetyoucanclearitin": "is set. You can clear it in this adapter config and retry the probe.",
+      "retrying": "Retrying...",
+      "unsetanthropicapikey": "Unset ANTHROPIC_API_KEY",
+      "manualdebug": "Manual debug",
+      "prompt": "Prompt:",
+      "respondwithhello": "Respond with hello.",
+      "ifauthfailsset": "If auth fails, set",
+      "kimimodelnamekimimodelapikey": "KIMI_MODEL_NAME + KIMI_MODEL_API_KEY",
+      "inenvorrun": "in env or run",
+      "agentlogin": "agent login",
+      "codexlogin": "codex login",
+      "geminiauth": "gemini auth",
+      "kimilogin": "kimi login",
+      "opencodeauthlogin": "opencode auth login",
+      "ifloginisrequiredrun": "If login is required, run",
+      "claudelogin": "claude login",
+      "andretry": "and retry.",
+      "gatewayurl": "Gateway URL",
+      "webhookurl": "Webhook URL",
+      "hint": "Hint:"
+    }
+  },
+  "opencodelogoicon": {
+    "general": {
+      "opencode": "OpenCode",
+      "opencode1": "OpenCode"
+    }
+  },
+  "outputfeedbackbuttons": {
+    "general": {
+      "helpful": "Helpful",
+      "needswork": "Needs work",
+      "whatcouldhavebeenbetter": "What could have been better?",
+      "addashortnote": "Add a short note",
+      "dismiss": "Dismiss",
+      "saving": "Saving...",
+      "savenote": "Save note",
+      "saveyourfeedbacksharingpreference": "Save your feedback sharing preference",
+      "choosewhethervotedaioutputscanbe": "Choose whether voted AI outputs can be shared with Paperclip Labs. This answer becomes the default for future thumbs up and thumbs down votes.",
+      "thisvoteisalwayssavedlocally": "This vote is always saved locally.",
+      "choose": "Choose",
+      "alwaysallow": "Always allow",
+      "tosharethisvoteandfuturevoted": "to share this vote and future voted AI outputs. Choose",
+      "dontallow": "Don't allow",
+      "tokeepthisvoteandfuturevotes": "to keep this vote and future votes local.",
+      "youcanchangethislaterinsettings": "You can change this later in Settings > General.",
+      "readourtermsofservice": "Read our terms of service",
+      "saving1": "Saving...",
+      "dontallow2": "Don't allow",
+      "saving3": "Saving...",
+      "alwaysallow4": "Always allow"
+    }
+  },
+  "pagetabbar": {
+    "general": {
+      "pagesection": "Page section"
+    }
+  },
+  "pipelinehealthwarnings": {
+    "general": {
+      "open": "Open",
+      "somestepswontrunyet": "Some steps won't run yet —",
+      "moreinstagesettings": "more in stage settings",
+      "thisstepwontrunyet": "This step won't run yet"
+    }
+  },
+  "pipelineitembodydocument": {
+    "general": {
+      "writetheitembodyinmarkdown": "Write the item body in Markdown…",
+      "savingcreatesrev": "Saving creates rev",
+      "tosaveesctocancel": "· ⌘↵ to save · Esc to cancel",
+      "cancel": "Cancel",
+      "saving": "Saving…",
+      "save": "Save",
+      "viewingrevision": "Viewing revision",
+      "historicalpreviewnewcommentsaredisabledwhile": "Historical preview. New comments are disabled while previewing a historical revision. Restoring it creates a new latest revision and keeps history append-only.",
+      "returntolatest": "Return to latest",
+      "restoring": "Restoring…",
+      "restorethisrevision": "Restore this revision",
+      "itembody": "Item body",
+      "editingunsaved": "● Editing · unsaved",
+      "edit": "Edit"
+    }
+  },
+  "pipelinelivenessbanner": {
+    "general": {
+      "requiredpermission": "Required permission:",
+      "onthetargetpipeline": "on the target pipeline.",
+      "retrying": "Retrying…"
+    }
+  },
+  "pipelinestagehistorypanel": {
+    "general": {
+      "history": "History",
+      "pastversionsoftheseinstructions": "Past versions of these instructions.",
+      "nohistoryyetsavetheinstructionsto": "No history yet. Save the instructions to create the first revision.",
+      "loadingrevisions": "Loading revisions…",
+      "couldnotloadrevisions": "Could not load revisions.",
+      "norevisionsrecordedyet": "No revisions recorded yet.",
+      "revision": "Revision",
+      "current": "Current",
+      "restore": "Restore"
+    }
+  },
+  "pipelineworkreferences": {
+    "general": {
+      "nolinkedworkyet": "No linked work yet.",
+      "folder": "Folder"
+    }
+  },
+  "pluginappshelloverlays": {
+    "general": {
+      "applicationextensions": "Application extensions"
+    }
+  },
+  "pluginorganizationswitcher": {
+    "general": {
+      "loadingorganization": "Loading organization"
+    }
+  },
+  "projectproperties": {
+    "general": {
+      "saving": "Saving",
+      "saved": "Saved",
+      "failed": "Failed",
+      "archivethisprojecttohideitfrom": "Archive this project to hide it from the sidebar and project selectors.",
+      "unarchivethisprojecttorestoreitin": "Unarchive this project to restore it in the sidebar and project selectors.",
+      "archiving": "Archiving...",
+      "unarchiving": "Unarchiving...",
+      "copy": "“",
+      "copy1": "”?",
+      "confirm": "Confirm",
+      "cancel": "Cancel",
+      "project": "project",
+      "project2": "project",
+      "name": "Name",
+      "projectname": "Project name",
+      "description": "Description",
+      "addadescription": "Add a description...",
+      "env": "Env",
+      "updated": "Updated",
+      "targetdate": "Target Date",
+      "codebase": "Codebase",
+      "codebasehelp": "Codebase help",
+      "repoidentifiesthesourceoftruthagents": "Repo identifies the source of truth. Agents check it out in the platform-managed environment.",
+      "repoidentifiesthesourceoftruthlocal": "Repo identifies the source of truth. Local folder is the default place agents write code.",
+      "paperclipmanagedfolder": "Paperclip-managed folder.",
+      "localfolder": "Local folder",
+      "paperclipmanagedfolder3": "Paperclip-managed folder.",
+      "changelocalfolder": "Change local folder",
+      "setlocalfolder": "Set local folder",
+      "clearlocalfolder": "Clear local folder",
+      "additionallegacyworkspacerecordsexistonthis": "Additional legacy workspace records exist on this project. Paperclip is using the primary workspace as the codebase view.",
+      "save": "Save",
+      "cancel4": "Cancel",
+      "failedtosaveworkspace": "Failed to save workspace.",
+      "failedtodeleteworkspace": "Failed to delete workspace.",
+      "failedtoupdateworkspace": "Failed to update workspace.",
+      "executionworkspaces": "Execution Workspaces",
+      "executionworkspaceshelp": "Execution workspaces help",
+      "projectowneddefaultsforisolatedtaskcheckouts": "Project-owned defaults for isolated task checkouts and execution workspace behavior.",
+      "enableisolatedtaskcheckouts": "Enable isolated task checkouts",
+      "lettaskschoosebetweentheprojects": "Let tasks choose between the project's primary checkout and an isolated execution workspace.",
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "newtasksdefaulttoisolatedcheckout": "New tasks default to isolated checkout",
+      "ifdisablednewtasksstayonthe": "If disabled, new tasks stay on the project's primary checkout unless someone opts in.",
+      "sharedworkspaceconcurrency": "Shared workspace concurrency",
+      "sharedworkspaceconcurrency5": "Shared workspace concurrency",
+      "hideadvancedcheckoutsettings": "Hide advanced checkout settings",
+      "showadvancedcheckoutsettings": "Show advanced checkout settings",
+      "hostmanagedimplementation": "Host-managed implementation:",
+      "gitworktree": "Git worktree",
+      "environment": "Environment",
+      "noenvironment": "No environment",
+      "baseref": "Base ref",
+      "originmain": "origin/main",
+      "branchtemplate": "Branch template",
+      "issueidentifierslug": "{{issue.identifier}}-{{slug}}",
+      "worktreeparentdir": "Worktree parent dir",
+      "paperclipworktrees": ".paperclip/worktrees",
+      "provisioncommand": "Provision command",
+      "bashscriptsprovisionworktreesh": "bash ./scripts/provision-worktree.sh",
+      "runtimeprovisioncommand": "Runtime provision command",
+      "bashscriptsprovisionworktreeruntimesh": "bash ./scripts/provision-worktree-runtime.sh",
+      "runsoncebeforethefirstruntimeservice": "Runs once before the first runtime-service start (heavy setup, e.g. DB seed). Leave empty to keep eager provisioning.",
+      "teardowncommand": "Teardown command",
+      "bashscriptsteardownworktreesh": "bash ./scripts/teardown-worktree.sh",
+      "provisionrunsinsidethederivedworktreebefore": "Provision runs inside the derived worktree before agent execution. Teardown is stored here for future cleanup flows.",
+      "dangerzone": "Danger Zone",
+      "created": "Created"
+    }
+  },
+  "projectrepositories": {
+    "general": {
+      "repositories": "Repositories",
+      "changessaved": "Changes saved",
+      "discardchanges": "Discard changes",
+      "saving": "Saving…",
+      "savechanges": "Save changes",
+      "connectgithub": "Connect GitHub"
+    }
+  },
+  "projectrepositoryinput": {
+    "general": {
+      "somegithubconnectionscouldnotloadreconnect": "Some GitHub connections could not load. Reconnect them in Apps or try again.",
+      "tryagain": "Try again"
+    }
+  },
+  "projectworkspacesummarycard": {
+    "general": {
+      "updated": "Updated",
+      "services": "services",
+      "stopservices": "Stop services",
+      "startservices": "Start services",
+      "retryclose": "Retry close",
+      "closeworkspace": "Close workspace",
+      "branch": "Branch",
+      "path": "Path",
+      "service": "Service",
+      "linkedtasks": "Linked tasks",
+      "more": "more"
+    }
+  },
+  "projectworkspacescontent": {
+    "general": {
+      "nonondefaultworkspaceactivityyet": "No non-default workspace activity yet.",
+      "cleanupattentionneeded": "Cleanup attention needed"
+    }
+  },
+  "propertiespanel": {
+    "general": {
+      "properties": "Properties",
+      "resizepanel": "Resize panel"
+    }
+  },
+  "providerquotacard": {
+    "general": {
+      "in": "in",
+      "out": "out",
+      "runs": " runs",
+      "periodspend": "Period spend",
+      "thisweek": "This week",
+      "rollingwindows": "Rolling windows",
+      "tok": "tok",
+      "subscription": "Subscription",
+      "runs1": "runs",
+      "total": "total",
+      "in2": "in",
+      "out3": "out",
+      "oftokenusageviasubscription": "% of token usage via subscription",
+      "tok4": "tok",
+      "subscriptionquota": "Subscription quota",
+      "used": "% used",
+      "resets": "resets"
+    }
+  },
+  "reportstopicker": {
+    "general": {
+      "unknownmanagerstaleid": "Unknown manager (stale ID)",
+      "terminated": " (terminated)",
+      "nomanager": "No manager",
+      "current": "Current:",
+      "terminated1": "(terminated)",
+      "savedmanagerismissingfromthisorganization": "Saved manager is missing from this organization. Choose a new manager or clear."
+    }
+  },
+  "repositoryeditor": {
+    "general": {
+      "privaterepository": "Private repository",
+      "sourcerepos": "Source repos",
+      "optional": "optional",
+      "connectgithubtopickarepo": "Connect GitHub to pick a repo",
+      "choosefromreposyoucanaccessthrough": "Choose from repos you can access through your GitHub connections.",
+      "connectgithub": "Connect GitHub",
+      "tryagain": "Try again",
+      "connectanothergithubaccount": "Connect another GitHub account",
+      "allgithubconnectionsyoucanuse": "All GitHub connections you can use.",
+      "cancel": "Cancel"
+    }
+  },
+  "routinecontextualsidebar": {
+    "general": {
+      "routinenavigation": "Routine navigation",
+      "operate": "Operate",
+      "runs": "Runs",
+      "activity": "Activity"
+    }
+  },
+  "routinehistorytab": {
+    "general": {
+      "couldnotloadrevisions": "Could not load revisions",
+      "unknownerrorloadingrevisions": "Unknown error loading revisions.",
+      "retry": "Retry",
+      "revision1istheonlyhistorythis": "Revision 1 is the only history this routine has. Saving an edit creates the first additional revision.",
+      "viewingrevision": "Viewing revision",
+      "readonly": "(read-only)",
+      "restoringthisrevisioncreatesanewrevision": "Restoring this revision creates a new revision",
+      "withthesamecontenthistorystaysappend": "with the same content. History stays append-only.",
+      "returntocurrent": "Return to current",
+      "restoreasnewrevision": "Restore as new revision",
+      "unsavedroutineedits": "Unsaved routine edits",
+      "youchanged": "You changed",
+      "buthaventsavedyetsaveor": "but haven't saved yet. Save or discard before previewing or restoring an older revision.",
+      "discardchanges": "Discard changes",
+      "saveandcontinue": "Save and continue",
+      "revisions": "Revisions",
+      "total": "total",
+      "rev": "rev",
+      "current": "Current",
+      "restored": "Restored",
+      "show": "Show",
+      "older": "older…",
+      "rev1": "rev",
+      "saved": "Saved",
+      "by": "by",
+      "comparewithcurrent": "Compare with current",
+      "structuredfields": "Structured fields",
+      "differsfromcurrent": "differs from current",
+      "description": "Description",
+      "nodescription": "No description",
+      "triggers": "Triggers (",
+      "notriggersinthisrevision": "No triggers in this revision.",
+      "webhooksecretsarenotstoredinrevisions": "Webhook secrets are not stored in revisions. If a restored webhook trigger needs re-creation, Paperclip mints fresh secret material at restore time.",
+      "variables": "Variables (",
+      "default": "default:",
+      "restorerevision": "Restore revision",
+      "thiscreatesanewrevision": "This creates a new revision",
+      "withthesamecontentasrevision": "with the same content as revision",
+      "revisions2": ". Revisions",
+      "stayinhistoryandarenotmodified": "stay in history and are not modified.",
+      "routinefieldvaluesvariablesandschedulecron": "Routine field values, variables, and schedule cron will revert.",
+      "routinesecretswillrevert": "Routine secrets will revert:",
+      "previousrunhistoryispreserved": "Previous run history is preserved.",
+      "thewebhooktrigger": "The webhook trigger",
+      "willberecreatedwithanewurl": "will be recreated with a new URL and secret. Paperclip will show the secret once after restore — copy it before closing.",
+      "changesummaryoptional": "Change summary (optional)",
+      "whyareyourestoringvisibleinhistory": "Why are you restoring? Visible in history.",
+      "cancel": "Cancel",
+      "restoring": "Restoring…",
+      "compareroutinerevisions": "Compare routine revisions",
+      "old": "Old",
+      "new": "New",
+      "fieldchanges": "Field changes",
+      "nostructuralfieldchanges": "No structural field changes.",
+      "field": "Field",
+      "oldvalue": "Old value",
+      "newvalue": "New value",
+      "descriptiondiff": "Description diff",
+      "close": "Close",
+      "restorerev": "Restore rev",
+      "asnewrevision": "as new revision",
+      "rev3": "rev",
+      "nodescriptiononeitherrevision": "No description on either revision.",
+      "descriptionsareidentical": "Descriptions are identical.",
+      "old4": "Old",
+      "new5": "New",
+      "content": "Content"
+    }
+  },
+  "routinelist": {
+    "general": {
+      "archived": "archived",
+      "draft": "draft",
+      "paused": "paused",
+      "unknownproject": "Unknown project",
+      "noproject": "No project",
+      "unknownagent": "Unknown agent",
+      "nodefaultagent": "No default agent",
+      "running": "Running...",
+      "runnow": "Run now",
+      "archived1": "Archived",
+      "draft2": "Draft",
+      "on": "On",
+      "off": "Off",
+      "running3": "Running...",
+      "runnow4": "Run now",
+      "pause": "Pause",
+      "enable": "Enable",
+      "restore": "Restore",
+      "archive": "Archive"
+    }
+  },
+  "routineoverview": {
+    "general": {
+      "state": "State",
+      "triggers": "Triggers",
+      "nextrun": "Next run",
+      "lastrun": "Last run",
+      "defaultagent": "Default agent",
+      "nodefaultagentautomatictriggersremainpaused": "No default agent. Automatic triggers remain paused.",
+      "description": "Description",
+      "nodescriptionyet": "No description yet.",
+      "recentruns": "Recent runs",
+      "viewallruns": "View all runs",
+      "norunsyetruntheroutinenow": "No runs yet. Run the routine now or wait for its schedule.",
+      "viewroutineactivity": "View routine activity"
+    }
+  },
+  "routinerunvariablesdialog": {
+    "general": {
+      "runroutine": "Run routine",
+      "choosetheagentandoptionalprojectfor": "Choose the agent and optional project for this one run. Routine defaults are prefilled and won't be changed.",
+      "agent": "Agent *",
+      "agent1": "Agent",
+      "selectanagent": "Select an agent",
+      "project": "Project",
+      "project2": "Project",
+      "noproject": "No project",
+      "novalue": "No value",
+      "true": "True",
+      "false": "False",
+      "chooseavalue": "Choose a value",
+      "novalue3": "No value",
+      "defaultagentrequiredforthisrun": "Default agent required for this run.",
+      "missing": "Missing:",
+      "chooseanexistingworkspacebeforerunning": "Choose an existing workspace before running.",
+      "cancel": "Cancel",
+      "running": "Running...",
+      "runroutine4": "Run routine"
+    }
+  },
+  "routinesavebar": {
+    "general": {
+      "routinechangedelsewherereloadtomerge": "Routine changed elsewhere. Reload to merge.",
+      "unsaved": "unsaved",
+      "change": "change",
+      "changes": "changes",
+      "pendingchanges": "Pending changes",
+      "reloadlatest": "Reload latest",
+      "overwriteanyway": "Overwrite anyway",
+      "replacesthenewerrevisionwithyourlocal": "Replaces the newer revision with your local edits.",
+      "discard": "Discard",
+      "savechanges": "Save changes",
+      "s": "⌘S",
+      "discardchanges": "Discard changes?",
+      "thiswillrevert": "This will revert",
+      "unsaved1": "unsaved",
+      "change2": "change",
+      "changes3": "changes",
+      "inthissection": "in this section.",
+      "keepediting": "Keep editing",
+      "discardchanges4": "Discard changes",
+      "readonlyyoudontownthis": "Read-only — you don't own this routine."
+    }
+  },
+  "routinesubsidebar": {
+    "general": {
+      "routinesections": "Routine sections",
+      "unsavedchanges": "Unsaved changes",
+      "routinesection": "Routine section"
+    }
+  },
+  "routinetriggercard": {
+    "general": {
+      "webhook": "Webhook",
+      "webhookurl": "Webhook URL",
+      "sendapostrequestwithcontenttype": "Send a POST request with Content-Type: application/json. Keep this URL private when signing is disabled.",
+      "label": "Label",
+      "schedule": "Schedule",
+      "signingmode": "Signing mode",
+      "replaywindowseconds": "Replay window (seconds)",
+      "delete": "Delete",
+      "rotatesecret": "Rotate secret",
+      "savetrigger": "Save trigger"
+    }
+  },
+  "routinevariableseditor": {
+    "general": {
+      "variables": "Variables",
+      "detectedfrom": "Detected from `",
+      "name": "{{name}}",
+      "placeholdersinthetitleandinstructions": "` placeholders in the title and instructions.",
+      "prompttheuserforthisvaluebefore": "Prompt the user for this value before each manual run.",
+      "label": "Label",
+      "type": "Type",
+      "defaultvalue": "Default value",
+      "required": "Required",
+      "nodefault": "No default",
+      "true": "True",
+      "false": "False",
+      "options": "Options",
+      "highmediumlow": "high, medium, low",
+      "defaultoption": "Default option",
+      "nodefault1": "No default",
+      "nodefault2": "No default",
+      "use": "Use `",
+      "variablename": "{{variable_name}}",
+      "placeholdersinthetitleorinstructionsto": "` placeholders in the title or instructions to prompt for inputs when the routine runs.",
+      "showvariablehelp": "Show variable help",
+      "routinevariables": "Routine variables",
+      "howtopromptforinputsandwhich": "How to prompt for inputs and which variables Paperclip fills in automatically.",
+      "customvariables": "Custom variables",
+      "type3": "Type",
+      "variablename4": "{{variable_name}}",
+      "anywhereinthetitleorinstructionspaperclip": "anywhere in the title or instructions. Paperclip detects each placeholder, lists it under",
+      "variables5": "Variables",
+      "andpromptsforavaluebeforeeach": ", and prompts for a value before each run.",
+      "namesmuststartwithaletterand": "Names must start with a letter and may use letters, numbers, and underscores.",
+      "pickatypetexttextareanumberboolean": "Pick a type (text, textarea, number, boolean, select, date), default value, and whether it is required.",
+      "variablenamesendingincapitaldatesuch": "Variable names ending in capital Date, such as startDate, are created as date variables by default.",
+      "thesamenamereusedacrossthetitle": "The same name reused across the title and instructions is treated as one variable.",
+      "builtinvariables": "Built-in variables",
+      "thesearefilledinautomaticallynosetup": "These are filled in automatically — no setup needed and they will not appear in the Variables list.",
+      "placeholder": "Placeholder",
+      "example": "Example",
+      "description": "Description"
+    }
+  },
+  "runworkspacerecoverysurface": {
+    "general": {
+      "workspacerecovery": "Workspace recovery"
+    }
+  },
+  "runnerinspector": {
+    "general": {
+      "copy": "\"",
+      "copy1": "\"",
+      "null": "null",
+      "nofieldsmatch": "No fields match.",
+      "action": "Action",
+      "providerpath": "Provider path",
+      "outputpath": "Output path",
+      "reason": "Reason",
+      "nofieldlevelmappingwasrecordedat": "No field-level mapping was recorded at this stage.",
+      "productionsurface": "Production surface:",
+      "in": "in",
+      "runnerinspector": "Runner Inspector",
+      "correlateexactprovidertrafficwitheveryinterpretation": "Correlate exact provider traffic with every interpretation stage, canonical PRP event, and production surface.",
+      "runnerinspectorviews": "Runner inspector views",
+      "rawprovidertracesrequireaninstanceadministrator": "Raw provider traces require an instance administrator.",
+      "canonicalprpeventsandpresentationdecisionsremain": "Canonical PRP events and presentation decisions remain inspectable below.",
+      "rawprovidercapturewasoffforthis": "Raw provider capture was off for this run.",
+      "canonicalprpeventsandpersistedpresentationdecisions": "Canonical PRP events and persisted presentation decisions remain available below.",
+      "rerunwithprovidertrace": "Re-run with provider trace",
+      "loadingrunpipeline": "Loading run pipeline…",
+      "provider": "Provider",
+      "rawframes": "Raw frames",
+      "operations": "Operations",
+      "prpevents": "PRP events",
+      "mappings": "Mappings",
+      "runstatus": "Run status",
+      "interpretationoutcomes": "Interpretation outcomes",
+      "nointerpretationrecordswerepersisted": "No interpretation records were persisted.",
+      "recentcorrelatedoperations": "Recent correlated operations",
+      "sensitivedebugdata": "Sensitive debug data",
+      "parsedframesareredactedontheserver": "Parsed frames are redacted on the server. Exact reveals and downloads are administrator-only, warned, audited, and automatically expire.",
+      "searchoperationsfieldsandevents": "Search operations, fields, and events",
+      "direction": "Direction",
+      "alldirections": "All directions",
+      "clientprovider": "Client → provider",
+      "providerclient": "Provider → client",
+      "providerstderr": "Provider stderr",
+      "nativemethod": "Native method",
+      "allnativemethods": "All native methods",
+      "mapping": "Mapping",
+      "allmappings": "All mappings",
+      "prptype": "PRP type",
+      "allprptypes": "All PRP types",
+      "visibility": "Visibility",
+      "visiblehidden": "Visible + hidden",
+      "visible": "Visible",
+      "hidden": "Hidden",
+      "loadingrunpipeline2": "Loading run pipeline…",
+      "nooperationsmatchthesefilters": "No operations match these filters.",
+      "frames": "frames",
+      "rawframe": "raw frame",
+      "s": "s",
+      "mappingstage": "mapping stage",
+      "s3": "s",
+      "prpevent": "PRP event",
+      "s4": "s",
+      "providerframes": "Provider frames",
+      "serverredactedbydefault": "server-redacted by default",
+      "frame": "frame",
+      "withheldpaths": "Withheld paths:",
+      "revealexactframe": "Reveal exact frame",
+      "exactunredactedframe": "Exact unredacted frame",
+      "searchexactframe": "Search exact frame",
+      "thisprpeventhasnorecoverableraw": "This PRP event has no recoverable raw frame.",
+      "interpretationstages": "Interpretation stages",
+      "nointerpretationstagewasrecordedforthis": "No interpretation stage was recorded for this frame.",
+      "canonicalprpevents": "Canonical PRP events",
+      "seq": "seq",
+      "whyisntthisvisible": "Why isn’t this visible?",
+      "canonicaleventjson": "Canonical event JSON",
+      "thisprovideroperationemittednocanonicalprp": "This provider operation emitted no canonical PRP events.",
+      "productionpresentation": "Production presentation",
+      "visible5": "Visible",
+      "surface": "Surface",
+      "container": "Container",
+      "state": "State",
+      "action6": "Action",
+      "reason7": "Reason",
+      "reasoncode": "Reason code",
+      "productionsurfacepreview": "Production surface preview",
+      "nopresentationsurfacewasemittedforthis": "No presentation surface was emitted for this operation.",
+      "resolvedfinalresponsedecision": "Resolved final response decision",
+      "semanticfinalizationlineage": "Semantic finalization lineage",
+      "providernativetransportandmodelauthoredtool": "Provider-native transport and model-authored tool arguments are separate layers. PRP normalized the model payload, then server policy chose the issue disposition.",
+      "environmentconstraint": "environment_constraint",
+      "wasmodelauthoredtoolpayloaddatanot": "was model-authored tool payload data, not a Codex app-server event. It was normalized into a non-blocking verification caveat.",
+      "policy": "Policy",
+      "decisionreason": "Decision reason",
+      "normalizedcaveatsandignoredrequests": "Normalized caveats and ignored requests",
+      "selectacorrelatedoperationtoinspectits": "Select a correlated operation to inspect its pipeline.",
+      "norawframeswerecapturedforthis": "No raw frames were captured for this run.",
+      "exacttraceframe": "Exact trace frame #",
+      "revealexactframe8": "Reveal exact frame",
+      "searchexactframe9": "Search exact frame",
+      "selectaframefromthechronologicaltrace": "Select a frame from the chronological trace.",
+      "frames10": "frames ·",
+      "expires": "· expires",
+      "downloadexacttrace": "Download exact trace",
+      "deletetrace": "Delete trace"
+    }
+  },
+  "runtimetestcard": {
+    "general": {
+      "runtimetest": "Runtime test",
+      "testdetails": "Test details"
+    }
+  },
+  "scheduleeditor": {
+    "general": {
+      "schedulefrequency": "Schedule frequency",
+      "choosefrequency": "Choose frequency...",
+      "cronexpression": "Cron expression",
+      "fivefieldsminutehourdayofmonth": "Five fields: minute hour day-of-month month day-of-week",
+      "at": "at",
+      "atminute": "at minute",
+      "on": "on",
+      "onday": "on day"
+    }
+  },
+  "scrolltobottom": {
+    "general": {
+      "scrolltobottom": "Scroll to bottom"
+    }
+  },
+  "secretbindingpicker": {
+    "general": {
+      "clear": "Clear",
+      "loading": "Loading…",
+      "anotherorganization": "another organization",
+      "version": "Version",
+      "latest": "latest",
+      "v": "v",
+      "createsecret": "Create secret",
+      "boundto": "Bound to",
+      "ownedby": "Owned by",
+      "anotherorganization1": "another organization",
+      "thebindingkeepsworkingselectingasecret": ". The binding keeps working; selecting a secret from this list re-points it here.",
+      "thepreviouslyselectedsecretwasdeletedpick": "The previously selected secret was deleted. Pick another or remove the binding.",
+      "couldnotloadthissecretreferences": "Could not load this secret reference's details.",
+      "checkingthissecretreference": "Checking this secret reference…",
+      "thepreviouslyselectedsecretisnolonger": "The previously selected secret is no longer available. Pick another or remove the binding.",
+      "createnewsecret": "Create new secret",
+      "name": "Name",
+      "value": "Value",
+      "pastethesecretvalue": "Paste the secret value",
+      "thevalueisstoredonceandnever": "The value is stored once and never re-displayed. Rotate to replace.",
+      "description": "Description",
+      "optionalnotesnovalues": "Optional notes (no values)",
+      "cancel": "Cancel",
+      "createbind": "Create & bind"
+    }
+  },
+  "setupwizard": {
+    "general": {
+      "saveexit": "Save & exit"
+    }
+  },
+  "sidebarprojects": {
+    "general": {
+      "projectpausedbybudget": "Project paused by budget",
+      "leaving": "Leaving...",
+      "leaveproject": "Leave project",
+      "projects": "Projects"
+    }
+  },
+  "routeerrorboundary": {
+    "general": {
+      "thispagehitanerror": "This page hit an error",
+      "somethingwentwrongwhilerendering": "Something went wrong while rendering this page. You can go back and try again, or reload.",
+      "goback": "Go back",
+      "reloadpage": "Reload page"
     }
   }
 }

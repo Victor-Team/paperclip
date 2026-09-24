@@ -1092,7 +1092,8 @@
       "renameTask": "重命名任务",
       "chooseAShortClear": "为此任务选择一个简短明确的名称。",
       "taskName": "任务名称",
-      "saving": "保存中…"
+      "saving": "保存中…",
+      "idle": "空闲"
     }
   },
   "sidebarstarredprojects": {
@@ -9778,6 +9779,726 @@
       "local": "本地",
       "folder": "文件夹",
       "remote": "远程"
+    }
+  },
+  "routeerrorboundary": {
+    "general": {
+      "thispagehitanerror": "此页面出错了",
+      "somethingwentwrongwhilerendering": "渲染此页面时出现问题，你可以返回重试，或刷新页面。",
+      "goback": "返回",
+      "reloadpage": "刷新页面"
+    }
+  },
+  "onboardingchat": {
+    "general": {
+      "loadingconversation": "正在加载会话…",
+      "hiringplandetected": "检测到招聘计划",
+      "haspreparedahiringplan": "已拟定一份招聘计划",
+      "reviewitmakeeditsthenapprove": "请审阅、编辑，然后批准。",
+      "reviewplan": "审阅计划",
+      "hithanksforbringingmeonto": "你好！感谢让我加入并负责",
+      "ourmissionis": "我们的使命是：",
+      "imreadytoputtogethera": "我可以着手规划我们应该招募哪些成员。要开始吗？",
+      "letsdiscussfirst": "先聊聊",
+      "yesgetstarted": "好，开始吧！"
+    }
+  },
+  "onboardingwizard": {
+    "general": {
+      "paperclipworkswithyoursubscriptionorapi": "Paperclip 可使用你的订阅或 API 密钥。",
+      "name": "名称",
+      "egnorthwindlabs": "例如 Northwind Labs",
+      "agentname": "智能体名称",
+      "egchiefofstaff": "例如参谋长",
+      "modelsource": "模型来源",
+      "savedapi": "已保存的 API",
+      "keyavailable": "个密钥可用",
+      "keysavailable": "个密钥可用",
+      "anexistingproviderconnectionisavailable": "已有可用的提供商连接。",
+      "apikey": "API 密钥",
+      "enterapikeyhere": "在此输入 API 密钥",
+      "thisenvironmentdoesnotsupportbrowsersign": "此环境不支持浏览器登录。请选择其他登录环境，或使用 API 密钥连接。",
+      "passed": "已通过",
+      "claudefailedwhile": "Claude 在执行以下操作时失败：",
+      "issetyoucanclearitin": "已设置。你可以在此适配器配置中清除它并重试探测。",
+      "retrying": "正在重试…",
+      "unsetanthropicapikey": "清除 ANTHROPIC_API_KEY",
+      "manualdebug": "手动调试",
+      "prompt": "提示词：",
+      "respondwithhello": "回复 hello。",
+      "ifauthfailsset": "如果认证失败，请设置",
+      "kimimodelnamekimimodelapikey": "KIMI_MODEL_NAME + KIMI_MODEL_API_KEY",
+      "inenvorrun": "（写入环境变量，或运行",
+      "agentlogin": "agent login",
+      "codexlogin": "codex login",
+      "geminiauth": "gemini auth",
+      "kimilogin": "kimi login",
+      "opencodeauthlogin": "opencode auth login",
+      "ifloginisrequiredrun": "如需登录，请运行",
+      "claudelogin": "claude login",
+      "andretry": "后重试。",
+      "gatewayurl": "网关 URL",
+      "webhookurl": "Webhook URL",
+      "hint": "提示："
+    }
+  },
+  "opencodelogoicon": {
+    "general": {
+      "opencode": "OpenCode",
+      "opencode1": "OpenCode"
+    }
+  },
+  "outputfeedbackbuttons": {
+    "general": {
+      "helpful": "有帮助",
+      "needswork": "有待改进",
+      "whatcouldhavebeenbetter": "哪些地方可以做得更好？",
+      "addashortnote": "添加简短备注",
+      "dismiss": "忽略",
+      "saving": "正在保存…",
+      "savenote": "保存备注",
+      "saveyourfeedbacksharingpreference": "保存你的反馈共享偏好",
+      "choosewhethervotedaioutputscanbe": "选择是否可以将你投票的 AI 输出共享给 Paperclip Labs。此选择将成为此后所有点赞/点踩投票的默认值。",
+      "thisvoteisalwayssavedlocally": "该投票始终只保存在本地。",
+      "choose": "选择「",
+      "alwaysallow": "一律允许",
+      "tosharethisvoteandfuturevoted": "」以共享本次及今后投票的 AI 输出。选择「",
+      "dontallow": "不允许",
+      "tokeepthisvoteandfuturevotes": "」以将本次及今后的投票保留在本地。",
+      "youcanchangethislaterinsettings": "你可以稍后在「设置 > 通用」中更改。",
+      "readourtermsofservice": "阅读我们的服务条款",
+      "saving1": "正在保存…",
+      "dontallow2": "不允许",
+      "saving3": "正在保存…",
+      "alwaysallow4": "一律允许"
+    }
+  },
+  "pagetabbar": {
+    "general": {
+      "pagesection": "页面区域"
+    }
+  },
+  "pipelinehealthwarnings": {
+    "general": {
+      "open": "打开",
+      "somestepswontrunyet": "部分步骤暂不会运行 —",
+      "moreinstagesettings": "详情见阶段设置",
+      "thisstepwontrunyet": "此步骤暂不会运行"
+    }
+  },
+  "pipelineitembodydocument": {
+    "general": {
+      "writetheitembodyinmarkdown": "用 Markdown 撰写条目正文…",
+      "savingcreatesrev": "保存将创建修订",
+      "tosaveesctocancel": "· ⌘↵ 保存 · Esc 取消",
+      "cancel": "取消",
+      "saving": "正在保存…",
+      "save": "保存",
+      "viewingrevision": "正在查看修订",
+      "historicalpreviewnewcommentsaredisabledwhile": "历史预览。预览历史修订时无法发表新评论。恢复它会生成一个新的最新修订，历史记录保持只增不改。",
+      "returntolatest": "返回最新版本",
+      "restoring": "正在恢复…",
+      "restorethisrevision": "恢复此修订",
+      "itembody": "条目正文",
+      "editingunsaved": "● 编辑中 · 未保存",
+      "edit": "编辑"
+    }
+  },
+  "pipelinelivenessbanner": {
+    "general": {
+      "requiredpermission": "所需权限：",
+      "onthetargetpipeline": "（在目标流水线上）。",
+      "retrying": "正在重试…"
+    }
+  },
+  "pipelinestagehistorypanel": {
+    "general": {
+      "history": "历史",
+      "pastversionsoftheseinstructions": "这些指令的历史版本。",
+      "nohistoryyetsavetheinstructionsto": "暂无历史。保存指令即可创建第一个修订。",
+      "loadingrevisions": "正在加载修订…",
+      "couldnotloadrevisions": "无法加载修订。",
+      "norevisionsrecordedyet": "尚未记录任何修订。",
+      "revision": "修订",
+      "current": "当前",
+      "restore": "恢复"
+    }
+  },
+  "pipelineworkreferences": {
+    "general": {
+      "nolinkedworkyet": "暂无关联工作。",
+      "folder": "文件夹"
+    }
+  },
+  "pluginappshelloverlays": {
+    "general": {
+      "applicationextensions": "应用扩展"
+    }
+  },
+  "pluginorganizationswitcher": {
+    "general": {
+      "loadingorganization": "正在加载组织"
+    }
+  },
+  "projectproperties": {
+    "general": {
+      "saving": "正在保存",
+      "saved": "已保存",
+      "failed": "失败",
+      "archivethisprojecttohideitfrom": "归档此项目，将其从侧边栏和项目选择器中隐藏。",
+      "unarchivethisprojecttorestoreitin": "取消归档此项目，将其恢复到侧边栏和项目选择器中。",
+      "archiving": "正在归档…",
+      "unarchiving": "正在取消归档…",
+      "copy": "「",
+      "copy1": "」？",
+      "confirm": "确认",
+      "cancel": "取消",
+      "project": "项目",
+      "project2": "项目",
+      "name": "名称",
+      "projectname": "项目名称",
+      "description": "描述",
+      "addadescription": "添加描述…",
+      "env": "环境",
+      "updated": "更新时间",
+      "targetdate": "目标日期",
+      "codebase": "代码库",
+      "codebasehelp": "代码库帮助",
+      "repoidentifiesthesourceoftruthagents": "仓库指明唯一事实来源。智能体会在平台管理的环境中将其检出。",
+      "repoidentifiesthesourceoftruthlocal": "仓库指明唯一事实来源。本地文件夹是智能体写代码的默认位置。",
+      "paperclipmanagedfolder": "Paperclip 管理的文件夹。",
+      "localfolder": "本地文件夹",
+      "paperclipmanagedfolder3": "Paperclip 管理的文件夹。",
+      "changelocalfolder": "更改本地文件夹",
+      "setlocalfolder": "设置本地文件夹",
+      "clearlocalfolder": "清除本地文件夹",
+      "additionallegacyworkspacerecordsexistonthis": "此项目上还存在其他遗留工作区记录。Paperclip 正以主工作区作为代码库视图。",
+      "save": "保存",
+      "cancel4": "取消",
+      "failedtosaveworkspace": "保存工作区失败。",
+      "failedtodeleteworkspace": "删除工作区失败。",
+      "failedtoupdateworkspace": "更新工作区失败。",
+      "executionworkspaces": "执行工作区",
+      "executionworkspaceshelp": "执行工作区帮助",
+      "projectowneddefaultsforisolatedtaskcheckouts": "项目级默认设置，用于隔离任务检出和执行工作区行为。",
+      "enableisolatedtaskcheckouts": "启用隔离任务检出",
+      "lettaskschoosebetweentheprojects": "允许任务在项目主检出和隔离执行工作区之间选择。",
+      "enabled": "已启用",
+      "disabled": "已禁用",
+      "newtasksdefaulttoisolatedcheckout": "新任务默认使用隔离检出",
+      "ifdisablednewtasksstayonthe": "禁用时，新任务默认留在项目主检出上，除非有人主动选择隔离。",
+      "sharedworkspaceconcurrency": "共享工作区并发",
+      "sharedworkspaceconcurrency5": "共享工作区并发",
+      "hideadvancedcheckoutsettings": "隐藏高级检出设置",
+      "showadvancedcheckoutsettings": "显示高级检出设置",
+      "hostmanagedimplementation": "宿主管理的实现方式：",
+      "gitworktree": "Git worktree",
+      "environment": "环境",
+      "noenvironment": "无环境",
+      "baseref": "基础 ref",
+      "originmain": "origin/main",
+      "branchtemplate": "分支模板",
+      "issueidentifierslug": "{{issue.identifier}}-{{slug}}",
+      "worktreeparentdir": "Worktree 父目录",
+      "paperclipworktrees": ".paperclip/worktrees",
+      "provisioncommand": "配置命令",
+      "bashscriptsprovisionworktreesh": "bash ./scripts/provision-worktree.sh",
+      "runtimeprovisioncommand": "运行时配置命令",
+      "bashscriptsprovisionworktreeruntimesh": "bash ./scripts/provision-worktree-runtime.sh",
+      "runsoncebeforethefirstruntimeservice": "在首个运行时服务启动前执行一次（重型初始化，如数据库种子）。留空则保持急切配置模式。",
+      "teardowncommand": "清理命令",
+      "bashscriptsteardownworktreesh": "bash ./scripts/teardown-worktree.sh",
+      "provisionrunsinsidethederivedworktreebefore": "配置命令在派生 worktree 内、智能体执行之前运行。清理命令在此保存，供将来的清理流程使用。",
+      "dangerzone": "危险区",
+      "created": "创建时间"
+    }
+  },
+  "projectrepositories": {
+    "general": {
+      "repositories": "仓库",
+      "changessaved": "更改已保存",
+      "discardchanges": "放弃更改",
+      "saving": "正在保存…",
+      "savechanges": "保存更改",
+      "connectgithub": "连接 GitHub"
+    }
+  },
+  "projectrepositoryinput": {
+    "general": {
+      "somegithubconnectionscouldnotloadreconnect": "部分 GitHub 连接加载失败。请在「应用」中重新连接，或重试。",
+      "tryagain": "重试"
+    }
+  },
+  "projectworkspacesummarycard": {
+    "general": {
+      "updated": "更新于",
+      "services": "个服务",
+      "stopservices": "停止服务",
+      "startservices": "启动服务",
+      "retryclose": "重试关闭",
+      "closeworkspace": "关闭工作区",
+      "branch": "分支",
+      "path": "路径",
+      "service": "服务",
+      "linkedtasks": "关联任务",
+      "more": "更多"
+    }
+  },
+  "projectworkspacescontent": {
+    "general": {
+      "nonondefaultworkspaceactivityyet": "暂无非默认工作区的活动。",
+      "cleanupattentionneeded": "需要清理关注"
+    }
+  },
+  "propertiespanel": {
+    "general": {
+      "properties": "属性",
+      "resizepanel": "调整面板大小"
+    }
+  },
+  "providerquotacard": {
+    "general": {
+      "in": "输入",
+      "out": "输出",
+      "runs": " 次运行",
+      "periodspend": "本周期消耗",
+      "thisweek": "本周",
+      "rollingwindows": "滚动窗口",
+      "tok": "tok",
+      "subscription": "订阅",
+      "runs1": "次运行",
+      "total": "总计",
+      "in2": "输入",
+      "out3": "输出",
+      "oftokenusageviasubscription": "% 的 token 用量走订阅",
+      "tok4": "tok",
+      "subscriptionquota": "订阅配额",
+      "used": "% 已用",
+      "resets": "重置"
+    }
+  },
+  "reportstopicker": {
+    "general": {
+      "unknownmanagerstaleid": "未知上级（ID 已失效）",
+      "terminated": "（已停用）",
+      "nomanager": "无上级",
+      "current": "当前：",
+      "terminated1": "（已停用）",
+      "savedmanagerismissingfromthisorganization": "保存的上级已不在此组织中。请另选一位上级或清空。"
+    }
+  },
+  "repositoryeditor": {
+    "general": {
+      "privaterepository": "私有仓库",
+      "sourcerepos": "源码仓库",
+      "optional": "可选",
+      "connectgithubtopickarepo": "连接 GitHub 以选择仓库",
+      "choosefromreposyoucanaccessthrough": "从你的 GitHub 连接可访问的仓库中选择。",
+      "connectgithub": "连接 GitHub",
+      "tryagain": "重试",
+      "connectanothergithubaccount": "连接另一个 GitHub 帐户",
+      "allgithubconnectionsyoucanuse": "你可使用的所有 GitHub 连接。",
+      "cancel": "取消"
+    }
+  },
+  "routinecontextualsidebar": {
+    "general": {
+      "routinenavigation": "例程导航",
+      "operate": "操作",
+      "runs": "运行",
+      "activity": "活动"
+    }
+  },
+  "routinehistorytab": {
+    "general": {
+      "couldnotloadrevisions": "无法加载修订",
+      "unknownerrorloadingrevisions": "加载修订时发生未知错误。",
+      "retry": "重试",
+      "revision1istheonlyhistorythis": "修订 1 是此例程仅有的历史。保存编辑将创建第一个新修订。",
+      "viewingrevision": "正在查看修订",
+      "readonly": "（只读）",
+      "restoringthisrevisioncreatesanewrevision": "恢复此修订将创建一个新修订",
+      "withthesamecontenthistorystaysappend": "，内容与当前相同。历史保持只增不改。",
+      "returntocurrent": "返回当前版本",
+      "restoreasnewrevision": "恢复为新修订",
+      "unsavedroutineedits": "未保存的例程编辑",
+      "youchanged": "你更改了",
+      "buthaventsavedyetsaveor": "，但尚未保存。请先保存或放弃，再预览或恢复旧修订。",
+      "discardchanges": "放弃更改",
+      "saveandcontinue": "保存并继续",
+      "revisions": "个修订",
+      "total": "总计",
+      "rev": "修订",
+      "current": "当前",
+      "restored": "已恢复",
+      "show": "显示",
+      "older": "个更早的…",
+      "rev1": "修订",
+      "saved": "保存于",
+      "by": "由",
+      "comparewithcurrent": "与当前版本对比",
+      "structuredfields": "结构化字段",
+      "differsfromcurrent": "与当前版本不同",
+      "description": "描述",
+      "nodescription": "无描述",
+      "triggers": "个触发器（",
+      "notriggersinthisrevision": "此修订中没有触发器。",
+      "webhooksecretsarenotstoredinrevisions": "Webhook 密钥不会存储在修订中。若恢复的 Webhook 触发器需要重建，Paperclip 会在恢复时生成新的密钥材料。",
+      "variables": "个变量（",
+      "default": "默认值：",
+      "restorerevision": "恢复修订",
+      "thiscreatesanewrevision": "这将创建一个新修订",
+      "withthesamecontentasrevision": "，内容与修订",
+      "revisions2": "相同。修订",
+      "stayinhistoryandarenotmodified": "仍留在历史中，不会被修改。",
+      "routinefieldvaluesvariablesandschedulecron": "例程字段值、变量和计划 cron 都将回退。",
+      "routinesecretswillrevert": "以下例程密钥将回退：",
+      "previousrunhistoryispreserved": "以往的运行历史会被保留。",
+      "thewebhooktrigger": "Webhook 触发器",
+      "willberecreatedwithanewurl": "将以新的 URL 和密钥重建。Paperclip 只会在恢复后展示一次密钥——请在关闭前复制保存。",
+      "changesummaryoptional": "变更摘要（可选）",
+      "whyareyourestoringvisibleinhistory": "为什么要恢复？会显示在历史中。",
+      "cancel": "取消",
+      "restoring": "正在恢复…",
+      "compareroutinerevisions": "对比例程修订",
+      "old": "旧",
+      "new": "新",
+      "fieldchanges": "字段变更",
+      "nostructuralfieldchanges": "无结构性字段变更。",
+      "field": "字段",
+      "oldvalue": "旧值",
+      "newvalue": "新值",
+      "descriptiondiff": "描述差异",
+      "close": "关闭",
+      "restorerev": "恢复修订",
+      "asnewrevision": "为新修订",
+      "rev3": "修订",
+      "nodescriptiononeitherrevision": "两个修订都没有描述。",
+      "descriptionsareidentical": "描述完全相同。",
+      "old4": "旧",
+      "new5": "新",
+      "content": "内容"
+    }
+  },
+  "routinelist": {
+    "general": {
+      "archived": "已归档",
+      "draft": "草稿",
+      "paused": "已暂停",
+      "unknownproject": "未知项目",
+      "noproject": "无项目",
+      "unknownagent": "未知智能体",
+      "nodefaultagent": "无默认智能体",
+      "running": "正在运行…",
+      "runnow": "立即运行",
+      "archived1": "已归档",
+      "draft2": "草稿",
+      "on": "开",
+      "off": "关",
+      "running3": "正在运行…",
+      "runnow4": "立即运行",
+      "pause": "暂停",
+      "enable": "启用",
+      "restore": "恢复",
+      "archive": "归档"
+    }
+  },
+  "routineoverview": {
+    "general": {
+      "state": "状态",
+      "triggers": "触发器",
+      "nextrun": "下次运行",
+      "lastrun": "上次运行",
+      "defaultagent": "默认智能体",
+      "nodefaultagentautomatictriggersremainpaused": "暂无默认智能体。自动触发器保持暂停。",
+      "description": "描述",
+      "nodescriptionyet": "暂无描述。",
+      "recentruns": "近期运行",
+      "viewallruns": "查看全部运行",
+      "norunsyetruntheroutinenow": "还没有运行记录。现在运行例程，或等待其计划时间。",
+      "viewroutineactivity": "查看例程活动"
+    }
+  },
+  "routinerunvariablesdialog": {
+    "general": {
+      "runroutine": "运行例程",
+      "choosetheagentandoptionalprojectfor": "为本次运行选择智能体和可选项目。例程默认值已预填，且不会被更改。",
+      "agent": "智能体 *",
+      "agent1": "智能体",
+      "selectanagent": "选择智能体",
+      "project": "项目",
+      "project2": "项目",
+      "noproject": "无项目",
+      "novalue": "无值",
+      "true": "是",
+      "false": "否",
+      "chooseavalue": "选择一个值",
+      "novalue3": "无值",
+      "defaultagentrequiredforthisrun": "本次运行需要默认智能体。",
+      "missing": "缺失：",
+      "chooseanexistingworkspacebeforerunning": "运行前请先选择一个现有工作区。",
+      "cancel": "取消",
+      "running": "正在运行…",
+      "runroutine4": "运行例程"
+    }
+  },
+  "routinesavebar": {
+    "general": {
+      "routinechangedelsewherereloadtomerge": "例程已在别处被修改。重新加载以合并更改。",
+      "unsaved": "处未保存",
+      "change": "处更改",
+      "changes": "处更改",
+      "pendingchanges": "待保存的更改",
+      "reloadlatest": "重新加载最新版",
+      "overwriteanyway": "仍要覆盖",
+      "replacesthenewerrevisionwithyourlocal": "用你的本地编辑替换较新的修订。",
+      "discard": "放弃",
+      "savechanges": "保存更改",
+      "s": "⌘S",
+      "discardchanges": "放弃更改？",
+      "thiswillrevert": "这将回退",
+      "unsaved1": "处未保存",
+      "change2": "处更改",
+      "changes3": "处更改",
+      "inthissection": "（在本区域）。",
+      "keepediting": "继续编辑",
+      "discardchanges4": "放弃更改",
+      "readonlyyoudontownthis": "只读——此例程不属于你。"
+    }
+  },
+  "routinesubsidebar": {
+    "general": {
+      "routinesections": "例程区块",
+      "unsavedchanges": "未保存的更改",
+      "routinesection": "例程区块"
+    }
+  },
+  "routinetriggercard": {
+    "general": {
+      "webhook": "Webhook",
+      "webhookurl": "Webhook URL",
+      "sendapostrequestwithcontenttype": "发送 Content-Type 为 application/json 的 POST 请求。未启用签名时请保密此 URL。",
+      "label": "标签",
+      "schedule": "计划",
+      "signingmode": "签名模式",
+      "replaywindowseconds": "重放窗口（秒）",
+      "delete": "删除",
+      "rotatesecret": "轮换密钥",
+      "savetrigger": "保存触发器"
+    }
+  },
+  "routinevariableseditor": {
+    "general": {
+      "variables": "变量",
+      "detectedfrom": "检测自 `",
+      "name": "{{name}}",
+      "placeholdersinthetitleandinstructions": "` 占位符（位于标题和指令中）。",
+      "prompttheuserforthisvaluebefore": "每次手动运行前向用户询问此值。",
+      "label": "标签",
+      "type": "类型",
+      "defaultvalue": "默认值",
+      "required": "必填",
+      "nodefault": "无默认值",
+      "true": "是",
+      "false": "否",
+      "options": "选项",
+      "highmediumlow": "high, medium, low",
+      "defaultoption": "默认选项",
+      "nodefault1": "无默认值",
+      "nodefault2": "无默认值",
+      "use": "使用 `",
+      "variablename": "{{variable_name}}",
+      "placeholdersinthetitleorinstructionsto": "` 占位符（位于标题或指令中），在例程运行时提示输入。",
+      "showvariablehelp": "显示变量帮助",
+      "routinevariables": "例程变量",
+      "howtopromptforinputsandwhich": "如何提示输入，以及 Paperclip 会自动填充哪些变量。",
+      "customvariables": "自定义变量",
+      "type3": "类型",
+      "variablename4": "{{variable_name}}",
+      "anywhereinthetitleorinstructionspaperclip": "（可写在标题或指令的任意位置）。Paperclip 会检测每个占位符，将其列在",
+      "variables5": "变量",
+      "andpromptsforavaluebeforeeach": "之下，并在每次运行前提示输入值。",
+      "namesmuststartwithaletterand": "名称必须以字母开头，可含字母、数字和下划线。",
+      "pickatypetexttextareanumberboolean": "选择类型（text、textarea、number、boolean、select、date）、默认值，以及是否必填。",
+      "variablenamesendingincapitaldatesuch": "以大写 Date 结尾的变量名（如 startDate）默认创建为日期变量。",
+      "thesamenamereusedacrossthetitle": "标题和指令中复用的同名变量视为同一个变量。",
+      "builtinvariables": "内置变量",
+      "thesearefilledinautomaticallynosetup": "这些变量自动填充——无需设置，也不会出现在变量列表中。",
+      "placeholder": "占位符",
+      "example": "示例",
+      "description": "描述"
+    }
+  },
+  "runworkspacerecoverysurface": {
+    "general": {
+      "workspacerecovery": "工作区恢复"
+    }
+  },
+  "runnerinspector": {
+    "general": {
+      "copy": "「",
+      "copy1": "」",
+      "null": "null",
+      "nofieldsmatch": "没有匹配的字段。",
+      "action": "操作",
+      "providerpath": "提供商路径",
+      "outputpath": "输出路径",
+      "reason": "原因",
+      "nofieldlevelmappingwasrecordedat": "此阶段没有记录字段级映射。",
+      "productionsurface": "生产呈现面：",
+      "in": "入",
+      "runnerinspector": "Runner Inspector",
+      "correlateexactprovidertrafficwitheveryinterpretation": "将精确的提供商流量与每个解释阶段、规范 PRP 事件和生产呈现面关联起来。",
+      "runnerinspectorviews": "Runner Inspector 视图",
+      "rawprovidertracesrequireaninstanceadministrator": "原始提供商轨迹需要实例管理员权限。",
+      "canonicalprpeventsandpresentationdecisionsremain": "规范 PRP 事件与呈现决策仍可在下方查看。",
+      "rawprovidercapturewasoffforthis": "本次运行未开启原始提供商捕获。",
+      "canonicalprpeventsandpersistedpresentationdecisions": "规范 PRP 事件与已持久化的呈现决策仍可在下方查看。",
+      "rerunwithprovidertrace": "带提供商轨迹重跑",
+      "loadingrunpipeline": "正在加载运行流水线…",
+      "provider": "提供商",
+      "rawframes": "原始帧",
+      "operations": "操作",
+      "prpevents": "PRP 事件",
+      "mappings": "映射",
+      "runstatus": "运行状态",
+      "interpretationoutcomes": "解释结果",
+      "nointerpretationrecordswerepersisted": "未持久化任何解释记录。",
+      "recentcorrelatedoperations": "近期关联操作",
+      "sensitivedebugdata": "敏感调试数据",
+      "parsedframesareredactedontheserver": "解析帧在服务端脱敏。精确揭示与下载仅限管理员，且有告警、审计，并自动过期。",
+      "searchoperationsfieldsandevents": "搜索操作、字段和事件",
+      "direction": "方向",
+      "alldirections": "全部方向",
+      "clientprovider": "客户端 → 提供商",
+      "providerclient": "提供商 → 客户端",
+      "providerstderr": "提供商 stderr",
+      "nativemethod": "原生方法",
+      "allnativemethods": "全部原生方法",
+      "mapping": "映射",
+      "allmappings": "全部映射",
+      "prptype": "PRP 类型",
+      "allprptypes": "全部 PRP 类型",
+      "visibility": "可见性",
+      "visiblehidden": "可见 + 隐藏",
+      "visible": "可见",
+      "hidden": "隐藏",
+      "loadingrunpipeline2": "正在加载运行流水线…",
+      "nooperationsmatchthesefilters": "没有符合这些筛选条件的操作。",
+      "frames": "帧",
+      "rawframe": "原始帧",
+      "s": "秒",
+      "mappingstage": "映射阶段",
+      "s3": "秒",
+      "prpevent": "PRP 事件",
+      "s4": "秒",
+      "providerframes": "提供商帧",
+      "serverredactedbydefault": "默认经服务端脱敏",
+      "frame": "帧",
+      "withheldpaths": "保留路径：",
+      "revealexactframe": "揭示精确帧",
+      "exactunredactedframe": "精确未脱敏帧",
+      "searchexactframe": "搜索精确帧",
+      "thisprpeventhasnorecoverableraw": "此 PRP 事件没有可恢复的原始帧。",
+      "interpretationstages": "解释阶段",
+      "nointerpretationstagewasrecordedforthis": "没有为此帧记录解释阶段。",
+      "canonicalprpevents": "规范 PRP 事件",
+      "seq": "序号",
+      "whyisntthisvisible": "为什么这个不可见？",
+      "canonicaleventjson": "规范事件 JSON",
+      "thisprovideroperationemittednocanonicalprp": "此提供商操作未发出任何规范 PRP 事件。",
+      "productionpresentation": "生产呈现",
+      "visible5": "可见",
+      "surface": "呈现面",
+      "container": "容器",
+      "state": "状态",
+      "action6": "操作",
+      "reason7": "原因",
+      "reasoncode": "原因码",
+      "productionsurfacepreview": "生产呈现面预览",
+      "nopresentationsurfacewasemittedforthis": "没有为此操作发出呈现面。",
+      "resolvedfinalresponsedecision": "已确定的最终响应决策",
+      "semanticfinalizationlineage": "语义终结溯源",
+      "providernativetransportandmodelauthoredtool": "提供商原生传输与模型撰写的工具参数是两个不同层。PRP 先规范化模型载荷，再由服务端策略选择议题处置方式。",
+      "environmentconstraint": "environment_constraint",
+      "wasmodelauthoredtoolpayloaddatanot": "是模型撰写的工具负载数据，不是 Codex 应用服务端事件。它被规范化为非阻断的核实告警。",
+      "policy": "策略",
+      "decisionreason": "决策原因",
+      "normalizedcaveatsandignoredrequests": "规范化告警与被忽略的请求",
+      "selectacorrelatedoperationtoinspectits": "选择一个关联操作以查看其流水线。",
+      "norawframeswerecapturedforthis": "本次运行没有捕获任何原始帧。",
+      "exacttraceframe": "精确轨迹帧 #",
+      "revealexactframe8": "揭示精确帧",
+      "searchexactframe9": "搜索精确帧",
+      "selectaframefromthechronologicaltrace": "从按时间排列的轨迹中选择一帧。",
+      "frames10": "帧 ·",
+      "expires": "· 过期",
+      "downloadexacttrace": "下载精确轨迹",
+      "deletetrace": "删除轨迹"
+    }
+  },
+  "runtimetestcard": {
+    "general": {
+      "runtimetest": "运行时测试",
+      "testdetails": "测试详情"
+    }
+  },
+  "scheduleeditor": {
+    "general": {
+      "schedulefrequency": "计划频率",
+      "choosefrequency": "选择频率…",
+      "cronexpression": "Cron 表达式",
+      "fivefieldsminutehourdayofmonth": "五个字段：分 时 日 月 星期",
+      "at": "于",
+      "atminute": "于第",
+      "on": "在",
+      "onday": "在"
+    }
+  },
+  "scrolltobottom": {
+    "general": {
+      "scrolltobottom": "滚动到底部"
+    }
+  },
+  "secretbindingpicker": {
+    "general": {
+      "clear": "清除",
+      "loading": "正在加载…",
+      "anotherorganization": "另一个组织",
+      "version": "版本",
+      "latest": "最新",
+      "v": "v",
+      "createsecret": "创建密钥",
+      "boundto": "绑定到",
+      "ownedby": "属于",
+      "anotherorganization1": "另一个组织",
+      "thebindingkeepsworkingselectingasecret": "。绑定仍然有效；从此列表选择密钥会将其重新指向此处。",
+      "thepreviouslyselectedsecretwasdeletedpick": "先前选择的密钥已被删除。请另选一个或移除绑定。",
+      "couldnotloadthissecretreferences": "无法加载此密钥引用的详情。",
+      "checkingthissecretreference": "正在检查此密钥引用…",
+      "thepreviouslyselectedsecretisnolonger": "先前选择的密钥已不可用。请另选一个或移除绑定。",
+      "createnewsecret": "创建新密钥",
+      "name": "名称",
+      "value": "值",
+      "pastethesecretvalue": "粘贴密钥值",
+      "thevalueisstoredonceandnever": "该值只存储一次，此后不再显示。轮换即可替换。",
+      "description": "描述",
+      "optionalnotesnovalues": "可选备注（不含值）",
+      "cancel": "取消",
+      "createbind": "创建并绑定"
+    }
+  },
+  "setupwizard": {
+    "general": {
+      "saveexit": "保存并退出"
+    }
+  },
+  "sidebarprojects": {
+    "general": {
+      "projectpausedbybudget": "项目因预算暂停",
+      "leaving": "正在退出…",
+      "leaveproject": "退出项目",
+      "projects": "项目"
     }
   }
 }

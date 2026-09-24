@@ -21,6 +21,7 @@ import { FoldCurtain } from "./FoldCurtain";
 import { MarkdownBody } from "./MarkdownBody";
 import { MarkdownEditor, type MentionOption } from "./MarkdownEditor";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "@/i18n";
 
 /** Case-level body document key (PUT /cases/:id/documents/body). */
 const BODY_DOCUMENT_KEY = "body";
@@ -102,6 +103,7 @@ export function PipelineItemBodyDocument({
   onStartConversation,
   onAfterChange,
 }: PipelineItemBodyDocumentProps) {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const { pushToast } = useToastActions();
 
@@ -295,7 +297,7 @@ export function PipelineItemBodyDocument({
           <MarkdownEditor
             value={draftBody}
             onChange={setDraftBody}
-            placeholder="Write the item body in Markdown…"
+            placeholder={t("pipelineitembodydocument.general.writetheitembodyinmarkdown")}
             bordered={false}
             className="min-h-(--sz-220px) bg-transparent"
             contentClassName={bodyContentClassName}
@@ -306,15 +308,13 @@ export function PipelineItemBodyDocument({
         </div>
         <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
           <span className="text-(length:--text-micro) text-muted-foreground">
-            Saving creates rev {(doc?.latestRevisionNumber ?? 0) + 1} · ⌘↵ to save · Esc to cancel
-          </span>
+            {t("pipelineitembodydocument.general.savingcreatesrev")} {(doc?.latestRevisionNumber ?? 0) + 1} {t("pipelineitembodydocument.general.tosaveesctocancel")}</span>
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="sm" onClick={cancelEdit} disabled={saveMutation.isPending}>
-              Cancel
-            </Button>
+              {t("pipelineitembodydocument.general.cancel")}</Button>
             <Button size="sm" onClick={() => void handleSave()} disabled={saveMutation.isPending}>
               {saveMutation.isPending ? <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" /> : null}
-              {saveMutation.isPending ? "Saving…" : "Save"}
+              {saveMutation.isPending ? t("pipelineitembodydocument.general.saving") : t("pipelineitembodydocument.general.save")}
             </Button>
           </div>
         </div>
@@ -327,23 +327,20 @@ export function PipelineItemBodyDocument({
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div className="space-y-1">
               <p className="text-sm font-medium text-amber-800 dark:text-amber-200">
-                Viewing revision {selectedHistoricalRevision.revisionNumber}
+                {t("pipelineitembodydocument.general.viewingrevision")} {selectedHistoricalRevision.revisionNumber}
               </p>
               <p className="text-xs text-muted-foreground">
-                Historical preview. New comments are disabled while previewing a historical revision. Restoring it
-                creates a new latest revision and keeps history append-only.
-              </p>
+                {t("pipelineitembodydocument.general.historicalpreviewnewcommentsaredisabledwhile")}</p>
             </div>
             <div className="flex flex-wrap items-center gap-2">
               <Button variant="outline" size="sm" onClick={() => setSelectedRevisionId(null)}>
-                Return to latest
-              </Button>
+                {t("pipelineitembodydocument.general.returntolatest")}</Button>
               <Button
                 size="sm"
                 onClick={() => restoreMutation.mutate(selectedHistoricalRevision.id)}
                 disabled={restoreMutation.isPending}
               >
-                {restoreMutation.isPending ? "Restoring…" : "Restore this revision"}
+                {restoreMutation.isPending ? t("pipelineitembodydocument.general.restoring") : t("pipelineitembodydocument.general.restorethisrevision")}
               </Button>
             </div>
           </div>
@@ -407,7 +404,7 @@ export function PipelineItemBodyDocument({
 
   return (
     <section
-      aria-label="Item body"
+      aria-label={t("pipelineitembodydocument.general.itembody")}
       id="pipeline-item-body-document"
       data-testid="pipeline-item-body-document"
       className="rounded-lg border border-border p-3"
@@ -444,12 +441,11 @@ export function PipelineItemBodyDocument({
           />
         ) : null}
         actionsSlot={editing ? (
-          <span className="text-(length:--text-micro) font-medium text-amber-700 dark:text-amber-300">● Editing · unsaved</span>
+          <span className="text-(length:--text-micro) font-medium text-amber-700 dark:text-amber-300">{t("pipelineitembodydocument.general.editingunsaved")}</span>
         ) : (
           <Button variant="ghost" size="sm" className="h-auto gap-1.5 px-2 py-1 text-xs" onClick={beginEdit}>
             <FilePenLine className="h-3.5 w-3.5" />
-            Edit
-          </Button>
+            {t("pipelineitembodydocument.general.edit")}</Button>
         )}
       />
 

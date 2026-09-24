@@ -4,6 +4,7 @@ import { createPortal } from "react-dom";
 import { useSetupWizardSidebar } from "@/context/SetupWizardSidebarContext";
 import { useSidebar } from "@/context/SidebarContext";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@/i18n";
 
 export function SetupWizardSidebar() {
   const sidebar = useSetupWizardSidebar();
@@ -90,8 +91,9 @@ export function SetupWizardSidebarOutlet({ children }: { children: ReactNode }) 
 
 /** Each step owns one footer row; secondary actions stay with the primary action. */
 export function SetupWizardFooter({ onSaveExit, children, disabled = false }: { onSaveExit: () => void; children: ReactNode; disabled?: boolean }) {
+  const { t } = useTranslation();
   return <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
-    <Button type="button" variant="ghost" className="text-muted-foreground" onClick={onSaveExit} disabled={disabled}>Save &amp; exit</Button>
+    <Button type="button" variant="ghost" className="text-muted-foreground" onClick={onSaveExit} disabled={disabled}>{t("setupwizard.general.saveexit")}</Button>
     <div className="ml-auto flex flex-wrap items-center gap-2">{children}</div>
   </div>;
 }

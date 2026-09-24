@@ -10,6 +10,7 @@ import {
   type LivenessBannerTone,
   type LivenessRetryKind,
 } from "../lib/pipeline-liveness";
+import { useTranslation } from "@/i18n";
 
 interface TonePalette {
   section: string;
@@ -84,6 +85,7 @@ export function PipelineLivenessBanner({
   retryPending?: boolean;
   retryError?: string | null;
 }) {
+  const { t } = useTranslation();
   const view = derivePipelineLivenessBanner(liveness);
   if (!view) return null;
 
@@ -115,12 +117,11 @@ export function PipelineLivenessBanner({
           <p className="text-sm opacity-85">{view.body}</p>
           {view.permissionKey ? (
             <p className="text-sm opacity-85">
-              Required permission:{" "}
+              {t("pipelinelivenessbanner.general.requiredpermission")}{" "}
               <code className="rounded-sm bg-black/10 px-1 py-0.5 text-xs font-medium dark:bg-white/10">
                 {view.permissionKey}
               </code>{" "}
-              on the target pipeline.
-            </p>
+              {t("pipelinelivenessbanner.general.onthetargetpipeline")}</p>
           ) : null}
           {view.blockerLink || view.automationLink ? (
             <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
@@ -169,7 +170,7 @@ export function PipelineLivenessBanner({
           ) : (
             <RefreshCw className="mr-2 h-4 w-4" />
           )}
-          {retryPending ? "Retrying…" : view.retryLabel}
+          {retryPending ? t("pipelinelivenessbanner.general.retrying") : view.retryLabel}
         </Button>
       ) : null}
     </section>
