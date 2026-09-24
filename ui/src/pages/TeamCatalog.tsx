@@ -2201,8 +2201,8 @@ export function TeamCard({
       <div className="space-y-0.5">
         <h3 className="text-sm font-semibold leading-snug">{team.name}</h3>
         <p className="text-xs text-muted-foreground">
-          {team.counts.agents} {t("teamcatalog.general.agent")}t{team.counts.agents === 1 ? "" : t("teamcatalog.general.s14")} ·{" "}
-          {team.counts.projects} {t("teamcatalog.general.project")}t{team.counts.projects === 1 ? "" : t("teamcatalog.general.s15")} ·{" "}
+          {team.counts.agents} {t("teamcatalog.general.agent")}{team.counts.agents === 1 ? "" : t("teamcatalog.general.s14")} ·{" "}
+          {team.counts.projects} {t("teamcatalog.general.project")}{team.counts.projects === 1 ? "" : t("teamcatalog.general.s15")} ·{" "}
           {team.counts.routines} {t("teamcatalog.general.routine")}{team.counts.routines === 1 ? "" : t("teamcatalog.general.s16")}
         </p>
       </div>
