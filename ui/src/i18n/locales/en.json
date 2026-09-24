@@ -25,6 +25,11 @@
       "tryagain": "Try again"
     }
   },
+  "browse": {
+    "general": {
+      "selectanorganizationtomanageconnectors": "Select an organization to manage connectors.", "searchconnectors": "Search connectors…", "searchconnectors1": "Search connectors", "couldntloadeveryconnectorexistingaccounts": "Couldn’t load every connector. Existing accounts are shown where available.", "tryagain": "Try again", "loadingconnectors": "Loading connectors", "noconnectorsmatch": "No connectors match “", "connectorlist": "Connector list", "remove": "Remove", "this": "this", "connection": "connection?", "service": "service", "services": "services", "connection2": "connection", "connections": "connections", "thesavedcredentialsaredeletedandagents": "The saved credentials are deleted and agents lose access immediately. Connecting it again later requires a new sign-in or key.", "cancel": "Cancel", "removing": "Removing…", "removeconnection": "Remove connection", "connectedby": "Connected by", "retryaccess": "Retry access", "reconnect": "Reconnect", "finishsetup": "Finish setup", "permissions": "Permissions", "removeconnection3": "Remove connection", "connectyourowntool": "Connect your own tool", "addacustommcpserverorpaste": "Add a custom MCP server or paste an existing configuration.", "close": "Close", "connect": "Connect", "connectyourownmcpserver": "Connect your own MCP server", "pasteaconfig": "Paste a config", "removechildren": "This also removes {{count}} connected {{kind}} and takes agent access away immediately. The Composio key and child session credentials are deleted.", "removeotherconnections": "This connection's saved credentials are deleted and agents lose access through it immediately. They can still use {{provider}} through {{count}} other active {{kind}}.", "customserverdescription": "Enter the URL for a custom or self-hosted MCP server.", "pasteconfigdescription": "Paste an existing setup snippet and connect it."
+    }
+  },
   "common": {
     "actions": {
       "retry": "Retry",

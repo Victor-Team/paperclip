@@ -25,6 +25,11 @@
       "tryagain": "重试"
     }
   },
+  "browse": {
+    "general": {
+      "selectanorganizationtomanageconnectors": "请选择一个组织以管理连接器", "searchconnectors": "搜索连接器…", "searchconnectors1": "搜索连接器", "couldntloadeveryconnectorexistingaccounts": "无法加载所有连接器。可用时仍会显示已有账户。", "tryagain": "重试", "loadingconnectors": "正在加载连接器", "noconnectorsmatch": "没有连接器匹配“", "connectorlist": "连接器列表", "remove": "移除", "this": "此", "connection": "连接？", "service": "服务", "services": "服务", "connection2": "连接", "connections": "连接", "thesavedcredentialsaredeletedandagents": "保存的凭据将被删除，智能体会立即失去访问权限。以后重新连接需要再次登录或提供密钥。", "cancel": "取消", "removing": "正在移除…", "removeconnection": "移除连接", "connectedby": "连接人", "retryaccess": "重试访问", "reconnect": "重新连接", "finishsetup": "完成设置", "permissions": "权限", "removeconnection3": "移除连接", "connectyourowntool": "连接自己的工具", "addacustommcpserverorpaste": "添加自定义 MCP 服务器或粘贴现有配置。", "close": "关闭", "connect": "连接", "connectyourownmcpserver": "连接自己的 MCP 服务器", "pasteaconfig": "粘贴配置", "removechildren": "这还会移除 {{count}} 个已连接的{{kind}}，并立即撤销智能体访问权限。Composio 密钥和子会话凭据也会被删除。", "removeotherconnections": "此连接保存的凭据将被删除，智能体会立即失去访问权限。它们仍可通过 {{count}} 个其他活跃{{kind}}使用 {{provider}}。", "customserverdescription": "输入自定义或自托管 MCP 服务器的 URL。", "pasteconfigdescription": "粘贴现有设置片段并连接。"
+    }
+  },
   "common": {
     "actions": {
       "retry": "重试",

@@ -79,6 +79,7 @@ import {
   connectionOwnerProfile,
   type ConnectionOwnerProfile,
 } from "./connection-owner";
+import { useTranslation } from "@/i18n";
 
 type ConnectorRowModel = {
   key: string;
@@ -267,6 +268,7 @@ function accountActionHref(
  * account; unconnected providers retain the same catalog setup flows.
  */
 export function Browse({ renderAccountDetails = (connection) => connection.connectionPurpose === "ai" ? <ManagedAiConnectionRow connection={connection} /> : null }: { renderAccountDetails?: (connection: ToolConnection) => ReactNode } = {}) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const preselectedChatAgentId =
     typeof window === "undefined"
@@ -604,8 +606,7 @@ export function Browse({ renderAccountDetails = (connection) => connection.conne
   if (!selectedCompanyId) {
     return (
       <div className="p-6 text-sm text-muted-foreground">
-        Select an organization to manage connectors.
-      </div>
+        {t("browse.general.selectanorganizationtomanageconnectors")}</div>
     );
   }
 
@@ -630,8 +631,8 @@ export function Browse({ renderAccountDetails = (connection) => connection.conne
             type="search"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search connectors…"
-            aria-label="Search connectors"
+            placeholder={t("browse.general.searchconnectors")}
+            aria-label={t("browse.general.searchconnectors1")}
             className="pl-9"
           />
         </div>
@@ -644,9 +645,7 @@ export function Browse({ renderAccountDetails = (connection) => connection.conne
         >
           <AlertTriangle className="h-4 w-4 shrink-0" />
           <p className="min-w-0 flex-1">
-            Couldn’t load every connector. Existing accounts are shown where
-            available.
-          </p>
+            {t("browse.general.couldntloadeveryconnectorexistingaccounts")}</p>
           <Button
             type="button"
             size="sm"
@@ -658,13 +657,12 @@ export function Browse({ renderAccountDetails = (connection) => connection.conne
               if (chatConnectorsEnabled) void chatEndpointsQuery.refetch();
             }}
           >
-            Try again
-          </Button>
+            {t("browse.general.tryagain")}</Button>
         </div>
       ) : null}
 
       {loading ? (
-        <div className="space-y-3" aria-label="Loading connectors">
+        <div className="space-y-3" aria-label={t("browse.general.loadingconnectors")}>
           {Array.from({ length: 6 }).map((_, index) => (
             <Skeleton key={index} className="h-24 w-full rounded-xl" />
           ))}
@@ -672,10 +670,10 @@ export function Browse({ renderAccountDetails = (connection) => connection.conne
       ) : nothingMatches ? (
         <p className="flex items-center gap-2 rounded-xl border border-dashed border-border bg-card px-4 py-6 text-sm text-muted-foreground">
           <Link2 className="h-4 w-4" />
-          No connectors match “{query.trim()}”.
+          {t("browse.general.noconnectorsmatch")}{query.trim()}”.
         </p>
       ) : (
-        <div className="space-y-3" role="list" aria-label="Connector list">
+        <div className="space-y-3" role="list" aria-label={t("browse.general.connectorlist")}>
           {visibleRows.map((row) => (
             <ConnectorCard
               renderAccountDetails={renderAccountDetails}
@@ -704,21 +702,19 @@ export function Browse({ renderAccountDetails = (connection) => connection.conne
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              Remove {connectionToRemove?.accountName ?? "this"} connection?
-            </AlertDialogTitle>
+              {t("browse.general.remove")} {connectionToRemove?.accountName ?? t("browse.general.this")} {t("browse.general.connection")}</AlertDialogTitle>
             <AlertDialogDescription>
               {connectionToRemove && connectionToRemove.childConnectionCount > 0
-                ? `This also removes ${connectionToRemove.childConnectionCount} connected ${connectionToRemove.childConnectionCount === 1 ? "service" : "services"} and takes agent access away immediately. The Composio key and child session credentials are deleted.`
+                ? t("browse.general.removechildren", { count: connectionToRemove.childConnectionCount, kind: connectionToRemove.childConnectionCount === 1 ? t("browse.general.service") : t("browse.general.services") })
                 : connectionToRemove &&
                     connectionToRemove.remainingConnectionCount > 0
-                  ? `This connection's saved credentials are deleted and agents lose access through it immediately. They can still use ${connectionToRemove.providerName} through ${connectionToRemove.remainingConnectionCount} other active ${connectionToRemove.remainingConnectionCount === 1 ? "connection" : "connections"}.`
-                  : "The saved credentials are deleted and agents lose access immediately. Connecting it again later requires a new sign-in or key."}
+                  ? t("browse.general.removeotherconnections", { provider: connectionToRemove.providerName, count: connectionToRemove.remainingConnectionCount, kind: connectionToRemove.remainingConnectionCount === 1 ? t("browse.general.connection2") : t("browse.general.connections") })
+                  : t("browse.general.thesavedcredentialsaredeletedandagents")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel disabled={removeConnection.isPending}>
-              Cancel
-            </AlertDialogCancel>
+              {t("browse.general.cancel")}</AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               disabled={!connectionToRemove || removeConnection.isPending}
@@ -733,7 +729,7 @@ export function Browse({ renderAccountDetails = (connection) => connection.conne
               ) : (
                 <Trash2 />
               )}
-              {removeConnection.isPending ? "Removing…" : "Remove connection"}
+              {removeConnection.isPending ? t("browse.general.removing") : t("browse.general.removeconnection")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -905,6 +901,7 @@ function ConnectionAccountRow({
   onNavigate: (href: string) => void;
   onRemove: () => void;
 }) {
+  const { t } = useTranslation();
   const state = connectionState(connection);
   const actionHref = accountActionHref(row, connection);
   const accountName = connectionDisplayNameForOwner(
@@ -943,7 +940,7 @@ function ConnectionAccountRow({
 
       <div className="flex flex-wrap items-center gap-2 sm:justify-end">
         <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-          <span>Connected by</span>
+          <span>{t("browse.general.connectedby")}</span>
           <ConnectionOwnerIdentity owner={owner} />
         </div>
         {state.kind === "attention" || state.kind === "draft" ? (
@@ -955,9 +952,9 @@ function ConnectionAccountRow({
           >
             {state.kind === "attention"
               ? connection.requiresReauthorization === false
-                ? "Retry access"
-                : "Reconnect"
-              : "Finish setup"}
+                ? t("browse.general.retryaccess")
+                : t("browse.general.reconnect")
+              : t("browse.general.finishsetup")}
           </Button>
         ) : null}
         <DropdownMenu>
@@ -975,13 +972,11 @@ function ConnectionAccountRow({
             <DropdownMenuItem
               onSelect={() => onNavigate(`/apps/${connection.id}/permissions`)}
             >
-              Permissions
-            </DropdownMenuItem>
+              {t("browse.general.permissions")}</DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem variant="destructive" onSelect={onRemove}>
               <Trash2 />
-              Remove connection
-            </DropdownMenuItem>
+              {t("browse.general.removeconnection3")}</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
@@ -1033,6 +1028,7 @@ function CustomConnectorCard({
 }: {
   onNavigate: (href: string) => void;
 }) {
+  const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
 
   return (
@@ -1047,11 +1043,9 @@ function CustomConnectorCard({
         </div>
         <div className="min-w-0 flex-1">
           <h2 className="text-sm font-semibold text-foreground">
-            Connect your own tool
-          </h2>
+            {t("browse.general.connectyourowntool")}</h2>
           <p className="mt-0.5 text-xs text-muted-foreground">
-            Add a custom MCP server or paste an existing configuration.
-          </p>
+            {t("browse.general.addacustommcpserverorpaste")}</p>
         </div>
         <Button
           type="button"
@@ -1061,7 +1055,7 @@ function CustomConnectorCard({
           aria-controls="custom-connector-options"
           onClick={() => setExpanded((open) => !open)}
         >
-          {expanded ? "Close" : "Connect"}
+          {expanded ? t("browse.general.close") : t("browse.general.connect")}
         </Button>
       </div>
 
@@ -1072,14 +1066,14 @@ function CustomConnectorCard({
         >
           <CustomConnectorOption
             icon={ServerCog}
-            title="Connect your own MCP server"
-            description="Enter the URL for a custom or self-hosted MCP server."
+            title={t("browse.general.connectyourownmcpserver")}
+            description={t("browse.general.customserverdescription")}
             onClick={() => onNavigate("/apps/byo")}
           />
           <CustomConnectorOption
             icon={ClipboardPaste}
-            title="Paste a config"
-            description="Paste an existing setup snippet and connect it."
+            title={t("browse.general.pasteaconfig")}
+            description={t("browse.general.pasteconfigdescription")}
             onClick={() => onNavigate("/apps/advanced/paste-config")}
           />
         </div>
