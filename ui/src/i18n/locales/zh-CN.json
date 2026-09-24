@@ -7725,5 +7725,550 @@
       "somethingwentwrongwhilerunningtheapp": "应用运行时出现问题，刷新通常可以解决。",
       "reloadpage": "刷新页面"
     }
+  },
+  "cloudaccessgate": {
+    "general": {
+      "noorganizationaccess": "无组织访问权限",
+      "thisaccountissignedinbutit": "该账号已登录，但在此 Paperclip 实例上\n          没有有效的组织成员身份或实例管理员权限。",
+      "useanorganizationinviteorsignin": "请使用组织邀请，或改用已属于该组织的账号登录。",
+      "failedtoloadappstate": "加载应用状态失败"
+    }
+  },
+  "codexsubscriptionpanel": {
+    "general": {
+      "codexsubscription": "Codex 订阅",
+      "livecodexquotawindows": "实时 Codex 配额窗口。",
+      "accountwindows": "账号窗口",
+      "modelwindows": "模型窗口",
+      "used": "% 已用"
+    }
+  },
+  "commandpalette": {
+    "general": {
+      "searchtasksagentsprojects": "搜索任务、智能体、项目…",
+      "noquicktaskmatchespress": "没有匹配的快捷任务。按",
+      "to": "以",
+      "searchall": "全局搜索",
+      "orkeeptypingtorefine": "或继续输入以细化结果。",
+      "noresultsfound": "未找到结果。",
+      "searchallfor": "全局搜索",
+      "ldquo": "&ldquo;",
+      "rdquo": "&rdquo;",
+      "openfullsearch": "打开完整搜索",
+      "createnewtask": "创建新任务",
+      "openfileinthisissue": "在此工单中打开文件…",
+      "gf": "g f",
+      "createnewagent": "创建新智能体",
+      "createnewproject": "创建新项目",
+      "dashboard": "仪表盘",
+      "inbox": "收件箱",
+      "tasks": "任务",
+      "projects": "项目",
+      "goals": "目标",
+      "agents": "智能体",
+      "costs": "费用",
+      "activity": "动态"
+    }
+  },
+  "commentattributionchip": {
+    "general": {
+      "for": "代表"
+    }
+  },
+  "commentthread": {
+    "general": {
+      "copycommentasmarkdown": "以 Markdown 格式复制评论",
+      "queued": "已排队",
+      "followup": "追加",
+      "queueing": "排队中…",
+      "sending": "发送中…",
+      "commentdeleted": "评论已删除",
+      "run": "运行",
+      "run1": "运行",
+      "run2": "运行",
+      "run3": "运行",
+      "status": "状态",
+      "assignee": "受派人",
+      "workspace": "工作区",
+      "notimelineentriesyet": "暂无时间线条目。",
+      "run4": "运行",
+      "environment": "环境",
+      "provider": "供应商",
+      "lease": "租约",
+      "failure": "失败：",
+      "timeline": "时间线 (",
+      "queuedcomments": "已排队评论 (",
+      "interrupting": "中断中…",
+      "interrupt": "中断",
+      "leaveacomment": "发表评论…",
+      "attachimage": "附加图片",
+      "responsible": "负责人",
+      "responsible5": "负责人",
+      "posting": "发布中…",
+      "comment": "评论"
+    }
+  },
+  "companysettingssidebarproduction": {
+    "general": {
+      "company": "公司",
+      "general": "通用",
+      "profile": "资料",
+      "members": "成员",
+      "invites": "邀请",
+      "secrets": "密钥",
+      "environments": "环境",
+      "access": "访问权限",
+      "heartbeats": "心跳",
+      "export": "导出",
+      "import": "导入",
+      "experimental": "实验性",
+      "plugins": "插件",
+      "adapters": "适配器"
+    }
+  },
+  "configurebuiltinagentmodal": {
+    "general": {
+      "setupthe": "设置",
+      "creates": "将创建",
+      "inyourrosterbadged": "加入你的名册，并标记为",
+      "builtin": "内置",
+      "organizationsthatrequirehireapprovalwillqueue": "。要求招聘审批的组织会将此提交给\n            董事会排队。",
+      "adaptertype": "适配器类型",
+      "thisadapterneedscommandorendpointfields": "该适配器在运行前需要填写命令或端点字段。请先创建\n              这个内置条目，再到完整的智能体配置中补齐这些字段。",
+      "monthlybudgetoptional": "月度预算（可选）",
+      "notnow": "暂不",
+      "configuring": "配置中…"
+    }
+  },
+  "contextualsidebarframe": {
+    "general": {
+      "organization": "组织"
+    }
+  },
+  "decisioncard": {
+    "general": {
+      "destructive": "破坏性",
+      "proposedby": "提议人",
+      "anagent": "某个智能体",
+      "whilerunning": "运行中",
+      "appliesto": " · 作用于 ",
+      "viewrun": "查看运行",
+      "changedsincethiswasproposed": "自提议以来已发生变化",
+      "optionsthatrequireanunchangedtargetare": "要求目标未发生变化的选项已在下方禁用。",
+      "blockedstale": "已阻塞 · 已过期",
+      "thiscancelsanentireissuetree": "此操作会取消整棵工单树",
+      "willbecancelled": "将被取消：",
+      "thisissueandeverysubissuebeneath": "此工单及其下所有子工单都将被取消。",
+      "type": "输入",
+      "toconfirm": "以确认。",
+      "typetheissueidentifiertoconfirm": "输入工单标识以确认",
+      "cancel": "取消",
+      "notnow": "暂不？",
+      "dismissnoeffects": "忽略——不产生任何效果",
+      "thedecisionwindowclosed": "决策窗口已关闭",
+      "atargetissuewascancelledbeforethis": "在此决策做出前，某个目标工单已被取消。",
+      "alltargetissueswerecompletedbeforethis": "在此决策做出前，所有目标工单均已完成。",
+      "noresponsebeforetheexpirydeadline": "在到期时限前未收到回应。",
+      "thisdecisionwaswithdrawnbytheproposer": "该决策已被提议人在收到回应前撤回。",
+      "dismissednoeffectswererun": "已忽略——未执行任何效果。",
+      "someeffectsmayalreadyhavebeenapplied": "部分效果可能已经生效。请在要求提议人重新提议前先检查结果。"
+    }
+  },
+  "decisiondatechips": {
+    "general": {
+      "custom": "自定义",
+      "from": "从",
+      "to": "至",
+      "clear": "清除"
+    }
+  },
+  "decisionqueuerail": {
+    "general": {
+      "decisionqueues": "决策队列",
+      "all": "全部",
+      "recentactivity": "最近动态"
+    }
+  },
+  "decisionresolver": {
+    "general": {
+      "loadingdecision": "正在加载决策…",
+      "thisdecisionisnolongeravailableit": "该决策已不可用——可能已在别处被处理。"
+    }
+  },
+  "decisionshelf": {
+    "general": {
+      "idle": "空闲",
+      "day": "天",
+      "days": "天",
+      "kept": "已保留",
+      "keepondesk": "保留在待办上"
+    }
+  },
+  "decisiontriagestrip": {
+    "general": {
+      "whentodecide": "何时决策",
+      "whentodecide1": "何时决策",
+      "pickdate": "选择日期",
+      "queues": "队列",
+      "snoozeduntil": "已延后至",
+      "clear": "清除",
+      "snooze": "延后",
+      "queue": "队列",
+      "newqueuename": "新队列名称…",
+      "cancel": "取消",
+      "create": "创建",
+      "nootherqueuesyet": "暂无其他队列。",
+      "newqueue": "新队列…",
+      "askagentforrecommendation": "请智能体给出建议"
+    }
+  },
+  "decisionstoolbar": {
+    "general": {
+      "decision": "个决策",
+      "decisions": "个决策",
+      "filter": "筛选",
+      "filter1": "筛选",
+      "group": "分组",
+      "group2": "分组",
+      "sort": "排序",
+      "sort3": "排序",
+      "filter4": "筛选",
+      "clear": "清除",
+      "type": "类型",
+      "severity": "严重程度",
+      "project": "项目",
+      "noproject": "无项目",
+      "workspace": "工作区",
+      "noworkspace": "无工作区"
+    }
+  },
+  "devrestartbanner": {
+    "general": {
+      "restartrequired": "需要重启",
+      "autorestarton": "自动重启已开启",
+      "changed": "已变更：",
+      "pendingmigrations": "待执行迁移：",
+      "waitingfor": "正在等待",
+      "tofinish": "完成",
+      "autorestartwilltriggerwhentheinstance": "实例空闲时会自动触发重启",
+      "restart": "重启",
+      "pnpmdevonce": "pnpm dev:once",
+      "aftertheactiveworkissafeto": "待当前工作可安全中断后",
+      "restartrequested": "已请求重启",
+      "restartnow": "立即重启"
+    }
+  },
+  "documentannotationlayer": {
+    "general": {
+      "openannotationthread": "打开批注讨论",
+      "anchormovedneedsreview": "锚点已移动——需要复核",
+      "selectionactions": "选区操作",
+      "comment": "评论"
+    }
+  },
+  "documentannotationpanel": {
+    "general": {
+      "commentson": "评论对象：",
+      "revision": "版本",
+      "rev": "版本",
+      "closeannotationpanel": "关闭批注面板",
+      "writeacomment": "写下评论…",
+      "cancel": "取消",
+      "posting": "发布中…",
+      "comment": "评论",
+      "reply": "回复…",
+      "reopen": "重新打开",
+      "resolve": "标记已解决",
+      "sending": "发送中…",
+      "reply1": "回复",
+      "moreactions": "更多操作",
+      "morethreadactions": "更多讨论操作",
+      "copylink": "复制链接",
+      "comment2": "条评论",
+      "s": "s",
+      "agent": "· 智能体"
+    }
+  },
+  "documentannotationpopover": {
+    "general": {
+      "writeacomment": "写下评论…",
+      "cancel": "取消",
+      "posting": "发布中…",
+      "comment": "评论"
+    }
+  },
+  "documentdiffmodal": {
+    "general": {
+      "diff": "差异 —",
+      "old": "旧版",
+      "selectrevision": "选择版本",
+      "new": "新版",
+      "selectrevision1": "选择版本",
+      "loadingrevisions": "正在加载版本…",
+      "selecttworevisionstocompare": "请选择两个版本进行比较。",
+      "bothsidesarethesamerevision": "两侧是同一个版本。",
+      "old2": "旧版",
+      "new3": "新版",
+      "content": "内容"
+    }
+  },
+  "documentframeheader": {
+    "general": {
+      "rev": "版本",
+      "revisionhistory": "版本历史",
+      "loadingrevisions": "正在加载版本…",
+      "rev1": "版本",
+      "current": "当前",
+      "norevisionsyet": "暂无版本",
+      "updated": "已更新"
+    }
+  },
+  "emailconnectionaccess": {
+    "general": {
+      "loadingaccess": "正在加载访问权限…",
+      "connectionaccesscouldnotbeloaded": "无法加载连接访问权限。",
+      "whichhumanscanusethiscredential": "哪些真人可以使用此凭据？",
+      "whichagentscanusethisconnection": "哪些智能体可以使用此连接？",
+      "removinganassignedagentstopsreceivingand": "移除已分配的智能体将使其收件箱停止收发邮件。"
+    }
+  },
+  "emailmessagecard": {
+    "general": {
+      "emailreceived": "已收到邮件",
+      "emailsent": "邮件已发送",
+      "external": "外部",
+      "to": "收件人：",
+      "cc": "抄送：",
+      "emaildetails": "邮件详情",
+      "bcc": "密送：",
+      "messageid": "消息 ID：",
+      "delivered": "已送达",
+      "deliveryfailed": "投递失败",
+      "deliveryuncertain": "投递结果不确定",
+      "queued": "已排队",
+      "sent": "已发送",
+      "attachmentscouldnotbeloaded": "无法加载附件。"
+    }
+  },
+  "emailsafetynotice": {
+    "general": {
+      "anyonecanemailanunrestrictedinbox": "任何人都可以给未限制的收件箱发邮件",
+      "incomingemailcancreatetasksandtrigger": "收到的邮件可能会创建任务并触发智能体工作。请在\n            AgentMail 中设置允许名单，限制谁能联系该收件箱。",
+      "paperclipdoesnotverifysenderrestrictionsagentmail": "Paperclip 不会校验发件人限制。AgentMail 对新邮件与\n            回复分别设有独立的名单，请两个都检查。",
+      "openagentmail": "打开 AgentMail ↗",
+      "setupallowlists": "设置允许名单 ↗"
+    }
+  },
+  "emailtaskactivity": {
+    "general": {
+      "emailsendintent": "发送邮件意图",
+      "emailreply": "邮件回复",
+      "to": "收件人：",
+      "email": "邮件",
+      "resolvedeliveryaftercheckingagentmail": "在 AgentMail 中核实后再解决投递问题",
+      "confirmtheoutcomeinagentmailbeforeresolving": "解决前请先在 AgentMail 中确认结果。此操作\n              不会重新发送。",
+      "providermessageid": "供应商消息 ID",
+      "providermessageid1": "供应商消息 ID",
+      "confirmsent": "确认已发送",
+      "confirmnotsent": "确认未发送"
+    }
+  },
+  "enforcementbanner": {
+    "general": {
+      "governedtoolcall": "个受管控工具调用",
+      "was": " 在过去一小时内",
+      "swere": " 在过去一小时内",
+      "deniedorfailedinthelasthour": "被拒绝或失败。访问权限由工具网关\n            在服务端强制执行——请打开受影响的连接器查看被阻止的内容及原因。",
+      "toolaccessisenforcedserversideby": "工具访问权限由工具网关在服务端强制执行。这些界面用于配置和观察该\n            强制执行，并不能替代它。智能体只能看到并调用其档案与策略\n            允许的工具；其余工具默认一律拒绝。"
+    }
+  },
+  "executionblockernotice": {
+    "general": {
+      "taskrecovery": "任务恢复",
+      "automaticrecoveryofthistaskstopped": "该任务的自动恢复已停止。",
+      "recoveryneeded": "需要恢复。",
+      "inspectrun": "检查运行",
+      "retrying": "重试中…",
+      "retry": "重试"
+    }
+  },
+  "executionparticipantpicker": {
+    "general": {
+      "no": "无",
+      "assigntome": "指派给我",
+      "requester": "请求人"
+    }
+  },
+  "executionworkspaceclosedialog": {
+    "general": {
+      "archive": "归档",
+      "andcleanupanyownedworkspaceartifacts": "并清理其拥有的工作区\n            产出物。Paperclip 会保留工作区记录和任务历史，但会将其从活跃工作区视图中移除。",
+      "checkingwhetherthisworkspaceissafeto": "正在检查此工作区是否可以安全关闭…",
+      "failedtoinspectworkspaceclosereadiness": "检查工作区关闭就绪状态失败。",
+      "closeisblocked": "关闭已被阻止",
+      "closeisallowedwithwarnings": "允许关闭，但有警告",
+      "closeisready": "可以关闭",
+      "thisisasharedworkspacesessionarchiving": "这是一个共享工作区会话。归档它只会移除此会话记录，底层项目工作区仍会保留。",
+      "thisexecutionworkspacehasitsowncheckout": "该执行工作区拥有独立的检出路径，可以单独归档。",
+      "thisexecutionworkspacecurrentlypointsatthe": "该执行工作区当前指向项目的主工作区路径。",
+      "thisworkspaceisdisposableandcanbe": "该工作区可随时废弃并归档。",
+      "blockingtasks": "阻塞任务",
+      "blockingreasons": "阻塞原因",
+      "warnings": "警告",
+      "gitstatus": "Git 状态",
+      "branch": "分支",
+      "unknown": "未知",
+      "baseref": "基准引用",
+      "notset": "未设置",
+      "mergedintobase": "已合并到基准",
+      "unknown1": "未知",
+      "yes": "是",
+      "no": "否",
+      "aheadbehind": "领先 / 落后",
+      "dirtytrackedfiles": "有改动的已跟踪文件",
+      "untrackedfiles": "未跟踪文件",
+      "otherlinkedtasks": "其他关联任务",
+      "attachedruntimeservices": "已挂接的运行时服务",
+      "cleanupactions": "清理操作",
+      "cleanuppreviouslyfailedonthisworkspaceretrying": "此工作区之前的清理曾失败。重试关闭会重新执行清理流程，\n                若成功则更新工作区状态。",
+      "thisworkspaceisalreadyarchived": "该工作区已归档。",
+      "reporoot": "仓库根目录：",
+      "workspacepath": "工作区路径：",
+      "lastchecked": "上次检查",
+      "cancel": "取消"
+    }
+  },
+  "feedcard": {
+    "general": {
+      "review": "审核 →"
+    }
+  },
+  "filetree": {
+    "general": {
+      "error": "错误",
+      "retry": "重试",
+      "nofiles": "没有文件",
+      "fileswillappearherewhentheyare": "文件在可用后会显示在这里。"
+    }
+  },
+  "fileviewersheet": {
+    "general": {
+      "line": "行",
+      "loadingfiledetails": "正在加载文件详情",
+      "imagepreviewunavailable": "图片预览不可用",
+      "videopreviewunavailable": "视频预览不可用",
+      "previewnotsupportedforthisfiletype": "该文件类型不支持预览",
+      "markdownpreviewmode": "Markdown 预览模式",
+      "showrenderedmarkdown": "显示渲染后的 Markdown",
+      "renderedmarkdown": "渲染后的 Markdown",
+      "showrawmarkdown": "显示原始 Markdown",
+      "rawmarkdown": "原始 Markdown",
+      "loadingfilepreview": "正在加载文件预览",
+      "loadingfilepreview1": "正在加载文件预览…",
+      "backtofiles": "返回文件列表",
+      "backtofiles2": "返回文件列表",
+      "downloadfile": "下载文件",
+      "downloadfile3": "下载文件",
+      "closefileviewer": "关闭文件查看器",
+      "close": "关闭",
+      "resizefiletree": "调整文件树大小",
+      "filenotfound": "未找到文件",
+      "tryprojectworkspace": "尝试项目工作区",
+      "retry": "重试",
+      "noworkspaceavailable": "没有可用的工作区",
+      "retry4": "重试",
+      "remoteworkspacepreviewcomingsoon": "远程工作区预览即将推出",
+      "retry5": "重试"
+    }
+  },
+  "filterbar": {
+    "general": {
+      "clearall": "清除全部"
+    }
+  },
+  "financebillercard": {
+    "general": {
+      "event": "个事件",
+      "s": "s",
+      "across": "跨",
+      "kind": "个类型",
+      "s1": "s",
+      "net": "净额",
+      "debits": "借方",
+      "credits": "贷方",
+      "estimated": "估算"
+    }
+  },
+  "financekindcard": {
+    "general": {
+      "financialeventmix": "财务事件构成",
+      "accountlevelchargesgroupedbyeventkind": "按事件类型分组的账户级费用。",
+      "nofinanceeventsinthisperiod": "该周期内没有财务事件。",
+      "event": "个事件",
+      "biller": "计费方",
+      "debits": "借方"
+    }
+  },
+  "financetimelinecard": {
+    "general": {
+      "recentfinancialevents": "最近的财务事件",
+      "topupsfeescreditscommitmentsandother": "充值、手续费、贷记、承诺及其他非请求类费用。",
+      "invoice": "发票",
+      "region": "区域",
+      "tier": "档位",
+      "estimated": "估算"
+    }
+  },
+  "frontmatterpanel": {
+    "general": {
+      "frontmatter": "Frontmatter",
+      "none": "无",
+      "fields": "字段",
+      "fields1": "字段",
+      "switchtoyamltoeditthisfrontmatter": "请切换到 YAML 模式编辑。此 frontmatter 使用了表单无法安全\n                      往返处理的 YAML 特性（例如注释、锚点或自定义顺序）。在此处编辑\n                      可保持字节级一致。",
+      "addfrontmatter": "添加 frontmatter",
+      "issue": "个工单",
+      "issues": "个工单",
+      "thisfilehasnofrontmatter": "此文件没有 frontmatter。",
+      "name": "名称",
+      "description": "描述",
+      "allowedtools": "allowed-tools",
+      "expectedalisteditinyaml": "此处应为列表——请在 YAML 中编辑。",
+      "addatool": "添加工具…",
+      "metadata": "元数据",
+      "complexvalueeditinyaml": "复杂值——请在 YAML 中编辑。",
+      "complexvalueeditinyaml2": "复杂值——请在 YAML 中编辑。",
+      "key": "键",
+      "value": "值",
+      "addfield": "添加字段",
+      "addtool": "添加工具",
+      "editingrawyamltopreserveformattingthe": "正在编辑原始 YAML，以保留表单无法还原的格式。",
+      "frontmatteryaml": "Frontmatter YAML",
+      "rawyamlisthesourceoftruth": "此模式下以原始 YAML 为准。"
+    }
+  },
+  "githubagenttrustwarning": {
+    "general": {
+      "isnotconfiguredforlowtrustreview": "未针对低信任审查进行配置",
+      "githubcommentsandpullrequestscancontain": "GitHub 评论和拉取请求可能包含恶意指令。我们\n        建议使用具有限定工作边界和隔离沙箱运行时的低信任智能体。",
+      "continuingkeepsthisagentscurrentpermissions": "继续将保留该智能体当前的权限。受限访客\n        档案不会替代该智能体的信任与运行时设置。",
+      "learnaboutlowtrustagents": "了解低信任智能体"
+    }
+  },
+  "goalproperties": {
+    "general": {
+      "status": "状态",
+      "level": "层级",
+      "owner": "负责人",
+      "none": "无",
+      "parentgoal": "父目标",
+      "created": "创建时间",
+      "updated": "更新时间"
+    }
+  },
+  "goaltree": {
+    "general": {
+      "nogoals": "暂无目标。"
+    }
   }
 }

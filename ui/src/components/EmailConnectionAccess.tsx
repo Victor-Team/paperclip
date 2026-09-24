@@ -4,6 +4,7 @@ import { toolsApi } from "@/api/tools";
 import { queryKeys } from "@/lib/queryKeys";
 import { AgentMultiSelect } from "@/components/AgentMultiSelect";
 import { RadioCardGroup } from "@/components/ui/radio-card";
+import { useTranslation } from "@/i18n";
 
 export function EmailConnectionAccess({
   companyId,
@@ -14,6 +15,7 @@ export function EmailConnectionAccess({
   connectionId: string;
   agents: Agent[];
 }) {
+  const { t } = useTranslation();
   const cache = useQueryClient();
   const grants = useQuery({
     queryKey: queryKeys.tools.connectionGrants(connectionId),
@@ -34,12 +36,11 @@ export function EmailConnectionAccess({
     },
   });
   if (grants.isLoading || installs.isLoading)
-    return <p className="text-sm text-muted-foreground">Loading access…</p>;
+    return <p className="text-sm text-muted-foreground">{t("emailconnectionaccess.general.loadingaccess")}</p>;
   if (grants.error || installs.error)
     return (
       <p role="alert" className="text-sm text-destructive">
-        Connection access could not be loaded.
-      </p>
+        {t("emailconnectionaccess.general.connectionaccesscouldnotbeloaded")}</p>
     );
   const active = grants.data?.grants.filter((g) => g.status === "active") ?? [];
   const everyone = active.some((g) => g.kind === "organization");
@@ -63,14 +64,12 @@ export function EmailConnectionAccess({
     <div className="space-y-8">
       <section className="space-y-3">
         <h2 className="text-sm font-semibold">
-          Which humans can use this credential?
-        </h2>
+          {t("emailconnectionaccess.general.whichhumanscanusethiscredential")}</h2>
         <p className="text-sm">{humanLabel}</p>
       </section>
       <section className="space-y-4">
         <h2 className="text-sm font-semibold">
-          Which agents can use this connection?
-        </h2>
+          {t("emailconnectionaccess.general.whichagentscanusethisconnection")}</h2>
         <RadioCardGroup
           ariaLabel="Which agents can use this connection"
           value={allAgents ? "all" : "selected"}
@@ -107,8 +106,7 @@ export function EmailConnectionAccess({
           />
         )}
         <p className="text-xs text-muted-foreground">
-          Removing an assigned agent stops receiving and sending from its inbox.
-        </p>
+          {t("emailconnectionaccess.general.removinganassignedagentstopsreceivingand")}</p>
         {save.error && (
           <p role="alert" className="text-sm text-destructive">
             {save.error.message}

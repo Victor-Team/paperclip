@@ -22,6 +22,7 @@ import {
   builtInAgentsApi,
   type BuiltInAgentState,
 } from "@/api/builtInAgents";
+import { useTranslation } from "@/i18n";
 
 /** Adapters whose config completeness is keyed on a non-empty `model`. */
 function isModelBasedAdapter(adapterType: string): boolean {
@@ -60,6 +61,7 @@ export function ConfigureBuiltInAgentModal({
   onOpenChange,
   onConfigured,
 }: ConfigureBuiltInAgentModalProps) {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const { definition } = state;
 
@@ -151,18 +153,16 @@ export function ConfigureBuiltInAgentModal({
     <Dialog open={open} onOpenChange={(next) => (provision.isPending ? undefined : onOpenChange(next))}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Set up the {definition.displayName}</DialogTitle>
+          <DialogTitle>{t("configurebuiltinagentmodal.general.setupthe")} {definition.displayName}</DialogTitle>
           <DialogDescription>{definition.shortPurpose}</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
           <InlineBanner tone="info" compact>
-            Creates <strong>{definition.displayName}</strong> in your roster, badged{" "}
-            <strong>Built-in</strong>. Organizations that require hire approval will queue this for the
-            board.
-          </InlineBanner>
+            {t("configurebuiltinagentmodal.general.creates")}<strong>{definition.displayName}</strong> {t("configurebuiltinagentmodal.general.inyourrosterbadged")}{" "}
+            <strong>{t("configurebuiltinagentmodal.general.builtin")}</strong>{t("configurebuiltinagentmodal.general.organizationsthatrequirehireapprovalwillqueue")}</InlineBanner>
 
-          <Field label="Adapter type">
+          <Field label={t("configurebuiltinagentmodal.general.adaptertype")}>
             <AdapterTypeDropdown
               value={adapterType}
               onChange={(next) => {
@@ -196,12 +196,10 @@ export function ConfigureBuiltInAgentModal({
 
           {!setupSupportedInModal && (
             <InlineBanner tone="warning" compact>
-              This adapter needs command or endpoint fields before it can run. Provision the
-              built-in row now, then finish those fields from the full agent configuration.
-            </InlineBanner>
+              {t("configurebuiltinagentmodal.general.thisadapterneedscommandorendpointfields")}</InlineBanner>
           )}
 
-          <Field label="Monthly budget (optional)" hint="Leave blank for no cap.">
+          <Field label={t("configurebuiltinagentmodal.general.monthlybudgetoptional")} hint="Leave blank for no cap.">
             <div className="flex items-center gap-2">
               <span className="text-sm text-muted-foreground">$</span>
               <Input
@@ -231,8 +229,7 @@ export function ConfigureBuiltInAgentModal({
             onClick={() => onOpenChange(false)}
             disabled={provision.isPending}
           >
-            Not now
-          </Button>
+            {t("configurebuiltinagentmodal.general.notnow")}</Button>
           <Button
             onClick={() => {
               setError(null);
@@ -240,7 +237,7 @@ export function ConfigureBuiltInAgentModal({
             }}
             disabled={!canSubmit || provision.isPending}
           >
-            {provision.isPending ? "Configuring…" : submitLabel}
+            {provision.isPending ? t("configurebuiltinagentmodal.general.configuring") : submitLabel}
           </Button>
         </DialogFooter>
       </DialogContent>

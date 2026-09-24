@@ -52,6 +52,7 @@ import type {
   WorkspaceFileContent,
   WorkspaceFileSelector,
 } from "@paperclipai/shared";
+import { useTranslation } from "@/i18n";
 
 const FILE_VIEWER_LABELLED_BY_ID = "paperclip-file-viewer-title";
 const FILE_VIEWER_DESCRIBED_BY_ID = "paperclip-file-viewer-description";
@@ -202,6 +203,7 @@ export function FileViewerMetadataRow({
   resolvedResource?: ResolvedWorkspaceResource;
   state: FileViewerUrlState | null;
 }) {
+  const { t } = useTranslation();
   return (
     <div className="flex min-h-(--sz-18px) flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-muted-foreground">
       {resolvedResource ? (
@@ -217,14 +219,14 @@ export function FileViewerMetadataRow({
             <>
               <span aria-hidden="true" className="opacity-50">·</span>
               <span>
-                Line {state.line}
+                {t("fileviewersheet.general.line")} {state.line}
                 {state.column ? `, Col ${state.column}` : ""}
               </span>
             </>
           ) : null}
         </>
       ) : state ? (
-        <span className="h-3 w-28 rounded bg-muted animate-pulse" aria-label="Loading file details" />
+        <span className="h-3 w-28 rounded bg-muted animate-pulse" aria-label={t("fileviewersheet.general.loadingfiledetails")} />
       ) : null}
     </div>
   );
@@ -239,6 +241,7 @@ interface FileContentViewerProps {
 type MarkdownPreviewMode = "raw" | "rendered";
 
 export function FileContentViewer({ content, highlightedLine, onLoaded }: FileContentViewerProps) {
+  const { t } = useTranslation();
   const { resource } = content;
   const isMarkdown = resource.previewKind === "text" && content.content.encoding === "utf8" && isMarkdownResource(resource);
   const [markdownMode, setMarkdownMode] = useState<MarkdownPreviewMode>("rendered");
@@ -275,7 +278,7 @@ export function FileContentViewer({ content, highlightedLine, onLoaded }: FileCo
       return (
         <FileViewerStateView
           icon={<AlertTriangle aria-hidden="true" className="h-6 w-6 text-amber-500" />}
-          title="Image preview unavailable"
+          title={t("fileviewersheet.general.imagepreviewunavailable")}
         />
       );
     }
@@ -298,7 +301,7 @@ export function FileContentViewer({ content, highlightedLine, onLoaded }: FileCo
       return (
         <FileViewerStateView
           icon={<AlertTriangle aria-hidden="true" className="h-6 w-6 text-amber-500" />}
-          title="Video preview unavailable"
+          title={t("fileviewersheet.general.videopreviewunavailable")}
         />
       );
     }
@@ -320,7 +323,7 @@ export function FileContentViewer({ content, highlightedLine, onLoaded }: FileCo
     return (
       <FileViewerStateView
         icon={<AlertTriangle aria-hidden="true" className="h-6 w-6 text-amber-500" />}
-        title="Preview not supported for this file type"
+        title={t("fileviewersheet.general.previewnotsupportedforthisfiletype")}
         body={resource.contentType ? `Content type: ${resource.contentType}` : undefined}
       />
     );
@@ -382,15 +385,15 @@ export function FileContentViewer({ content, highlightedLine, onLoaded }: FileCo
       <div className="absolute right-3 top-3 z-20">
         <div
           role="group"
-          aria-label="Markdown preview mode"
+          aria-label={t("fileviewersheet.general.markdownpreviewmode")}
           className="inline-flex rounded-md border border-border bg-background/95 p-0.5 shadow-sm backdrop-blur"
         >
           <Button
             type="button"
             variant={markdownMode === "rendered" ? "secondary" : "ghost"}
             size="icon-sm"
-            aria-label="Show rendered Markdown"
-            title="Rendered Markdown"
+            aria-label={t("fileviewersheet.general.showrenderedmarkdown")}
+            title={t("fileviewersheet.general.renderedmarkdown")}
             aria-pressed={markdownMode === "rendered"}
             onClick={() => setMarkdownMode("rendered")}
             className={cn(
@@ -404,8 +407,8 @@ export function FileContentViewer({ content, highlightedLine, onLoaded }: FileCo
             type="button"
             variant={markdownMode === "raw" ? "secondary" : "ghost"}
             size="icon-sm"
-            aria-label="Show raw Markdown"
-            title="Raw Markdown"
+            aria-label={t("fileviewersheet.general.showrawmarkdown")}
+            title={t("fileviewersheet.general.rawmarkdown")}
             aria-pressed={markdownMode === "raw"}
             onClick={() => setMarkdownMode("raw")}
             className={cn(
@@ -436,13 +439,14 @@ export function FileContentViewer({ content, highlightedLine, onLoaded }: FileCo
 }
 
 function LoadingView({ elapsedMs }: { elapsedMs: number }) {
+  const { t } = useTranslation();
   if (elapsedMs < 100) {
     return <div className="flex-1" aria-hidden="true" />;
   }
   if (elapsedMs < 400) {
     return (
       <div className="flex-1 space-y-2 p-6" aria-busy="true" aria-live="polite">
-        <span className="sr-only">Loading file preview</span>
+        <span className="sr-only">{t("fileviewersheet.general.loadingfilepreview")}</span>
         {Array.from({ length: 10 }).map((_, index) => (
           <div key={index} className="h-3 rounded bg-muted animate-pulse" style={{ width: `${90 - index * 6}%` }} />
         ))}
@@ -457,8 +461,7 @@ function LoadingView({ elapsedMs }: { elapsedMs: number }) {
     >
       <div className="flex items-center gap-2 text-muted-foreground">
         <Loader2 aria-hidden="true" className="h-4 w-4 animate-spin" />
-        Loading file preview...
-      </div>
+        {t("fileviewersheet.general.loadingfilepreview1")}</div>
     </div>
   );
 }
@@ -483,6 +486,7 @@ export function FileViewerSheet({
   open: openProp,
   onOpenChange,
 }: FileViewerSheetProps) {
+  const { t } = useTranslation();
   const viewer = useRequiredFileViewer();
   const state = typeof stateProp !== "undefined" ? stateProp : viewer.state;
   // Browse mode: no file selected, but the sheet was opened to browse/search.
@@ -761,11 +765,10 @@ export function FileViewerSheet({
                   size="sm"
                   onClick={() => viewer.backToFiles()}
                   className="h-7 gap-1 px-2 text-xs"
-                  aria-label="Back to files"
+                  aria-label={t("fileviewersheet.general.backtofiles")}
                 >
                   <ArrowLeft className="h-3.5 w-3.5" />
-                  Back to files
-                </Button>
+                  {t("fileviewersheet.general.backtofiles2")}</Button>
               ) : null}
               {state ? (
                 downloadUrl ? (
@@ -778,8 +781,8 @@ export function FileViewerSheet({
                     <a
                       href={downloadUrl}
                       download={resolvedResource?.title ?? basename(state.path)}
-                      aria-label="Download file"
-                      title="Download file"
+                      aria-label={t("fileviewersheet.general.downloadfile")}
+                      title={t("fileviewersheet.general.downloadfile3")}
                     >
                       <Download className="h-4 w-4" />
                     </a>
@@ -830,8 +833,8 @@ export function FileViewerSheet({
                 size="icon-sm"
                 onClick={() => handleOpenChange(false)}
                 className="h-7 w-7"
-                aria-label="Close file viewer"
-                title="Close"
+                aria-label={t("fileviewersheet.general.closefileviewer")}
+                title={t("fileviewersheet.general.close")}
               >
                 <X className="h-4 w-4" />
               </Button>
@@ -871,7 +874,7 @@ export function FileViewerSheet({
               <div
                 role="separator"
                 aria-orientation="vertical"
-                aria-label="Resize file tree"
+                aria-label={t("fileviewersheet.general.resizefiletree")}
                 aria-valuemin={MIN_FILE_TREE_WIDTH}
                 aria-valuemax={MAX_FILE_TREE_WIDTH}
                 aria-valuenow={fileTreeWidth}
@@ -946,6 +949,7 @@ export function FileViewerBody({
   onSetAnnouncement,
   onFallbackToProject,
 }: FileViewerBodyProps) {
+  const { t } = useTranslation();
   if (resolveQuery.isFetching && !resolveQuery.data) {
     return <LoadingView elapsedMs={elapsedMs} />;
   }
@@ -956,18 +960,16 @@ export function FileViewerBody({
       return (
         <FileViewerStateView
           icon={<FileSearch aria-hidden="true" className="h-6 w-6 text-muted-foreground" />}
-          title="File not found"
+          title={t("fileviewersheet.general.filenotfound")}
           body="That file was not found in the active workspace."
           actions={
             <>
               {onFallbackToProject ? (
                 <Button type="button" variant="secondary" size="sm" onClick={onFallbackToProject}>
-                  Try project workspace
-                </Button>
+                  {t("fileviewersheet.general.tryprojectworkspace")}</Button>
               ) : null}
               <Button type="button" variant="ghost" size="sm" onClick={onRetry}>
-                <RefreshCcw aria-hidden="true" className="mr-1 h-3 w-3" /> Retry
-              </Button>
+                <RefreshCcw aria-hidden="true" className="mr-1 h-3 w-3" /> {t("fileviewersheet.general.retry")}</Button>
             </>
           }
         />
@@ -977,7 +979,7 @@ export function FileViewerBody({
       return (
         <FileViewerStateView
           icon={<FolderOpen aria-hidden="true" className="h-6 w-6 text-muted-foreground" />}
-          title="No workspace available"
+          title={t("fileviewersheet.general.noworkspaceavailable")}
           body="This issue does not have a workspace that supports preview yet."
         />
       );
@@ -990,8 +992,7 @@ export function FileViewerBody({
         body={denial.body}
         actions={
           <Button type="button" variant="ghost" size="sm" onClick={onRetry}>
-            <RefreshCcw aria-hidden="true" className="mr-1 h-3 w-3" /> Retry
-          </Button>
+            <RefreshCcw aria-hidden="true" className="mr-1 h-3 w-3" /> {t("fileviewersheet.general.retry4")}</Button>
         }
       />
     );
@@ -1004,7 +1005,7 @@ export function FileViewerBody({
     return (
       <FileViewerStateView
         icon={<Cloud aria-hidden="true" className="h-6 w-6 text-muted-foreground" />}
-        title="Remote workspace preview coming soon"
+        title={t("fileviewersheet.general.remoteworkspacepreviewcomingsoon")}
         body="This workspace is hosted remotely; inline previews are not supported yet."
       />
     );
@@ -1029,8 +1030,7 @@ export function FileViewerBody({
         body={denial.body}
         actions={
           <Button type="button" variant="ghost" size="sm" onClick={onRetry}>
-            <RefreshCcw aria-hidden="true" className="mr-1 h-3 w-3" /> Retry
-          </Button>
+            <RefreshCcw aria-hidden="true" className="mr-1 h-3 w-3" /> {t("fileviewersheet.general.retry5")}</Button>
         }
       />
     );

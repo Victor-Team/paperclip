@@ -9,6 +9,7 @@ import {
 } from "@/lib/shell-navigation";
 import { cn } from "@/lib/utils";
 import { SidebarNavExpandedProvider } from "./SidebarNavItem";
+import { useTranslation } from "@/i18n";
 
 export function ContextualSidebarFrame({
   surface,
@@ -27,6 +28,7 @@ export function ContextualSidebarFrame({
   className?: string;
   children: ReactNode;
 }) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { selectedCompany } = useCompany();
   const { isMobile, setSidebarOpen } = useSidebar();
@@ -55,7 +57,7 @@ export function ContextualSidebarFrame({
               aria-label={`Back from ${title}`}
             >
               <ChevronLeft className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-              <span className="truncate">{selectedCompany?.name ?? "Organization"}</span>
+              <span className="truncate">{selectedCompany?.name ?? t("contextualsidebarframe.general.organization")}</span>
             </button>
             <div className="flex min-w-0 items-center gap-2 px-2 py-1">
               {Icon ? <Icon className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true" /> : null}

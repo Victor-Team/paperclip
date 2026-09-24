@@ -42,6 +42,7 @@ import {
   parseSearchQuery,
   type SearchQueryParserContext,
 } from "../lib/search-query-parser";
+import { useTranslation } from "@/i18n";
 
 const SEARCH_ALL_VALUE = "__paperclip-search-all__";
 
@@ -89,6 +90,7 @@ function scoreProjectMatch(name: string, description: string, q: string): number
 }
 
 export function CommandPalette() {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const navigate = useNavigate();
@@ -223,7 +225,7 @@ export function CommandPalette() {
         if (v && isMobile) setSidebarOpen(false);
       }}>
       <CommandInput
-        placeholder="Search tasks, agents, projects..."
+        placeholder={t("commandpalette.general.searchtasksagentsprojects")}
         value={query}
         onValueChange={setQuery}
         onKeyDown={(event) => {
@@ -242,12 +244,11 @@ export function CommandPalette() {
         <CommandEmpty>
           {showSearchAll ? (
             <span>
-              No quick task matches. Press{" "}
+              {t("commandpalette.general.noquicktaskmatchespress")}{" "}
               <kbd className="rounded border border-border bg-muted px-1 py-0.5 text-(length:--text-nano)">↵</kbd>{" "}
-              to <span className="font-medium">search all</span> or keep typing to refine.
-            </span>
+              t{t("commandpalette.general.to")}<span className="font-medium">{t("commandpalette.general.searchall")}</span> {t("commandpalette.general.orkeeptypingtorefine")}</span>
           ) : (
-            "No results found."
+            t("commandpalette.general.noresultsfound")
           )}
         </CommandEmpty>
 
@@ -261,10 +262,10 @@ export function CommandPalette() {
             >
               <Search className="mr-2 h-4 w-4" />
               <span className="flex-1 truncate">
-                Search all for <span className="font-semibold">&ldquo;{searchQuery}&rdquo;</span>
+                {t("commandpalette.general.searchallfor")}<span className="font-semibold">{t("commandpalette.general.ldquo")}{searchQuery}{t("commandpalette.general.rdquo")}</span>
               </span>
               <span className="ml-auto inline-flex items-center gap-1 text-xs text-muted-foreground">
-                <span>open full search</span>
+                <span>{t("commandpalette.general.openfullsearch")}</span>
                 <kbd className="rounded border border-border bg-background px-1 py-0.5 text-(length:--text-nano)">↵</kbd>
               </span>
             </CommandItem>
@@ -321,8 +322,7 @@ export function CommandPalette() {
             }}
           >
             <SquarePen className="mr-2 h-4 w-4" />
-            Create new task
-            <span className="ml-auto text-xs text-muted-foreground">C</span>
+            {t("commandpalette.general.createnewtask")}<span className="ml-auto text-xs text-muted-foreground">C</span>
           </CommandItem>
           {onIssueDetail && fileViewerEnabled && (
             <CommandItem
@@ -332,8 +332,7 @@ export function CommandPalette() {
               }}
             >
               <FileCode2 className="mr-2 h-4 w-4" />
-              Open file in this issue...
-              <span className="ml-auto text-xs text-muted-foreground">g f</span>
+              {t("commandpalette.general.openfileinthisissue")}<span className="ml-auto text-xs text-muted-foreground">{t("commandpalette.general.gf")}</span>
             </CommandItem>
           )}
           <CommandItem
@@ -343,12 +342,10 @@ export function CommandPalette() {
             }}
           >
             <Plus className="mr-2 h-4 w-4" />
-            Create new agent
-          </CommandItem>
+            {t("commandpalette.general.createnewagent")}</CommandItem>
           <CommandItem onSelect={() => go("/projects")}>
             <Plus className="mr-2 h-4 w-4" />
-            Create new project
-          </CommandItem>
+            {t("commandpalette.general.createnewproject")}</CommandItem>
         </CommandGroup>
 
         <CommandSeparator />
@@ -356,36 +353,28 @@ export function CommandPalette() {
         <CommandGroup heading="Pages">
           <CommandItem onSelect={() => go("/dashboard")}>
             <LayoutDashboard className="mr-2 h-4 w-4" />
-            Dashboard
-          </CommandItem>
+            {t("commandpalette.general.dashboard")}</CommandItem>
           <CommandItem onSelect={() => go("/inbox")}>
             <Inbox className="mr-2 h-4 w-4" />
-            Inbox
-          </CommandItem>
+            {t("commandpalette.general.inbox")}</CommandItem>
           <CommandItem onSelect={() => go("/issues")}>
             <CircleDot className="mr-2 h-4 w-4" />
-            Tasks
-          </CommandItem>
+            {t("commandpalette.general.tasks")}</CommandItem>
           <CommandItem onSelect={() => go("/projects")}>
             <Hexagon className="mr-2 h-4 w-4" />
-            Projects
-          </CommandItem>
+            {t("commandpalette.general.projects")}</CommandItem>
           <CommandItem onSelect={() => go("/goals")}>
             <Target className="mr-2 h-4 w-4" />
-            Goals
-          </CommandItem>
+            {t("commandpalette.general.goals")}</CommandItem>
           <CommandItem onSelect={() => go("/agents")}>
             <Bot className="mr-2 h-4 w-4" />
-            Agents
-          </CommandItem>
+            {t("commandpalette.general.agents")}</CommandItem>
           <CommandItem onSelect={() => go("/costs")}>
             <DollarSign className="mr-2 h-4 w-4" />
-            Costs
-          </CommandItem>
+            {t("commandpalette.general.costs")}</CommandItem>
           <CommandItem onSelect={() => go("/activity")}>
             <History className="mr-2 h-4 w-4" />
-            Activity
-          </CommandItem>
+            {t("commandpalette.general.activity")}</CommandItem>
         </CommandGroup>
 
         {visibleIssues.length > 0 && (
