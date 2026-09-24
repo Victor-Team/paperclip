@@ -4742,6 +4742,31 @@
       "healthy": "健康"
     }
   },
+  "gatewayadvancedpanel": {
+    "general": {
+      "gatewayarchived": "网关已归档",
+      "gatewayarchivedbody": "{{name}} 已无法访问。",
+      "couldntarchivethegateway": "无法归档网关",
+      "copied": "已复制",
+      "copyfailed": "复制失败",
+      "clipboardaccessisunavailable": "无法访问剪贴板。",
+      "transport": "传输方式",
+      "authentication": "身份验证",
+      "protocolversion": "协议版本",
+      "publicid": "公开 ID",
+      "endpointurl": "端点 URL",
+      "copy": "复制",
+      "rawconfiguration": "原始配置",
+      "gatewayconfigjson": "网关配置 JSON",
+      "copyjson": "复制 JSON",
+      "dangerzone": "危险区域",
+      "archivingtakesthegatewayoffline": "归档会让所有客户端无法使用该网关，现有令牌也会停止工作。请输入网关名称以确认。",
+      "typethegatewaynametoconfirmarchive": "输入网关名称以确认归档",
+      "archiving": "正在归档…",
+      "archivegateway": "归档网关",
+      "cancel": "取消"
+    }
+  },
   "appstoolspanel": {
     "general": {
       "theseappsgothroughthisgatewaythe": "这些应用通过此网关。绑定的配置",

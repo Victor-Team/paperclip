@@ -4742,6 +4742,31 @@
       "healthy": "Healthy"
     }
   },
+  "gatewayadvancedpanel": {
+    "general": {
+      "gatewayarchived": "Gateway archived",
+      "gatewayarchivedbody": "{{name}} is no longer reachable.",
+      "couldntarchivethegateway": "Couldn't archive the gateway",
+      "copied": "Copied",
+      "copyfailed": "Copy failed",
+      "clipboardaccessisunavailable": "Clipboard access is unavailable.",
+      "transport": "Transport",
+      "authentication": "Authentication",
+      "protocolversion": "Protocol version",
+      "publicid": "Public ID",
+      "endpointurl": "Endpoint URL",
+      "copy": "Copy",
+      "rawconfiguration": "Raw configuration",
+      "gatewayconfigjson": "Gateway config JSON",
+      "copyjson": "Copy JSON",
+      "dangerzone": "Danger zone",
+      "archivingtakesthegatewayoffline": "Archiving takes the gateway offline for every client. Existing tokens stop working. Type the gateway name to confirm.",
+      "typethegatewaynametoconfirmarchive": "Type the gateway name to confirm archive",
+      "archiving": "Archiving…",
+      "archivegateway": "Archive gateway",
+      "cancel": "Cancel"
+    }
+  },
   "appstoolspanel": {
     "general": {
       "theseappsgothroughthisgatewaythe": "These apps go through this gateway. The bound profile",
