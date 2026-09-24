@@ -1,10 +1,12 @@
 import type { StatusCardRefreshPolicy, StatusCardUpdate } from "@paperclipai/shared";
+import { formatDateTime, relativeTime } from "@/lib/utils";
 
 /** "1.1k tok" / "940 tok" — compact token count for footers and chips. */
-export function formatTokens(tokens: number | null | undefined): string | null {
+export function formatTokens(tokens: number | null | undefined, locale = "en"): string | null {
   if (tokens === null || tokens === undefined) return null;
-  if (tokens < 1000) return `${tokens} tok`;
-  return `${(tokens / 1000).toFixed(1)}k tok`;
+  const unit = locale === "zh-CN" ? " 词元" : " tok";
+  if (tokens < 1000) return `${tokens}${unit}`;
+  return `${(tokens / 1000).toFixed(1)}k${unit}`;
 }
 
 /**
@@ -93,13 +95,13 @@ export interface StatusCardCostEstimate {
  * policy. Reacts to mode (manual / interval / reactive), interval, active
  * hours, and the daily token cap.
  */
-export function estimateStatusCardCost(policy: StatusCardRefreshPolicy): StatusCardCostEstimate {
+export function estimateStatusCardCost(policy: StatusCardRefreshPolicy, t?: StatusCardTranslate, locale = "en"): StatusCardCostEstimate {
   if (policy.mode === "manual") {
-    const cost = `${formatCents(EST_FULL_CENTS)} · ${formatTokens(EST_FULL_TOKENS)}`;
+    const cost = `${formatCents(EST_FULL_CENTS)} · ${formatTokens(EST_FULL_TOKENS, locale)}`;
     return {
       cost,
-      primary: `~1 rebuild per refresh ≈ ${cost}`,
-      note: "Manual cards only cost tokens when you press Refresh.",
+      primary: t ? t("statuscards.common.rebuildperrefresh", { cost }) : `~1 rebuild per refresh ≈ ${cost}`,
+      note: t ? t("statuscards.common.manualcostnote") : "Manual cards only cost tokens when you press Refresh.",
     };
   }
 
@@ -124,21 +126,21 @@ export function estimateStatusCardCost(policy: StatusCardRefreshPolicy): StatusC
   const tokens = effective * EST_INCREMENTAL_TOKENS;
   const cents = effective * EST_INCREMENTAL_CENTS;
   const withinHours = policy.activeHours ? " during active hours" : "";
-  const cost = `${formatCents(cents)} · ${formatTokens(tokens)}`;
+  const cost = `${formatCents(cents)} · ${formatTokens(tokens, locale)}`;
 
   return {
     cost,
-    primary: `Up to ~${effective} updates/day (${cadence}${withinHours}) ≈ ${cost}`,
+    primary: t ? t("statuscards.common.updatesperday", { count: effective, cadence: policy.mode === "interval" ? t("statuscards.common.everyminutes", { count: policy.intervalMinutes ?? 15 }) : t("statuscards.common.uptoperhour", { count: policy.maxUpdatesPerHour ?? 6 }), hours: policy.activeHours ? t("statuscards.common.duringactivehours") : "", cost }) : `Up to ~${effective} updates/day (${cadence}${withinHours}) ≈ ${cost}`,
     note: cappedByTokenCap
-      ? `Capped by your ${formatTokens(cap!)} daily token cap — the card pauses when it's hit.`
-      : "Only runs when something changed; a cheap no-op check otherwise.",
+      ? (t ? t("statuscards.common.cappedbytokens", { tokens: formatTokens(cap!, locale) ?? "" }) : `Capped by your ${formatTokens(cap!, locale)} daily token cap — the card pauses when it's hit.`)
+      : (t ? t("statuscards.common.onlyonchange") : "Only runs when something changed; a cheap no-op check otherwise."),
   };
 }
 
 /** "0.4k in / 0.2k out" — the per-update token split shown in history rows. */
-export function formatTokenSplit(inputTokens: number, outputTokens: number): string {
+export function formatTokenSplit(inputTokens: number, outputTokens: number, t?: StatusCardTranslate): string {
   const fmt = (n: number) => (n < 1000 ? `${n}` : `${(n / 1000).toFixed(1)}k`);
-  return `${fmt(inputTokens)} in / ${fmt(outputTokens)} out`;
+  return t ? t("statuscards.common.tokensplit", { input: fmt(inputTokens), output: fmt(outputTokens) }) : `${fmt(inputTokens)} in / ${fmt(outputTokens)} out`;
 }
 
 /** Human label for an update's kind. */
@@ -153,4 +155,40 @@ export function updateKindLabel(kind: StatusCardUpdate["kind"]): string {
     default:
       return kind;
   }
+}
+
+/** Labels local to Status Cards; the shared state helpers retain their English API. */
+export type StatusCardTranslate = (key: string, options?: Record<string, string | number>) => string;
+
+export function statusCardRelativeTime(date: Date | string, locale: string): string {
+  if (locale !== "zh-CN") return relativeTime(date);
+  const seconds = Math.round((Date.now() - new Date(date).getTime()) / 1000);
+  if (seconds < 60) return "刚刚";
+  const formatter = new Intl.RelativeTimeFormat("zh-CN", { numeric: "auto", style: "short" });
+  const minutes = Math.round(seconds / 60);
+  if (minutes < 60) return formatter.format(-minutes, "minute");
+  const hours = Math.round(minutes / 60);
+  if (hours < 24) return formatter.format(-hours, "hour");
+  const days = Math.round(hours / 24);
+  if (days < 30) return formatter.format(-days, "day");
+  return new Date(date).toLocaleDateString("zh-CN", { month: "short", day: "numeric", year: "numeric" });
+}
+
+export function statusCardDateTime(date: Date | string, locale: string): string {
+  if (locale !== "zh-CN") return formatDateTime(date);
+  return new Date(date).toLocaleString("zh-CN", {
+    month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit",
+  });
+}
+
+export function statusCardPolicyLabel(policy: StatusCardRefreshPolicy, t: StatusCardTranslate): string {
+  if (policy.mode === "interval") {
+    return policy.intervalMinutes
+      ? t("statuscards.common.everyminutesifchanged", { count: policy.intervalMinutes })
+      : t("statuscards.common.scheduleifchanged");
+  }
+  if (policy.mode === "reactive") {
+    return t("statuscards.common.onchange", { seconds: policy.debounceSeconds ?? 60 });
+  }
+  return t("statuscards.common.manual");
 }
