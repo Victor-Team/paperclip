@@ -43,71 +43,82 @@ const providerNames: Record<ChatProvider, string> = {
 };
 
 type PublicationFeedback = {
-  title: string;
-  body: string;
+  titleKey: string;
+  bodyKey: string;
   tone: "info" | "success" | "warn" | "error";
 };
 
 const publicationFeedback: Record<ChatPublicationState, PublicationFeedback> = {
   awaiting_consent: {
-    title: "Waiting for file consent",
-    body: "The recipient must accept the file card in Microsoft Teams. The file is not delivered yet; this send identity is kept while Paperclip waits.",
+    titleKey: "externallyconnectedtaskbanner.general.waitingforfileconsent",
+    bodyKey: "externallyconnectedtaskbanner.general.therecipientmustacceptthefilecard",
     tone: "info",
   },
   published: {
-    title: "Sent to channel",
-    body: "The board update was published to the connected conversation.",
+    titleKey: "externallyconnectedtaskbanner.general.senttochannel",
+    bodyKey: "externallyconnectedtaskbanner.general.theboardupdatewaspublishedtotheconnected",
     tone: "success",
   },
   pending: {
-    title: "Queued for channel",
-    body: "Delivery is still pending. Your draft is kept until Paperclip confirms publication.",
+    titleKey: "externallyconnectedtaskbanner.general.queuedforchannel",
+    bodyKey: "externallyconnectedtaskbanner.general.deliveryisstillpendingyourdraftiskept",
     tone: "info",
   },
   streaming: {
-    title: "Publishing to channel",
-    body: "Delivery is still in progress. Your draft is kept until Paperclip confirms publication.",
+    titleKey: "externallyconnectedtaskbanner.general.publishingtochannel",
+    bodyKey: "externallyconnectedtaskbanner.general.deliveryisstillinprogressyourdraftiskept",
     tone: "info",
   },
   retry: {
-    title: "Delivery retry scheduled",
-    body: "Paperclip will retry this publication. Your draft and retry identity are kept.",
+    titleKey: "externallyconnectedtaskbanner.general.deliveryretryscheduled",
+    bodyKey: "externallyconnectedtaskbanner.general.paperclipwillretrythispublicationyourdraft",
     tone: "warn",
   },
   delivery_unknown: {
-    title: "Delivery not confirmed",
-    body: "The provider may have accepted this update. Resolve it in Activity before trying again to avoid a duplicate.",
+    titleKey: "externallyconnectedtaskbanner.general.deliverynotconfirmed",
+    bodyKey: "externallyconnectedtaskbanner.general.theprovidermayhaveacceptedthisupdate",
     tone: "warn",
   },
   failed: {
-    title: "Channel delivery failed",
-    body: "Your draft is kept. Open Activity to retry this same publication safely.",
+    titleKey: "externallyconnectedtaskbanner.general.channeldeliveryfailed",
+    bodyKey: "externallyconnectedtaskbanner.general.yourdraftiskeptopenactivitytoretrythis",
     tone: "error",
   },
   cancelled: {
-    title: "Channel delivery cancelled",
-    body: "Your draft is kept. Some parts may already have been published; check Activity before starting a new send.",
+    titleKey: "externallyconnectedtaskbanner.general.channeldeliverycancelled",
+    bodyKey: "externallyconnectedtaskbanner.general.yourdraftiskeptsomepartsmayalreadyhave",
     tone: "info",
   },
 };
 
-const filePhaseLabels: Record<ChatFileTransferPhase, string> = {
-  consent_pending: "Consent card queued",
-  consent_sending: "Sending consent card",
-  consent_unknown: "Consent card delivery not confirmed",
-  awaiting_consent: "Awaiting consent",
-  upload_pending: "Upload queued",
-  uploading: "Uploading file",
-  upload_unknown: "File upload not confirmed",
-  file_info_pending: "File notification queued",
-  file_info_sending: "Sending file notification",
-  file_info_unknown: "File notification not confirmed",
-  delivered: "Delivered",
-  declined: "Declined",
-  expired: "Consent expired",
-  cancelled: "Cancelled; remote bytes may remain",
-  conflict: "File delivery needs review",
+const filePhaseLabelKeys: Record<ChatFileTransferPhase, string> = {
+  consent_pending: "externallyconnectedtaskbanner.general.consentcardqueued",
+  consent_sending: "externallyconnectedtaskbanner.general.sendingconsentcard",
+  consent_unknown: "externallyconnectedtaskbanner.general.consentcarddeliverynotconfirmed",
+  awaiting_consent: "externallyconnectedtaskbanner.general.awaitingconsent",
+  upload_pending: "externallyconnectedtaskbanner.general.uploadqueued",
+  uploading: "externallyconnectedtaskbanner.general.uploadingfile",
+  upload_unknown: "externallyconnectedtaskbanner.general.fileuploadnotconfirmed",
+  file_info_pending: "externallyconnectedtaskbanner.general.filenotificationqueued",
+  file_info_sending: "externallyconnectedtaskbanner.general.sendingfilenotification",
+  file_info_unknown: "externallyconnectedtaskbanner.general.filenotificationnotconfirmed",
+  delivered: "externallyconnectedtaskbanner.general.delivered",
+  declined: "externallyconnectedtaskbanner.general.declined",
+  expired: "externallyconnectedtaskbanner.general.consentexpired",
+  cancelled: "externallyconnectedtaskbanner.general.cancelledremotebytesmayremain",
+  conflict: "externallyconnectedtaskbanner.general.filedeliveryneedsreview",
 };
+
+function resolvePublicationFeedback(
+  t: (key: string) => string,
+  feedback: PublicationFeedback,
+) {
+  return {
+    title: t(feedback.titleKey),
+    body: t(feedback.bodyKey),
+    tone: feedback.tone,
+  };
+}
 
 export function useIssueChatBinding(companyId: string, issueId: string) {
   const { enabled } = useChatConnectorsEnabled();
@@ -216,11 +227,11 @@ function ConnectedTaskComposer({
       setStorageError(null);
     } catch {
       setStorageError(
-        "Saved delivery identity could not be read. Check Activity and restore browser storage before starting another send.",
+        t("externallyconnectedtaskbanner.general.saveddeliveryidentitycouldnotberead"),
       );
       setComposing(true);
     }
-  }, [storageKey]);
+  }, [storageKey, t]);
   const deliveryScopeReady = Boolean(
     storageKey &&
     loadedStorageKey.current === storageKey &&
@@ -258,8 +269,8 @@ function ConnectedTaskComposer({
     setUploadError(null);
     setComposing(false);
     invalidateTask();
-    pushToast(publicationFeedback.published);
-  }, [invalidateTask, pushToast, storageKey]);
+    pushToast(resolvePublicationFeedback(t, publicationFeedback.published));
+  }, [invalidateTask, pushToast, storageKey, t]);
   // Keep the first returned ID as the anchor. A batch's blocking row may
   // change as text and files finish; no read is allowed to submit another send.
   const publicationStatus = useQuery({
@@ -335,9 +346,9 @@ function ConnectedTaskComposer({
         }
       }
       pushToast({
-        ...feedback,
+        ...resolvePublicationFeedback(t, feedback),
         action: {
-          label: "View activity",
+          label: t("externallyconnectedtaskbanner.general.viewactivity"),
           href: `/apps/chat/${binding!.endpointId}/activity`,
         },
       });
@@ -351,7 +362,7 @@ function ConnectedTaskComposer({
           writeBoardSendDraft(storageKey, saved);
         } catch {
           setStorageError(
-            "The rejected send could not be saved. Restore browser storage, then retry this same request to recover its receipt.",
+            t("externallyconnectedtaskbanner.general.therejectedsendcouldnotbesaved"),
           );
           return;
         }
@@ -360,18 +371,18 @@ function ConnectedTaskComposer({
         setUnconfirmedRequest(false);
         invalidateTask();
         pushToast({
-          title: "Update was not sent",
-          body: "A selected file already belongs to another comment. Edit the rejected send to correct the selection.",
+          title: t("externallyconnectedtaskbanner.general.updatewasnotsent"),
+          body: t("externallyconnectedtaskbanner.general.aselectedfilealreadybelongstoanother"),
           tone: "error",
         });
         return;
       }
       pushToast({
-        title: "Couldn't confirm channel delivery",
+        title: t("externallyconnectedtaskbanner.general.couldntconfirmchanneldelivery"),
         body:
           error instanceof Error
-            ? `${error.message} Your draft is kept; retrying here reuses the same request identity.`
-            : "Your draft is kept; retrying here reuses the same request identity.",
+            ? t("externallyconnectedtaskbanner.general.deliveryerrorwithmessage", { error: error.message })
+            : t("externallyconnectedtaskbanner.general.yourdraftiskeptretryingherereusesthe"),
         tone: "error",
       });
     },
@@ -405,7 +416,9 @@ function ConnectedTaskComposer({
     } catch (error) {
       if (mounted.current) {
         setUploadError(
-          `${error instanceof Error ? error.message : "Upload could not be confirmed."} No channel message was sent. Check task files before retrying the upload.`,
+          error instanceof Error
+            ? t("externallyconnectedtaskbanner.general.uploaderrorwithmessage", { error: error.message })
+            : t("externallyconnectedtaskbanner.general.uploadcouldnotbeconfirmednochannelsent"),
         );
       }
     } finally {
@@ -451,7 +464,7 @@ function ConnectedTaskComposer({
             ?.name ??
           taskAttachments.find((attachment) => attachment.id === id)
             ?.originalFilename ??
-          "Selected task file (details unavailable)",
+          t("externallyconnectedtaskbanner.general.selectedtaskfiledetailsunavailable"),
       }))
     : taskAttachments.filter(
         (attachment) =>
@@ -467,20 +480,20 @@ function ConnectedTaskComposer({
   const mixedTerminal =
     canDismissBoardSendBatch(batch) && batch!.published < batch!.total;
   const currentFeedback = mixedTerminal
-    ? {
-        title: "Delivery settled with mixed outcomes",
-        body: "Not every part was confirmed delivered. Review the outcomes below; dismissing this receipt does not resend anything.",
-        tone: "info" as const,
-      }
+    ? resolvePublicationFeedback(t, {
+        titleKey: "externallyconnectedtaskbanner.general.deliverysettledwithmixedoutcomes",
+        bodyKey: "externallyconnectedtaskbanner.general.noteverypartwasconfirmeddeliveredreviewthe",
+        tone: "info",
+      })
     : currentPublication?.state === "cancelled" &&
         (batch?.awaitingConsent ?? 0) > 0
-      ? {
-          title: "Waiting for remaining file consent",
-          body: "Some parts have settled. The remaining file cards still need the recipient's response; this send stays locked until the whole batch is resolved.",
-          tone: "info" as const,
-        }
+      ? resolvePublicationFeedback(t, {
+          titleKey: "externallyconnectedtaskbanner.general.waitingforremainingfileconsent",
+          bodyKey: "externallyconnectedtaskbanner.general.somepartshavesettledtheremainingfilecards",
+          tone: "info",
+        })
       : currentPublication
-        ? publicationFeedback[currentPublication.state]
+        ? resolvePublicationFeedback(t, publicationFeedback[currentPublication.state])
         : null;
   const activityPath = `/apps/chat/${binding.endpointId}/activity`;
   return (
@@ -613,7 +626,8 @@ function ConnectedTaskComposer({
               <div className="space-y-2">
                 {visibleAttachments.map((attachment) => {
                   const label =
-                    attachment.originalFilename ?? "Unnamed attachment";
+                    attachment.originalFilename ??
+                    t("externallyconnectedtaskbanner.general.unnamedattachment");
                   return (
                     <label
                       className="flex items-center gap-2 text-xs"
@@ -663,7 +677,7 @@ function ConnectedTaskComposer({
                     clearBoardSendDraft(storageKey);
                   } catch {
                     setStorageError(
-                      "Saved rejection could not be cleared. Restore browser storage before editing this send.",
+                      t("externallyconnectedtaskbanner.general.savedrejectioncouldnotbecleared"),
                     );
                     return;
                   }
@@ -726,19 +740,19 @@ function ConnectedTaskComposer({
                   batch.cancelled !== undefined &&
                   batch.awaitingConsent !== undefined
                     ? [
-                        `${batch.published} published`,
+                        t("externallyconnectedtaskbanner.general.publishedcount", { count: batch.published }),
                         ...(batch.awaitingConsent
-                          ? [`${batch.awaitingConsent} awaiting consent`]
+                          ? [t("externallyconnectedtaskbanner.general.awaitingconsentcount", { count: batch.awaitingConsent })]
                           : []),
                         ...(batch.declined
-                          ? [`${batch.declined} declined`]
+                          ? [t("externallyconnectedtaskbanner.general.declinedcount", { count: batch.declined })]
                           : []),
-                        ...(batch.expired ? [`${batch.expired} expired`] : []),
+                        ...(batch.expired ? [t("externallyconnectedtaskbanner.general.expiredcount", { count: batch.expired })] : []),
                         ...(batch.cancelled
-                          ? [`${batch.cancelled} cancelled`]
+                          ? [t("externallyconnectedtaskbanner.general.cancelledcount", { count: batch.cancelled })]
                           : []),
                       ].join(" · ")
-                    : `${batch.published} of ${batch.total} parts published.`}
+                    : t("externallyconnectedtaskbanner.general.partspublishedcount", { published: batch.published, total: batch.total })}
                 </p>
               )}
               {batch?.parts?.some((part) => part.fileTransfer) && (
@@ -751,7 +765,7 @@ function ConnectedTaskComposer({
                     .map((part) => (
                       <li key={part.id}>
                         {part.fileTransfer!.filename} —{" "}
-                        {filePhaseLabels[part.fileTransfer!.phase]}
+                        {t(filePhaseLabelKeys[part.fileTransfer!.phase])}
                       </li>
                     ))}
                 </ul>
@@ -781,7 +795,7 @@ function ConnectedTaskComposer({
                         clearBoardSendDraft(storageKey);
                       } catch {
                         setStorageError(
-                          "Saved delivery identity could not be cleared. Restore browser storage before starting another send.",
+                          t("externallyconnectedtaskbanner.general.saveddeliveryidentitycouldnotbecleared"),
                         );
                         return;
                       }
@@ -831,7 +845,8 @@ function ConnectedTaskComposer({
                     id,
                     name:
                       taskAttachments.find((attachment) => attachment.id === id)
-                        ?.originalFilename ?? "Unnamed attachment",
+                        ?.originalFilename ??
+                      t("externallyconnectedtaskbanner.general.unnamedattachment"),
                   })),
                   body: body.trim(),
                   idempotencyKey: idempotencyKey.current,
@@ -842,7 +857,7 @@ function ConnectedTaskComposer({
                   writeBoardSendDraft(storageKey, input);
                 } catch {
                   setStorageError(
-                    "Browser storage could not preserve this delivery identity. No update was sent. Restore browser storage, then reload to try again.",
+                    t("externallyconnectedtaskbanner.general.browserstoragecouldnotpreservethisdelivery"),
                   );
                   return;
                 }

@@ -76,7 +76,7 @@ export function AgentChannelsPanel({
                 <p className="truncate text-xs text-muted-foreground">
                   {endpoint.botLabel ??
                     endpoint.providerAccountLabel ??
-                    "Provider identity"}
+                    t("agentchannelspanel.general.provideridentity")}
                 </p>
               </div>
               <StatusBadge status={endpoint.status} />
