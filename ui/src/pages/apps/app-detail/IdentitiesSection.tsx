@@ -181,7 +181,7 @@ export function IdentitiesSection({
         <h2 className="text-sm font-semibold text-foreground">{t("identitiessection.general.githubidentity")}</h2>
         <p className="text-sm text-muted-foreground">{t("identitiessection.general.thisagentusesthisgithubaccountfor")}</p>
         <IdentityRow
-          title={github ? `@${github.login}` : "Dedicated GitHub account"}
+          title={github ? `@${github.login}` : t("identitiessection.general.dedicatedgithubaccount")}
           status={agentGrant?.status ?? null}
           detail={dedicatedAgent ? (
             <Link
@@ -190,7 +190,7 @@ export function IdentitiesSection({
             >
               {t("identitiessection.general.usedonlyby")} {dedicatedAgent.name}
             </Link>
-          ) : "Dedicated to one agent"}
+          ) : t("identitiessection.general.dedicatedtooneagent")}
           actions={!agentGrant && dedicatedAgent && capabilities?.canConfigure ? (
             <Button size="sm" disabled={connectPending} onClick={() => onConnectAgent(dedicatedAgent.id)}>
               {connectPending ? <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" /> : null}
@@ -236,7 +236,7 @@ export function IdentitiesSection({
               id="personal-identity"
               title={t("identitiessection.general.personalaccount")}
               status={null}
-              detail="Personal identity"
+              detail={t("identitiessection.general.personalidentity")}
               actions={capabilities?.canConnectAsCurrentUser ? (
                   <Button size="sm" disabled={connectPending} onClick={onConnectAsMe}>
                     {connectPending ? <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" /> : null}
@@ -256,7 +256,7 @@ export function IdentitiesSection({
             <IdentityRow
               title={t("identitiessection.general.organizationaccount")}
               status={null}
-              detail="Organization identity"
+              detail={t("identitiessection.general.organizationidentity")}
               actions={capabilities?.canCreateOrganizationGrant ? (
                   <Button size="sm" disabled={connectPending} onClick={onConnectOrganization}>
                     {t("identitiessection.general.connectorganizationidentity")}</Button>
@@ -300,13 +300,18 @@ function GitHubConnectionSummary({
       ? github.installationUrl
       : null;
   const repositoryWarning = github.repositorySelection === "all"
-    ? "All current and future repositories"
+    ? t("identitiessection.general.allcurrentandfuturerepositories")
     : github.repositorySelection === "mixed"
-      ? "Mixed access; scope varies by installation"
+      ? t("identitiessection.general.mixedaccessscopevariesbyinstallation")
       : null;
   const repositorySummary = github.repositorySelection === "none"
-    ? "No repositories selected"
-    : `${github.repositoryCount} selected ${github.repositoryCount === 1 ? "repository" : "repositories"}`;
+    ? t("identitiessection.general.norepositoriesselected")
+    : t("identitiessection.general.selectedrepositories", {
+      count: github.repositoryCount,
+      repositoryLabel: github.repositoryCount === 1
+        ? t("identitiessection.general.repository")
+        : t("identitiessection.general.repositoriesplural"),
+    });
   return (
     <div className="divide-y divide-border border-y border-border">
       <div className="py-3">
@@ -398,10 +403,11 @@ function HumanAccessCards({
   onChooseAll: () => void;
   onChooseSelected: () => void;
 }) {
+  const { t } = useTranslation();
   return (
     <div className="space-y-3">
       <RadioCardGroup
-        ariaLabel="Which humans can use this credential"
+        ariaLabel={t("identitiessection.general.whichhumanscanusethiscredential")}
         value={personal ? "personal" : restricted ? "selected" : "company"}
         className="sm:grid-cols-2"
         onValueChange={(next) => {
@@ -412,22 +418,22 @@ function HumanAccessCards({
         options={personal ? [
           {
             value: "personal",
-            title: "Just me",
-            description: "Only you can use this connection.",
+            title: t("identitiessection.general.justme"),
+            description: t("identitiessection.general.onlyyoucanusethisconnection"),
             icon: <UserRound className="h-4 w-4" />,
           },
         ] : [
           {
             value: "selected",
-            title: "Humans I pick",
-            description: "Only selected people in your company.",
+            title: t("identitiessection.general.humansipick"),
+            description: t("identitiessection.general.onlyselectedpeopleinyourcompany"),
             icon: <UserRound className="h-4 w-4" />,
             disabled: !canEditAudience,
           },
           {
             value: "company",
-            title: "Any human in the company",
-            description: "Anyone in your company can use this connection.",
+            title: t("identitiessection.general.anyhumaninthecompany"),
+            description: t("identitiessection.general.anyoneinyourcompanycanusethisconnection"),
             icon: <Building2 className="h-4 w-4" />,
             disabled: !canEditAudience,
           },
@@ -516,19 +522,19 @@ export function AudienceDialog({
 
         <div className="space-y-3">
           <RadioCardGroup
-            ariaLabel="Who can use this identity"
+            ariaLabel={t("identitiessection.general.whocanusethisidentity")}
             value={scope}
             onValueChange={(next) => setScope(next as "all" | "selected")}
             options={[
               {
                 value: "all",
-                title: "All organization members",
-                description: "Anyone in this organization can have work use this identity.",
+                title: t("identitiessection.general.allorganizationmembers"),
+                description: t("identitiessection.general.anyoneinthisorganizationcanhaveworkusethisidentity"),
               },
               {
                 value: "selected",
-                title: "Selected members",
-                description: "Only the people you choose.",
+                title: t("identitiessection.general.selectedmembers"),
+                description: t("identitiessection.general.onlythepeopleyouchoose"),
               },
             ]}
           />
@@ -543,8 +549,13 @@ export function AudienceDialog({
               selectedUserIds={selected}
               onChange={setSelected}
               triggerLabel={selected.size === 0
-                ? "Choose people"
-                : `${selected.size} ${selected.size === 1 ? "person" : "people"} selected`}
+                ? t("identitiessection.general.choosepeople")
+                : t("identitiessection.general.peopleselected", {
+                  count: selected.size,
+                  personLabel: selected.size === 1
+                    ? t("identitiessection.general.person")
+                    : t("identitiessection.general.people"),
+                })}
             />
           ) : null}
 
@@ -604,16 +615,16 @@ export function RevokeGrantDialog({
   const personal = grant.kind === "user";
   const title = personal
     ? isOwnIdentity
-      ? `Revoke your ${providerName} identity?`
-      : `Revoke this ${providerName} identity?`
-    : "Revoke the organization identity?";
+      ? t("identitiessection.general.revokeyourprovideridentity", { providerName })
+      : t("identitiessection.general.revokethisprovideridentity", { providerName })
+    : t("identitiessection.general.revoketheorganizationidentity");
   const body = personal
     ? isOwnIdentity
-      ? "Agents will stop acting as you. Work that needs this identity can ask you to connect again."
-      : "Agents will stop acting as this person. They can connect again themselves; no one else can do it for them."
+      ? t("identitiessection.general.agentswillstopactingasyou")
+      : t("identitiessection.general.agentswillstopactingasthisperson")
     : credentialPolicy === "per_user"
-      ? "Installed agents lose this shared identity immediately."
-      : "Eligible members and installed agents will lose this shared identity immediately.";
+      ? t("identitiessection.general.installedagentslosethissharedidentityimmediately")
+      : t("identitiessection.general.eligiblemembersandinstalledagentswilllosethissharedidentityimmediately");
 
   return (
     <AlertDialog open onOpenChange={(open) => { if (!open) onCancel(); }}>
