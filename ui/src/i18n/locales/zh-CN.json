@@ -6,6 +6,25 @@
       "newCompany": "新公司"
     }
   },
+  "appdetail": {
+    "general": {
+      "selectanorganizationtomanageapps": "请选择一个组织以管理应用",
+      "wecouldntfindthatapp": "找不到该应用。",
+      "backtoconnectors": "返回连接器",
+      "retryaccess": "重试访问",
+      "appname": "应用名称",
+      "save": "保存",
+      "cancel": "取消",
+      "renameapp": "重命名应用",
+      "action": "项操作",
+      "actions": "项操作",
+      "available": "可用",
+      "loadingmcpactionsthismaytakea": "正在加载 MCP 操作，可能需要一点时间。",
+      "loadingtools": "正在加载工具…",
+      "couldntloadtoolsforthisapp": "无法加载此应用的工具。",
+      "tryagain": "重试"
+    }
+  },
   "common": {
     "actions": {
       "retry": "重试",

@@ -117,6 +117,10 @@ function insertUseTranslation(component) {
   return { start: position, end: position, replacement: "\n  const { t } = useTranslation();" };
 }
 
+function hasUseTranslation(component) {
+  return /\buseTranslation\s*\(/.test(component.body.getText());
+}
+
 function hasTranslationImport(source) {
   return source.statements.some((statement) => ts.isImportDeclaration(statement)
     && ts.isStringLiteral(statement.moduleSpecifier) && statement.moduleSpecifier.text === "@/i18n");
@@ -181,7 +185,9 @@ function scan(file) {
         replacement: `${lastImport ? "\n" : ""}import { useTranslation } from "@/i18n";`,
       });
     }
-    for (const component of translatedComponents) edits.push(insertUseTranslation(component));
+    for (const component of translatedComponents) {
+      if (!hasUseTranslation(component)) edits.push(insertUseTranslation(component));
+    }
     const next = edits.sort((left, right) => right.start - left.start)
       .reduce((value, edit) => `${value.slice(0, edit.start)}${edit.replacement}${value.slice(edit.end)}`, sourceText);
     fs.writeFileSync(file, next);

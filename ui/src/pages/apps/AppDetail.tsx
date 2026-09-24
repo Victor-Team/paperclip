@@ -465,7 +465,7 @@ export function AppDetail({ renderActions, onReconnect }: {
   }
 
   if (!selectedCompanyId) {
-    return <div className="p-6 text-sm text-muted-foreground">Select an organization to manage apps.</div>;
+    return <div className="p-6 text-sm text-muted-foreground">{t("appdetail.general.selectanorganizationtomanageapps")}</div>;
   }
   if (connectionQuery.isLoading) {
     return (
@@ -479,10 +479,9 @@ export function AppDetail({ renderActions, onReconnect }: {
   if (!connection) {
     return (
       <div className="max-w-3xl p-6">
-        <p className="text-sm text-muted-foreground">We couldn't find that app.</p>
+        <p className="text-sm text-muted-foreground">{t("appdetail.general.wecouldntfindthatapp")}</p>
         <Button className="mt-4" variant="outline" onClick={() => navigate("/apps")}>
-          Back to connectors
-        </Button>
+          {t("appdetail.general.backtoconnectors")}</Button>
       </div>
     );
   }
@@ -532,8 +531,7 @@ export function AppDetail({ renderActions, onReconnect }: {
         <div role="status">
           <p>{connection.healthMessage || "GitHub access could not be checked. Try again."}</p>
           <Button variant="outline" disabled={refreshGitHubAccess.isPending} onClick={() => refreshGitHubAccess.mutate()}>
-            Retry access
-          </Button>
+            {t("appdetail.general.retryaccess")}</Button>
         </div>
       )}
       {needsReconnect && (
@@ -679,6 +677,7 @@ function AppDetailHeader({
   onRenameCancel: () => void;
   onRenameSubmit: (value: string) => void;
 }) {
+  const { t } = useTranslation();
   const unverifiedHost = unverifiedRemoteHost(connection);
   return (
     <header>
@@ -701,18 +700,17 @@ function AppDetailHeader({
               }}
             >
               <Input
-                aria-label="App name"
+                aria-label={t("appdetail.general.appname")}
                 value={nameDraft}
                 onChange={(event) => onNameDraftChange(event.target.value)}
                 className="h-9 w-64 text-lg font-bold"
                 autoFocus
               />
               <Button type="submit" size="sm" disabled={renamePending || !nameDraft.trim()}>
-                {renamePending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : "Save"}
+                {renamePending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : t("appdetail.general.save")}
               </Button>
               <Button type="button" size="sm" variant="ghost" onClick={onRenameCancel} disabled={renamePending}>
-                Cancel
-              </Button>
+                {t("appdetail.general.cancel")}</Button>
             </form>
           ) : (
             <div className="flex items-center gap-1.5">
@@ -721,7 +719,7 @@ function AppDetailHeader({
                 variant="ghost"
                 size="icon"
                 className="h-7 w-7 text-muted-foreground"
-                aria-label="Rename app"
+                aria-label={t("appdetail.general.renameapp")}
                 onClick={onRenameStart}
               >
                 <Pencil className="h-3.5 w-3.5" />
@@ -732,8 +730,7 @@ function AppDetailHeader({
             <StatusBadge status={status} />
             {connection.config?.provider !== "agentmail" && actionCount !== null && (
               <span className="text-xs text-muted-foreground">
-                {actionCount} {actionCount === 1 ? "action" : "actions"} available
-              </span>
+                {actionCount} {actionCount === 1 ? t("appdetail.general.action") : t("appdetail.general.actions")} {t("appdetail.general.available")}</span>
             )}
             {connectionDisplaySecondaryHint(connection) ? (
               <span className="text-xs text-muted-foreground">
@@ -750,19 +747,21 @@ function AppDetailHeader({
 }
 
 function ToolsLoading({ mcpActions = false }: { mcpActions?: boolean }) {
+  const { t } = useTranslation();
   return (
     <div className="flex items-center gap-2 py-8 text-sm text-muted-foreground" role="status">
       <Loader2 className="h-4 w-4 animate-spin" />
-      {mcpActions ? "Loading MCP actions, this may take a minute." : "Loading tools…"}
+      {mcpActions ? t("appdetail.general.loadingmcpactionsthismaytakea") : t("appdetail.general.loadingtools")}
     </div>
   );
 }
 
 function ToolsLoadError({ onRetry }: { onRetry: () => void }) {
+  const { t } = useTranslation();
   return (
     <div className="space-y-3 py-8">
-      <p className="text-sm text-destructive">Couldn’t load tools for this app.</p>
-      <Button size="sm" variant="outline" onClick={onRetry}>Try again</Button>
+      <p className="text-sm text-destructive">{t("appdetail.general.couldntloadtoolsforthisapp")}</p>
+      <Button size="sm" variant="outline" onClick={onRetry}>{t("appdetail.general.tryagain")}</Button>
     </div>
   );
 }

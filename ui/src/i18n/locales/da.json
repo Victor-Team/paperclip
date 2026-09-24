@@ -6,6 +6,25 @@
       "newCompany": "New Organization"
     }
   },
+  "appdetail": {
+    "general": {
+      "selectanorganizationtomanageapps": "Select an organization to manage apps.",
+      "wecouldntfindthatapp": "We couldn't find that app.",
+      "backtoconnectors": "Back to connectors",
+      "retryaccess": "Retry access",
+      "appname": "App name",
+      "save": "Save",
+      "cancel": "Cancel",
+      "renameapp": "Rename app",
+      "action": "action",
+      "actions": "actions",
+      "available": "available",
+      "loadingmcpactionsthismaytakea": "Loading MCP actions, this may take a minute.",
+      "loadingtools": "Loading tools…",
+      "couldntloadtoolsforthisapp": "Couldn’t load tools for this app.",
+      "tryagain": "Try again"
+    }
+  },
   "common": {
     "actions": {
       "retry": "Retry",
@@ -3571,8 +3590,8 @@
       "used": "{{who}} used {{action}}",
       "ranbutdidntfinish": "{{who}} ran {{action}}, but it didn't finish",
       "didntworkfor": "{{action}} didn't work for {{who}}",
-      "turnedoff": "{{who}} — {{action}} is turned off",
-      "blockednotturnedon": "Blocked {{action}} — it isn't turned on",
+      "turnedoff": "{{who}} - {{action}} is turned off",
+      "blockednotturnedon": "Blocked {{action}} - it isn't turned on",
       "askedbeforerunning": "{{who}} asked before running {{action}}",
       "approved": "{{resolver}} approved {{action}}",
       "saidnoto": "{{resolver}} said no to {{action}}",
