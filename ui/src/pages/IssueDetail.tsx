@@ -356,7 +356,7 @@ import {
   type WorkspaceFileRef,
   workspaceFileRefSchema,
 } from "@paperclipai/shared";
-import { useTranslation } from "@/i18n";
+import { t as translate, useTranslation } from "@/i18n";
 
 // Stable empty array for React Query `data` defaults. A literal `= []` default
 // creates a new array reference on every render while `data` is undefined
@@ -373,8 +373,8 @@ function createRunCancelledStatusUpdateError(
 ): StopAndFinalizeRunError {
   const message =
     err instanceof Error
-      ? `Run was stopped, but updating the task failed: ${err.message}`
-      : "Run was stopped, but updating the task failed. Retry the task status update.";
+      ? translate("issuedetail.general.stoppedStatusUpdateFailedWithError", { error: err.message })
+      : translate("issuedetail.general.stoppedStatusUpdateFailed");
   const error = new Error(message) as StopAndFinalizeRunError;
   error.runCancelledBeforeStatusUpdateFailed = true;
   return error;
@@ -423,9 +423,11 @@ function isPlanConfirmationInteraction(
 function buildPlanDecisionResponseText(
   interaction: RequestConfirmationInteraction,
 ) {
-  if (interaction.status === "accepted") return "Approved plan";
+  if (interaction.status === "accepted") return translate("issuedetail.general.approvedPlan");
   const reason = interaction.result?.reason?.trim();
-  return reason ? `Requested changes\n\n${reason}` : "Requested changes";
+  return reason
+    ? translate("issuedetail.general.requestedChangesWithReason", { reason })
+    : translate("issuedetail.general.requestedChanges");
 }
 
 const FEEDBACK_TERMS_URL =
@@ -436,13 +438,13 @@ const JUMP_TO_LATEST_MAX_COMMENT_PAGES = 10;
 function treeControlPreviewErrorCopy(error: unknown): string {
   if (error instanceof ApiError) {
     if (error.status === 403)
-      return "Only board users can preview subtree controls.";
+      return translate("issuedetail.general.previewBoardOnly");
     if (error.status === 409)
-      return "Preview is stale because subtree hold state changed. Retry to refresh.";
+      return translate("issuedetail.general.previewStale");
     if (error.status === 422)
-      return "This subtree action is currently invalid for the selected tasks.";
+      return translate("issuedetail.general.previewInvalid");
   }
-  return error instanceof Error ? error.message : "Unable to load preview.";
+  return error instanceof Error ? error.message : translate("issuedetail.general.previewLoadFailed");
 }
 
 export function canBoardResolveRecoveryAction(
@@ -662,23 +664,24 @@ function ActorIdentity({
     import("../lib/company-members").CompanyUserProfile
   >;
 }) {
+  const { t } = useTranslation();
   const id = evt.actorId;
   if (evt.actorType === "agent") {
     const agent = agentMap.get(id);
     return <AgentIdentity agent={agent ?? { id, name: id.slice(0, 8) }} size="sm" />;
   }
-  if (evt.actorType === "system") return <Identity name="System" size="sm" />;
+  if (evt.actorType === "system") return <Identity name={t("issuedetail.general.system")} size="sm" />;
   if (evt.actorType === "user") {
     const profile = userProfileMap?.get(id);
     return (
       <Identity
-        name={profile?.label ?? "Board"}
+        name={profile?.label ?? t("issuedetail.general.board")}
         avatarUrl={profile?.image}
         size="sm"
       />
     );
   }
-  return <Identity name={id || "Unknown"} size="sm" />;
+  return <Identity name={id || t("issuedetail.general.unknown")} size="sm" />;
 }
 
 export type AttributionActor = {
@@ -708,7 +711,7 @@ function AttributionAvatar({
   const { t } = useTranslation();
   const label = kind === "assignee" ? t("issuedetail.general.assignee") : t("issuedetail.general.originating");
   const accessibleLabel = via
-    ? `${label}: ${actor.name} · via ${via}`
+    ? t("issuedetail.general.attributionVia", { label, name: actor.name, via })
     : `${label}: ${actor.name}`;
   const testIdLabel = kind;
 
@@ -785,7 +788,7 @@ function IssueAttributionByline({
           name:
             formatUserLabel(issue.assigneeUserId, userLabelMap) ??
             userProfileMap.get(issue.assigneeUserId)?.label ??
-            "User",
+            t("issuedetail.general.user"),
           avatarUrl: userProfileMap.get(issue.assigneeUserId)?.image ?? null,
         }
       : null;
@@ -806,7 +809,7 @@ function IssueAttributionByline({
           name:
             formatUserLabel(originatingActor.id, userLabelMap) ??
             userProfileMap.get(originatingActor.id)?.label ??
-            "User",
+            t("issuedetail.general.user"),
           avatarUrl: userProfileMap.get(originatingActor.id)?.image ?? null,
         }
     : null;
@@ -2666,14 +2669,21 @@ function IssueDetailActivityTab({
                   <span>
                     {t("issuedetail.general.tokens")} {formatTokens(issueCostSummary.totalTokens)}
                     {issueCostSummary.cached > 0
-                      ? ` (in ${formatTokens(issueCostSummary.input)}, out ${formatTokens(issueCostSummary.output)}, cached ${formatTokens(issueCostSummary.cached)})`
-                      : ` (in ${formatTokens(issueCostSummary.input)}, out ${formatTokens(issueCostSummary.output)})`}
+                      ? t("issuedetail.general.tokenBreakdownCached", {
+                          input: formatTokens(issueCostSummary.input),
+                          output: formatTokens(issueCostSummary.output),
+                          cached: formatTokens(issueCostSummary.cached),
+                        })
+                      : t("issuedetail.general.tokenBreakdown", {
+                          input: formatTokens(issueCostSummary.input),
+                          output: formatTokens(issueCostSummary.output),
+                        })}
                   </span>
                 ) : null}
                 {issueCostSummary.hasRuntime ? (
                   <span>
                     {t("issuedetail.general.runtime")} {formatDurationMs(issueCostSummary.runtimeMs)}
-                    {` (${issueCostSummary.runCount} run${issueCostSummary.runCount === 1 ? "" : t("issuedetail.general.s")})`}
+                    {t(issueCostSummary.runCount === 1 ? "issuedetail.general.runCountOne" : "issuedetail.general.runCountMany", { runs: issueCostSummary.runCount })}
                   </span>
                 ) : null}
                 {!issueCostSummary.hasCost &&
@@ -2698,18 +2708,25 @@ function IssueDetailActivityTab({
                   </span>
                   <span>
                     {t("issuedetail.general.tokens1")} {formatTokens(issueTreeCostTokens)}
-                    {issueTreeCostSummary.cachedInputTokens > 0
-                      ? ` (in ${formatTokens(issueTreeCostSummary.inputTokens)}, out ${formatTokens(issueTreeCostSummary.outputTokens)}, cached ${formatTokens(issueTreeCostSummary.cachedInputTokens)})`
-                      : ` (in ${formatTokens(issueTreeCostSummary.inputTokens)}, out ${formatTokens(issueTreeCostSummary.outputTokens)})`}
+                      {issueTreeCostSummary.cachedInputTokens > 0
+                        ? t("issuedetail.general.tokenBreakdownCached", {
+                            input: formatTokens(issueTreeCostSummary.inputTokens),
+                            output: formatTokens(issueTreeCostSummary.outputTokens),
+                            cached: formatTokens(issueTreeCostSummary.cachedInputTokens),
+                          })
+                        : t("issuedetail.general.tokenBreakdown", {
+                            input: formatTokens(issueTreeCostSummary.inputTokens),
+                            output: formatTokens(issueTreeCostSummary.outputTokens),
+                          })}
                   </span>
                   {issueTreeCostSummary.runCount > 0 ? (
                     <span>
                       {t("issuedetail.general.runtime2")} {formatDurationMs(issueTreeCostSummary.runtimeMs)}
-                      {` (${issueTreeCostSummary.runCount} run${issueTreeCostSummary.runCount === 1 ? "" : t("issuedetail.general.s3")})`}
+                      {t(issueTreeCostSummary.runCount === 1 ? "issuedetail.general.runCountOne" : "issuedetail.general.runCountMany", { runs: issueTreeCostSummary.runCount })}
                     </span>
                   ) : null}
                   <span>
-                    {issueTreeCostSummary.issueCount} {t("issuedetail.general.task")}                    {issueTreeCostSummary.issueCount === 1 ? "" : t("issuedetail.general.s4")}
+                    {t(issueTreeCostSummary.issueCount === 1 ? "issuedetail.general.taskCountOne" : "issuedetail.general.taskCountMany", { tasks: issueTreeCostSummary.issueCount })}
                   </span>
                 </div>
               ) : null}
