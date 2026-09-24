@@ -53,7 +53,7 @@ export function AiConnectionAccountControls({
       )}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="min-w-0 text-sm">
-          <p className="font-medium">{aiMethodLabel(account.provider, account.method)}</p>
+          <p className="font-medium">{aiMethodLabel(account.provider, account.method, t)}</p>
           {account.accountLabel && <p className="break-words text-xs text-muted-foreground">{account.accountLabel}</p>}
         </div>
         {!readOnly && grant.capabilities?.canRevoke && (

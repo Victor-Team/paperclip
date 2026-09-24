@@ -24,7 +24,7 @@ export function AiConnectionIdentity({
         </span>
         <span className="text-xs text-muted-foreground">
           {provider.name} ·{" "}
-          {aiMethodLabel(connection.provider, connection.method)}
+          {aiMethodLabel(connection.provider, connection.method, t)}
           {connection.accountLabel ? ` · ${connection.accountLabel}` : ""}
         </span>
         <span className="flex items-center gap-1 text-xs text-muted-foreground">

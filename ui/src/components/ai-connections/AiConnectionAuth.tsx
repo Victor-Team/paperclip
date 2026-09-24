@@ -73,7 +73,7 @@ function AuthAttempt({
       <div className="flex flex-col gap-1">
         <h3 className="text-sm font-semibold">{t("aiconnectionauth.general.connect")} {info.name}</h3>
         <p className="text-xs text-muted-foreground">
-          {aiMethodLabel(provider, method)}
+          {aiMethodLabel(provider, method, t)}
         </p>
       </div>
       {state.phase === "connected" ? (

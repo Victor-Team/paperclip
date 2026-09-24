@@ -58,6 +58,7 @@ export function AiConnectionPicker({
     connections,
     currentUserId,
     agentId,
+    t,
   ) : undefined;
   const select = (
     mode: "shared",
@@ -84,7 +85,7 @@ export function AiConnectionPicker({
         <h3 className="text-sm font-semibold">{t("aiconnectionpicker.general.aiconnection1")}</h3>
         <p className="text-xs text-muted-foreground">
           {AI_PROVIDERS[requirement.provider].name}
-          {value && value.mode !== "responsible_user" && ` · ${aiMethodLabel(value.provider, value.method)}`}
+          {value && value.mode !== "responsible_user" && ` · ${aiMethodLabel(value.provider, value.method, t)}`}
         </p>
         </div>
       </div>
@@ -114,8 +115,8 @@ export function AiConnectionPicker({
               </> },
               ...compatible.filter((connection) => connection.ownership === "shared").map((connection) => ({
                 id: connection.id, name: connection.name,
-                disabled: Boolean(aiConnectionProblem(connection)),
-                description: <>{t("aiconnectionpicker.general.companyshared")}{aiMethodLabel(connection.provider, connection.method)}{connection.accountLabel ? ` · ${connection.accountLabel}` : ""}{aiConnectionProblem(connection) ? ` · ${aiConnectionProblem(connection)}` : ""}</>,
+                disabled: Boolean(aiConnectionProblem(connection, t)),
+                description: <>{t("aiconnectionpicker.general.companyshared")}{aiMethodLabel(connection.provider, connection.method, t)}{connection.accountLabel ? ` · ${connection.accountLabel}` : ""}{aiConnectionProblem(connection, t) ? ` · ${aiConnectionProblem(connection, t)}` : ""}</>,
               })),
             ]}
             onSelect={(id) => {

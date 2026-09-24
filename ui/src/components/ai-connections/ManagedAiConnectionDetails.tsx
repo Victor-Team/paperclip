@@ -24,7 +24,7 @@ export function ManagedAiConnectionRow({
   if (!metadata) return null;
   return (
     <p className="text-xs text-muted-foreground">
-      {aiMethodLabel(metadata.provider, metadata.method)} ·{" "}
+      {aiMethodLabel(metadata.provider, metadata.method, t)} ·{" "}
       {connection.credentialPolicy === "per_user"
         ? t("managedaiconnectiondetails.general.personal")
         : t("managedaiconnectiondetails.general.companyshared")}

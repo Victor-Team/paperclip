@@ -2346,6 +2346,39 @@
       "couldnotrevokeaccount": "无法撤销此账户。请重试。"
     }
   },
+  "aiconnectionmodel": {
+    "general": {
+      "connected": "已连接",
+      "needsattention": "需要注意",
+      "expired": "已过期",
+      "revoked": "已撤销",
+      "apikey": "API 密钥",
+      "claudesubscription": "Claude 订阅",
+      "chatgptsubscription": "ChatGPT 订阅",
+      "groksubscription": "Grok 订阅",
+      "subscriptionunavailable": "订阅不可用",
+      "noconnectionselected": "未选择连接。请连接账户后继续。",
+      "statusrequiresreconnection": "{{status}}。请重新连接此账户后继续。",
+      "choosecompatibleconnection": "请选择与此提供商和登录方式兼容的连接。",
+      "connectionnolongeravailable": "此连接已不再可用于该智能体。请选择其他连接。",
+      "choosecompanysharedconnection": "请选择公司共享连接。",
+      "credentialnotshared": "此凭据未与您共享。请选择您可以使用的连接。"
+    }
+  },
+  "aiconnectionconnectorpages": {
+    "general": {
+      "personal": "个人",
+      "personaldefault": "个人默认"
+    }
+  },
+  "localailogin": {
+    "general": {
+      "signinattemptexpired": "此登录尝试已过期。请重新开始登录。",
+      "couldnotchecklocalsignin": "无法检查本地登录。",
+      "choosecompanybeforeconnecting": "请先选择公司再连接。",
+      "preparelocalsigninbeforeconnecting": "请先准备本地登录再连接。"
+    }
+  },
   "aiconnectionauth": {
     "general": {
       "connect": "连接",

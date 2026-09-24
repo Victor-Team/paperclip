@@ -2346,6 +2346,39 @@
       "couldnotrevokeaccount": "Could not revoke this account. Retry."
     }
   },
+  "aiconnectionmodel": {
+    "general": {
+      "connected": "Connected",
+      "needsattention": "Needs attention",
+      "expired": "Expired",
+      "revoked": "Revoked",
+      "apikey": "API key",
+      "claudesubscription": "Claude subscription",
+      "chatgptsubscription": "ChatGPT subscription",
+      "groksubscription": "Grok subscription",
+      "subscriptionunavailable": "Subscription unavailable",
+      "noconnectionselected": "No connection selected. Connect an account to continue.",
+      "statusrequiresreconnection": "{{status}}. Reconnect this account to continue.",
+      "choosecompatibleconnection": "Choose a connection compatible with this provider and sign-in method.",
+      "connectionnolongeravailable": "This connection is no longer available for this agent. Choose another connection.",
+      "choosecompanysharedconnection": "Choose a company-shared connection.",
+      "credentialnotshared": "This credential is not shared with you. Choose a connection you can use."
+    }
+  },
+  "aiconnectionconnectorpages": {
+    "general": {
+      "personal": "Personal",
+      "personaldefault": "Personal default"
+    }
+  },
+  "localailogin": {
+    "general": {
+      "signinattemptexpired": "This sign-in attempt expired. Start sign-in again.",
+      "couldnotchecklocalsignin": "Could not check local sign-in.",
+      "choosecompanybeforeconnecting": "Choose a company before connecting.",
+      "preparelocalsigninbeforeconnecting": "Prepare local sign-in before connecting."
+    }
+  },
   "aiconnectionauth": {
     "general": {
       "connect": "Connect",
