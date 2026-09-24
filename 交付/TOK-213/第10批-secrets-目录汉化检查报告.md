@@ -5,7 +5,7 @@
 - 提交：`c8aa618d2`（`feat(i18n): localize secrets pages`）
 - 页面范围：`ui/src/pages/secrets/**` 的 9 个可渲染 TSX 文件；未修改 `ui/src/pages/apps/**`、`ui/src/components/**`、`ui/src/context/**`、`ui/src/features/**`、`ui/src/adapters/**` 或 `ui/src/plugins/**`。
 - 接线：169 条可见英文候选全部接入 `t()`；AST 复扫为 0 条。
-- locale：新增 211 个键（包含完整插值句），`en.json` 与 `zh-CN.json` 为手写事实源；其余 38 个语言包由 `scripts/generate-i18n-locales.mjs --copy-en-values` 生成。
+- locale：新增本批页面命名空间键（包含完整插值句），`en.json` 与 `zh-CN.json` 为手写事实源；其余 38 个语言包由 `scripts/generate-i18n-locales.mjs --copy-en-values` 生成。
 
 ## 中文与术语
 
