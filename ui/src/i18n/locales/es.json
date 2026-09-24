@@ -3742,5 +3742,19 @@
       "disconnectdescription": "This removes {{name}} from Paperclip and deletes its credentials in Composio. Agents using its actions lose them immediately. Connecting it again needs a new sign-in.",
       "cancel": "Cancel"
     }
+  },
+  "paperclipcloudoauthhandoff": {
+    "general": {
+      "signincouldntcontinue": "Sign-in couldn’t continue",
+      "preparingsecuresignin": "Preparing secure sign-in",
+      "couldntprepareprovider": "Paperclip couldn’t prepare the provider sign-in. Try again.",
+      "signinisbeingrefreshed": "Your Paperclip sign-in is being refreshed.",
+      "openingprovidersecurely": "Paperclip is opening the provider securely.",
+      "tryagain": "Try again",
+      "returntopaperclip": "Return to Paperclip",
+      "signinexpired": "This sign-in expired. Return to Paperclip and start the connection again.",
+      "couldntrefreshsignin": "Paperclip couldn’t refresh this sign-in. Try again to continue.",
+      "couldntpreparesecure": "Paperclip couldn’t prepare secure sign-in."
+    }
   }
 }

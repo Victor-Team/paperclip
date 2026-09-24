@@ -3,8 +3,12 @@
 import { flushSync } from "react-dom";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { i18n } from "@/i18n";
 import { savePendingCloudHandoff } from "@/lib/oauthHandoff";
-import { PaperclipCloudOAuthHandoffPage } from "./PaperclipCloudOAuthHandoff";
+import {
+  ManagedOAuthHandoffState,
+  PaperclipCloudOAuthHandoffPage,
+} from "./PaperclipCloudOAuthHandoff";
 
 const navigateTopLevel = vi.hoisted(() => vi.fn());
 const SESSION = "cloud_session_abcdefghijklmnop";
@@ -44,13 +48,25 @@ beforeEach(() => {
   root = createRoot(container);
 });
 
-afterEach(() => {
-  act(() => root.unmount());
+afterEach(async () => {
+  await act(() => root.unmount());
   container.remove();
   vi.restoreAllMocks();
+  await i18n.changeLanguage("en");
 });
 
 describe("PaperclipCloudOAuthHandoffPage", () => {
+  it("renders OAuth handoff recovery controls in Simplified Chinese", async () => {
+    await i18n.changeLanguage("zh-CN");
+    await act(() => root.render(
+      <ManagedOAuthHandoffState phase="error" onRetry={vi.fn()} onCancel={vi.fn()} />,
+    ));
+
+    expect(container.textContent).toContain("无法继续登录");
+    expect(container.textContent).toContain("重试");
+    expect(container.textContent).toContain("返回 Paperclip");
+  });
+
   it("keeps a tenant loading state visible until the provider URL is ready", async () => {
     savePendingCloudHandoff(SESSION);
     let complete: ((response: Response) => void) | undefined;

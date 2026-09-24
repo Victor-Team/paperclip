@@ -3636,6 +3636,20 @@
       "cancel": "取消"
     }
   },
+  "paperclipcloudoauthhandoff": {
+    "general": {
+      "signincouldntcontinue": "无法继续登录",
+      "preparingsecuresignin": "正在准备安全登录",
+      "couldntprepareprovider": "Paperclip 无法准备提供商登录。请重试。",
+      "signinisbeingrefreshed": "正在刷新您的 Paperclip 登录状态。",
+      "openingprovidersecurely": "Paperclip 正在安全地打开提供商。",
+      "tryagain": "重试",
+      "returntopaperclip": "返回 Paperclip",
+      "signinexpired": "此登录已过期。请返回 Paperclip 并重新开始连接。",
+      "couldntrefreshsignin": "Paperclip 无法刷新此登录。请重试以继续。",
+      "couldntpreparesecure": "Paperclip 无法准备安全登录。"
+    }
+  },
   "setuppanel": {
     "general": {
       "agents": "智能体",
