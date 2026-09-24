@@ -129,7 +129,7 @@ import {
   UserSecretChip,
 } from "./secrets/user-secret-presentation";
 import type { MyUserSecretEntry } from "../api/secrets";
-import { useTranslation } from "@/i18n";
+import { t as translate, useTranslation } from "@/i18n";
 
 type CreateMode = "managed" | "external";
 // "value" writes a new secret value (for external references: through to the
@@ -151,11 +151,10 @@ function readStoredViewMode(): SecretsViewMode | null {
   }
 }
 
-/** "12 secrets · 3 folders" — folder part omitted when there are no subfolders. */
 function formatSecretPathCounts(secretCount: number, folderCount: number): string {
-  const parts = [`${secretCount} ${secretCount === 1 ? "secret" : "secrets"}`];
+  const parts = [translate("secrets.general.secretcount", { count: secretCount })];
   if (folderCount > 0) {
-    parts.push(`${folderCount} ${folderCount === 1 ? "folder" : "folders"}`);
+    parts.push(translate("secrets.general.foldercount", { count: folderCount }));
   }
   return parts.join(" · ");
 }
@@ -263,9 +262,9 @@ function isAwsDiscoveryAccessDenied(error: unknown): boolean {
 }
 
 function readableErrorMessage(error: unknown): string {
-  if (error instanceof ApiError) return error.message || `Request failed: ${error.status}`;
+  if (error instanceof ApiError) return error.message || translate("secrets.general.requestfailed", { status: error.status });
   if (error instanceof Error) return error.message;
-  return "Unexpected error";
+  return translate("secrets.general.unexpectederror");
 }
 
 function providerVaultFormFromConfig(config: CompanySecretProviderConfig): ProviderVaultForm {
@@ -295,16 +294,16 @@ function formatRelative(value: Date | string | null | undefined): string {
   const date = typeof value === "string" ? new Date(value) : value;
   if (Number.isNaN(date.getTime())) return "—";
   const diff = Date.now() - date.getTime();
-  if (diff < 0) return date.toLocaleString();
+  if (diff < 0) return date.toLocaleString(translate("secrets.general.datelocale"));
   const seconds = Math.floor(diff / 1000);
-  if (seconds < 60) return `${seconds}s ago`;
+  if (seconds < 60) return translate("secrets.general.secondsago", { count: seconds });
   const minutes = Math.floor(seconds / 60);
-  if (minutes < 60) return `${minutes}m ago`;
+  if (minutes < 60) return translate("secrets.general.minutesago", { count: minutes });
   const hours = Math.floor(minutes / 60);
-  if (hours < 48) return `${hours}h ago`;
+  if (hours < 48) return translate("secrets.general.hoursago", { count: hours });
   const days = Math.floor(hours / 24);
-  if (days < 30) return `${days}d ago`;
-  return date.toLocaleDateString();
+  if (days < 30) return translate("secrets.general.daysago", { count: days });
+  return date.toLocaleDateString(translate("secrets.general.datelocale"));
 }
 
 function statusTextTone(status: SecretStatus) {
@@ -346,20 +345,20 @@ function normalizeUserSecretKeyForPreview(input: string) {
 
 
 function modeLabel(managedMode: SecretManagedMode) {
-  return managedMode === "paperclip_managed" ? "Paperclip-managed" : "Linked external";
+  return managedMode === "paperclip_managed" ? translate("secrets.general.paperclipmanaged") : translate("secrets.general.linkedexternal");
 }
 
 function modeDescription(managedMode: SecretManagedMode, canWriteExternalValue = false) {
   if (managedMode === "paperclip_managed") {
-    return "Paperclip owns create and rotation writes for this provider secret.";
+    return translate("secrets.general.paperclipownsproviderwrites");
   }
   return canWriteExternalValue
-    ? "Paperclip resolves this provider reference and can write new values to it via Update value."
-    : "Paperclip resolves this provider reference but does not rotate the provider value.";
+    ? translate("secrets.general.providerreferencewritable")
+    : translate("secrets.general.providerreferencereadonly");
 }
 
 function statusLabel(status: SecretStatus) {
-  return status.charAt(0).toUpperCase() + status.slice(1);
+  return translate(`secrets.general.status_${status}`);
 }
 
 function statusDotTone(status: SecretStatus) {
@@ -404,8 +403,8 @@ function providerIndicatorLabel(
   const custody = modeLabel(secret.managedMode);
   return [
     `${custody} · ${provider}`,
-    vault ? `Vault: ${vault}` : null,
-    secret.externalRef ? `Reference: ${secret.externalRef}` : null,
+    vault ? translate("secrets.general.vaulttooltip", { vault }) : null,
+    secret.externalRef ? translate("secrets.general.referencetooltip", { reference: secret.externalRef }) : null,
   ]
     .filter(Boolean)
     .join("\n");
@@ -472,12 +471,12 @@ export function getCreateProviderBlockReason(
   health: SecretProviderHealthResponse | null,
   providerConfig?: CompanySecretProviderConfig | null,
 ) {
-  if (!provider) return "Select a provider.";
+  if (!provider) return translate("secrets.general.selectprovider");
   if (mode === "managed" && provider.supportsManagedValues === false) {
-    return `${provider.label} does not support Paperclip-managed secret values.`;
+    return translate("secrets.general.managednotavailable", { provider: provider.label });
   }
   if (mode === "external" && provider.supportsExternalReferences === false) {
-    return `${provider.label} does not support linked external references.`;
+    return translate("secrets.general.linkednotavailable", { provider: provider.label });
   }
   const selectedProviderConfigBlockReason = providerConfig?.provider === provider.id
     ? getProviderConfigBlockReason(providerConfig)
@@ -488,15 +487,15 @@ export function getCreateProviderBlockReason(
     if (selectedProviderConfigReady) return null;
     if (selectedProviderConfigBlockReason) return selectedProviderConfigBlockReason;
     const healthEntry = healthEntryForProvider(health, provider.id);
-    const deploymentMessage = `Deployment default ${provider.label} is not configured.`;
-    const nextStep = " Select a ready provider vault or configure the deployment default.";
+    const deploymentMessage = translate("secrets.general.deploymentnotconfigured", { provider: provider.label });
+    const nextStep = translate("secrets.general.selectreadyvault");
     return healthEntry?.message
       ? `${deploymentMessage}${nextStep} ${healthEntry.message}`
       : `${deploymentMessage}${nextStep}`;
   }
   const healthEntry = healthEntryForProvider(health, provider.id);
   if (healthEntry?.status === "error") {
-    return `${provider.label} health check failed: ${healthEntry.message}`;
+    return translate("secrets.general.providerhealthfailed", { provider: provider.label, message: healthEntry.message });
   }
   return null;
 }
@@ -512,7 +511,7 @@ function providerHealthText(
     providerConfig?.provider === provider.id &&
     !getProviderConfigBlockReason(providerConfig)
   ) {
-    return `Using selected provider vault. Deployment default ${provider.label} is not configured.`;
+    return translate("secrets.general.usingselectedvault", { provider: provider.label });
   }
   const entry = healthEntryForProvider(health, provider.id);
   if (!entry) return null;
@@ -529,10 +528,10 @@ export function getProviderConfigBlockReason(
   config: CompanySecretProviderConfig | null | undefined,
 ) {
   if (!config) return null;
-  if (config.status === "disabled") return "This provider vault is disabled.";
-  if (config.status === "coming_soon") return "This provider vault is saved as draft metadata only.";
+  if (config.status === "disabled") return translate("secrets.general.vaultdisabledreason");
+  if (config.status === "coming_soon") return translate("secrets.general.vaultdraftreason");
   if (config.healthStatus === "error") {
-    return config.healthMessage ?? "This provider vault health check failed.";
+    return config.healthMessage ?? translate("secrets.general.vaulthealthfailed");
   }
   return null;
 }
@@ -589,8 +588,8 @@ export function findCreateProviderReplacement({
 }
 
 function providerVaultLabel(configs: CompanySecretProviderConfig[], id: string | null | undefined) {
-  if (!id) return "Deployment default";
-  return configs.find((config) => config.id === id)?.displayName ?? "Unknown vault";
+  if (!id) return translate("secrets.general.deploymentdefaultlabel");
+  return configs.find((config) => config.id === id)?.displayName ?? translate("secrets.general.unknownvault");
 }
 
 function buildProviderVaultConfig(form: ProviderVaultForm): Record<string, unknown> {
@@ -733,8 +732,8 @@ export function Secrets() {
   const [newFolderError, setNewFolderError] = useState<string | null>(null);
 
   useEffect(() => {
-    setBreadcrumbs([{ label: "Secrets" }]);
-  }, [setBreadcrumbs]);
+    setBreadcrumbs([{ label: t("secrets.general.secrets") }]);
+  }, [setBreadcrumbs, t]);
 
   const secretsQuery = useQuery({
     queryKey: selectedCompanyId
@@ -1116,10 +1115,10 @@ export function Secrets() {
       pushToast({
         title:
           result.kind === "company"
-            ? "Secret created"
+            ? t("secrets.general.secretcreated")
             : result.action === "updated"
-              ? "User-provided secret updated"
-              : "User-provided secret created",
+              ? t("secrets.general.usersecretupdated")
+              : t("secrets.general.usersecretcreated"),
         body: result.item.name,
         tone: "success",
       });
@@ -1168,7 +1167,7 @@ export function Secrets() {
       });
     },
     onSuccess: (updated) => {
-      pushToast({ title: "Rotated", body: `${updated.name} → v${updated.latestVersion}`, tone: "success" });
+      pushToast({ title: t("secrets.general.rotated"), body: `${updated.name} → v${updated.latestVersion}`, tone: "success" });
       setRotateOpen(false);
       setRotateValue("");
       setRotateExternalRef("");
@@ -1177,7 +1176,7 @@ export function Secrets() {
       invalidateAll([updated.id]);
     },
     onError: (error) => {
-      setRotateError(error instanceof Error ? error.message : "Rotate failed");
+      setRotateError(error instanceof Error ? error.message : t("secrets.general.rotatefailed"));
     },
   });
 
@@ -1195,13 +1194,13 @@ export function Secrets() {
       }
     },
     onSuccess: (updated) => {
-      pushToast({ title: `Secret ${updated.status}`, body: updated.name, tone: "info" });
+      pushToast({ title: t("secrets.general.secretstatus", { status: statusLabel(updated.status) }), body: updated.name, tone: "info" });
       invalidateAll([updated.id]);
     },
     onError: (error) => {
       pushToast({
-        title: "Status update failed",
-        body: error instanceof Error ? error.message : "Try again",
+        title: t("secrets.general.statusupdatefailed"),
+        body: error instanceof Error ? error.message : t("secrets.general.tryagain"),
         tone: "error",
       });
     },
@@ -1211,13 +1210,13 @@ export function Secrets() {
     mutationFn: ({ definition, status }: { definition: UserSecretDefinition; status: SecretStatus }) =>
       secretsApi.updateUserSecretDefinition(selectedCompanyId!, definition.id, { status }),
     onSuccess: (updated) => {
-      pushToast({ title: `User-provided secret ${updated.status}`, body: updated.name, tone: "info" });
+      pushToast({ title: t("secrets.general.usersecretstatus", { status: statusLabel(updated.status) }), body: updated.name, tone: "info" });
       invalidateAll([updated.id]);
     },
     onError: (error) => {
       pushToast({
-        title: "Status update failed",
-        body: error instanceof Error ? error.message : "Try again",
+        title: t("secrets.general.statusupdatefailed"),
+        body: error instanceof Error ? error.message : t("secrets.general.tryagain"),
         tone: "error",
       });
     },
@@ -1226,15 +1225,15 @@ export function Secrets() {
   const deleteMutation = useMutation({
     mutationFn: (id: string) => secretsApi.remove(id),
     onSuccess: (_response, id) => {
-      pushToast({ title: "Secret deleted", tone: "info" });
+      pushToast({ title: t("secrets.general.secretdeleted"), tone: "info" });
       setDeleteConfirm(null);
       if (selectedSecretId === id) setDetailSelection(null);
       invalidateAll([id]);
     },
     onError: (error) => {
       pushToast({
-        title: "Delete failed",
-        body: error instanceof Error ? error.message : "Try again",
+        title: t("secrets.general.deletefailed"),
+        body: error instanceof Error ? error.message : t("secrets.general.tryagain"),
         tone: "error",
       });
     },
@@ -1244,15 +1243,15 @@ export function Secrets() {
     mutationFn: (definition: UserSecretDefinition) =>
       secretsApi.removeUserSecretDefinition(selectedCompanyId!, definition.id),
     onSuccess: (_response, definition) => {
-      pushToast({ title: "User-provided secret removed", body: definition.name, tone: "info" });
+      pushToast({ title: t("secrets.general.usersecretremoved"), body: definition.name, tone: "info" });
       setDefinitionDeleteConfirm(null);
       if (selectedDefinitionId === definition.id) setDetailSelection(null);
       invalidateAll([definition.id]);
     },
     onError: (error) => {
       pushToast({
-        title: "Delete failed",
-        body: error instanceof Error ? error.message : "Try again",
+        title: t("secrets.general.deletefailed"),
+        body: error instanceof Error ? error.message : t("secrets.general.tryagain"),
         tone: "error",
       });
     },
@@ -1275,7 +1274,7 @@ export function Secrets() {
       } as CreateSecretProviderConfigInput);
     },
     onSuccess: (saved) => {
-      pushToast({ title: editingVault ? "Provider vault updated" : "Provider vault created", body: saved.displayName, tone: "success" });
+      pushToast({ title: editingVault ? t("secrets.general.vaultupdated") : t("secrets.general.vaultcreated"), body: saved.displayName, tone: "success" });
       setVaultDialogOpen(false);
       setEditingVault(null);
       setVaultForm(emptyProviderVaultForm());
@@ -1308,13 +1307,13 @@ export function Secrets() {
   const disableVaultMutation = useMutation({
     mutationFn: (id: string) => secretsApi.disableProviderConfig(id),
     onSuccess: (updated) => {
-      pushToast({ title: "Provider vault disabled", body: updated.displayName, tone: "info" });
+      pushToast({ title: t("secrets.general.vaultdisabled"), body: updated.displayName, tone: "info" });
       invalidateAll();
     },
     onError: (error) => {
       pushToast({
-        title: "Disable failed",
-        body: error instanceof Error ? error.message : "Try again",
+        title: t("secrets.general.disablefailed"),
+        body: error instanceof Error ? error.message : t("secrets.general.tryagain"),
         tone: "error",
       });
     },
@@ -1324,8 +1323,8 @@ export function Secrets() {
     mutationFn: (id: string) => secretsApi.removeProviderConfig(id),
     onSuccess: (removed) => {
       pushToast({
-        title: "Provider vault removed",
-        body: `${removed.displayName} was removed from Paperclip only.`,
+        title: t("secrets.general.vaultremoved"),
+        body: t("secrets.general.vaultremovedbody", { name: removed.displayName }),
         tone: "info",
       });
       setRemoveVaultConfirm(null);
@@ -1333,8 +1332,8 @@ export function Secrets() {
     },
     onError: (error) => {
       pushToast({
-        title: "Remove failed",
-        body: error instanceof Error ? error.message : "Try again",
+        title: t("secrets.general.removefailed"),
+        body: error instanceof Error ? error.message : t("secrets.general.tryagain"),
         tone: "error",
       });
     },
@@ -1343,13 +1342,13 @@ export function Secrets() {
   const defaultVaultMutation = useMutation({
     mutationFn: (id: string) => secretsApi.setDefaultProviderConfig(id),
     onSuccess: (updated) => {
-      pushToast({ title: "Default vault set", body: updated.displayName, tone: "success" });
+      pushToast({ title: t("secrets.general.defaultvaultset"), body: updated.displayName, tone: "success" });
       invalidateAll();
     },
     onError: (error) => {
       pushToast({
-        title: "Default update failed",
-        body: error instanceof Error ? error.message : "Try again",
+        title: t("secrets.general.defaultupdatefailed"),
+        body: error instanceof Error ? error.message : t("secrets.general.tryagain"),
         tone: "error",
       });
     },
@@ -1358,13 +1357,13 @@ export function Secrets() {
   const healthVaultMutation = useMutation({
     mutationFn: (id: string) => secretsApi.checkProviderConfigHealth(id),
     onSuccess: (health) => {
-      pushToast({ title: "Health checked", body: health.message, tone: health.status === "error" ? "error" : "info" });
+      pushToast({ title: t("secrets.general.healthchecked"), body: health.message, tone: health.status === "error" ? "error" : "info" });
       invalidateAll();
     },
     onError: (error) => {
       pushToast({
-        title: "Health check failed",
-        body: error instanceof Error ? error.message : "Try again",
+        title: t("secrets.general.healthcheckfailed"),
+        body: error instanceof Error ? error.message : t("secrets.general.tryagain"),
         tone: "error",
       });
     },
@@ -1472,8 +1471,8 @@ export function Secrets() {
 
   function rotateActionLabel(secret: CompanySecret) {
     return secret.managedMode === "external_reference" && !secretSupportsExternalValueWrite(secret)
-      ? "Update reference"
-      : "Update value";
+      ? t("secrets.general.updatereference")
+      : t("secrets.general.updatevalueaction");
   }
 
   function openRotateSecret(secret: CompanySecret) {
@@ -1494,11 +1493,11 @@ export function Secrets() {
 
   function copyDetailLink() {
     void copyTextToClipboard(window.location.href)
-      .then(() => pushToast({ title: "Link copied", body: "Deep link to this secret", tone: "success" }))
+      .then(() => pushToast({ title: t("secrets.general.linkcopied"), body: t("secrets.general.deeplinkbody"), tone: "success" }))
       .catch((error) =>
         pushToast({
-          title: "Copy failed",
-          body: error instanceof Error ? error.message : "Unable to copy link",
+          title: t("secrets.general.copyfailed"),
+          body: error instanceof Error ? error.message : t("secrets.general.unabletocopylink"),
           tone: "error",
         }),
       );
@@ -1506,11 +1505,11 @@ export function Secrets() {
 
   function copySecretKey(key: string) {
     void copyTextToClipboard(key)
-      .then(() => pushToast({ title: "Secret key copied", body: key, tone: "success" }))
+      .then(() => pushToast({ title: t("secrets.general.secretkeycopied"), body: key, tone: "success" }))
       .catch((error) =>
         pushToast({
-          title: "Copy failed",
-          body: error instanceof Error ? error.message : "Unable to copy secret key",
+          title: t("secrets.general.copyfailed"),
+          body: error instanceof Error ? error.message : t("secrets.general.unabletocopykey"),
           tone: "error",
         }),
       );
@@ -1524,7 +1523,7 @@ export function Secrets() {
           <Button
             variant="ghost"
             size="icon-sm"
-            aria-label={`Actions for ${name}`}
+            aria-label={t("secrets.general.actionsfor", { name })}
             onClick={(event) => event.stopPropagation()}
           >
             <MoreHorizontal className="h-4 w-4" />
@@ -1541,7 +1540,7 @@ export function Secrets() {
           {row.kind === "company" ? (
             <>
               <DropdownMenuItem onSelect={() => setUsageDialogSecretId(row.secret.id)}>
-                <Link2 className="h-4 w-4" /> {t("secrets.general.viewreferences")}{row.secret.referenceCount ?? 0})
+                <Link2 className="h-4 w-4" /> {t("secrets.general.viewreferencescount", { count: row.secret.referenceCount ?? 0 })}
               </DropdownMenuItem>
               <DropdownMenuItem onSelect={() => openRotateSecret(row.secret)}>
                 <RefreshCw className="h-4 w-4" />
@@ -1708,7 +1707,7 @@ export function Secrets() {
   }
 
   function renderUpRow(variant: "table" | "card") {
-    const parentLabel = parentFolderPath ? parentFolderPath.split("/").pop()! : "All secrets";
+    const parentLabel = parentFolderPath ? parentFolderPath.split("/").pop()! : t("secrets.general.allsecrets");
     return (
       <Link
         to={folderLinkTo(parentFolderPath)}
@@ -1727,10 +1726,10 @@ export function Secrets() {
   }
 
   function renderSecretsBreadcrumb() {
-    const currentName = breadcrumbs.length > 0 ? breadcrumbs[breadcrumbs.length - 1].name : "All secrets";
-    const parentLabel = parentFolderPath ? parentFolderPath.split("/").pop()! : "All secrets";
+    const currentName = breadcrumbs.length > 0 ? breadcrumbs[breadcrumbs.length - 1].name : t("secrets.general.allsecrets");
+    const parentLabel = parentFolderPath ? parentFolderPath.split("/").pop()! : t("secrets.general.allsecrets");
     const fullTrail: { name: string; path: string }[] = [
-      { name: "All secrets", path: "" },
+      { name: t("secrets.general.allsecrets"), path: "" },
       ...breadcrumbs,
     ];
     // Middle-truncate deep paths: root · … · last two.
@@ -1778,7 +1777,7 @@ export function Secrets() {
               >
                 <ChevronLeft className="h-4 w-4" />
               </Link>
-              {parentLabel !== "All secrets" ? (
+              {parentFolderPath ? (
                 <span className="shrink-0 text-muted-foreground">{parentLabel} /</span>
               ) : null}
               <span aria-current="page" className="truncate font-medium text-foreground">
@@ -1815,9 +1814,9 @@ export function Secrets() {
       >
         <PageTabBar
           items={[
-            { value: "secrets", label: "Secrets" },
-            { value: "my-secrets", label: "My secrets" },
-            ...(hideVaultsTab ? [] : [{ value: "vaults", label: "Provider vaults" }]),
+            { value: "secrets", label: t("secrets.general.secrets") },
+            { value: "my-secrets", label: t("secrets.general.mysecrets") },
+            ...(hideVaultsTab ? [] : [{ value: "vaults", label: t("secrets.general.providervaults") }]),
             ...(hideProposalsTab
               ? []
               : [
@@ -1965,8 +1964,8 @@ export function Secrets() {
               !(showFolderView && folderPath) ? (
               <EmptyState
                 icon={KeyRound}
-                message="No secrets yet. Create a shared organization secret or one that each user supplies."
-                action="New secret"
+                message={t("secrets.general.nosecretsyet")}
+                action={t("secrets.general.newsecret")}
                 onAction={openCreateSecret}
               />
             ) : (
@@ -1982,7 +1981,7 @@ export function Secrets() {
                   <div className="mb-3">
                     <div className="text-sm font-medium text-foreground">{t("secrets.general.searchresults")}</div>
                     <div className="text-xs text-muted-foreground">
-                      {filteredRows.length} {filteredRows.length === 1 ? t("secrets.general.match") : t("secrets.general.matches")} {t("secrets.general.acrossallfolders")}{folderPath ? ` · searching everywhere, not just ${folderPath}` : ""}
+                      {t("secrets.general.searchresultcount", { count: filteredRows.length })}{folderPath ? ` · ${t("secrets.general.searchingallfolders", { path: folderPath })}` : ""}
                     </div>
                   </div>
                 ) : null}
@@ -1997,14 +1996,14 @@ export function Secrets() {
                   ) : showFolderView && folderPath && activeSecretFilterCount === 0 ? (
                     <EmptyState
                       icon={FolderOpen}
-                      message="No secrets in this folder yet."
-                      action="New secret here"
+                      message={t("secrets.general.nosecretsinfolder")}
+                      action={t("secrets.general.newsecrethere")}
                       onAction={openCreateSecret}
                     />
                   ) : (
                     <EmptyState
                       icon={Search}
-                      message={searching ? "No secrets match your search." : "No secrets match your filters."}
+                      message={searching ? t("secrets.general.nosearchmatches") : t("secrets.general.nofiltermatches")}
                     />
                   )
                 ) : (
@@ -2034,11 +2033,11 @@ export function Secrets() {
                       const updatedTooltip =
                         row.kind === "company"
                           ? [
-                              `Updated: ${formatRelative(row.secret.updatedAt)}`,
-                              `Last rotated: ${formatRelative(row.secret.lastRotatedAt)}`,
-                              `Last resolved: ${formatRelative(row.secret.lastResolvedAt)}`,
+                              t("secrets.general.updatedtooltip", { time: formatRelative(row.secret.updatedAt) }),
+                              t("secrets.general.lastrotatedtooltip", { time: formatRelative(row.secret.lastRotatedAt) }),
+                              t("secrets.general.lastresolvedtooltip", { time: formatRelative(row.secret.lastResolvedAt) }),
                             ].join("\n")
-                          : `Updated: ${formatRelative(row.definition.updatedAt)}\nLast resolved: user values resolve per member`;
+                          : [t("secrets.general.updatedtooltip", { time: formatRelative(row.definition.updatedAt) }), t("secrets.general.userlastresolvedtooltip")].join("\n");
                       return (
                         <div
                           key={row.id}
@@ -2095,7 +2094,7 @@ export function Secrets() {
                             {row.kind === "company" ? (
                               <span className="truncate text-muted-foreground">
                                 <span className="font-mono text-foreground">{t("secrets.general.v")}{row.secret.latestVersion}</span>
-                                <span> · {row.secret.managedMode === "external_reference" ? "linked" : "managed"}</span>
+                                <span> · {row.secret.managedMode === "external_reference" ? t("secrets.general.linkedmode") : t("secrets.general.managedmode")}</span>
                               </span>
                             ) : (
                               <CoverageInline companyId={selectedCompanyId} definitionId={row.definition.id} compact />
@@ -2167,10 +2166,10 @@ export function Secrets() {
                             {row.kind === "company" ? (
                               <>
                                 {t("secrets.general.v11")}{row.secret.latestVersion} ·{" "}
-                                {row.secret.managedMode === "external_reference" ? "linked" : "managed"}
+                                {row.secret.managedMode === "external_reference" ? t("secrets.general.linkedmode") : t("secrets.general.managedmode")}
                               </>
                             ) : (
-                              "Member-owned values"
+                              t("secrets.general.memberownedvalues")
                             )}
                           </span>
                           <span>{t("secrets.general.updated12")} {formatRelative(row.kind === "company" ? row.secret.updatedAt : row.definition.updatedAt)}</span>
@@ -2278,7 +2277,7 @@ export function Secrets() {
                   <Link2 className="h-3.5 w-3.5 mr-1" /> {t("secrets.general.copylink")}</Button>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="sm" aria-label={`More actions for ${selectedSecret.name}`}>
+                    <Button variant="outline" size="sm" aria-label={t("secrets.general.moreactionsfor", { name: selectedSecret.name })}>
                       <MoreHorizontal className="mr-1 h-3.5 w-3.5" /> {t("secrets.general.more")}</Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-52">
@@ -2324,9 +2323,9 @@ export function Secrets() {
                 <div className="border-b border-border px-4">
                   <PageTabBar
                     items={[
-                      { value: "details", label: "Details" },
-                      { value: "usage", label: usageQuery.data ? `Usage (${usageQuery.data.bindings.length})` : "Usage" },
-                      { value: "events", label: "Access events" },
+                      { value: "details", label: t("secrets.general.detailstab") },
+                      { value: "usage", label: usageQuery.data ? t("secrets.general.usagecount", { count: usageQuery.data.bindings.length }) : t("secrets.general.usagetab") },
+                      { value: "events", label: t("secrets.general.accesseventstab") },
                     ]}
                     align="start"
                     value={secretDetailTab}
@@ -2409,7 +2408,7 @@ export function Secrets() {
                 </Button>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="sm" aria-label={`More actions for ${selectedDefinition.name}`}>
+                    <Button variant="outline" size="sm" aria-label={t("secrets.general.moreactionsfor", { name: selectedDefinition.name })}>
                       <MoreHorizontal className="mr-1 h-3.5 w-3.5" /> {t("secrets.general.more25")}</Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-52">
@@ -2458,10 +2457,10 @@ export function Secrets() {
                 <div className="border-b border-border px-4">
                   <PageTabBar
                     items={[
-                      { value: "details", label: "Details" },
-                      { value: "coverage", label: "Coverage" },
-                      { value: "usage", label: "Usage" },
-                      { value: "events", label: "Access events" },
+                      { value: "details", label: t("secrets.general.detailstab") },
+                      { value: "coverage", label: t("secrets.general.coverage") },
+                      { value: "usage", label: t("secrets.general.usagetab") },
+                      { value: "events", label: t("secrets.general.accesseventstab") },
                     ]}
                     align="start"
                     value={secretDetailTab}
@@ -2510,9 +2509,7 @@ export function Secrets() {
             <DialogTitle>{t("secrets.general.secretreferences")}</DialogTitle>
             <DialogDescription>
               {usageDialogSecret
-                ? `${usageDialogSecret.name} is referenced by ${usageDialogSecret.referenceCount ?? 0} ${
-                    (usageDialogSecret.referenceCount ?? 0) === 1 ? t("secrets.general.place") : t("secrets.general.places")
-                  }.`
+                ? t("secrets.general.referencecount", { name: usageDialogSecret.name, count: usageDialogSecret.referenceCount ?? 0 })
                 : null}
             </DialogDescription>
           </DialogHeader>
@@ -2655,7 +2652,7 @@ export function Secrets() {
                           : normalizeSecretKeyForPreview(name),
                     }));
                   }}
-                  placeholder={secretValueProvider === "user" ? "Personal GitHub token" : "/dev/foo/bar"}
+                  placeholder={secretValueProvider === "user" ? t("secrets.general.personalgithubtoken") : "/dev/foo/bar"}
                   autoFocus
                 />
               )}
@@ -2741,7 +2738,7 @@ export function Secrets() {
                   setCreateKeyDirty(true);
                   setCreateForm((current) => ({ ...current, key: event.target.value }));
                 }}
-                placeholder={secretValueProvider === "user" ? "PERSONAL_GH_TOKEN" : "auto from name"}
+                placeholder={secretValueProvider === "user" ? "PERSONAL_GH_TOKEN" : t("secrets.general.autofromname")}
                 disabled={Boolean(editingDefinition)}
                 className={cn(
                   "font-mono text-sm",
@@ -3085,7 +3082,7 @@ export function Secrets() {
                 id="rotate-ref"
                 value={rotateExternalRef}
                 onChange={(event) => setRotateExternalRef(event.target.value)}
-                placeholder={selectedSecret.externalRef ?? "Updated reference"}
+                placeholder={selectedSecret.externalRef ?? t("secrets.general.updatedreference")}
                 className="font-mono text-xs"
               />
               <p className="mt-1 text-(length:--text-micro) text-muted-foreground">
@@ -3261,10 +3258,10 @@ function SecretsFiltersPopover({
   };
 
   const statusOptions: Array<{ value: SecretStatus | "all"; label: string }> = [
-    { value: "active", label: "Active" },
-    { value: "all", label: "All statuses" },
-    { value: "disabled", label: "Disabled" },
-    { value: "archived", label: "Archived" },
+    { value: "active", label: t("secrets.general.status_active") },
+    { value: "all", label: t("secrets.general.allstatuses") },
+    { value: "disabled", label: t("secrets.general.status_disabled") },
+    { value: "archived", label: t("secrets.general.status_archived") },
   ];
 
   return (
@@ -3274,7 +3271,7 @@ function SecretsFiltersPopover({
           variant="outline"
           size="icon"
           className={cn("relative h-8 w-8 shrink-0", activeFilterCount > 0 && "text-blue-600 dark:text-blue-400")}
-          title={activeFilterCount > 0 ? `Filters: ${activeFilterCount}` : "Filter"}
+          title={activeFilterCount > 0 ? t("secrets.general.filtercount", { count: activeFilterCount }) : t("secrets.general.filter")}
         >
           <Filter className="h-3.5 w-3.5" />
           {activeFilterCount > 0 ? (
@@ -3322,9 +3319,9 @@ function SecretsFiltersPopover({
               <span className="text-xs text-muted-foreground">{t("secrets.general.providedby")}</span>
               <div className="space-y-0.5">
                 {[
-                  { value: "all" as const, label: "All sources" },
-                  { value: "company" as const, label: "Organization" },
-                  { value: "user" as const, label: "Each user" },
+                  { value: "all" as const, label: t("secrets.general.allsources") },
+                  { value: "company" as const, label: t("secrets.general.organization") },
+                  { value: "user" as const, label: t("secrets.general.eachuser") },
                 ].map((option) => (
                   <label key={option.value} className="flex cursor-pointer items-center gap-2 rounded-sm px-2 py-1 hover:bg-accent/50">
                     <Checkbox
@@ -3556,8 +3553,8 @@ export function ProviderVaultsTab({
             {configs.length === 0 ? (
               <div className="rounded-md border border-dashed border-border bg-muted/20 p-4 text-sm text-muted-foreground">
                 {isComingSoonFamily
-                  ? "Not yet supported."
-                  : "No organization-specific vaults yet. Secrets can still use the deployment default provider settings."}
+                  ? t("secrets.general.notyetsupported")
+                  : t("secrets.general.noorganizationvaultsyet")}
               </div>
             ) : (
               <div className="space-y-3">
@@ -3659,7 +3656,7 @@ function ProviderVaultCard({
             title={
               blockReason
                 ? blockReason
-                : "Refresh AWS metadata and import existing secrets"
+                : t("secrets.general.refreshawsandimport")
             }
             data-testid={`provider-vault-refresh-secrets-${config.id}`}
           >
@@ -3836,8 +3833,7 @@ function AwsProviderVaultDiscoveryPanel({
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <Database className="h-3.5 w-3.5" />
             <span>
-              {preview.candidates.length} {t("secrets.general.candidate")}{preview.candidates.length === 1 ? "" : t("secrets.general.s")} {t("secrets.general.from")}{" "}
-              {preview.sampledSecretCount} {t("secrets.general.sampledsecret")}{preview.sampledSecretCount === 1 ? "" : t("secrets.general.s64")}
+              {t("secrets.general.discoverycounts", { candidates: preview.candidates.length, secrets: preview.sampledSecretCount })}
             </span>
           </div>
           <div className="space-y-2" data-testid="aws-vault-discovery-candidates">
@@ -4069,7 +4065,7 @@ function AwsProviderVaultDiscoveryCandidateRow({
           <div className="flex flex-wrap items-center gap-2">
             <p className="text-sm font-medium leading-snug">{candidate.displayName}</p>
             <span className="text-xs text-muted-foreground">
-              {candidate.sampleCount} {t("secrets.general.sample")}{candidate.sampleCount === 1 ? "" : t("secrets.general.s72")}
+              {t("secrets.general.samplecount", { count: candidate.sampleCount })}
             </span>
           </div>
           <p className="mt-1 truncate text-xs text-muted-foreground">
@@ -4147,12 +4143,12 @@ function CoverageInline({
       <Users className="h-3 w-3" />
       <span className="truncate">
         {compact && summary
-          ? `${summary.configuredCount}/${summary.configuredCount + summary.missingCount + summary.inactiveCount} set`
+          ? t("secrets.general.compactcoverage", { configured: summary.configuredCount, total: summary.configuredCount + summary.missingCount + summary.inactiveCount })
           : coverageSummaryLabel(summary)}
       </span>
       {summary && summary.missingCount > 0 ? (
         <span className="shrink-0 text-amber-600 dark:text-amber-400">
-          · {compact ? `${summary.missingCount} miss` : `${summary.missingCount} missing`}
+          · {t(compact ? "secrets.general.compactmissing" : "secrets.general.missingcount", { count: summary.missingCount })}
         </span>
       ) : null}
     </span>
@@ -4248,7 +4244,7 @@ function UserSecretCoverageTab({
         </div>
       </div>
       <p className="text-xs text-muted-foreground">
-        {t("secrets.general.coverageiscountsonlyacross")} {total} {t("secrets.general.member")}{total === 1 ? "" : t("secrets.general.s83")}{t("secrets.general.secretvaluesarenevershownhere")}</p>
+        {t("secrets.general.coveragecount", { count: total })}</p>
     </div>
   );
 }
@@ -4394,7 +4390,7 @@ function AgentAccessSection({
       const adapterConfig = { ...((detail.adapterConfig ?? {}) as Record<string, unknown>) };
       const env = { ...((adapterConfig.env ?? {}) as Record<string, unknown>) };
       if (env[key] !== undefined) {
-        throw new Error(`${detail.name} already has an env var named ${key}.`);
+        throw new Error(t("secrets.general.envkeyexists", { name: detail.name, key }));
       }
       env[key] =
         reference.kind === "company"
@@ -4412,7 +4408,7 @@ function AgentAccessSection({
       setEnvKeyDirty(false);
       setAccessError(null);
       invalidateAfterChange(variables.agentId);
-      pushToast({ title: "Access granted", body: `${agent.name} now receives ${variables.key}`, tone: "success" });
+      pushToast({ title: t("secrets.general.accessgranted"), body: t("secrets.general.agentnowreceives", { name: agent.name, key: variables.key }), tone: "success" });
     },
     onError: (error) => setAccessError(readableErrorMessage(error)),
   });
@@ -4436,7 +4432,7 @@ function AgentAccessSection({
     onSuccess: (agent, variables) => {
       setAccessError(null);
       invalidateAfterChange(variables.agentId);
-      pushToast({ title: "Access removed", body: agent.name, tone: "info" });
+      pushToast({ title: t("secrets.general.accessremoved"), body: agent.name, tone: "info" });
     },
     onError: (error) => setAccessError(readableErrorMessage(error)),
   });
@@ -4493,7 +4489,7 @@ function AgentAccessSection({
                     variant="ghost"
                     size="sm"
                     className="h-6 w-6 shrink-0 p-0 text-muted-foreground"
-                    aria-label={`Remove access for ${agent.name}`}
+                    aria-label={t("secrets.general.removeaccessfor", { name: agent.name })}
                     disabled={revokeMutation.isPending}
                     onClick={() => revokeMutation.mutate({ agentId: agent.id })}
                   >
@@ -4518,7 +4514,7 @@ function AgentAccessSection({
                 value={selectedAgentId}
                 onChange={setSelectedAgentId}
                 triggerClassName="h-8 text-xs"
-                emptyMessage="No agents available."
+                emptyMessage={t("secrets.general.noagentsavailable")}
               />
             </div>
             <div className="min-w-0 flex-1">
@@ -4577,9 +4573,7 @@ function SecretDetailsTab({
   onViewUsage: () => void;
 }) {
   const { t } = useTranslation();
-  const bindingLabel = (secret.referenceCount ?? 0) === 1
-    ? "1 binding"
-    : `${secret.referenceCount ?? 0} bindings`;
+  const bindingLabel = t("secrets.general.bindingcount", { count: secret.referenceCount ?? 0 });
 
   return (
     <dl className="divide-y divide-border/60 text-xs">
