@@ -17,7 +17,7 @@ import { TaskChatRunnerActivityGroup } from "@/components/task-chat/TaskChatRunn
 import { TaskChatMarker } from "@/components/task-chat/TaskChatMarker";
 import { TaskChatComposer } from "@/components/task-chat/TaskChatComposer";
 import { TaskTreeControlDialog, TaskTreeControlMenuItems } from "@/components/TaskTreeControls";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   BookOpen,
   Bot,
@@ -426,8 +426,8 @@ function TaskExecutionControlsExample() {
         onCancel={() => setDialogMode("cancel")} onRestore={() => setDialogMode("restore")} />
     </div>
     <p className="text-sm text-muted-foreground">{running ? t("designguide.general.runningtypetoswitchstoptosend") : t("designguide.general.pausedresumefromthemenu")}</p>
-    <TaskChatProjectCreatedCard item={{ id: "design-project", kind: "project_created", projectId: "example-project", name: "Onboarding improvements", description: "Help new teams reach their first useful result.", timestamp: "2026-09-11T00:00:00Z", repositories: [{ id: "1", name: "paperclipai/paperclip", url: "https://github.com/paperclipai/paperclip" }] }} />
-    {!running ? <TaskChatMarker item={{ id: "design-cancelled", kind: "marker", variant: "interrupted", tone: "neutral", label: "Run cancelled", detail: "The run was cancelled before returning an answer.", collapsible: true }} /> : null}
+    <TaskChatProjectCreatedCard item={{ id: "design-project", kind: "project_created", projectId: "example-project", name: t("designguide.general.sampleonboardingname"), description: t("designguide.general.sampleonboardingdescription"), timestamp: "2026-09-11T00:00:00Z", repositories: [{ id: "1", name: "paperclipai/paperclip", url: "https://github.com/paperclipai/paperclip" }] }} />
+    {!running ? <TaskChatMarker item={{ id: "design-cancelled", kind: "marker", variant: "interrupted", tone: "neutral", label: t("designguide.general.sampleruncancelled"), detail: t("designguide.general.sampleruncancelleddetail"), collapsible: true }} /> : null}
     <TaskChatComposer pause={!running ? { scope: "subtree", onResume: () => setDialogMode("resume") } : null} onAdd={async () => {}} workMode="standard" stopScope="subtree" onStop={running ? async () => setRunning(false) : undefined} />
     <TaskTreeControlDialog open={dialogMode !== null} onOpenChange={(open) => { if (!open) setDialogMode(null); }}
       mode={dialogMode ?? "cancel"} scope="subtree" affectedCount={3} affectedAgentCount={2} loading={false} pending={false} valid
@@ -444,30 +444,40 @@ function AgentChatPickerExample() {
     <Button variant="outline" onClick={() => setState("loading")}>{t("designguide.general.loadingpicker")}</Button>
     <Button variant="outline" onClick={() => setState("error")}>{t("designguide.general.failedpicker")}</Button>
     <AgentChatPicker agents={[]} open={state !== "closed"} onOpenChange={(open) => { if (!open) setState("closed"); }} onSelect={() => {}}
-      loading={state === "loading"} error={state === "error" ? new Error("Unavailable") : null} onRetry={() => setState("empty")} />
+      loading={state === "loading"} error={state === "error" ? new Error(t("designguide.general.sampleunavailable")) : null} onRetry={() => setState("empty")} />
   </div>;
 }
 
 export function DesignGuide() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [wizardStep, setWizardStep] = useState(0);
   const [status, setStatus] = useState("todo");
   const [priority, setPriority] = useState("medium");
   const [selectValue, setSelectValue] = useState("in_progress");
   const [menuChecked, setMenuChecked] = useState(true);
   const [collapsibleOpen, setCollapsibleOpen] = useState(false);
-  const [inlineText, setInlineText] = useState("Click to edit this text");
-  const [inlineTitle, setInlineTitle] = useState("Editable Title");
-  const [inlineDesc, setInlineDesc] = useState(
-    "This is an editable description. Click to edit it — the textarea auto-sizes to fit the content without layout shift."
-  );
+  const [inlineText, setInlineText] = useState(() => t("designguide.general.sampleinlinetext"));
+  const [inlineTitle, setInlineTitle] = useState(() => t("designguide.general.sampleinlinetitle"));
+  const [inlineDesc, setInlineDesc] = useState(() => t("designguide.general.sampleinlinedescription"));
   const [filters, setFilters] = useState<FilterValue[]>([
-    { key: "status", label: "Status", value: "Active" },
+    { key: "status", label: t("designguide.general.status"), value: t("designguide.general.sampleactive") },
     // PAP-411: priority filter demo row suppressed while SHOW_TASK_PRIORITY_UI is off.
     ...(SHOW_TASK_PRIORITY_UI
-      ? [{ key: "priority", label: "Priority", value: "High" } as FilterValue]
+      ? [{ key: "priority", label: t("designguide.general.priority"), value: "High" } as FilterValue]
       : []),
   ]);
+  useEffect(() => {
+    setInlineText(t("designguide.general.sampleinlinetext"));
+    setInlineTitle(t("designguide.general.sampleinlinetitle"));
+    setInlineDesc(t("designguide.general.sampleinlinedescription"));
+    setFilters([
+      { key: "status", label: t("designguide.general.status"), value: t("designguide.general.sampleactive") },
+      ...(SHOW_TASK_PRIORITY_UI
+        ? [{ key: "priority", label: t("designguide.general.priority"), value: "High" } as FilterValue]
+        : []),
+    ]);
+  }, [i18n.language, t]);
+
   const [allowExternal, setAllowExternal] = useState(false);
   const [allowUnpinned, setAllowUnpinned] = useState(false);
   const [allowLocalPath, setAllowLocalPath] = useState(false);
@@ -543,7 +553,7 @@ export function DesignGuide() {
         />
         <div className="overflow-hidden rounded-lg border border-border">
           <IssueRow
-            issue={DESIGN_GUIDE_TASK}
+            issue={{ ...DESIGN_GUIDE_TASK, title: t("designguide.general.samplereconcilenavigation") }}
             presentation="task"
             unreadState="visible"
             metadata={<span className="text-xs text-muted-foreground">{t("designguide.general.updated12mago")}</span>}
@@ -578,35 +588,35 @@ export function DesignGuide() {
       <Section title={t("designguide.general.colors")}>
         <SubSection title={t("designguide.general.core")}>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            <Swatch name="Background" cssVar="--background" />
-            <Swatch name="Foreground" cssVar="--foreground" />
-            <Swatch name="Card" cssVar="--card" />
-            <Swatch name="Primary" cssVar="--primary" />
-            <Swatch name="Primary foreground" cssVar="--primary-foreground" />
-            <Swatch name="Secondary" cssVar="--secondary" />
-            <Swatch name="Muted" cssVar="--muted" />
-            <Swatch name="Muted foreground" cssVar="--muted-foreground" />
-            <Swatch name="Accent" cssVar="--accent" />
-            <Swatch name="Destructive" cssVar="--destructive" />
-            <Swatch name="Border" cssVar="--border" />
-            <Swatch name="Ring" cssVar="--ring" />
+            <Swatch name={t("designguide.general.swatchbackground")} cssVar="--background" />
+            <Swatch name={t("designguide.general.swatchforeground")} cssVar="--foreground" />
+            <Swatch name={t("designguide.general.swatchcard")} cssVar="--card" />
+            <Swatch name={t("designguide.general.swatchprimary")} cssVar="--primary" />
+            <Swatch name={t("designguide.general.swatchprimaryforeground")} cssVar="--primary-foreground" />
+            <Swatch name={t("designguide.general.swatchsecondary")} cssVar="--secondary" />
+            <Swatch name={t("designguide.general.swatchmuted")} cssVar="--muted" />
+            <Swatch name={t("designguide.general.swatchmutedforeground")} cssVar="--muted-foreground" />
+            <Swatch name={t("designguide.general.swatchaccent")} cssVar="--accent" />
+            <Swatch name={t("designguide.general.swatchdestructive")} cssVar="--destructive" />
+            <Swatch name={t("designguide.general.swatchborder")} cssVar="--border" />
+            <Swatch name={t("designguide.general.swatchring")} cssVar="--ring" />
           </div>
         </SubSection>
 
         <SubSection title={t("designguide.general.sidebar")}>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            <Swatch name="Sidebar" cssVar="--sidebar" />
-            <Swatch name="Sidebar border" cssVar="--sidebar-border" />
+            <Swatch name={t("designguide.general.swatchsidebar")} cssVar="--sidebar" />
+            <Swatch name={t("designguide.general.swatchsidebarborder")} cssVar="--sidebar-border" />
           </div>
         </SubSection>
 
         <SubSection title={t("designguide.general.chart")}>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            <Swatch name="Chart 1" cssVar="--chart-1" />
-            <Swatch name="Chart 2" cssVar="--chart-2" />
-            <Swatch name="Chart 3" cssVar="--chart-3" />
-            <Swatch name="Chart 4" cssVar="--chart-4" />
-            <Swatch name="Chart 5" cssVar="--chart-5" />
+            <Swatch name={t("designguide.general.swatchchart1")} cssVar="--chart-1" />
+            <Swatch name={t("designguide.general.swatchchart2")} cssVar="--chart-2" />
+            <Swatch name={t("designguide.general.swatchchart3")} cssVar="--chart-3" />
+            <Swatch name={t("designguide.general.swatchchart4")} cssVar="--chart-4" />
+            <Swatch name={t("designguide.general.swatchchart5")} cssVar="--chart-5" />
           </div>
         </SubSection>
       </Section>
@@ -615,13 +625,13 @@ export function DesignGuide() {
       {/*  TYPOGRAPHY                                                   */}
       {/* ============================================================ */}
       <Section title={t("designguide.general.runneractivity")}>
-        <TaskChatRunnerActivityGroup item={{ id: "design-runner-activity", kind: "activity_phase", active: true, summary: "", interstitial: { id: "design-runner-commentary", kind: "message", author: "agent", text: "I’ll inspect the activity feed and check the layout.", interstitial: true }, items: [
-          { id: "design-runner-read", kind: "tool", name: "read", target: "TaskChatRunnerTurn.tsx", status: "completed", detail: "Found the activity groups." },
+        <TaskChatRunnerActivityGroup item={{ id: "design-runner-activity", kind: "activity_phase", active: true, summary: "", interstitial: { id: "design-runner-commentary", kind: "message", author: "agent", text: t("designguide.general.runnercommentary"), interstitial: true }, items: [
+          { id: "design-runner-read", kind: "tool", name: "read", target: "TaskChatRunnerTurn.tsx", status: "completed", detail: t("designguide.general.runnerfoundgroups") },
           { id: "design-runner-check", kind: "tool", name: "exec_command", target: "pnpm check:token-gates", status: "in_progress" },
         ] }} />
         <TaskChatRunnerActivityGroup item={{ id: "design-runner-completed", kind: "activity_phase", active: false, summary: "", items: [
-          { id: "design-completed-read", kind: "tool", name: "read", target: "TaskChatRunnerTurn.tsx", status: "completed", detail: "Read the activity groups." },
-          { id: "design-completed-check", kind: "tool", name: "exec_command", target: "pnpm check:token-gates", status: "failed", detail: "A token check needs another pass." },
+          { id: "design-completed-read", kind: "tool", name: "read", target: "TaskChatRunnerTurn.tsx", status: "completed", detail: t("designguide.general.runnerreadgroups") },
+          { id: "design-completed-check", kind: "tool", name: "exec_command", target: "pnpm check:token-gates", status: "failed", detail: t("designguide.general.runnertokencheck") },
         ] }} />
       </Section>
 
@@ -771,14 +781,14 @@ export function DesignGuide() {
               (s) => (
                 <div key={s} className="flex items-center gap-1.5">
                   <StatusIcon status={s} />
-                  <span className="text-xs text-muted-foreground">{s}</span>
+                  <span className="text-xs text-muted-foreground">{t(`designguide.general.statuslabel${s}`)}</span>
                 </div>
               )
             )}
           </div>
           <div className="flex items-center gap-2 mt-2">
             <StatusIcon status={status} onChange={setStatus} />
-            <span className="text-sm">{t("designguide.general.clicktheicontochangestatuscurrent")} {status})</span>
+            <span className="text-sm">{t("designguide.general.clicktheicontochangestatuscurrent")} {t(`designguide.general.statuslabel${status}`)})</span>
           </div>
         </SubSection>
 
@@ -807,7 +817,7 @@ export function DesignGuide() {
                 <span className="relative flex h-2.5 w-2.5">
                   <span className={`inline-flex h-full w-full rounded-full ${agentStatusDot[label] ?? agentStatusDotDefault}`} />
                 </span>
-                <span className="text-xs text-muted-foreground">{label}</span>
+                <span className="text-xs text-muted-foreground">{t(`designguide.general.agentstatus${label}`)}</span>
               </div>
             ))}
           </div>
@@ -822,7 +832,7 @@ export function DesignGuide() {
               ["automation", "bg-muted text-muted-foreground"],
             ].map(([label, cls]) => (
               <Badge variant="ghost" key={label} className={`px-1.5 text-(length:--text-nano) ${cls}`}>
-                {label}
+                {t(`designguide.general.invocation${label}`)}
               </Badge>
             ))}
           </div>
@@ -830,14 +840,14 @@ export function DesignGuide() {
 
         <SubSection title={t("designguide.general.issuereferencepill")}>
           <p className="text-xs text-muted-foreground">
-            {t("designguide.general.usedwhereverataskisreferencedin")}<code className="font-mono">{t("designguide.general.status")}</code> {t("designguide.general.toshowthetargetissueaposs")}<code className="font-mono">{t("designguide.general.variantproperty")}</code> {t("designguide.general.forcompactbadgeswithdirectnavigationpass")}<code className="font-mono">{t("designguide.general.onremove")}</code> {t("designguide.general.foraseparateblockerremovalcontrolwith")}<code className="font-mono">{t("designguide.general.strikethrough")}</code> {t("designguide.general.forquotremovedquotcontexts")}</p>
+            {t("designguide.general.usedwhereverataskisreferencedin")}<code className="font-mono">status</code> {t("designguide.general.toshowthetargetissueaposs")}<code className="font-mono">{t("designguide.general.variantproperty")}</code> {t("designguide.general.forcompactbadgeswithdirectnavigationpass")}<code className="font-mono">{t("designguide.general.onremove")}</code> {t("designguide.general.foraseparateblockerremovalcontrolwith")}<code className="font-mono">{t("designguide.general.strikethrough")}</code> {t("designguide.general.forquotremovedquotcontexts")}</p>
           <div className="flex items-center gap-2 flex-wrap">
-            <IssueReferencePill issue={{ id: "demo-1", identifier: "PAP-123", title: "Identifier only — no status yet" }} />
-            <IssueReferencePill issue={{ id: "demo-2", identifier: "PAP-456", title: "With in_progress status", status: "in_progress" }} />
-            <IssueReferencePill issue={{ id: "demo-3", identifier: "PAP-789", title: "Done status", status: "done" }} />
-            <IssueReferencePill issue={{ id: "demo-4", identifier: "PAP-101", title: "Blocked status", status: "blocked" }} />
-            <IssueReferencePill onRemove={() => window.alert("Blocker removed")} issue={{ id: "demo-blocker", identifier: "PAP-303", title: "Hover or focus to remove blocker", status: "in_review" }} />
-            <IssueReferencePill strikethrough issue={{ id: "demo-5", identifier: "PAP-202", title: "Removed (strikethrough)", status: "todo" }} />
+            <IssueReferencePill issue={{ id: "demo-1", identifier: "PAP-123", title: t("designguide.general.sampleidentifieronlynostatusyet") }} />
+            <IssueReferencePill issue={{ id: "demo-2", identifier: "PAP-456", title: t("designguide.general.samplewithinprogressstatus"), status: "in_progress" }} />
+            <IssueReferencePill issue={{ id: "demo-3", identifier: "PAP-789", title: t("designguide.general.sampledonestatus"), status: "done" }} />
+            <IssueReferencePill issue={{ id: "demo-4", identifier: "PAP-101", title: t("designguide.general.sampleblockedstatus"), status: "blocked" }} />
+            <IssueReferencePill onRemove={() => window.alert(t("designguide.general.sampleblockerremoved"))} issue={{ id: "demo-blocker", identifier: "PAP-303", title: t("designguide.general.samplehoverorfocustoremoveblocker"), status: "in_review" }} />
+            <IssueReferencePill strikethrough issue={{ id: "demo-5", identifier: "PAP-202", title: t("designguide.general.sampleremovedstrikethrough"), status: "todo" }} />
           </div>
         </SubSection>
       </Section>
@@ -987,7 +997,7 @@ export function DesignGuide() {
                 <SelectItem value="done">{t("designguide.general.done")}</SelectItem>
               </SelectContent>
             </Select>
-            <p className="text-xs text-muted-foreground">{t("designguide.general.currentvalue")} {selectValue}</p>
+            <p className="text-xs text-muted-foreground">{t("designguide.general.currentvalue")} {t(`designguide.general.statuslabel${selectValue}`)}</p>
           </SubSection>
           <SubSection title={t("designguide.general.smalltrigger")}>
             <Select defaultValue="high">
@@ -1087,11 +1097,11 @@ export function DesignGuide() {
             <div className="space-y-4 px-4">
               <div className="space-y-1">
                 <Label htmlFor="sheet-title">{t("designguide.general.title")}</Label>
-                <Input id="sheet-title" defaultValue="Improve onboarding docs" />
+                <Input id="sheet-title" defaultValue={t("designguide.general.sampleimproveonboardingdocs")} />
               </div>
               <div className="space-y-1">
                 <Label htmlFor="sheet-description">{t("designguide.general.description")}</Label>
-                <Textarea id="sheet-description" defaultValue="Capture setup pitfalls and screenshots." />
+                <Textarea id="sheet-description" defaultValue={t("designguide.general.samplecapturesetuppitfallsandscreenshots")} />
               </div>
             </div>
             <SheetFooter>
@@ -1125,7 +1135,7 @@ export function DesignGuide() {
             <CommandInput placeholder={t("designguide.general.typeacommandorsearch")} />
             <CommandList>
               <CommandEmpty>{t("designguide.general.noresultsfound")}</CommandEmpty>
-              <CommandGroup heading="Pages">
+              <CommandGroup heading={t("designguide.general.samplepages")}>
                 <CommandItem>
                   <LayoutDashboard className="h-4 w-4" />
                   {t("designguide.general.dashboard")}</CommandItem>
@@ -1134,7 +1144,7 @@ export function DesignGuide() {
                   {t("designguide.general.issues")}</CommandItem>
               </CommandGroup>
               <CommandSeparator />
-              <CommandGroup heading="Actions">
+              <CommandGroup heading={t("designguide.general.sampleactions")}>
                 <CommandItem>
                   <CommandIcon className="h-4 w-4" />
                   {t("designguide.general.opencommandpalette")}</CommandItem>
@@ -1183,7 +1193,7 @@ export function DesignGuide() {
                   status, adapterType: "codex_local", invocationSource: "on_demand", triggerDetail: "manual",
                   startedAt: null, finishedAt: null, createdAt: "2026-09-11T12:00:00Z", issueId: "design-guide-task",
                 }}
-                issue={{ identifier: "PAP-559", title: "Recreate this wireframe on pages Paperclip", status: status === "succeeded" ? "done" : "in_progress" }}
+                issue={{ identifier: "PAP-559", title: t("designguide.general.samplerecreatewireframe"), status: status === "succeeded" ? "done" : "in_progress" }}
               />
             ))}
           </div>
@@ -1207,9 +1217,9 @@ export function DesignGuide() {
 
         <SubSection title={t("designguide.general.metriccards")}>
           <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-4">
-            <MetricCard icon={Bot} value={12} label={t("designguide.general.activeagents")} description="+3 this week" />
+            <MetricCard icon={Bot} value={12} label={t("designguide.general.activeagents")} description={t("designguide.general.sample3thisweek")} />
             <MetricCard icon={CircleDot} value={48} label={t("designguide.general.openissues")} />
-            <MetricCard icon={DollarSign} value="$1,234" label={t("designguide.general.monthlycost")} description="Under budget" />
+            <MetricCard icon={DollarSign} value="$1,234" label={t("designguide.general.monthlycost")} description={t("designguide.general.sampleunderbudget")} />
             <MetricCard icon={Zap} value="99.9%" label={t("designguide.general.uptime")} />
           </div>
         </SubSection>
@@ -1277,7 +1287,7 @@ export function DesignGuide() {
             }
             identifier="PAP-001"
             title={t("designguide.general.implementauthenticationflow")}
-            subtitle="Responsible: Agent Alpha"
+            subtitle={t("designguide.general.sampleresponsibleagentalpha")}
             trailing={<IssueStatusBadge status="in_progress" />}
             onClick={() => {}}
           />
@@ -1290,7 +1300,7 @@ export function DesignGuide() {
             }
             identifier="PAP-002"
             title={t("designguide.general.setupcicdpipeline")}
-            subtitle="Completed 2 days ago"
+            subtitle={t("designguide.general.samplecompleted2daysago")}
             trailing={<IssueStatusBadge status="done" />}
             onClick={() => {}}
           />
@@ -1315,7 +1325,7 @@ export function DesignGuide() {
             }
             identifier="PAP-004"
             title={t("designguide.general.deploytoproduction")}
-            subtitle="Blocked by PAP-001"
+            subtitle={t("designguide.general.sampleblockedbypap001")}
             trailing={<IssueStatusBadge status="blocked" />}
             selected
           />
@@ -1324,12 +1334,12 @@ export function DesignGuide() {
           <div className="border border-border rounded-md">
             <EntityRow
               title={t("designguide.general.joinedresource")}
-              subtitle="Hover or focus the row to reveal the reserved action slot."
+              subtitle={t("designguide.general.samplehoverorfocustherowtorevealthereservedactionslot")}
               className="group"
               trailing={
                 <MembershipAction
                   state="joined"
-                  resourceName="Joined resource"
+                  resourceName={t("designguide.general.samplejoinedresource")}
                   onJoin={() => {}}
                   onLeave={() => {}}
                 />
@@ -1337,12 +1347,12 @@ export function DesignGuide() {
             />
             <EntityRow
               title={t("designguide.general.leftresource")}
-              subtitle="Persistent action with dimmed row content."
+              subtitle={t("designguide.general.samplepersistentactionwithdimmedrowcontent")}
               className="group text-foreground/55"
               trailing={
                 <MembershipAction
                   state="left"
-                  resourceName="Left resource"
+                  resourceName={t("designguide.general.sampleleftresource")}
                   onJoin={() => {}}
                   onLeave={() => {}}
                 />
@@ -1350,14 +1360,14 @@ export function DesignGuide() {
             />
             <EntityRow
               title={t("designguide.general.leavingresource")}
-              subtitle="Disabled while the optimistic mutation is pending."
+              subtitle={t("designguide.general.sampledisabledwhiletheoptimisticmutationispending")}
               className="group text-foreground/55"
               trailing={
                 <MembershipAction
                   state="left"
                   pending
                   pendingState="left"
-                  resourceName="Leaving resource"
+                  resourceName={t("designguide.general.sampleleavingresource")}
                   onJoin={() => {}}
                   onLeave={() => {}}
                 />
@@ -1365,14 +1375,14 @@ export function DesignGuide() {
             />
             <EntityRow
               title={t("designguide.general.joiningresource")}
-              subtitle="The target state is visible immediately while the server confirms."
+              subtitle={t("designguide.general.samplethetargetstateisvisibleimmediatelywhiletheserverconfirms")}
               className="group"
               trailing={
                 <MembershipAction
                   state="joined"
                   pending
                   pendingState="joined"
-                  resourceName="Joining resource"
+                  resourceName={t("designguide.general.samplejoiningresource")}
                   onJoin={() => {}}
                   onLeave={() => {}}
                 />
@@ -1397,10 +1407,10 @@ export function DesignGuide() {
             size="sm"
             onClick={() =>
               setFilters([
-                { key: "status", label: "Status", value: "Active" },
+                { key: "status", label: t("designguide.general.status"), value: t("designguide.general.sampleactive") },
                 // PAP-411: priority filter demo row suppressed while SHOW_TASK_PRIORITY_UI is off.
                 ...(SHOW_TASK_PRIORITY_UI
-                  ? [{ key: "priority", label: "Priority", value: "High" } as FilterValue]
+                  ? [{ key: "priority", label: t("designguide.general.priority"), value: "High" } as FilterValue]
                   : []),
               ])
             }
@@ -1441,7 +1451,7 @@ export function DesignGuide() {
               size={36}
             />
             <AppLogo name="Jira" logoUrl="/brands/apps/jira.svg" darkLogoUrl="/brands/apps/jira-dark.svg" size={44} />
-            <AppLogo name="Fallback" logoUrl="/brands/apps/does-not-exist.svg" size={36} />
+            <AppLogo name={t("designguide.general.samplefallbacklogo")} logoUrl="/brands/apps/does-not-exist.svg" size={36} />
           </div>
         </SubSection>
       </Section>
@@ -1476,7 +1486,7 @@ export function DesignGuide() {
         </SubSection>
 
         <SubSection title={t("designguide.general.custominitials")}>
-          <Identity name="Backend Service" initials="BS" size="sm" />
+          <Identity name={t("designguide.general.samplebackendservice")} initials="BS" size="sm" />
         </SubSection>
       </Section>
 
@@ -1539,8 +1549,8 @@ export function DesignGuide() {
         <div className="border border-border rounded-md">
           <EmptyState
             icon={Inbox}
-            message="No items to show. Create your first one to get started."
-            action="Create Item"
+            message={t("designguide.general.samplenoitemstoshowcreateyourfirstonetogetstarted")}
+            action={t("designguide.general.samplecreateitem")}
             onAction={() => {}}
           />
         </div>
@@ -1552,9 +1562,9 @@ export function DesignGuide() {
       <Section title={t("designguide.general.progressbarsbudget")}>
         <div className="space-y-3">
           {[
-            { label: "Under budget (40%)", pct: 40, color: "bg-green-400" },
-            { label: "Warning (75%)", pct: 75, color: "bg-yellow-400" },
-            { label: "Over budget (95%)", pct: 95, color: "bg-red-400" },
+            { label: t("designguide.general.budgetunder40"), pct: 40, color: "bg-green-400" },
+            { label: t("designguide.general.budgetwarning75"), pct: 75, color: "bg-yellow-400" },
+            { label: t("designguide.general.budgetover95"), pct: 95, color: "bg-red-400" },
           ].map(({ label, pct, color }) => (
             <div key={label} className="space-y-1">
               <div className="flex items-center justify-between">
@@ -1635,7 +1645,7 @@ export function DesignGuide() {
         <SubSection title={t("designguide.general.setupwizard")}>
           <p className="text-sm text-muted-foreground">{t("designguide.general.sharedbyconnectionsetupandtriggerpreviews")}</p>
           <div className="max-w-sm space-y-6">
-            <SetupWizardNavigation inline labels={["Choose trigger", "Configure", "Review"]} step={wizardStep} availableStep={2} onSelect={setWizardStep} />
+            <SetupWizardNavigation inline labels={[t("designguide.general.wizardchoosetrigger"), t("designguide.general.wizardconfigure"), t("designguide.general.wizardreview")]} step={wizardStep} availableStep={2} onSelect={setWizardStep} />
             <SetupWizardFooter onSaveExit={() => setWizardStep(0)}><Button onClick={() => setWizardStep((wizardStep + 1) % 3)}>{t("designguide.general.continue")}</Button></SetupWizardFooter>
           </div>
         </SubSection>
@@ -1927,12 +1937,12 @@ export function DesignGuide() {
       <Section title={t("designguide.general.keyboardshortcuts")}>
         <div className="border border-border rounded-md divide-y divide-border text-sm">
           {[
-            ["Cmd+K / Ctrl+K", "Open Command Palette"],
-            ["C", "New Issue (outside inputs)"],
-            ["[", "Toggle Sidebar"],
-            ["]", "Toggle Properties Panel"],
+            ["Cmd+K / Ctrl+K", t("designguide.general.shortcutopencommandpalette")],
+            ["C", t("designguide.general.shortcutnewissueoutsideinputs")],
+            ["[", t("designguide.general.shortcuttogglesidebar")],
+            ["]", t("designguide.general.shortcuttogglepropertiespanel")],
 
-            ["Cmd+Enter / Ctrl+Enter", "Submit markdown comment"],
+            ["Cmd+Enter / Ctrl+Enter", t("designguide.general.shortcutsubmitmarkdowncomment")],
           ].map(([key, desc]) => (
             <div key={key} className="flex items-center justify-between px-4 py-2">
               <span className="text-muted-foreground">{desc}</span>
@@ -1975,17 +1985,17 @@ export function DesignGuide() {
             <EnforcementBanner
               tone="info"
               title={t("designguide.general.effectiveaccessserverresolved")}
-              body="This is exactly what the tool gateway will accept. Profile and policy edits reflect within ~5s; the prompt cannot expand it."
+              body={t("designguide.general.samplethisisexactlywhatthetoolgatewaywillacceptprofileandpoli")}
             />
             <EnforcementBanner
               tone="warning"
               title={t("designguide.general.localstdioislocalcodeexecutionnot")}
-              body="A local-stdio slot runs with the orchestrator's privileges. Only bind trusted commands; quarantine anything you would not run yourself."
+              body={t("designguide.general.samplealocalstdioslotrunswiththeorchestratorsprivilegesonlybi")}
             />
             <EnforcementBanner
               tone="error"
               title={t("designguide.general.runtimefailedclosed")}
-              body="The supervisor is restarting (attempt 2/3). The gateway returns runtime-error and the agent does not see partial output."
+              body={t("designguide.general.samplethesupervisorisrestartingattempt23thegatewayreturnsrunt")}
             />
           </div>
           <p className="mt-2 text-xs text-muted-foreground">
@@ -2007,10 +2017,10 @@ export function DesignGuide() {
                 catalogSha256: "sha256:9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
                 payloadSha256: "sha256:2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae",
               }}
-              input={{ channel: "#launch", text: "Deploy v2 is live 🎉", unfurl_links: false }}
-              reason="This tool can write to your workspace, so a human signs off before the agent posts."
+              input={{ channel: "#launch", text: t("designguide.general.sampledeployv2islive"), unfurl_links: false }}
+              reason={t("designguide.general.samplethistoolcanwritetoyourworkspacesoahumansignsoffbeforeth")}
               policyNumber={7}
-              expiresInLabel="expires in 23h 51m"
+              expiresInLabel={t("designguide.general.sampleexpiresin23h51m")}
             />
             <ActionCard
               variant="stale"
@@ -2025,10 +2035,10 @@ export function DesignGuide() {
                 previousCatalogSha256: "sha256:9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
                 payloadSha256: "sha256:2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae",
               }}
-              input={{ channel: "#launch", text: "Deploy v2 is live 🎉", unfurl_links: false }}
-              reason="This tool can write to your workspace, so a human signs off before the agent posts."
+              input={{ channel: "#launch", text: t("designguide.general.sampledeployv2islive"), unfurl_links: false }}
+              reason={t("designguide.general.samplethistoolcanwritetoyourworkspacesoahumansignsoffbeforeth")}
               policyNumber={7}
-              expiresInLabel="expires in 18h 02m"
+              expiresInLabel={t("designguide.general.sampleexpiresin18h02m")}
             />
           </div>
           <p className="mt-2 text-xs text-muted-foreground">
@@ -2049,10 +2059,10 @@ export function DesignGuide() {
                 catalogSha256: "sha256:9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
                 payloadSha256: "sha256:2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae",
               }}
-              input={{ channel: "#launch", text: "Deploy v2 is live 🎉" }}
-              reason="This tool can write to your workspace, so a human signs off before the agent posts."
+              input={{ channel: "#launch", text: t("designguide.general.sampledeployv2islive") }}
+              reason={t("designguide.general.samplethistoolcanwritetoyourworkspacesoahumansignsoffbeforeth")}
               policyNumber={7}
-              expiresInLabel="expires in 23h 51m"
+              expiresInLabel={t("designguide.general.sampleexpiresin23h51m")}
             />
           </div>
           <p className="mt-2 text-xs text-muted-foreground">
@@ -2062,10 +2072,10 @@ export function DesignGuide() {
         <SubSection title={t("designguide.general.bindingstablereusedintheauditrowdrilldown")}>
           <BindingsTable
             rows={[
-              { label: "Application", value: "Slack · manifest v2.4.1" },
-              { label: "Connection", value: "https://slack.com/api · acme-workspace", mono: true },
-              { label: "Catalog", value: "sha256:9f86d081…f00a08", mono: true },
-              { label: "Payload", value: "sha256:2c26b46b…66e7ae", mono: true },
+              { label: t("designguide.general.bindingapplication"), value: "Slack · manifest v2.4.1" },
+              { label: t("designguide.general.bindingconnection"), value: "https://slack.com/api · acme-workspace", mono: true },
+              { label: t("designguide.general.bindingcatalog"), value: "sha256:9f86d081…f00a08", mono: true },
+              { label: t("designguide.general.bindingpayload"), value: "sha256:2c26b46b…66e7ae", mono: true },
             ]}
           />
           <p className="mt-2 text-xs text-muted-foreground">
@@ -2090,9 +2100,9 @@ export function DesignGuide() {
         <SubSection title={t("designguide.general.emptystatecanonicalwithdescriptionaction")}>
           <EmptyState
             icon={Inbox}
-            message="No connections yet"
-            description="Add a connection to an application to configure credentials and discover its tools."
-            action="New connection"
+            message={t("designguide.general.samplenoconnectionsyet")}
+            description={t("designguide.general.sampleaddaconnectiontoanapplicationtoconfigurecredentialsanddiscoveritstools")}
+            action={t("designguide.general.samplenewconnection")}
             onAction={() => {}}
           />
         </SubSection>
@@ -2103,8 +2113,8 @@ export function DesignGuide() {
           <RepositoryEditor selected={[]} onChange={() => {}} state="disconnected" onConnect={() => {}} onRetry={() => {}} />
         </SubSection>
         <SubSection title={t("designguide.general.selectedandsearchable")}>
-          <RepositoryEditor selected={[{ id: "1", fullName: "paperclipai/paperclip", url: "https://github.com/paperclipai/paperclip", connections: ["Your GitHub"] }]}
-            available={[{ id: "2", fullName: "paperclipai/docs", url: "https://github.com/paperclipai/docs", connections: ["Company GitHub"] }]}
+          <RepositoryEditor selected={[{ id: "1", fullName: "paperclipai/paperclip", url: "https://github.com/paperclipai/paperclip", connections: [t("designguide.general.sampleyourgithub")] }]}
+            available={[{ id: "2", fullName: "paperclipai/docs", url: "https://github.com/paperclipai/docs", connections: [t("designguide.general.samplecompanygithub")] }]}
             onChange={() => {}} onConnect={() => {}} onRetry={() => {}} />
         </SubSection>
         <p className="text-sm text-muted-foreground">{t("designguide.general.loadingerrorsemptysearchmobileandshort")}</p>
@@ -2120,10 +2130,10 @@ export function DesignGuide() {
         <SubSection title={t("designguide.general.subtasksandcreatedworkareindependent")}>
           <div className="max-w-xl">
             <TaskDetailTasksPanel
-              subtasks={[DESIGN_GUIDE_TASK]}
+              subtasks={[{ ...DESIGN_GUIDE_TASK, title: t("designguide.general.samplereconcilenavigation") }]}
               createdTasks={[
-                { ...DESIGN_GUIDE_TASK, projectId: "design-board", project: { id: "design-board", name: "Board UI" } as Issue["project"] },
-                { ...DESIGN_GUIDE_TASK, id: "design-followup", identifier: "PAP-428", title: "Write release notes", status: "todo", projectId: null },
+                { ...DESIGN_GUIDE_TASK, title: t("designguide.general.samplereconcilenavigation"), projectId: "design-board", project: { id: "design-board", name: t("designguide.general.sampleboardui") } as Issue["project"] },
+                { ...DESIGN_GUIDE_TASK, id: "design-followup", identifier: "PAP-428", title: t("designguide.general.samplewritereleasenotes"), status: "todo", projectId: null },
               ]}
               projects={[]}
             />
@@ -2142,7 +2152,7 @@ export function DesignGuide() {
       </Section>
 
       <Section title={t("designguide.general.savedproviderapikeys")}>
-        <SavedProviderKeySelect options={[{ id: "example", label: "Claude API key (Your key)", binding: { type: "user_secret_ref", key: "ANTHROPIC_API_KEY", version: "latest" } }]} value="example" onChange={() => {}} loading={false} error={false} />
+        <SavedProviderKeySelect options={[{ id: "example", label: t("designguide.general.sampleclaudeapikey"), binding: { type: "user_secret_ref", key: "ANTHROPIC_API_KEY", version: "latest" } }]} value="example" onChange={() => {}} loading={false} error={false} />
         <SavedProviderKeySelect options={[]} value="" onChange={() => {}} loading error={false} />
         <SavedProviderKeySelect options={[]} value="" onChange={() => {}} loading={false} error />
       </Section>
@@ -2238,8 +2248,8 @@ export function DesignGuide() {
       <Section title={t("designguide.general.mediaartifacts")}>
         <p className="text-sm text-muted-foreground">{t("designguide.general.imagesandvideosusegallerytilesthe")}</p>
         <div className="grid max-w-2xl grid-cols-1 gap-3 sm:grid-cols-2">
-          <MediaArtifactCard id="design-image" title={t("designguide.general.launchartwork")} contentPath="/announcement-preview.svg" contentType="image/svg+xml" originalFilename="launch.svg" detail="Image" />
-          <MediaArtifactCard id="design-video" title={t("designguide.general.videopreviewunavailable")} contentPath="" contentType="video/mp4" originalFilename="preview.mp4" detail="Video" />
+          <MediaArtifactCard id="design-image" title={t("designguide.general.launchartwork")} contentPath="/announcement-preview.svg" contentType="image/svg+xml" originalFilename="launch.svg" detail={t("designguide.general.sampleimage")} />
+          <MediaArtifactCard id="design-video" title={t("designguide.general.videopreviewunavailable")} contentPath="" contentType="video/mp4" originalFilename="preview.mp4" detail={t("designguide.general.samplevideo")} />
         </div>
       </Section>
 
