@@ -3622,5 +3622,47 @@
       "removingkeystopsconnections": "Removing the key stops new Paperclip connections. Also remove its public key from Railway.",
       "containeraccesscouldntbeupdated": "Container access could not be updated."
     }
+  },
+  "setuppanel": {
+    "general": {
+      "agents": "Agents",
+      "actions": "Actions",
+      "loadingpermissions": "Loading permissions…",
+      "managepermissions": "Manage permissions",
+      "posthogsignin": "PostHog sign-in",
+      "personalapikey": "Personal API key",
+      "none": "None",
+      "connectionmethod": "Connection method",
+      "projectpin": "Project pin",
+      "useactiveproject": "Use active project",
+      "readonlymode": "Read-only mode",
+      "on": "On",
+      "off": "Off",
+      "featuregroups": "Feature groups",
+      "individualtools": "Individual tools",
+      "responsemode": "Response mode",
+      "tools": "tools",
+      "posthogaccessscope": "PostHog access scope",
+      "posthogaccessscopedescription": "PostHog uses its normal account defaults unless you narrow the optional controls below.",
+      "sheetsagentscanuse": "Sheets agents can use",
+      "agentscanonlyusesheets": "Agents can only use the sheets listed here.",
+      "nosheetsconnected": "No sheets are connected yet.",
+      "opensheet": "Open sheet",
+      "id": "ID",
+      "addanothersheet": "Add another sheet before removing this one.",
+      "remove": "Remove",
+      "pastegooglesheetslink": "Paste a Google Sheets link.",
+      "notgooglesheetslink": "That doesn't look like a Google Sheets link.",
+      "addsheet": "Add sheet",
+      "reviewnewactions_one": "Review {{count}} new action",
+      "reviewnewactions_other": "Review {{count}} new actions",
+      "turnonactions": "Turn on the actions agents may use. Anything left off stays blocked when you save.",
+      "turnallon": "Turn all on",
+      "turnalloff": "Turn all off",
+      "allowedfor": "{{label}} allowed",
+      "selectedwillbeon": "{{selected}} of {{count}} will be on",
+      "saving": "Saving…",
+      "savechoices": "Save choices"
+    }
   }
 }

@@ -3558,6 +3558,48 @@
       "containeraccesscouldntbeupdated": "无法更新容器访问。"
     }
   },
+  "setuppanel": {
+    "general": {
+      "agents": "智能体",
+      "actions": "操作",
+      "loadingpermissions": "正在加载权限…",
+      "managepermissions": "管理权限",
+      "posthogsignin": "PostHog 登录",
+      "personalapikey": "个人 API 密钥",
+      "none": "无",
+      "connectionmethod": "连接方式",
+      "projectpin": "项目固定项",
+      "useactiveproject": "使用当前项目",
+      "readonlymode": "只读模式",
+      "on": "开启",
+      "off": "关闭",
+      "featuregroups": "功能组",
+      "individualtools": "单独工具",
+      "responsemode": "响应模式",
+      "tools": "工具",
+      "posthogaccessscope": "PostHog 访问范围",
+      "posthogaccessscopedescription": "PostHog 会使用其普通账户默认设置，除非您在下方收紧可选控制项。",
+      "sheetsagentscanuse": "智能体可使用的表格",
+      "agentscanonlyusesheets": "智能体只能使用此处列出的表格。",
+      "nosheetsconnected": "尚未连接任何表格。",
+      "opensheet": "打开表格",
+      "id": "ID",
+      "addanothersheet": "请先添加另一份表格，再移除此表格。",
+      "remove": "移除",
+      "pastegooglesheetslink": "请粘贴 Google Sheets 链接。",
+      "notgooglesheetslink": "这似乎不是 Google Sheets 链接。",
+      "addsheet": "添加表格",
+      "reviewnewactions_one": "审查 {{count}} 个新操作",
+      "reviewnewactions_other": "审查 {{count}} 个新操作",
+      "turnonactions": "开启智能体可使用的操作。保存时未开启的操作会继续保持阻止状态。",
+      "turnallon": "全部开启",
+      "turnalloff": "全部关闭",
+      "allowedfor": "允许 {{label}}",
+      "selectedwillbeon": "将开启 {{selected}} / {{count}} 个",
+      "saving": "正在保存…",
+      "savechoices": "保存选择"
+    }
+  },
   "appnotconnected": {
     "general": {
       "app": "应用",
