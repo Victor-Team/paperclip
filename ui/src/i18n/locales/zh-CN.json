@@ -4657,6 +4657,26 @@
       "emptydescription": "将已连接的应用组合成一个安全端点交给客户端，并可一次性撤销。"
     }
   },
+  "newgatewaydialog": {
+    "general": {
+      "gatewaycreated": "网关已创建",
+      "gatewaywasnotcreated": "未能创建网关",
+      "newgateway": "新建网关",
+      "description": "网关是一个安全的 MCP 端点，只会公开其访问配置中的应用。你可以将它交给 Cursor 或 Claude Desktop 等客户端。",
+      "name": "名称",
+      "nameplaceholder": "CTO 智能体",
+      "accessprofile": "访问配置",
+      "loadingprofiles": "正在加载配置…",
+      "chooseaprofile": "选择配置",
+      "profiledescription": "配置决定此网关允许哪些工具；你可以稍后更改它。",
+      "descriptionoptional": "说明（可选）",
+      "descriptionplaceholder": "此端点适用对象以及应何时轮换。",
+      "noprofilesmessage": "请先在“高级”下创建访问配置，再添加网关。",
+      "cancel": "取消",
+      "creating": "正在创建…",
+      "creategateway": "创建网关"
+    }
+  },
   "appstoolspanel": {
     "general": {
       "theseappsgothroughthisgatewaythe": "这些应用通过此网关。绑定的配置",

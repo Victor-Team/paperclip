@@ -4657,6 +4657,26 @@
       "emptydescription": "Group your connected apps into one safe endpoint you can hand to a client, then revoke it in one move."
     }
   },
+  "newgatewaydialog": {
+    "general": {
+      "gatewaycreated": "Gateway created",
+      "gatewaywasnotcreated": "Gateway was not created",
+      "newgateway": "New gateway",
+      "description": "One safe MCP endpoint that exposes only the apps in its access profile. Hand it to a client like Cursor or Claude Desktop.",
+      "name": "Name",
+      "nameplaceholder": "CTO agents",
+      "accessprofile": "Access profile",
+      "loadingprofiles": "Loading profiles…",
+      "chooseaprofile": "Choose a profile",
+      "profiledescription": "The profile decides which tools this gateway allows. You can change it later.",
+      "descriptionoptional": "Description (optional)",
+      "descriptionplaceholder": "Who this endpoint is for and when it should be rotated.",
+      "noprofilesmessage": "Create an access profile under Advanced before adding a gateway.",
+      "cancel": "Cancel",
+      "creating": "Creating…",
+      "creategateway": "Create gateway"
+    }
+  },
   "appstoolspanel": {
     "general": {
       "theseappsgothroughthisgatewaythe": "These apps go through this gateway. The bound profile",
