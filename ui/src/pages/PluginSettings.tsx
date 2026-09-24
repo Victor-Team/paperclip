@@ -329,7 +329,7 @@ export function PluginSettings() {
                                     <AlertTriangle className="h-3 w-3 text-amber-500" />
                                     {t("pluginsettings.general.crashes")}</span>
                                   <span className="text-xs">
-                                    {dashboardData.worker.consecutiveCrashes} {t("pluginsettings.general.consecutive")} {dashboardData.worker.totalCrashes} t{t("pluginsettings.general.total")}</span>
+                                    {dashboardData.worker.consecutiveCrashes} {t("pluginsettings.general.consecutive")} {dashboardData.worker.totalCrashes} {t("pluginsettings.general.total")}</span>
                                 </div>
                                 {dashboardData.worker.lastCrashAt && (
                                   <div className="flex justify-between col-span-2">
@@ -428,7 +428,7 @@ export function PluginSettings() {
                     <CardTitle className="text-base flex items-center gap-1.5">
                       <ActivitySquare className="h-4 w-4" />
                       {t("pluginsettings.general.recentlogs")}</CardTitle>
-                    <CardDescription>{t("pluginsettings.general.last")}t {recentLogs.length} {t("pluginsettings.general.logentries")}</CardDescription>
+                    <CardDescription>{t("pluginsettings.general.last")} {recentLogs.length} {t("pluginsettings.general.logentries")}</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="max-h-64 space-y-1 overflow-y-auto font-mono text-xs">

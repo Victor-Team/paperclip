@@ -589,8 +589,7 @@ export function Search() {
             aria-hidden
             className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 rounded border border-border bg-muted px-1.5 py-0.5 text-(length:--text-nano) font-medium text-muted-foreground"
           >
-            ⌘K
-          </kbd>
+            {t("search.general.k")}</kbd>
         </div>
         <div className="mt-2 flex min-h-6 flex-wrap items-center gap-1.5 text-(length:--text-micro) text-muted-foreground">
           {operatorPills.length > 0 ? (
@@ -623,9 +622,9 @@ export function Search() {
             </div>
           ) : (
             <span className="truncate">
-              {t("search.general.try")} <code className="rounded bg-muted px-1 py-0.5 text-(length:--text-micro)">status:todo</code>,{" "}
-              <code className="rounded bg-muted px-1 py-0.5 text-(length:--text-micro)">assignee:me</code>,{" "}
-              {t("search.general.or")} <code className="rounded bg-muted px-1 py-0.5 text-(length:--text-micro)">updated:&gt;7d</code>.
+              {t("search.general.try")} <code className="rounded bg-muted px-1 py-0.5 text-(length:--text-micro)">{t("search.general.statustodo")}</code>,{" "}
+              <code className="rounded bg-muted px-1 py-0.5 text-(length:--text-micro)">{t("search.general.assigneeme")}</code>,{" "}
+              {t("search.general.or")} <code className="rounded bg-muted px-1 py-0.5 text-(length:--text-micro)">{t("search.general.updatedgt7d")}</code>.
             </span>
           )}
         </div>
@@ -800,7 +799,7 @@ function SearchTabContent({
           <li>
             <span className="font-medium text-foreground">{t("search.general.identifierLookup")}</span>{" "}
             {t("search.general.type")}{" "}
-            <code className="rounded bg-muted px-1 py-0.5 text-(length:--text-micro)">PAP-123</code>{" "}
+            <code className="rounded bg-muted px-1 py-0.5 text-(length:--text-micro)">{t("search.general.pap123")}</code>{" "}
             {t("search.general.toJumpStraightTo")}
           </li>
           <li>
@@ -808,7 +807,7 @@ function SearchTabContent({
             {t("search.general.wrapAPhraseIn")}
           </li>
           <li>
-            <span className="font-medium text-foreground">⌘K:</span> {t("search.general.reopensTheCommandPalette")}
+            <span className="font-medium text-foreground">{t("search.general.k1")}</span> {t("search.general.reopensTheCommandPalette")}
           </li>
         </ul>
       </div>
@@ -889,7 +888,7 @@ function SearchTabContent({
         <ul className="mt-2 space-y-0.5 text-xs text-muted-foreground">
           <li>{t("search.general.tryFewerTokensOr")}</li>
           <li>
-            {t("search.general.useAnIdentifierShortcut")} <code className="rounded bg-muted px-1 py-0.5">PAP-123</code>.
+            {t("search.general.useAnIdentifierShortcut")} <code className="rounded bg-muted px-1 py-0.5">{t("search.general.pap1232")}</code>.
           </li>
           <li>{t("search.general.wrapMultiWordPhrasesIn")}</li>
         </ul>

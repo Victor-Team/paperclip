@@ -71,6 +71,7 @@ import type {
   RoutineEnvConfig,
   RoutineVariable,
 } from "@paperclipai/shared";
+import { useTranslation } from "@/i18n";
 
 export function buildRoutineProjectOptions(
   projects: ReadonlyArray<{ id: string; name: string; description?: string | null; archivedAt?: Date | string | null }>,
@@ -120,6 +121,7 @@ function buildRoutineMutationPayload(input: RoutineEditDraft) {
 }
 
 export function RoutineDetail() {
+  const { t } = useTranslation();
   const { routineId, section: sectionParam } = useParams<{ routineId: string; section?: string }>();
   const [searchParams] = useSearchParams();
   const triggerSetup = sectionParam === "triggers" && searchParams.has("triggerSetup");
@@ -774,8 +776,7 @@ export function RoutineDetail() {
         href="#routine-section"
         className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-20 focus:rounded focus:bg-background focus:px-3 focus:py-1.5 focus:text-sm"
       >
-        Skip to section
-      </a>
+        {t("routinedetail.general.skiptosection")}</a>
 
       {/* The global shell owns routine navigation. This surface keeps one
           content scroll owner and a compact action header. */}
@@ -806,7 +807,7 @@ export function RoutineDetail() {
                 ref={titleInputRef}
                 data-autosize-title
                 className="min-w-0 flex-1 resize-none overflow-hidden bg-transparent text-base font-semibold leading-7 outline-none placeholder:text-muted-foreground/50"
-                placeholder="Routine title"
+                placeholder={t("routinedetail.general.routinetitle")}
                 rows={1}
                 value={editDraft.title}
                 onChange={(event) => {
@@ -838,8 +839,7 @@ export function RoutineDetail() {
                 size="sm"
                 onClick={() => navigate(routineDetailHref(routine.id))}
               >
-                Back to overview
-              </Button>
+                {t("routinedetail.general.backtooverview")}</Button>
             ) : (
               <Button
                 variant="ghost"
@@ -847,8 +847,7 @@ export function RoutineDetail() {
                 onClick={() => navigate(routineDetailHref(routine.id, "history"))}
               >
                 <History className="h-3.5 w-3.5" />
-                History
-              </Button>
+                {t("routinedetail.general.history")}</Button>
             )}
             {section === "overview" ? (
               overviewEditing ? (
@@ -861,13 +860,11 @@ export function RoutineDetail() {
                   }}
                 >
                   <X className="h-3.5 w-3.5" />
-                  Cancel editing
-                </Button>
+                  {t("routinedetail.general.cancelediting")}</Button>
               ) : (
                 <Button variant="outline" size="sm" onClick={() => setOverviewEditing(true)}>
                   <Pencil className="h-3.5 w-3.5" />
-                  Edit routine
-                </Button>
+                  {t("routinedetail.general.editroutine")}</Button>
               )
             ) : null}
             <RunButton onClick={() => setRunVariablesOpen(true)} disabled={runRoutine.isPending} />
