@@ -6,6 +6,7 @@ import type {
   ProjectWorkspace,
 } from "@paperclipai/shared";
 import { describe, expect, it } from "vitest";
+import { i18n } from "@/i18n";
 import {
   defaultSelection,
   filterCandidates,
@@ -210,5 +211,18 @@ describe("scannable workspace detection", () => {
       ],
     } as unknown as Project;
     expect(scannableWorkspaces(project)).toHaveLength(0);
+  });
+});
+
+
+describe("Import Skills dialog language", () => {
+  it("renders whole count phrases in English and Chinese", () => {
+    const en = i18n.getFixedT("en");
+    const zh = i18n.getFixedT("zh-CN");
+    const key = "importskillsfromprojectdialog.general.importskillcount";
+    expect(en(key, { count: 1 })).toBe("Import 1 skill");
+    expect(en(key, { count: 2 })).toBe("Import 2 skills");
+    expect(zh(key, { count: 2 })).toBe("导入 2 项技能");
+    expect(zh("importskillsfromprojectdialog.general.noprojectsmatch", { filter: "示例" })).toBe("没有与“示例”匹配的项目。");
   });
 });

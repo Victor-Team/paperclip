@@ -374,9 +374,9 @@ export function SystemNoticeUxLab() {
             {t("systemnoticeuxlab.general.equaltothevisibletonelabelso")}</div>
           <div className="rounded-2xl border border-border/70 bg-background/80 px-4 py-3">
             <div className="mb-1 font-medium text-foreground">{t("systemnoticeuxlab.general.legacyfallback")}</div>
-            {t("systemnoticeuxlab.general.existingcommentswithout")}t{" "}
+            {t("systemnoticeuxlab.general.existingcommentswithout")}{" "}
             <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-xs">{t("systemnoticeuxlab.general.presentation")}</code>{" "}
-            {t("systemnoticeuxlab.general.keeprenderingthroughthecurrent")}t{" "}
+            {t("systemnoticeuxlab.general.keeprenderingthroughthecurrent")}{" "}
             <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-xs">{t("systemnoticeuxlab.general.successfulrunhandoffcommentcallout")}</code>{" "}
             {t("systemnoticeuxlab.general.stringdetectorthenewcontractisopt")}</div>
         </CardContent>

@@ -2537,7 +2537,7 @@ export function CompanyEnvironments({ mode = "list" }: CompanyEnvironmentsProps)
                     {agentsUsingEnvironment.length > 0 ? (
                       <label className="block space-y-1.5 text-sm">
                         <span className="font-medium">
-                          {t("companyenvironments.general.reassign")} {agentsUsingEnvironment.length === 1 ? t("companyenvironments.general.agent") : t("companyenvironments.general.agents")} t{t("companyenvironments.general.to")}</span>
+                          {t("companyenvironments.general.reassign")} {agentsUsingEnvironment.length === 1 ? t("companyenvironments.general.agent") : t("companyenvironments.general.agents")} {t("companyenvironments.general.to")}</span>
                         <select
                           aria-label={t("companyenvironments.general.reassignagentstoenvironment")}
                           data-testid="environment-delete-reassign-select"

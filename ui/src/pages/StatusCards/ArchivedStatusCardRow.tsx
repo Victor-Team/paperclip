@@ -4,13 +4,14 @@ import { Loader2 } from "lucide-react";
 import { statusCardsApi } from "@/api/statusCards";
 import { Button } from "@/components/ui/button";
 import { queryKeys } from "@/lib/queryKeys";
-import { formatDateTime } from "@/lib/utils";
-import { formatCents, formatTokens, rollupUpdates } from "./format";
-import type { StatusCardView } from "./types";
 
-function shortDate(iso: string | null): string {
+import { formatCents, formatTokens, rollupUpdates, statusCardDateTime } from "./format";
+import type { StatusCardView } from "./types";
+import { useTranslation } from "@/i18n";
+
+function shortDate(iso: string | null, locale: string): string {
   if (!iso) return "—";
-  return new Date(iso).toLocaleDateString(undefined, { month: "short", day: "numeric" });
+  return new Date(iso).toLocaleDateString(locale, { month: "short", day: "numeric" });
 }
 
 export function ArchivedStatusCardRow({
@@ -24,6 +25,7 @@ export function ArchivedStatusCardRow({
   onRestore: () => void;
   restorePending?: boolean;
 }) {
+  const { t, i18n } = useTranslation();
   // Lifetime cost is a rollup of the card's full update ledger (live P1 data).
   const updatesQuery = useQuery({
     queryKey: queryKeys.statusCards.updates(card.id),
@@ -34,10 +36,10 @@ export function ArchivedStatusCardRow({
   return (
     <div className="flex items-center justify-between gap-4 rounded-lg border border-border bg-muted/30 px-4 py-3">
       <div className="min-w-0">
-        <p className="truncate text-sm font-semibold">{card.title ?? "Untitled card"}</p>
-        <p className="mt-0.5 text-xs text-muted-foreground" title={card.archivedAt ? formatDateTime(card.archivedAt) : undefined}>
-          archived {shortDate(card.archivedAt)} · last summary {shortDate(card.lastGeneratedAt)}
-          {rollup ? ` · lifetime ${formatTokens(rollup.totalTokens)} / ${formatCents(rollup.totalCostCents)}` : ""}
+        <p className="truncate text-sm font-semibold">{card.title ?? t("archivedstatuscardrow.general.untitledcard")}</p>
+        <p className="mt-0.5 text-xs text-muted-foreground" title={card.archivedAt ? statusCardDateTime(card.archivedAt, i18n.language) : undefined}>
+          {t("archivedstatuscardrow.general.archived")} {shortDate(card.archivedAt, i18n.language)} {t("archivedstatuscardrow.general.lastsummary")} {shortDate(card.lastGeneratedAt, i18n.language)}
+          {rollup ? t("archivedstatuscardrow.general.lifetime", { tokens: formatTokens(rollup.totalTokens, i18n.language), cost: formatCents(rollup.totalCostCents) }) : ""}
         </p>
       </div>
       {/* View is the more common intent on an archived row (reading the last
@@ -45,12 +47,10 @@ export function ArchivedStatusCardRow({
           stale and never auto-runs. */}
       <div className="flex shrink-0 gap-2">
         <Button size="sm" onClick={onView}>
-          View
-        </Button>
+          {t("archivedstatuscardrow.general.view")}</Button>
         <Button variant="outline" size="sm" onClick={onRestore} disabled={restorePending}>
           {restorePending ? <Loader2 className="animate-spin" /> : null}
-          Restore
-        </Button>
+          {t("archivedstatuscardrow.general.restore")}</Button>
       </div>
     </div>
   );

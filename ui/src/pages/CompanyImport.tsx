@@ -185,7 +185,7 @@ function renderImportFileExtra(node: FileTreeNode, checked: boolean, renameMap: 
     <span className="inline-flex items-center gap-1.5 shrink-0">
       {renamedTo && checked && (
         <span className="text-(length:--text-nano) text-cyan-500 font-mono truncate max-w-(--sz-7rem)" title={renamedTo}>
-          &rarr; {renamedTo}
+          → {renamedTo}
         </span>
       )}
       {actionBadge}
@@ -606,7 +606,7 @@ function AdapterPickerList({
         <div className="flex items-center gap-2 border-b border-border px-4 py-2.5">
           <h3 className="text-sm font-medium">{t("companyimport.general.adapters")}</h3>
           <span className="text-xs text-muted-foreground">
-            {agents.length} {t("companyimport.general.agent")}t{agents.length === 1 ? "" : t("companyimport.general.s1")}
+            {agents.length} {t("companyimport.general.agent")}{agents.length === 1 ? "" : t("companyimport.general.s1")}
           </span>
         </div>
         <div className="divide-y divide-border">
@@ -1706,9 +1706,9 @@ export function CompanyImport() {
         <div>
           <h2 className="text-base font-semibold">{t("companyimport.general.importcomplete")}</h2>
           <p className="text-xs text-muted-foreground mt-1">
-            {result.company.name}: {result.agents.length} {t("companyimport.general.agent3")}t{result.agents.length === 1 ? "" : t("companyimport.general.s4")},{" "}
+            {result.company.name}: {result.agents.length} {t("companyimport.general.agent3")}{result.agents.length === 1 ? "" : t("companyimport.general.s4")},{" "}
             {skillResults.length} {t("companyimport.general.skill")}{skillResults.length === 1 ? "" : t("companyimport.general.s5")},{" "}
-            {result.projects.length} {t("companyimport.general.project")}t{result.projects.length === 1 ? "" : t("companyimport.general.s6")}{t("companyimport.general.and")}{" "}
+            {result.projects.length} {t("companyimport.general.project")}{result.projects.length === 1 ? "" : t("companyimport.general.s6")}{t("companyimport.general.and")}{" "}
             {result.routines.length} {t("companyimport.general.routine")}{result.routines.length === 1 ? "" : t("companyimport.general.s7")} {t("companyimport.general.processed")}</p>
         </div>
 
@@ -2035,7 +2035,7 @@ export function CompanyImport() {
                 {selectedCount} / {totalFiles} {t("companyimport.general.file9")}{totalFiles === 1 ? "" : t("companyimport.general.s10")} {t("companyimport.general.selected")}</span>
               {conflicts.length > 0 && (
                 <span className="text-amber-500">
-                  {conflicts.length} {t("companyimport.general.conflict")}t{conflicts.length === 1 ? "" : t("companyimport.general.s11")}
+                  {conflicts.length} {t("companyimport.general.conflict")}{conflicts.length === 1 ? "" : t("companyimport.general.s11")}
                 </span>
               )}
               {importPreview.errors.length > 0 && (
