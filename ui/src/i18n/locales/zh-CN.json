@@ -119,7 +119,12 @@
       "provideridentity": "提供商身份",
       "manage": "管理",
       "openpermissions": "打开 {{name}} 的权限",
-      "manageconnection": "管理 {{name}} 连接"
+      "manageconnection": "管理 {{name}} 连接",
+      "retired": "已停用",
+      "retiredcomposiomessage": "此旧版 Composio 连接已不再支持。请在“连接器”中添加新的 Composio MCP 连接，然后移除这个连接。现有凭据和权限不会被迁移。",
+      "chatdisconnectedtasksremain": "{{provider}} 已断开连接。现有的 Paperclip 任务仍然可用。",
+      "chatconnectionremovaldescription": "此连接将停止从 {{provider}} 接收新的工作。现有的 Paperclip 任务和对话历史仍然可用。这不会删除 {{provider}} 中的应用、机器人或账号。",
+      "manageconnectionarialabel": "管理 {{agentName}} 的 {{providerName}} 连接"
     }
   },
   "connections": {
@@ -197,7 +202,8 @@
       "deletechildren": "这还会移除 {{count}} 个已连接的{{kind}}，并立即撤销智能体访问权限。Composio 密钥和子会话凭据将被删除。",
       "deleteotherconnections": "此连接保存的凭据会被删除，智能体将立即失去通过该连接的访问权限。智能体仍可通过其他 {{count}} 个活动{{kind}}使用 {{appName}}。",
       "attentionnames": "{{names}}",
-      "attentionnamesmore": "{{names}} 等 {{count}} 个"
+      "attentionnamesmore": "{{names}} 等 {{count}} 个",
+      "retiredcomposiomessage": "此旧版 Composio 连接已不再支持。请在“连接器”中添加新的 Composio MCP 连接，然后移除这个连接。现有凭据和权限不会被迁移。"
     }
   },
   "chatendpointdetail": {
@@ -362,7 +368,33 @@
       "staleurl": "URL 已过期",
       "notobserved": "尚未观测",
       "replayfailed": "重放失败的 {{kind}}",
-      "waitingfortask": "等待任务"
+      "waitingfortask": "等待任务",
+      "allowedchannels": "允许的频道",
+      "chatinslack": "在 Slack 中聊天",
+      "invitethebottoachannelthenmention": "邀请机器人加入频道，然后 @ 它即可开始对话。",
+      "messagecopied": "消息已复制",
+      "copymessage": "复制消息",
+      "couldntcopythemessage": "无法复制消息",
+      "selectandcopyitmanually": "请手动选中并复制。",
+      "connectionhealthandcontrols": "连接健康状况与控制",
+      "callbackurlsneedattention": "回调 URL 需要处理",
+      "recentactivity": "最近活动",
+      "loadingagentavatar": "正在加载智能体头像…",
+      "couldntloadtheagentsavatar": "无法加载该智能体的头像。",
+      "inviteotherstoconnecttheirslackaccounts": "邀请其他人连接他们的 Slack 账号",
+      "askthemtosendthiscommandin": "请他们在你的 Slack 工作区中发送以下命令：",
+      "couldntcopythecommand": "无法复制该命令",
+      "copied": "已复制",
+      "copycommand": "复制命令",
+      "opentheprivatelinkfromthebot": "从机器人打开私信链接，登录 Paperclip，并确认他们的 Slack 账号。该链接 15 分钟后失效，且只能使用一次。",
+      "iftheyarentamemberof": "如果他们还不是该组织的成员，请选择",
+      "requestaccess": "请求访问",
+      "anadminmustapprovetheirrequestbefore": "。管理员必须先批准他们的请求，之后他们才能关联账号。",
+      "eachpersonlinkstheirownaccountand": "每个人都关联自己的账号，并使用自己的 Paperclip 权限。他们不需要另外创建 Slack 应用或共享凭据。",
+      "activitypagination": "活动分页",
+      "page": "第 {{page}} 页",
+      "previous": "上一页",
+      "next": "下一页"
     }
   },
   "chatidentityconfirm": {
@@ -384,7 +416,13 @@
       "confirmonlyifthisisyour": "请仅在这是您的",
       "identitypaperclipwillcheckyourcurrentorganization": "身份时确认。Paperclip 会在每次操作时检查您当前的组织成员资格。",
       "thislinkcouldnotbeconfirmedit": "无法确认此链接。它可能已过期或被撤销。",
-      "confirmidentity": "确认身份"
+      "confirmidentity": "确认身份",
+      "returntoslack": "返回 Slack",
+      "couldnapostloadyouraccountrefresh": "无法加载你的账号。请刷新后重试。",
+      "youneedmembershipin": "你需要先成为 {{companyName}} 的成员，才能关联此账号。",
+      "accessrequestedanadmincanapproveit": "已请求访问。管理员可以在 Paperclip 中批准该请求。批准后，请返回此处确认；如果此链接已过期，请在 Slack 中再次发送连接命令。",
+      "requestaccess": "请求访问",
+      "couldnapostrequestaccessthelink": "无法请求访问。该链接可能已过期。请再次发送连接命令并重试。"
     }
   },
   "photonconnectstep": {
@@ -530,7 +568,13 @@
       "noactiveagentsareavailable": "没有可用的活跃智能体。",
       "continue": "继续",
       "connectionfailed": "连接失败",
-      "saveampexit": "保存并退出"
+      "saveampexit": "保存并退出",
+      "couldntcopytoclipboard": "无法复制到剪贴板",
+      "selectandcopyvalue": "请手动选中并复制该值。",
+      "assignedagent": "已分配的智能体",
+      "loadingagentavatar": "正在加载智能体头像…",
+      "couldntloadtheagentsavatar": "无法加载该智能体的头像。",
+      "skipfornow": "暂时跳过"
     },
     "discord": {
       "title": "将 {{agentName}} 连接到 Discord",
@@ -635,7 +679,9 @@
       "waitingforwebhook": "正在等待 GitHub 投递已签名的 Webhook ping…",
       "publichttpsrequired": "连接 GitHub 前，请为此 Paperclip 实例配置公开的 HTTPS URL。",
       "reconnectandverify": "重新连接并验证",
-      "connectandverify": "连接并验证"
+      "connectandverify": "连接并验证",
+      "webhooksecretcopied": "Webhook 密钥已复制",
+      "couldntcopyselectitmanually": "无法复制——请手动选中"
     },
     "slack": {
       "finishsetup": "完成 Slack 设置",
@@ -662,7 +708,43 @@
       "botuseroauthtoken": "Bot User OAuth Token",
       "signingsecret": "Signing Secret",
       "publichttpsrequired": "连接 Slack 前，请为此 Paperclip 实例配置公开的 HTTPS URL。",
-      "reconnectapp": "重新连接 Slack 应用"
+      "reconnectapp": "重新连接 Slack 应用",
+      "helpwith": "帮助：",
+      "verifyslackconnection": "验证 Slack 连接",
+      "slackneedstoconfirm": "Slack 需要确认它可以访问你的 Paperclip 实例。",
+      "openslackappsettingsandchooseapp": "<link>打开 Slack 应用设置 <icon /></link>，选择 <strong>{{appName}}</strong>。",
+      "eventsubscriptions": "选择 <strong>Event Subscriptions</strong>。",
+      "requesturlretryifnotverified": "在已预填的 <strong>Request URL</strong> 旁边，如果未验证请点击 <strong>Retry</strong>。如果 Slack 提示，请保存更改。",
+      "slackverifiedyourconnection": "Slack 已验证你的连接。",
+      "openingthemessagetest": "正在打开消息测试…",
+      "couldntcheckverification": "无法检查验证状态。我们会继续重试；如果问题持续，请检查你的连接。",
+      "waitingforslacktoverify": "正在等待 Slack 验证。我们会自动继续。",
+      "troubleshooting": "故障排查",
+      "requesturlmissingtroubleshooting": "如果 Request URL 缺失或不同，请将此 URL 粘贴到 Event Subscriptions 中。如果验证失败，请检查你的公网 HTTPS 服务器是否可访问，以及 Signing Secret 是否正确。",
+      "chooseoauthamppermissions": "选择 <strong>OAuth &amp; Permissions</strong>",
+      "copypasteyourbotoauthtoken": "复制并粘贴你的 <strong>Bot OAuth Token</strong>",
+      "botoauthtokenmuststartwithxoxb": "你的 Bot User OAuth Token 必须以 <code>xoxb-</code> 开头。请从 <strong>OAuth &amp; Permissions</strong> 中复制。",
+      "choosebasicinformation": "选择 <strong>Basic Information</strong>",
+      "copypasteyoursigningsecret": "复制并粘贴你的 <strong>Signing Secret</strong>",
+      "usethesigningsecretnotapporbottoken": "请使用 <strong>Signing Secret</strong>，不要使用应用或机器人令牌。Signing Secret 没有令牌前缀。",
+      "nowyouneedtofindtwosecrets": "现在你需要找到两个密钥，它们分别在 Slack 的两个不同页面中。",
+      "yourcredentialsaresavedleaveblank": "你的凭据已保存。留空可保留原值，或输入新值以替换。",
+      "savedleaveblanktokeep": "已保存——留空以保留",
+      "connectslackappbutton": "连接 Slack 应用",
+      "publichttpsurlrequiredheading": "需要公网 HTTPS URL",
+      "slackneedsapublichttpsurl": "Slack 需要一个公网 HTTPS URL 才能向 Paperclip 发送消息。请在创建或连接你的 Slack 应用之前为此实例配置一个。",
+      "learnhowtosetuphttps": "了解如何配置 HTTPS",
+      "createaslackapp": "创建 Slack 应用",
+      "addslackcredentials": "添加 Slack 凭据",
+      "slackappnamehelp": "你的应用在 Slack 应用目录和设置中显示的名称。",
+      "botdisplaynamehelp": "机器人发送消息时人们看到的名称。请使用小写字母、数字、句点、连字符或下划线。",
+      "slashcommandhelp": "人们在 Slack 中用来与该智能体对话的命令。以 / 开头，后跟小写字母、数字、连字符或下划线。",
+      "couldntsavetheslackappdetails": "无法保存 Slack 应用详情。请重试后再连接。",
+      "retrysaving": "重试保存",
+      "viewslackappmanifest": "查看 Slack 应用清单",
+      "generatedfromyourappnamebotname": "根据你的应用名称、机器人名称和斜杠命令生成。修改这些字段即可更新清单。",
+      "ialreadycreatedtheapp": "我已经创建了该应用",
+      "createslackappbutton": "创建 Slack 应用"
     },
     "test": {
       "freshphoton": "向您的 Photon 号码发送一条新消息",
@@ -702,7 +784,7 @@
       "teamsstep1": "打开已安装的频道并新建帖子。",
       "teamsstep2": "在帖子中提及 {{botMention}}。",
       "teamsstep3": "在帖子下方回复一次。",
-      "otherstep1": "打开频道，并在需要时邀请机器人。",
+      "otherstep1": "打开频道，并在需要时邀请 {{botMention}}。",
       "otherstep2": "在新的频道消息中提及 {{botMention}}。",
       "otherstep3": "在 {{agentName}} 的线程中回复一次。",
       "title": "在 {{providerName}} 中试用 {{agentName}}",
@@ -713,7 +795,16 @@
       "numbercopied": "号码已复制",
       "copynumber": "复制 {{number}}",
       "openprovider": "打开 {{providerName}}",
-      "senttestmessage": "我已发送测试消息"
+      "senttestmessage": "我已发送测试消息",
+      "continuetheconversationinthethread": "在话题（thread）中继续对话。",
+      "selectthebotfromslackmentionsuggestions": "从 Slack 的 @ 提及建议中选择该机器人。",
+      "copymessage": "复制消息",
+      "copied": "已复制",
+      "couldntcopyselectandcopycommand": "无法复制。请选中并复制上方的命令。",
+      "receivedyourslackmessage": "已收到你的 Slack 消息。",
+      "couldntcheckforyourmessage": "无法检查你的消息。你仍然可以完成设置。",
+      "wellcheckforyourmessageautomatically": "我们会自动检查你的消息。此测试是可选的。",
+      "skiptestandfinish": "跳过测试并完成"
     }
   },
   "common": {
@@ -1091,7 +1182,8 @@
       "interrupted": "已中断",
       "todo": "待办",
       "inReview": "审查中",
-      "backlog": "待办列表"
+      "backlog": "待办列表",
+      "idle": "空闲"
     }
   },
   "activitycharts": {
@@ -2459,7 +2551,7 @@
   "taskchatbubbleactions": {
     "general": {
       "copymessage": "复制消息",
-      "copymessage1": "复制消息"
+      "couldntcopymessage": "无法复制消息"
     }
   },
   "taskchatcompactinteractioncard": {
@@ -2886,7 +2978,9 @@
       "noproject": "无项目",
       "subtasks": "子任务",
       "gotoproject": "前往 {{name}} 项目",
-      "projecttasks": "{{name}} 任务"
+      "projecttasks": "{{name}} 任务",
+      "ancestors": "上级任务",
+      "ancestortasksroottoparent": "上级任务，从根到父级"
     }
   },
   "taskdocumentpanel": {
@@ -3942,8 +4036,8 @@
       "anyactivityacrosstheorganizationcountsasa": "组织内的任何活动都可作为运行理由。",
       "activitygatescopethisproject": "此项目",
       "onlyactivityintheroutinesprojectcountsasa": "仅例程所属项目中的活动可作为运行理由。",
-      "signingmodebearerdescription": "在 Authorization 请求头中要求共享 Bearer 令牌。",
-      "signingmodehmacsha256description": "要求使用共享密钥对请求生成 HMAC SHA-256 签名。",
+      "signingmodebearerdescription": "每次请求都发送 Authorization: Bearer <secret>。",
+      "signingmodehmacsha256description": "发送 X-Paperclip-Timestamp 和 X-Paperclip-Signature: sha256=<hex>，对时间戳 + 一个点 + 精确的 JSON 请求体进行签名。",
       "signingmodegithubhmacdescription": "接受 GitHub 风格的 X-Hub-Signature-256 请求头（对原始正文做 HMAC，无时间戳）。",
       "signingmodenonedescription": "无需认证——Webhook URL 本身充当共享密钥。",
       "noresponsible": "无负责人",
@@ -3977,7 +4071,13 @@
       "firecoalesced": "将被合并",
       "fireskipped": "将被跳过",
       "firerunsimmediately": "立即运行",
-      "fireifpreviousactive": "如果上一次运行仍处于活动状态"
+      "fireifpreviousactive": "如果上一次运行仍处于活动状态",
+      "signingmodeappwebhookdescription": "接受 Bearer 令牌，或对请求体在 X-Hub-Signature 或 X-Hub-Signature-256 中提供的 HMAC-SHA256 签名。",
+      "signingmodefireflieshmacdescription": "已签名的 Webhook（旧版）。",
+      "addatrigger": "添加触发器",
+      "newwebhookurl": "新的 Webhook URL",
+      "newwebhooksecret": "新的 Webhook 密钥",
+      "done": "完成"
     }
   },
   "editablesections": {
@@ -4043,8 +4143,8 @@
       "anyactivityacrosstheorganizationcountsasa": "组织内的任何活动都可作为运行理由。",
       "activitygatescopethisproject": "此项目",
       "onlyactivityintheroutinesprojectcountsasa": "仅例程所属项目中的活动可作为运行理由。",
-      "signingmodebearerdescription": "在 Authorization 请求头中要求共享 Bearer 令牌。",
-      "signingmodehmacsha256description": "要求使用共享密钥对请求生成 HMAC SHA-256 签名。",
+      "signingmodebearerdescription": "每次请求都发送 Authorization: Bearer <secret>。",
+      "signingmodehmacsha256description": "发送 X-Paperclip-Timestamp 和 X-Paperclip-Signature: sha256=<hex>，对时间戳 + 一个点 + 精确的 JSON 请求体进行签名。",
       "signingmodegithubhmacdescription": "接受 GitHub 风格的 X-Hub-Signature-256 请求头（对原始正文做 HMAC，无时间戳）。",
       "signingmodenonedescription": "无需认证——Webhook URL 本身充当共享密钥。",
       "noresponsible": "无负责人",
@@ -4075,7 +4175,9 @@
       "firecoalesced": "将被合并",
       "fireskipped": "将被跳过",
       "firerunsimmediately": "立即运行",
-      "fireifpreviousactive": "如果上一次运行仍处于活动状态"
+      "fireifpreviousactive": "如果上一次运行仍处于活动状态",
+      "signingmodeappwebhookdescription": "接受 Bearer 令牌，或对请求体在 X-Hub-Signature 或 X-Hub-Signature-256 中提供的 HMAC-SHA256 签名。",
+      "signingmodefireflieshmacdescription": "已签名的 Webhook（旧版）。"
     }
   },
   "operatesections": {
@@ -4115,7 +4217,9 @@
       "runFailed": "运行失败",
       "skipNoExternalActivity": "已跳过：自上次运行后没有活动",
       "skipPaused": "已跳过：例程已暂停",
-      "skipWorktreeExecutionCutoff": "已跳过：工作树执行截止"
+      "skipWorktreeExecutionCutoff": "已跳过：工作树执行截止",
+      "failedtoupdatetask": "更新任务失败",
+      "loadingactivity": "正在加载活动…"
     }
   },
   "agentsusingskilldialog": {

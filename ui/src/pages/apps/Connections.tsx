@@ -1,3 +1,4 @@
+import { isRetiredComposioConnection } from "@paperclipai/shared";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AppWindow, Cloud, Loader2, ShieldAlert, ShieldCheck, ShieldQuestion, Trash2 } from "lucide-react";
@@ -33,8 +34,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { timeAgo } from "@/lib/timeAgo";
 import { AppLogo } from "./AppLogo";
-import { ConnectionProvenanceChip } from "./ComposioProvenanceChip";
-import { composioChildParentConnectionId } from "./composio-services";
+import { ConnectionProvenanceChip } from "./ConnectionProvenanceChip";
 import {
   appApplicationSourceSlug,
   appDefinitionDarkLogoUrl,
@@ -58,7 +58,7 @@ const BROWSE_HREF = "/apps";
 type StatusFilter = "all" | "attention";
 
 type AppStatus = {
-  label: "Healthy" | "Needs attention" | "Paused" | "Not connected";
+  label: "Healthy" | "Needs attention" | "Paused" | "Not connected" | "Retired";
   tone: "connected" | "attention" | "paused" | "not_connected";
 };
 
@@ -82,6 +82,7 @@ type AppRow = {
  * pill's `attention` tone and the row highlight are now the *same* predicate.
  */
 function statusFor(application: ToolApplication, connections: ToolConnection[]): AppStatus {
+  if (connections.some(isRetiredComposioConnection)) return { label: "Retired", tone: "attention" };
   if (connections.length === 0) {
     return { label: "Not connected", tone: "not_connected" };
   }
@@ -123,7 +124,7 @@ export function Connections() {
     id: string;
     appName: string;
     remainingConnectionCount: number;
-    childConnectionCount: number;
+
   } | null>(null);
 
   useEffect(() => {
@@ -180,11 +181,9 @@ export function Connections() {
       id: string;
       appName: string;
       remainingConnectionCount: number;
-      childConnectionCount: number;
+
     }) =>
-      toolsApi.archiveConnection(target.id, {
-        confirmComposioChildren: target.childConnectionCount > 0,
-      }),
+      toolsApi.archiveConnection(target.id),
     onSuccess: (_connection, target) => {
       queryClient.invalidateQueries({ queryKey: queryKeys.tools.connections(selectedCompanyId!) });
       queryClient.invalidateQueries({ queryKey: queryKeys.tools.applications(selectedCompanyId!) });
@@ -417,6 +416,7 @@ export function Connections() {
                   const { application, connection, status } = row;
                   const attention = rowNeedsAttention(row);
                   const hint =
+                    connection && isRetiredComposioConnection(connection) ? t("connections.general.retiredcomposiomessage") :
                     status.tone === "attention"
                       ? connection?.authKind === "oauth"
                         ? t("connections.general.reconnectrequired")
@@ -433,6 +433,7 @@ export function Connections() {
                     : `/apps/app/${application.id}/permissions`;
                   const actionLabel = !connection
                     ? t("connections.general.connect")
+                    : connection && isRetiredComposioConnection(connection) ? t("connections.general.review")
                     : status.tone === "attention"
                       ? t("connections.general.reconnect")
                       : t("connections.general.permissions");
@@ -515,9 +516,7 @@ export function Connections() {
                                   id: connection.id,
                                   appName: application.name,
                                   remainingConnectionCount: row.remainingAgentAvailableConnectionCount,
-                                  childConnectionCount: connections.filter(
-                                    (candidate) => composioChildParentConnectionId(candidate) === connection.id,
-                                  ).length,
+
                                 });
                               }}
                             >
@@ -551,14 +550,7 @@ export function Connections() {
             <AlertDialogTitle>
               {t("connections.general.delete")} {connectionToDelete?.appName ?? t("connections.general.this")} {t("connections.general.connection1")}</AlertDialogTitle>
             <AlertDialogDescription>
-              {connectionToDelete && connectionToDelete.childConnectionCount > 0
-                ? t("connections.general.deletechildren", {
-                    count: connectionToDelete.childConnectionCount,
-                    kind: connectionToDelete.childConnectionCount === 1
-                      ? t("connections.general.service")
-                      : t("connections.general.services"),
-                  })
-                : connectionToDelete && connectionToDelete.remainingConnectionCount > 0
+              {connectionToDelete && connectionToDelete.remainingConnectionCount > 0
                 ? t("connections.general.deleteotherconnections", {
                     appName: connectionToDelete.appName,
                     count: connectionToDelete.remainingConnectionCount,

@@ -6,7 +6,7 @@ import { projectRouteRef } from "@/lib/utils";
 import { issueStatusOrder } from "@/lib/issue-filters";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { TaskDetailSubtasksPanel, TaskDetailTaskList } from "./TaskDetailRelationsPanel";
+import { RelationNavigationList, TaskDetailSubtasksPanel, TaskDetailTaskList } from "./TaskDetailRelationsPanel";
 import { useTranslation } from "@/i18n";
 
 function TaskGroup({ name, projectPath, projectLinkLabel, children }: { name: string; projectPath?: string; projectLinkLabel?: string; children: ReactNode }) {
@@ -35,6 +35,8 @@ function TaskGroup({ name, projectPath, projectLinkLabel, children }: { name: st
 }
 
 export interface TaskDetailTasksPanelProps {
+  /** API order: immediate parent first. Displayed root first. */
+  ancestors?: NonNullable<Issue["ancestors"]>;
   subtasks: Issue[];
   createdTasks: Issue[];
   projects: Project[];
@@ -44,7 +46,7 @@ export interface TaskDetailTasksPanelProps {
   issueLinkState?: unknown;
 }
 
-export function TaskDetailTasksPanel({ subtasks, createdTasks, projects, isLoading, hasError, onRetry, issueLinkState }: TaskDetailTasksPanelProps) {
+export function TaskDetailTasksPanel({ ancestors = [], subtasks, createdTasks, projects, isLoading, hasError, onRetry, issueLinkState }: TaskDetailTasksPanelProps) {
   const { t } = useTranslation();
   const sortedSubtasks = sortTasks(subtasks);
   const groups = new Map<string, { name: string; path?: string; tasks: Issue[] }>();
@@ -63,6 +65,16 @@ export function TaskDetailTasksPanel({ subtasks, createdTasks, projects, isLoadi
   }
   return (
     <section className="flex flex-col gap-6" aria-label={t("taskdetailtaskspanel.general.relatedtasks")}>
+      {ancestors.length > 0 && (
+        <TaskGroup name={t("taskdetailtaskspanel.general.ancestors")}>
+          <RelationNavigationList
+            items={[...ancestors].reverse()}
+            emptyMessage=""
+            ariaLabel={t("taskdetailtaskspanel.general.ancestortasksroottoparent")}
+            issueLinkState={issueLinkState}
+          />
+        </TaskGroup>
+      )}
       {sortedSubtasks.length > 0 && (
         <TaskGroup name={t("taskdetailtaskspanel.general.subtasks")}>
           <TaskDetailSubtasksPanel items={sortedSubtasks} issueLinkState={issueLinkState} />
@@ -80,7 +92,7 @@ export function TaskDetailTasksPanel({ subtasks, createdTasks, projects, isLoadi
           {onRetry && <Button variant="ghost" size="sm" onClick={onRetry}>{t("taskdetailtaskspanel.general.retry")}</Button>}
         </div>
       )}
-      {!isLoading && !hasError && subtasks.length === 0 && createdTasks.length === 0 && (
+      {!isLoading && !hasError && ancestors.length === 0 && subtasks.length === 0 && createdTasks.length === 0 && (
         <p className="py-6 text-center text-sm text-muted-foreground">{t("taskdetailtaskspanel.general.notasksyet")}</p>
       )}
     </section>

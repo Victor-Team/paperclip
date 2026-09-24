@@ -98,7 +98,7 @@ export function TaskChatTurn({
           {item.agentName ? (
             <TaskChatAgentIdentity
               agentName={item.agentName}
-              agentIcon={item.agentIcon}
+              agentIcon={item.agentIcon} agent={item.agent}
             />
           ) : null}
           <span className="min-w-0 truncate">

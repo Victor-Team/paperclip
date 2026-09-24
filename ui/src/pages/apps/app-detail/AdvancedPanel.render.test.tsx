@@ -29,16 +29,6 @@ function renderDangerZone() {
   return container;
 }
 
-function renderComposioDangerZone() {
-  container = document.createElement("div");
-  document.body.appendChild(container);
-  const root = createRoot(container);
-  act(() => root.render(
-    <DangerZone appName="Composio" childConnectionCount={2} removing={false} onRemove={vi.fn()} />,
-  ));
-  return container;
-}
-
 function expandDangerZone(node: HTMLDivElement) {
   const trigger = Array.from(node.querySelectorAll("button"))
     .find((button) => button.textContent?.includes("Danger zone"));
@@ -131,12 +121,6 @@ describe("DangerZone", () => {
     expect(text).toContain("Yes, remove it");
     expect(text).toContain("Deletes credentials for PostHog");
     expect(text).toContain("requires a new sign-in or key");
-  });
-
-  it("names every child service that parent removal will take down", () => {
-    const node = renderComposioDangerZone();
-    expandDangerZone(node);
-    expect(node.textContent).toContain("2 connected services");
   });
 
   it("renders fixed destructive controls in Simplified Chinese", async () => {

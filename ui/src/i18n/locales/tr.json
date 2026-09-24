@@ -119,7 +119,12 @@
       "provideridentity": "Provider identity",
       "manage": "Manage",
       "openpermissions": "Open {{name}} permissions",
-      "manageconnection": "Manage {{name}} connection"
+      "manageconnection": "Manage {{name}} connection",
+      "retired": "Retired",
+      "retiredcomposiomessage": "This legacy Composio connection is no longer supported. Add a new Composio MCP connection from Connectors, then remove this connection. Existing credentials and permissions are not migrated.",
+      "chatdisconnectedtasksremain": "{{provider}} is disconnected. Existing Paperclip tasks remain available.",
+      "chatconnectionremovaldescription": "This connection will stop receiving new work from {{provider}}. Existing Paperclip tasks and conversation history remain available. This does not delete the app, bot, or account in {{provider}}.",
+      "manageconnectionarialabel": "Manage {{agentName}} {{providerName}} connection"
     }
   },
   "connections": {
@@ -197,7 +202,8 @@
       "deletechildren": "This also removes {{count}} connected {{kind}} and takes agent access away immediately. The Composio key and child session credentials are deleted.",
       "deleteotherconnections": "This connection's saved credentials are deleted and agents lose access through it immediately. Agents can still use {{appName}} through {{count}} other active {{kind}}.",
       "attentionnames": "{{names}}",
-      "attentionnamesmore": "{{names}} and {{count}} more"
+      "attentionnamesmore": "{{names}} and {{count}} more",
+      "retiredcomposiomessage": "This legacy Composio connection is no longer supported. Add a new Composio MCP connection from Connectors, then remove this connection. Existing credentials and permissions are not migrated."
     }
   },
   "chatendpointdetail": {
@@ -362,7 +368,33 @@
       "staleurl": "Stale URL",
       "notobserved": "Not observed",
       "replayfailed": "Replay failed {{kind}}",
-      "waitingfortask": "Waiting for task"
+      "waitingfortask": "Waiting for task",
+      "allowedchannels": "Allowed Channels",
+      "chatinslack": "Chat in Slack",
+      "invitethebottoachannelthenmention": "Invite the bot to a channel, then mention it to start a conversation.",
+      "messagecopied": "Message copied",
+      "copymessage": "Copy message",
+      "couldntcopythemessage": "Couldn’t copy the message",
+      "selectandcopyitmanually": "Select and copy it manually.",
+      "connectionhealthandcontrols": "Connection health and controls",
+      "callbackurlsneedattention": "Callback URLs need attention",
+      "recentactivity": "Recent activity",
+      "loadingagentavatar": "Loading agent avatar…",
+      "couldntloadtheagentsavatar": "Couldn’t load the agent’s avatar.",
+      "inviteotherstoconnecttheirslackaccounts": "Invite others to connect their Slack accounts",
+      "askthemtosendthiscommandin": "Ask them to send this command in your Slack workspace:",
+      "couldntcopythecommand": "Couldn't copy the command",
+      "copied": "Copied",
+      "copycommand": "Copy command",
+      "opentheprivatelinkfromthebot": "Open the private link from the bot, sign into Paperclip, and confirm their Slack account. The link expires in 15 minutes and works once.",
+      "iftheyarentamemberof": "If they aren’t a member of this organization, choose",
+      "requestaccess": "Request access",
+      "anadminmustapprovetheirrequestbefore": ". An admin must approve their request before they can link their account.",
+      "eachpersonlinkstheirownaccountand": "Each person links their own account and uses their own Paperclip permissions. They don’t need to create another Slack app or share credentials.",
+      "activitypagination": "Activity pagination",
+      "page": "Page {{page}}",
+      "previous": "Previous",
+      "next": "Next"
     }
   },
   "chatidentityconfirm": {
@@ -384,7 +416,13 @@
       "confirmonlyifthisisyour": "Confirm only if this is your",
       "identitypaperclipwillcheckyourcurrentorganization": "identity. Paperclip will check your current organization membership on every action.",
       "thislinkcouldnotbeconfirmedit": "This link could not be confirmed. It may have expired or been revoked.",
-      "confirmidentity": "Confirm identity"
+      "confirmidentity": "Confirm identity",
+      "returntoslack": "Return to Slack",
+      "couldnapostloadyouraccountrefresh": "Couldn’t load your account. Refresh to try again.",
+      "youneedmembershipin": "You need membership in {{companyName}} before linking this account.",
+      "accessrequestedanadmincanapproveit": "Access requested. An admin can approve it in Paperclip. After approval, return here to confirm; if this link expires, send the connect command in Slack again.",
+      "requestaccess": "Request access",
+      "couldnapostrequestaccessthelink": "Couldn’t request access. The link may have expired. Send the connect command again and retry."
     }
   },
   "photonconnectstep": {
@@ -530,7 +568,13 @@
       "noactiveagentsareavailable": "No active agents are available.",
       "continue": "Continue",
       "connectionfailed": "Connection failed",
-      "saveampexit": "Save & exit"
+      "saveampexit": "Save & exit",
+      "couldntcopytoclipboard": "Couldn't copy to clipboard",
+      "selectandcopyvalue": "Select and copy the value manually.",
+      "assignedagent": "Assigned agent",
+      "loadingagentavatar": "Loading agent avatar…",
+      "couldntloadtheagentsavatar": "Couldn’t load the agent’s avatar.",
+      "skipfornow": "Skip for now"
     },
     "discord": {
       "title": "Connect {{agentName}} to Discord",
@@ -624,6 +668,8 @@
       "webhooksecret": "Webhook secret",
       "generatedwebhooksecret": "Generated webhook secret",
       "copywebhooksecret": "Copy webhook secret",
+      "webhooksecretcopied": "Webhook secret copied",
+      "couldntcopyselectitmanually": "Couldn’t copy — select it manually",
       "copysecretnow": "Copy this value now. Paperclip will not show it again.",
       "secretconfigured": "A webhook secret is configured and cannot be shown again.",
       "generatesecretandpaste": "Generate the secret in Paperclip, then paste it into the GitHub App.",
@@ -662,7 +708,43 @@
       "botuseroauthtoken": "Bot User OAuth Token",
       "signingsecret": "Signing Secret",
       "publichttpsrequired": "Configure a public HTTPS URL for this Paperclip instance before connecting Slack.",
-      "reconnectapp": "Reconnect Slack app"
+      "reconnectapp": "Reconnect Slack app",
+      "helpwith": "Help with",
+      "verifyslackconnection": "Verify Slack connection",
+      "slackneedstoconfirm": "Slack needs to confirm that it can reach your Paperclip instance.",
+      "openslackappsettingsandchooseapp": "<link>Open Slack app Settings <icon /></link> and choose <strong>{{appName}}</strong>.",
+      "eventsubscriptions": "Choose <strong>Event Subscriptions</strong>.",
+      "requesturlretryifnotverified": "Beside the prefilled <strong>Request URL</strong>, click <strong>Retry</strong> if it isn't verified. Save changes if Slack asks.",
+      "slackverifiedyourconnection": "Slack verified your connection.",
+      "openingthemessagetest": "Opening the message test…",
+      "couldntcheckverification": "Couldn't check verification. We'll keep trying; check your connection if this continues.",
+      "waitingforslacktoverify": "Waiting for Slack to verify. We'll continue automatically.",
+      "troubleshooting": "Troubleshooting",
+      "requesturlmissingtroubleshooting": "If the Request URL is missing or different, paste this URL into Event Subscriptions. If verification fails, check that your public HTTPS server is reachable and your Signing Secret is correct.",
+      "chooseoauthamppermissions": "Choose <strong>OAuth &amp; Permissions</strong>",
+      "copypasteyourbotoauthtoken": "Copy and paste your <strong>Bot OAuth Token</strong>",
+      "botoauthtokenmuststartwithxoxb": "Your Bot User OAuth Token must start with <code>xoxb-</code>. Copy it from <strong>OAuth &amp; Permissions</strong>.",
+      "choosebasicinformation": "Choose <strong>Basic Information</strong>",
+      "copypasteyoursigningsecret": "Copy and paste your <strong>Signing Secret</strong>",
+      "usethesigningsecretnotapporbottoken": "Use the <strong>Signing Secret</strong>, NOT an app or bot token. The Signing Secret has no token prefix.",
+      "nowyouneedtofindtwosecrets": "Now you need to find two secrets. They are in two different screens on Slack.",
+      "yourcredentialsaresavedleaveblank": "Your credentials are saved. Leave the fields blank to keep them, or enter replacements.",
+      "savedleaveblanktokeep": "Saved — leave blank to keep",
+      "connectslackappbutton": "Connect Slack app",
+      "publichttpsurlrequiredheading": "Public HTTPS URL required",
+      "slackneedsapublichttpsurl": "Slack needs a public HTTPS URL to send messages to Paperclip. Configure one for this instance before creating or connecting your Slack app.",
+      "learnhowtosetuphttps": "Learn how to set up HTTPS",
+      "createaslackapp": "Create a Slack app",
+      "addslackcredentials": "Add Slack credentials",
+      "slackappnamehelp": "The name of your app in Slack’s app directory and settings.",
+      "botdisplaynamehelp": "The name people see when your bot sends a message. Use lowercase letters, numbers, periods, hyphens, or underscores.",
+      "slashcommandhelp": "The command people type in Slack to talk to this agent. Start with /, followed by lowercase letters, numbers, hyphens, or underscores.",
+      "couldntsavetheslackappdetails": "Couldn't save the Slack app details. Try again before connecting.",
+      "retrysaving": "Retry saving",
+      "viewslackappmanifest": "View Slack App Manifest",
+      "generatedfromyourappnamebotname": "Generated from your app name, bot name, and slash command. Edit those fields to update the manifest.",
+      "ialreadycreatedtheapp": "I already created the app",
+      "createslackappbutton": "Create Slack app"
     },
     "test": {
       "freshphoton": "send a fresh message to your Photon number",
@@ -702,7 +784,7 @@
       "teamsstep1": "Open an installed channel and start a new post.",
       "teamsstep2": "Mention {{botMention}} in the post.",
       "teamsstep3": "Reply once beneath the post.",
-      "otherstep1": "Open a channel and invite the bot if needed.",
+      "otherstep1": "Open a channel and invite {{botMention}} if needed.",
       "otherstep2": "Mention {{botMention}} in a new channel message.",
       "otherstep3": "Reply once in {{agentName}}'s thread.",
       "title": "Try {{agentName}} in {{providerName}}",
@@ -713,7 +795,16 @@
       "numbercopied": "Number copied",
       "copynumber": "Copy {{number}}",
       "openprovider": "Open {{providerName}}",
-      "senttestmessage": "I've sent the test message"
+      "senttestmessage": "I've sent the test message",
+      "continuetheconversationinthethread": "Continue the conversation in the thread.",
+      "selectthebotfromslackmentionsuggestions": "Select the bot from Slack’s @mention suggestions.",
+      "copymessage": "Copy message",
+      "copied": "Copied",
+      "couldntcopyselectandcopycommand": "Couldn't copy. Select and copy the command above.",
+      "receivedyourslackmessage": "Received your Slack message.",
+      "couldntcheckforyourmessage": "Couldn’t check for your message. You can still finish setup.",
+      "wellcheckforyourmessageautomatically": "We’ll check for your message automatically. This test is optional.",
+      "skiptestandfinish": "Skip test and finish"
     }
   },
   "common": {
@@ -1091,7 +1182,8 @@
       "interrupted": "Interrupted",
       "todo": "To Do",
       "inReview": "In Review",
-      "backlog": "Backlog"
+      "backlog": "Backlog",
+      "idle": "idle"
     }
   },
   "activitycharts": {
@@ -2459,7 +2551,7 @@
   "taskchatbubbleactions": {
     "general": {
       "copymessage": "Copy message",
-      "copymessage1": "Copy message"
+      "couldntcopymessage": "Couldn’t copy message"
     }
   },
   "taskchatcompactinteractioncard": {
@@ -2886,7 +2978,9 @@
       "noproject": "No project",
       "subtasks": "Subtasks",
       "gotoproject": "Go to {{name}} project",
-      "projecttasks": "{{name}} tasks"
+      "projecttasks": "{{name}} tasks",
+      "ancestors": "Ancestors",
+      "ancestortasksroottoparent": "Ancestor tasks, root to parent"
     }
   },
   "taskdocumentpanel": {
@@ -3977,7 +4071,13 @@
       "firecoalesced": "would be coalesced",
       "fireskipped": "would be skipped",
       "firerunsimmediately": "runs immediately",
-      "fireifpreviousactive": "if the previous run is still active"
+      "fireifpreviousactive": "if the previous run is still active",
+      "signingmodeappwebhookdescription": "Accept a bearer token or an HMAC-SHA256 signature over the exact request body in X-Hub-Signature or X-Hub-Signature-256.",
+      "signingmodefireflieshmacdescription": "Signed webhook (legacy).",
+      "addatrigger": "Add a trigger",
+      "newwebhookurl": "New webhook URL",
+      "newwebhooksecret": "New webhook secret",
+      "done": "Done"
     }
   },
   "editablesections": {
@@ -4075,7 +4175,9 @@
       "firecoalesced": "would be coalesced",
       "fireskipped": "would be skipped",
       "firerunsimmediately": "runs immediately",
-      "fireifpreviousactive": "if the previous run is still active"
+      "fireifpreviousactive": "if the previous run is still active",
+      "signingmodeappwebhookdescription": "Accept a bearer token or an HMAC-SHA256 signature over the exact request body in X-Hub-Signature or X-Hub-Signature-256.",
+      "signingmodefireflieshmacdescription": "Signed webhook (legacy)."
     }
   },
   "operatesections": {
@@ -4115,7 +4217,9 @@
       "runFailed": "Run failed",
       "skipNoExternalActivity": "Skipped — no activity since last run",
       "skipPaused": "Skipped — routine paused",
-      "skipWorktreeExecutionCutoff": "Skipped — worktree execution cutoff"
+      "skipWorktreeExecutionCutoff": "Skipped — worktree execution cutoff",
+      "failedtoupdatetask": "Failed to update task",
+      "loadingactivity": "Loading activity…"
     }
   },
   "agentsusingskilldialog": {

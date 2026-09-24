@@ -1,3 +1,4 @@
+import { AgentIdentity } from "@/components/AgentIdentity";
 import { startTransition, useDeferredValue, useEffect, useMemo, useState, useCallback, useRef } from "react";
 import type { ReactNode } from "react";
 import { t, useTranslation } from "@/i18n";
@@ -2259,7 +2260,7 @@ function StreamlinedIssuesList({
                         ) : undefined}
                         statusSlot={rowPresentation === "task" ? (
                           <span className="relative inline-flex items-start self-stretch sm:items-center" onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
-                            <StatusIcon status={issue.status} size="md" blockerAttention={issue.blockerAttention} onChange={(s) => onUpdateIssue(issue.id, { status: s })} />
+                            <StatusIcon status={issue.status} externalConversationState={issue.externalConversationState} size="md" blockerAttention={issue.blockerAttention} onChange={(s) => onUpdateIssue(issue.id, { status: s })} />
                             {hasChildren && isExpanded ? (
                               <span aria-hidden="true" className="pointer-events-none absolute top-5 -bottom-2.5 left-1/2 w-px bg-border sm:hidden" />
                             ) : null}
@@ -2283,7 +2284,7 @@ function StreamlinedIssuesList({
                             </button>
                           ) : (
                             <span className="inline-flex items-center" onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
-                              <StatusIcon status={issue.status} size="md" blockerAttention={issue.blockerAttention} onChange={(s) => onUpdateIssue(issue.id, { status: s })} />
+                              <StatusIcon status={issue.status} externalConversationState={issue.externalConversationState} size="md" blockerAttention={issue.blockerAttention} onChange={(s) => onUpdateIssue(issue.id, { status: s })} />
                             </span>
                           )
                         }
@@ -2310,7 +2311,7 @@ function StreamlinedIssuesList({
                               checklistStepNumber={checklistStepNumber}
                               statusSlot={(
                                 <span className="inline-flex items-center" onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
-                                  <StatusIcon status={issue.status} size="md" blockerAttention={issue.blockerAttention} onChange={(s) => onUpdateIssue(issue.id, { status: s })} />
+                                  <StatusIcon status={issue.status} externalConversationState={issue.externalConversationState} size="md" blockerAttention={issue.blockerAttention} onChange={(s) => onUpdateIssue(issue.id, { status: s })} />
                                 </span>
                               )}
                             />
@@ -2338,6 +2339,8 @@ function StreamlinedIssuesList({
                               })}
                               onFilterWorkspace={filterToWorkspace}
                               assigneeName={agentName(issue.assigneeAgentId)}
+                            assigneeAgent={agents?.find((agent) => agent.id === issue.assigneeAgentId)}
+                            creatorAgent={agents?.find((agent) => agent.id === issue.createdByAgentId)}
                               assigneeUserName={assigneeUserLabel}
                               assigneeUserAvatarUrl={assigneeUserProfile?.image ?? null}
                               creatorAgentName={agentName(issue.createdByAgentId)}
@@ -2361,7 +2364,7 @@ function StreamlinedIssuesList({
                                       onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
                                     >
                                       {issue.assigneeAgentId && agentName(issue.assigneeAgentId) ? (
-                                        <Identity name={agentName(issue.assigneeAgentId)!} size="sm" shape="square" className="min-w-0" />
+                                        <AgentIdentity agent={agents!.find((agent) => agent.id === issue.assigneeAgentId)!} size="sm" className="min-w-0" />
                                       ) : issue.assigneeUserId ? (
                                         <Identity
                                           name={assigneeUserLabel ?? t("issueslist.general.fallbackUser")}
@@ -2440,7 +2443,7 @@ function StreamlinedIssuesList({
                                               assignIssue(issue.id, agent.id, null);
                                             }}
                                           >
-                                            <Identity name={agent.name} size="sm" className="min-w-0" />
+                                            <AgentIdentity agent={agent} size="sm" className="min-w-0" />
                                           </button>
                                         ))}
                                     </div>

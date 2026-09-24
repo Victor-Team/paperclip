@@ -2,10 +2,11 @@ import { useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { CheckCircle2, Loader2 } from "lucide-react";
 import { chatEndpointsApi, type ChatProvider } from "@/api/chatEndpoints";
+import { healthApi } from "@/api/health";
 import { authApi } from "@/api/auth";
 import { Button } from "@/components/ui/button";
 import { queryKeys } from "@/lib/queryKeys";
-import { Link, useSearchParams } from "@/lib/router";
+import { Navigate, useSearchParams } from "@/lib/router";
 import { useTranslation } from "@/i18n";
 
 const providerNames: Record<ChatProvider, string> = {
@@ -23,6 +24,8 @@ export function ChatIdentityConfirm() {
   const [params] = useSearchParams();
   const token = params.get("token") ?? "";
   const [confirmed, setConfirmed] = useState(false);
+  const health = useQuery({ queryKey: queryKeys.health, queryFn: healthApi.get, retry: false });
+  const local = health.data?.deploymentMode === "local_trusted";
   const session = useQuery({
     queryKey: queryKeys.auth.session,
     queryFn: () => authApi.getSession(),
@@ -31,7 +34,8 @@ export function ChatIdentityConfirm() {
   const preview = useQuery({
     queryKey: ["chat-identity-link-preview", token],
     queryFn: () => chatEndpointsApi.previewIdentityLink(token),
-    enabled: token.length >= 32,
+    enabled: token.length >= 32 && (local || Boolean(session.data)),
+    refetchInterval: confirmed ? false : 3_000,
     retry: false,
   });
   const confirm = useMutation({
@@ -39,7 +43,14 @@ export function ChatIdentityConfirm() {
     onSuccess: () => setConfirmed(true),
   });
 
-  if (token.length < 32 || preview.isError) {
+  const requestAccess = useMutation({
+    mutationFn: () => chatEndpointsApi.requestIdentityAccess(token),
+  });
+  if (health.isError || (!local && session.isError)) return <main className="mx-auto max-w-lg px-6 py-12 text-sm text-destructive">{t("chatidentityconfirm.general.couldnapostloadyouraccountrefresh")}</main>;
+  if (health.isSuccess && !local && session.isSuccess && !session.data) {
+    return <Navigate to={`/auth?next=${encodeURIComponent(`/chat-identity/confirm?token=${token}`)}`} replace />;
+  }
+  if (token.length < 32 || (!confirmed && preview.isError)) {
     return (
       <main className="mx-auto max-w-lg space-y-4 px-6 py-12">
         <h1 className="text-xl font-bold">{t("chatidentityconfirm.general.thisidentitylinkisunavailable")}</h1>
@@ -48,7 +59,7 @@ export function ChatIdentityConfirm() {
       </main>
     );
   }
-  if (preview.isLoading || session.isLoading || !preview.data) {
+  if (health.isPending || preview.isLoading || (!local && session.isLoading) || !preview.data) {
     return (
       <main className="flex items-center justify-center gap-2 px-6 py-12 text-sm text-muted-foreground">
         <Loader2 className="h-4 w-4 animate-spin" />
@@ -56,7 +67,7 @@ export function ChatIdentityConfirm() {
     );
   }
   const identity = preview.data;
-  const paperclipAccount =
+  const paperclipAccount = local ? "Local Board" :
     session.data?.user.name?.trim() ||
     session.data?.user.email?.trim() ||
     session.data?.user.id ||
@@ -71,12 +82,7 @@ export function ChatIdentityConfirm() {
             {t("chatidentityconfirm.general.futuremessagesfrom")} {identity.externalLabel} {t("chatidentityconfirm.general.useyourcurrentpaperclippermissionsin")} {identity.companyName}.
           </p>
         </div>
-        <Button asChild>
-          <Link
-            to={`/${identity.companyPrefix}/apps/chat/${identity.endpointId}/access`}
-          >
-            {t("chatidentityconfirm.general.returntoconnection")}</Link>
-        </Button>
+        {identity.provider === "slack" && <Button asChild><a href="https://app.slack.com/" target="_blank" rel="noopener noreferrer">{t("chatidentityconfirm.general.returntoslack")}</a></Button>}
       </main>
     );
   }
@@ -118,9 +124,17 @@ export function ChatIdentityConfirm() {
         <p className="text-sm text-destructive">
           {t("chatidentityconfirm.general.thislinkcouldnotbeconfirmedit")}</p>
       )}
-      <Button disabled={confirm.isPending} onClick={() => confirm.mutate()}>
+      {identity.canConfirm === false ? (
+        <div className="space-y-3">
+          <p className="text-sm">{t("chatidentityconfirm.general.youneedmembershipin", { companyName: identity.companyName })}</p>
+          {requestAccess.isSuccess ? <p role="status" className="text-sm">{t("chatidentityconfirm.general.accessrequestedanadmincanapproveit")}</p>
+            : <Button disabled={requestAccess.isPending || !identity.selfService} onClick={() => requestAccess.mutate()}>{t("chatidentityconfirm.general.requestaccess")}</Button>}
+          {requestAccess.isError && <p role="alert" className="text-sm text-destructive">{t("chatidentityconfirm.general.couldnapostrequestaccessthelink")}</p>}
+        </div>
+      ) : <Button disabled={confirm.isPending} onClick={() => confirm.mutate()}>
         {confirm.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
-        {t("chatidentityconfirm.general.confirmidentity")}</Button>
+        {t("chatidentityconfirm.general.confirmidentity")}
+      </Button>}
     </main>
   );
 }

@@ -1,3 +1,4 @@
+import { isRetiredComposioConnection } from "@paperclipai/shared";
 import { ManagedAiConnectionRow } from "@/components/ai-connections/ManagedAiConnectionDetails";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -18,12 +19,14 @@ import {
 import type { ToolApplication, ToolConnection } from "@paperclipai/shared";
 import {
   getAppDefinitionForUrl,
+  isRemoteMcpConnectorId,
   getAppStoreDefinition,
   isToolConnectionAttentionHealth,
   aiSubscriptionNeedsIsolatedLogin,
 } from "@paperclipai/shared";
 import { useNavigate } from "@/lib/router";
 import { useChatConnectorsEnabled } from "@/hooks/useChatConnectorsEnabled";
+import { useMcpAggregatorsEnabled } from "@/hooks/useMcpAggregatorsEnabled";
 import { appCopyFor } from "@/lib/app-gallery-copy";
 import { useCompany } from "@/context/CompanyContext";
 import { useBreadcrumbs } from "@/context/BreadcrumbContext";
@@ -72,7 +75,6 @@ import {
   appSourceResumeHref,
   appSupportsToolCatalogSetup,
 } from "./app-connect-policy";
-import { composioChildParentConnectionId } from "./composio-services";
 import {
   ConnectionOwnerIdentity,
   connectionDisplayNameForOwner,
@@ -102,11 +104,12 @@ type ConnectionState = {
 };
 
 type ConnectionRemovalTarget = {
+  kind?: "chat";
   id: string;
   accountName: string;
   providerName: string;
   remainingConnectionCount: number;
-  childConnectionCount: number;
+
 };
 
 function chatProviderForSlug(slug: string): ChatProvider | null {
@@ -165,6 +168,9 @@ function connectionState(
   connection: ToolConnection,
   t: (key: string, params?: Record<string, string | number>) => string,
 ): ConnectionState {
+  if (isRetiredComposioConnection(connection)) {
+    return { kind: "attention", label: t("browse.general.retired"), message: t("browse.general.retiredcomposiomessage") };
+  }
   if (connection.status === "draft") {
     return {
       kind: "draft",
@@ -282,6 +288,7 @@ export function Browse({ renderAccountDetails = (connection) => connection.conne
   const { pushToast } = useToast();
   const { selectedCompanyId } = useCompany();
   const { enabled: chatConnectorsEnabled } = useChatConnectorsEnabled();
+  const { enabled: mcpAggregatorsEnabled } = useMcpAggregatorsEnabled();
   const { setBreadcrumbs } = useBreadcrumbs();
   const [query, setQuery] = useState("");
   const [connectionToRemove, setConnectionToRemove] =
@@ -320,11 +327,17 @@ export function Browse({ renderAccountDetails = (connection) => connection.conne
     enabled: !!selectedCompanyId,
   });
   const removeConnection = useMutation({
-    mutationFn: (target: ConnectionRemovalTarget) =>
-      toolsApi.archiveConnection(target.id, {
-        confirmComposioChildren: target.childConnectionCount > 0,
-      }),
+    mutationFn: async (target: ConnectionRemovalTarget) => {
+      if (target.kind === "chat") {
+        await chatEndpointsApi.setup(target.id, { action: "remove" });
+      } else {
+        await toolsApi.archiveConnection(target.id);
+      }
+    },
     onSuccess: (_connection, target) => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.chatEndpoints.list(selectedCompanyId!),
+      });
       queryClient.invalidateQueries({
         queryKey: queryKeys.tools.connections(selectedCompanyId!),
       });
@@ -337,7 +350,11 @@ export function Browse({ renderAccountDetails = (connection) => connection.conne
       pushToast({
         title: t("browse.general.connectionremoved"),
         body:
-          target.remainingConnectionCount > 0
+          target.kind === "chat"
+            ? t("browse.general.chatdisconnectedtasksremain", {
+                provider: target.providerName,
+              })
+            : target.remainingConnectionCount > 0
             ? t("browse.general.connectionstillavailable", {
                 provider: target.providerName,
                 count: target.remainingConnectionCount,
@@ -360,6 +377,7 @@ export function Browse({ renderAccountDetails = (connection) => connection.conne
   const gallery = (
     (galleryQuery.data?.apps ?? []) as AppGalleryDisplayEntry[]
   ).filter((entry) => {
+    if (!mcpAggregatorsEnabled && isRemoteMcpConnectorId(appDefinitionSlug(entry))) return false;
     const definition = getAppStoreDefinition(appDefinitionSlug(entry));
     return (
       chatConnectorsEnabled ||
@@ -538,6 +556,7 @@ export function Browse({ renderAccountDetails = (connection) => connection.conne
     for (const endpoint of chatConnectorsEnabled
       ? (chatEndpointsQuery.data ?? [])
       : []) {
+      if (endpoint.status === "archived") continue;
       let target = [...rowsBySlug.values()].find(
         (row) => chatProviderForSlug(row.slug) === endpoint.provider,
       );
@@ -690,7 +709,6 @@ export function Browse({ renderAccountDetails = (connection) => connection.conne
               renderAccountDetails={renderAccountDetails}
               key={row.key}
               row={row}
-              allConnections={connectionsQuery.data?.connections ?? []}
               userProfileById={userProfileById}
               onNavigate={navigate}
               onRequestRemove={setConnectionToRemove}
@@ -715,8 +733,8 @@ export function Browse({ renderAccountDetails = (connection) => connection.conne
             <AlertDialogTitle>
               {t("browse.general.remove")} {connectionToRemove?.accountName ?? t("browse.general.this")} {t("browse.general.connection")}</AlertDialogTitle>
             <AlertDialogDescription>
-              {connectionToRemove && connectionToRemove.childConnectionCount > 0
-                ? t("browse.general.removechildren", { count: connectionToRemove.childConnectionCount, kind: connectionToRemove.childConnectionCount === 1 ? t("browse.general.service") : t("browse.general.services") })
+              {connectionToRemove?.kind === "chat"
+                ? t("browse.general.chatconnectionremovaldescription", { provider: connectionToRemove.providerName })
                 : connectionToRemove &&
                     connectionToRemove.remainingConnectionCount > 0
                   ? t("browse.general.removeotherconnections", { provider: connectionToRemove.providerName, count: connectionToRemove.remainingConnectionCount, kind: connectionToRemove.remainingConnectionCount === 1 ? t("browse.general.connection2") : t("browse.general.connections") })
@@ -752,7 +770,6 @@ export function Browse({ renderAccountDetails = (connection) => connection.conne
 export function ConnectorCard({
   renderAccountDetails,
   row,
-  allConnections,
   userProfileById,
   onNavigate,
   onRequestRemove,
@@ -761,7 +778,6 @@ export function ConnectorCard({
 }: {
   renderAccountDetails?: (connection: ToolConnection) => ReactNode;
   row: ConnectorRowModel;
-  allConnections: ToolConnection[];
   userProfileById: ReadonlyMap<string, ConnectionOwnerProfile>;
   onNavigate: (href: string) => void;
   onRequestRemove: (target: ConnectionRemovalTarget) => void;
@@ -844,11 +860,6 @@ export function ConnectorCard({
                       candidate.status === "active" &&
                       candidate.enabled,
                   ).length,
-                  childConnectionCount: allConnections.filter(
-                    (candidate) =>
-                      composioChildParentConnectionId(candidate) ===
-                      connection.id,
-                  ).length,
                 });
               }}
             />
@@ -883,21 +894,48 @@ export function ConnectorCard({
                   ? t("browse.general.setupincomplete")
                   : t("browse.general.connected")}
               </span>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() =>
-                  onNavigate(
-                    endpoint.status === "draft"
-                      ? `/apps/chat/connect?provider=${endpoint.provider}&purpose=chat&resume=${endpoint.id}`
-                      : `/apps/chat/${endpoint.id}/settings`,
-                  )
-                }
-              >
-                {endpoint.status === "draft"
-                  ? t("browse.general.finishsetup")
-                  : t("browse.general.manage")}
-              </Button>
+              <div className="flex items-center gap-2">
+                {endpoint.status === "draft" ? (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => onNavigate(`/apps/chat/connect?provider=${endpoint.provider}&purpose=chat&resume=${endpoint.id}`)}
+                  >
+                    {t("browse.general.finishsetup")}
+                  </Button>
+                ) : null}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon-sm"
+                      aria-label={t("browse.general.manageconnectionarialabel", { agentName: endpoint.assignedAgentName, providerName: row.name })}
+                    >
+                      <MoreHorizontal className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onSelect={() => onNavigate(`/apps/chat/${endpoint.id}/settings`)}>
+                      {t("browse.general.manage")}
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      variant="destructive"
+                      onSelect={() => onRequestRemove({
+                        kind: "chat",
+                        id: endpoint.id,
+                        accountName: `${endpoint.assignedAgentName} · ${row.name}`,
+                        providerName: row.name,
+                        remainingConnectionCount: 0,
+                      })}
+                    >
+                      <Trash2 />
+                      {t("browse.general.removeconnection")}
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
             </div>
           ))}
         </div>

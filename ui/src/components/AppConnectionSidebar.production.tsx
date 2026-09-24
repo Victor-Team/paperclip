@@ -10,7 +10,6 @@ import { useTranslation } from "@/i18n";
 import { queryKeys } from "@/lib/queryKeys";
 import {
   APP_TABS,
-  CONNECTED_ONLY_APP_TABS,
   appApplicationTabHref,
   appTabLabel,
   appTabHref,
@@ -104,9 +103,7 @@ export function AppDetailSidebar(props: AppDetailSidebarProps) {
 
       <nav className="scrollbar-auto-hide min-h-0 flex-1 overflow-y-auto px-3 py-2">
         <div className="flex flex-col gap-0.5">
-          {APP_TABS.filter(
-            (tab) => props.kind === "connection" || !CONNECTED_ONLY_APP_TABS.has(tab.key),
-          ).map((tab) => (
+          {APP_TABS.map((tab) => (
             <SidebarNavItem
               key={tab.key}
               to={tabHref(props, tab.key)}

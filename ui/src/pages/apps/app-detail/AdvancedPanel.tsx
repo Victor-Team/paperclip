@@ -31,7 +31,6 @@ export function AdvancedPanel({
   connection,
   appName,
   galleryEntry,
-  childConnectionCount,
   removing,
   onRemove,
   onReplaced,
@@ -48,7 +47,6 @@ export function AdvancedPanel({
   onRevokeIdentity,
 }: Pick<AppDetailSectionProps, "connection" | "appName" | "galleryEntry"> & {
   removing: boolean;
-  childConnectionCount?: number;
   onRemove: () => void;
   onReplaced: () => void;
   canReplaceCredential?: boolean;
@@ -70,7 +68,6 @@ export function AdvancedPanel({
         appName={appName}
         connection={connection}
         galleryEntry={galleryEntry}
-        childConnectionCount={childConnectionCount}
         removing={removing}
         onRemove={onRemove}
         onReplaced={onReplaced}
@@ -436,7 +433,6 @@ export function DangerZone({
   appName,
   connection,
   galleryEntry = null,
-  childConnectionCount = 0,
   removing,
   onRemove,
   onReplaced,
@@ -455,7 +451,6 @@ export function DangerZone({
   appName: string;
   connection?: ToolConnection;
   galleryEntry?: AppDefinition | null;
-  childConnectionCount?: number;
   removing: boolean;
   onRemove: () => void;
   onReplaced?: () => void;
@@ -578,9 +573,7 @@ export function DangerZone({
               <div>
                 <p className="text-sm font-medium text-foreground">{t("advancedpanel.general.removethisapp")}</p>
                 <p className="text-xs text-muted-foreground">
-                  {childConnectionCount > 0
-                    ? t("advancedpanel.general.deletescredentialswithservices", { appName, childConnectionCount, count: childConnectionCount })
-                    : t("advancedpanel.general.deletescredentials", { appName })}
+                  {t("advancedpanel.general.deletescredentials", { appName })}
                 </p>
               </div>
               {confirming ? (

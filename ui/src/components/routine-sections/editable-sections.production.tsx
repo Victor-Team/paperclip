@@ -1,3 +1,4 @@
+import { AgentAvatar } from "@/components/AgentAvatar";
 import { useEffect, useMemo, useState } from "react";
 import {
   ArrowRight,
@@ -28,7 +29,6 @@ import { timeAgo } from "../../lib/timeAgo";
 import { EmptyState } from "../EmptyState";
 import { InlineEntitySelector } from "../InlineEntitySelector";
 import { DocumentAnnotationsCountChip, IssueDocumentAnnotations } from "../IssueDocumentAnnotations";
-import { AgentIcon } from "../AgentIconPicker";
 import { MarkdownEditor } from "../MarkdownEditor";
 import { ScheduleEditor, getScheduleCronValidation } from "../ScheduleEditor";
 import { RoutineVariablesEditor, RoutineVariablesHint } from "../RoutineVariablesEditor";
@@ -96,14 +96,16 @@ const activityGateScopeOptions = [
 ];
 
 const triggerKinds = ["schedule", "webhook"];
-const signingModes = ["bearer", "hmac_sha256", "github_hmac", "none"];
+const signingModes = ["app_webhook", "bearer", "hmac_sha256", "github_hmac", "none"];
 const signingModeDescriptionKeys: Record<string, string> = {
   bearer: "signingmodebearerdescription",
   hmac_sha256: "signingmodehmacsha256description",
   github_hmac: "signingmodegithubhmacdescription",
+  app_webhook: "signingmodeappwebhookdescription",
+  fireflies_hmac: "signingmodefireflieshmacdescription",
   none: "signingmodenonedescription",
 };
-const SIGNING_MODES_WITHOUT_REPLAY_WINDOW = new Set(["github_hmac", "none"]);
+const SIGNING_MODES_WITHOUT_REPLAY_WINDOW = new Set(["app_webhook", "bearer", "github_hmac", "fireflies_hmac", "none"]);
 
 type KeyedOption = {
   value: string;
@@ -222,7 +224,7 @@ export function OverviewSection({
               option ? (
                 currentAssignee ? (
                   <>
-                    <AgentIcon icon={currentAssignee.icon} className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                    <AgentAvatar agent={currentAssignee} size={16} className="h-3.5 w-3.5 shrink-0 text-muted-foreground"/>
                     <span className="truncate">{option.label}</span>
                   </>
                 ) : (
@@ -238,7 +240,7 @@ export function OverviewSection({
               return (
                 <>
                   {assignee ? (
-                    <AgentIcon icon={assignee.icon} className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                    <AgentAvatar agent={assignee} size={16} className="h-3.5 w-3.5 shrink-0 text-muted-foreground"/>
                   ) : null}
                   <span className="truncate">{option.label}</span>
                 </>
@@ -462,7 +464,7 @@ function SummaryCard({
 export function TriggersSection() {
   const { t } = useTranslation();
   const ctx = useRoutineDetail();
-  const { routine, newTrigger, setNewTrigger, createTrigger, updateTrigger, deleteTrigger, rotateTrigger } = ctx;
+  const { routine, newTrigger, setNewTrigger, createTrigger, updateTrigger, deleteTrigger, rotateTrigger, secretMessage, copySecretValue, setSecretMessage } = ctx;
   const [addOpen, setAddOpen] = useState(false);
   const [newScheduleEditorValid, setNewScheduleEditorValid] = useState(true);
   const newScheduleValidation = useMemo(
@@ -520,9 +522,8 @@ export function TriggersSection() {
               </SelectTrigger>
               <SelectContent>
                 {triggerKinds.map((kind) => (
-                  <SelectItem key={kind} value={kind} disabled={kind === "webhook"}>
+                  <SelectItem key={kind} value={kind}>
                     {kind === "schedule" ? t("editablesectionsproduction.general.schedule") : t("editablesectionsproduction.general.webhook")}
-                    {kind === "webhook" ? ` — ${t("editablesectionsproduction.general.comingsoon")}` : ""}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -600,12 +601,42 @@ export function TriggersSection() {
       </div>
       ) : null}
 
+      {secretMessage ? (
+        <div className="space-y-3 rounded-lg border border-border bg-muted/20 p-4 text-sm">
+          <div>
+            <p className="font-medium">{secretMessage.title}</p>
+            <p className="text-xs text-muted-foreground">
+              {t("editablesectionsproduction.general.savethisnowpaperclipwillnotshow")}
+            </p>
+          </div>
+          <div className="space-y-3">
+            {secretMessage.entries.map((entry, index) => (
+              <div key={`${entry.webhookUrl}-${index}`} className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <Input aria-label={t("editablesectionsproduction.general.newwebhookurl")} value={entry.webhookUrl} readOnly className="flex-1" />
+                  <Button variant="outline" size="sm" onClick={() => copySecretValue(t("editablesectionsproduction.general.webhookurl"), entry.webhookUrl)}>
+                    URL
+                  </Button>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Input aria-label={t("editablesectionsproduction.general.newwebhooksecret")} value={entry.webhookSecret} readOnly className="flex-1" />
+                  <Button variant="outline" size="sm" onClick={() => copySecretValue(t("editablesectionsproduction.general.secret"), entry.webhookSecret)}>
+                    {t("editablesectionsproduction.general.secret")}
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+          <Button variant="outline" size="sm" onClick={() => setSecretMessage(null)}>{t("editablesectionsproduction.general.done")}</Button>
+        </div>
+      ) : null}
+
       {/* Existing triggers */}
       {routine.triggers.length === 0 ? (
         <EmptyState
           icon={Clock3}
           message={t("editablesectionsproduction.general.notriggersyet1")}
-          action={t("editablesectionsproduction.general.addaschedule")}
+          action={t("editablesectionsproduction.general.addatrigger")}
           onAction={() => setAddOpen(true)}
         />
       ) : (
@@ -663,7 +694,7 @@ export function VariablesSection() {
 export function SecretsSection() {
   const { t } = useTranslation();
   const ctx = useRoutineDetail();
-  const { editDraft, setEditDraft, availableSecrets, createSecret, secretMessage, copySecretValue } = ctx;
+  const { editDraft, setEditDraft, availableSecrets, createSecret } = ctx;
 
   // Project/company-scoped secrets that already see real usage, surfaced as
   // quick-bind chips (§3.4). Ranked by reference count then recency.
@@ -685,32 +716,6 @@ export function SecretsSection() {
       <div className="rounded-md border border-border bg-muted/20 px-4 py-3 text-xs text-muted-foreground">
         {t("editablesectionsproduction.general.routinesecretsapplytoeverytaskthis")}<span className="font-mono">{t("editablesectionsproduction.general.paperclip")}</span> {t("editablesectionsproduction.general.namesarereserved")}</div>
 
-      {secretMessage ? (
-        <div className="space-y-3 rounded-lg border border-blue-500/30 bg-blue-500/5 p-4 text-sm">
-          <div>
-            <p className="font-medium">{secretMessage.title}</p>
-            <p className="text-xs text-muted-foreground">
-              {t("editablesectionsproduction.general.savethisnowpaperclipwillnotshow")}</p>
-          </div>
-          <div className="space-y-3">
-            {secretMessage.entries.map((entry, index) => (
-              <div key={`${entry.webhookUrl}-${index}`} className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <Input value={entry.webhookUrl} readOnly className="flex-1" />
-                  <Button variant="outline" size="sm" onClick={() => copySecretValue(t("editablesectionsproduction.general.webhookurl"), entry.webhookUrl)}>
-                    URL
-                  </Button>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Input value={entry.webhookSecret} readOnly className="flex-1" />
-                  <Button variant="outline" size="sm" onClick={() => copySecretValue("Webhook secret", entry.webhookSecret)}>
-                    {t("editablesectionsproduction.general.secret")}</Button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      ) : null}
 
       <EnvironmentVariablesEditor
         value={(editDraft.env ?? {}) as Record<string, EnvBinding>}
