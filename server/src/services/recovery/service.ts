@@ -554,6 +554,19 @@ export type AdapterFailureRecoveryClassification =
   | null;
 
 function parseProviderQuotaClockReset(error: string, now: Date) {
+  // Google Cloud Code Assist quota errors carry an exact reset instant in
+  // their RPC details and a relative "Resets in 48m54s." in the message.
+  const resetStamp = error.match(/"quotaResetTimeStamp"\s*:\s*"(\d{4}-\d{2}-\d{2}T[^"]+)"/);
+  if (resetStamp) {
+    const at = new Date(resetStamp[1]);
+    if (!Number.isNaN(at.getTime()) && at > now) return at;
+  }
+  const relative = error.match(/\bresets? in\s+(?:(\d+)h)?\s*(?:(\d+)m)?\s*(?:(\d+)(?:\.\d+)?s)?/i);
+  if (relative && (relative[1] || relative[2] || relative[3])) {
+    const ms =
+      (Number(relative[1] ?? 0) * 3600 + Number(relative[2] ?? 0) * 60 + Number(relative[3] ?? 0)) * 1000;
+    if (ms > 0) return new Date(now.getTime() + ms);
+  }
   // TOK-206: providers that word their quota reset as a full timestamp
   // ("It will reset at 2026-09-17 16:33:02 +0800 CST.") must parse as one
   // absolute date-time. The hour-only pattern below would otherwise read
