@@ -312,7 +312,10 @@ export function ChatEndpointDetail() {
       <header className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="text-xl font-bold">
-            {endpoint.assignedAgentName} {t("chatendpointdetail.general.in")} {providerNames[endpoint.provider]}
+            {t("chatendpointdetail.general.agentinprovider", {
+              agentName: endpoint.assignedAgentName,
+              providerName: providerNames[endpoint.provider],
+            })}
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
             {endpoint.providerAccountLabel ?? t("chatendpointdetail.general.chatconnection")}
@@ -365,6 +368,22 @@ export function ChatEndpointDetail() {
         <Activity endpointId={endpoint.id} endpoint={endpoint} />
       )}
     </div>
+  );
+}
+
+export function SlackCommandHelp({ command }: { command: string }) {
+  const { t } = useTranslation();
+  return (
+    <Trans
+      i18nKey="chatendpointdetail.general.commanddescription"
+      values={{
+        taskCommand: `${command} ${t("chatendpointdetail.general.investigatethis")}`,
+        statusCommand: `${command} status`,
+        newCommand: `${command} new`,
+        closeCommand: `${command} close`,
+      }}
+      components={{ code: <code /> }}
+    />
   );
 }
 
@@ -434,11 +453,8 @@ function Settings({
           <div className="rounded-lg border border-border p-3 text-sm">
             <code>{endpoint.setup.command}</code>
             <p className="mt-2 text-muted-foreground">
-              {t("chatendpointdetail.general.startworkwith")}{" "}
-              <code>{endpoint.setup.command} {t("chatendpointdetail.general.investigatethis")}</code>{t("chatendpointdetail.general.inadirectmessageuse")}<code>{endpoint.setup.command} {t("chatendpointdetail.general.status")}</code>,{" "}
-              <code>{endpoint.setup.command} {t("chatendpointdetail.general.new")}</code>{t("chatendpointdetail.general.or")}{" "}
-              <code>{endpoint.setup.command} {t("chatendpointdetail.general.close")}</code>{t("chatendpointdetail.general.slackapossbare")}{" "}
-              <code>/status</code> {t("chatendpointdetail.general.commandisnotapaperclipcontrol")}</p>
+              <SlackCommandHelp command={endpoint.setup.command} />
+            </p>
           </div>
         </div>
       )}
