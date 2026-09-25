@@ -6766,7 +6766,22 @@
       "canmakechanges": "Can make changes",
       "isactiveforallagents": "is active for all agents.",
       "turnallon": "Turn all on",
-      "turnalloff": "Turn all off"
+      "turnalloff": "Turn all off",
+      "secureSignInFailed": "Paperclip couldn’t start secure sign-in. Try again.",
+      "remoteHttpOnly": "Only remote HTTP drafts can be checked and activated from pasted config.",
+      "oauthClientDetailsRequired": "This server requires OAuth client details from its provider settings. Continue in setup to add them.",
+      "importedApp": "Imported app",
+      "invalidJsonSnippet": "That doesn't look like valid JSON yet — paste the whole snippet, including the outer braces.",
+      "askFirstWhenEnabled": "Ask first when enabled",
+      "risk": {
+        "read": "Read-only",
+        "write": "Makes changes",
+        "destructive": "Destructive",
+        "low": "Low risk",
+        "medium": "Medium risk",
+        "high": "High risk",
+        "critical": "Critical risk"
+      }
     }
   },
   "profilestab": {
@@ -7423,7 +7438,37 @@
       "agoDay_one": "{{count}}d ago",
       "inDay_one": "in {{count}}d",
       "agoDay_other": "{{count}}d ago",
-      "inDay_other": "in {{count}}d"
+      "inDay_other": "in {{count}}d",
+      "risk": {
+        "low": "low",
+        "medium": "medium",
+        "high": "high",
+        "critical": "critical",
+        "read": "read",
+        "write": "write",
+        "destructive": "destructive"
+      },
+      "health": {
+        "healthy": "healthy",
+        "ok": "ok",
+        "degraded": "degraded",
+        "warning": "warning",
+        "error": "error",
+        "unhealthy": "unhealthy",
+        "critical": "critical",
+        "unchecked": "unchecked",
+        "unknown": "unknown"
+      },
+      "decision": {
+        "allowed": "allowed",
+        "denied": "denied",
+        "block": "block",
+        "require-approval": "require approval",
+        "redacted": "redacted",
+        "rate-limit": "rate limited",
+        "deferred": "deferred",
+        "hidden": "hidden"
+      }
     }
   },
   "importfromvaultdialog": {
@@ -12168,6 +12213,36 @@
       "rerunFailed": "Couldn't re-run",
       "deleteRunFailed": "Couldn't delete run",
       "runDetailsLoading": "Run details are still loading."
+    }
+  },
+  "profilemodel": {
+    "general": {
+      "noneSelected": "None selected",
+      "allGroupTools": "All {{group}} tools ({{count}})",
+      "allGroupExcept": "All {{group}} except {{count}}",
+      "selectedGroupTools": "{{selected}} of {{total}} {{group}} tools"
+    },
+    "templates": {
+      "read_only": {
+        "title": "Read-only",
+        "description": "See and fetch, but never change anything."
+      },
+      "everyday": {
+        "title": "Everyday work",
+        "description": "Read and make routine changes — no destructive tools."
+      },
+      "full_access": {
+        "title": "Full access",
+        "description": "Everything every connected app offers."
+      },
+      "scratch": {
+        "title": "Start from scratch",
+        "description": "An empty profile you build up tool by tool."
+      },
+      "copy": {
+        "title": "Copy an existing profile",
+        "description": "Start from a profile you already have."
+      }
     }
   }
 }

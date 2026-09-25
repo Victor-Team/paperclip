@@ -385,8 +385,8 @@ function EmptyTemplatePicker({ onPick }: { onPick: (key: TemplateKey) => void })
               "hover:border-primary hover:bg-primary/5",
             )}
           >
-            <span className="text-sm font-medium text-foreground">{template.title}</span>
-            <span className="text-xs text-muted-foreground">{template.description}</span>
+            <span className="text-sm font-medium text-foreground">{t(`profilemodel.templates.${template.key}.title`)}</span>
+            <span className="text-xs text-muted-foreground">{t(`profilemodel.templates.${template.key}.description`)}</span>
           </button>
         ))}
       </div>

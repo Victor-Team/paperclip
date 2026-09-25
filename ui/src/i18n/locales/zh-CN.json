@@ -6766,7 +6766,22 @@
       "canmakechanges": "可以更改",
       "isactiveforallagents": "已对所有智能体启用。",
       "turnallon": "全部启用",
-      "turnalloff": "全部关闭"
+      "turnalloff": "全部关闭",
+      "secureSignInFailed": "Paperclip 无法启动安全登录，请重试。",
+      "remoteHttpOnly": "粘贴配置后只能检查并启用远程 HTTP 草稿。",
+      "oauthClientDetailsRequired": "此服务器需要在提供方设置中填写 OAuth 客户端信息。请继续设置并添加这些信息。",
+      "importedApp": "导入的应用",
+      "invalidJsonSnippet": "JSON 格式似乎不正确。请粘贴包含最外层大括号的完整片段。",
+      "askFirstWhenEnabled": "启用后先询问",
+      "risk": {
+        "read": "只读",
+        "write": "可更改",
+        "destructive": "破坏性操作",
+        "low": "低风险",
+        "medium": "中风险",
+        "high": "高风险",
+        "critical": "严重风险"
+      }
     }
   },
   "profilestab": {
@@ -7423,7 +7438,37 @@
       "agoDay_one": "{{count}} 天前",
       "inDay_one": "{{count}} 天后",
       "agoDay_other": "{{count}} 天前",
-      "inDay_other": "{{count}} 天后"
+      "inDay_other": "{{count}} 天后",
+      "risk": {
+        "low": "低风险",
+        "medium": "中风险",
+        "high": "高风险",
+        "critical": "严重风险",
+        "read": "读取",
+        "write": "写入",
+        "destructive": "破坏性操作"
+      },
+      "health": {
+        "healthy": "健康",
+        "ok": "正常",
+        "degraded": "性能下降",
+        "warning": "警告",
+        "error": "错误",
+        "unhealthy": "异常",
+        "critical": "严重故障",
+        "unchecked": "未检查",
+        "unknown": "未知"
+      },
+      "decision": {
+        "allowed": "允许",
+        "denied": "拒绝",
+        "block": "阻止",
+        "require-approval": "需要审批",
+        "redacted": "已遮盖",
+        "rate-limit": "已限流",
+        "deferred": "已延后",
+        "hidden": "已隐藏"
+      }
     }
   },
   "importfromvaultdialog": {
@@ -12168,6 +12213,36 @@
       "rerunFailed": "无法重新运行",
       "deleteRunFailed": "无法删除运行",
       "runDetailsLoading": "运行详情仍在加载。"
+    }
+  },
+  "profilemodel": {
+    "general": {
+      "noneSelected": "未选择工具",
+      "allGroupTools": "{{group}} 的全部工具（{{count}} 个）",
+      "allGroupExcept": "{{group}} 的全部工具，排除 {{count}} 个",
+      "selectedGroupTools": "{{group}} 的 {{total}} 个工具中已选 {{selected}} 个"
+    },
+    "templates": {
+      "read_only": {
+        "title": "只读",
+        "description": "可查看和获取内容，但不能进行更改。"
+      },
+      "everyday": {
+        "title": "日常工作",
+        "description": "可读取并进行常规更改，不包含破坏性工具。"
+      },
+      "full_access": {
+        "title": "全部权限",
+        "description": "可使用每个已连接应用提供的所有工具。"
+      },
+      "scratch": {
+        "title": "从零开始",
+        "description": "创建空白访问配置，再逐个添加工具。"
+      },
+      "copy": {
+        "title": "复制现有访问配置",
+        "description": "以已有访问配置为起点。"
+      }
     }
   }
 }

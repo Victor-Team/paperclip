@@ -139,7 +139,7 @@ export function PasteConfigTab({ companyId }: { companyId: string }) {
       navigateTopLevel(target.url);
     } catch (error) {
       setOAuthPhase("error");
-      setOAuthError(error instanceof Error ? error.message : "Paperclip couldn’t start secure sign-in. Try again.");
+      setOAuthError(error instanceof Error ? error.message : t("pasteconfigtab.general.secureSignInFailed"));
     }
   };
 
@@ -151,7 +151,7 @@ export function PasteConfigTab({ companyId }: { companyId: string }) {
       setOAuthError(
         error instanceof Error
           ? error.message
-          : "Paperclip couldn’t start secure sign-in. Try again.",
+          : t("pasteconfigtab.general.secureSignInFailed"),
       );
     },
   });
@@ -159,7 +159,7 @@ export function PasteConfigTab({ companyId }: { companyId: string }) {
   const connectMutation = useMutation({
     mutationFn: (draft: McpJsonImportDraft) => {
       const url = draftConnectUrl(draft);
-      if (!url) throw new Error("Only remote HTTP drafts can be checked and activated from pasted config.");
+      if (!url) throw new Error(t("pasteconfigtab.general.remoteHttpOnly"));
       return toolsApi.connectApp(companyId, {
         link: url,
         name: connectionNames[draft.name]?.trim() || draft.name,
@@ -175,7 +175,7 @@ export function PasteConfigTab({ companyId }: { companyId: string }) {
         if (result.auth.manualClientRequired) {
           setOAuthPhase("error");
           setOAuthError(
-            "This server requires OAuth client details from its provider settings. Continue in setup to add them.",
+            t("pasteconfigtab.general.oauthClientDetailsRequired"),
           );
           return;
         }
@@ -209,7 +209,7 @@ export function PasteConfigTab({ companyId }: { companyId: string }) {
         access: "all_agents",
       });
     },
-    onSuccess: () => setActivatedName(connectResult?.application.name ?? "Imported app"),
+    onSuccess: () => setActivatedName(connectResult?.application.name ?? t("pasteconfigtab.general.importedApp")),
   });
 
   const drafts = preview?.drafts ?? [];
@@ -222,9 +222,9 @@ export function PasteConfigTab({ companyId }: { companyId: string }) {
       JSON.parse(trimmed);
       return null;
     } catch {
-      return "That doesn't look like valid JSON yet — paste the whole snippet, including the outer braces.";
+      return t("pasteconfigtab.general.invalidJsonSnippet");
     }
-  }, [draftText]);
+  }, [draftText, t]);
 
   if (connectResult?.auth?.kind === "oauth") {
     const connectionUrl = typeof connectResult.connection.config?.url === "string"
@@ -549,7 +549,9 @@ function ActionGroup({
               <div className="min-w-0 flex-1">
                 <div className="truncate text-sm font-medium text-foreground">{action.title || action.toolName}</div>
                 <div className="truncate text-xs text-muted-foreground">
-                  {askFirstLevels.includes(action.riskLevel) ? "Ask first when enabled" : action.riskLevel}
+                  {askFirstLevels.includes(action.riskLevel)
+                    ? t("pasteconfigtab.general.askFirstWhenEnabled")
+                    : t(`pasteconfigtab.general.risk.${action.riskLevel}`, { defaultValue: action.riskLevel })}
                 </div>
               </div>
               <ToggleSwitch checked={on} onCheckedChange={(next) => onToggle(action.catalogEntryId, next)} />

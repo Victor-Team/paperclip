@@ -455,20 +455,20 @@ export function StepName({
       <div className="space-y-2">
         <h3 className="text-sm font-medium text-foreground">{t("profilewizard.general.startfrom")}</h3>
         <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-          {TEMPLATES.map((t) => (
+          {TEMPLATES.map((templateOption) => (
             <button
-              key={t.key}
+              key={templateOption.key}
               type="button"
-              onClick={() => onTemplate(t.key)}
+              onClick={() => onTemplate(templateOption.key)}
               className={cn(
                 "flex flex-col items-start gap-1 rounded-md border px-4 py-3 text-left transition-colors",
-                template === t.key
+                template === templateOption.key
                   ? "border-primary bg-primary/5 ring-1 ring-primary"
                   : "border-border hover:border-primary/40 hover:bg-accent/40",
               )}
             >
-              <span className="text-sm font-medium text-foreground">{t.title}</span>
-              <span className="text-xs text-muted-foreground">{t.description}</span>
+              <span className="text-sm font-medium text-foreground">{t(`profilemodel.templates.${templateOption.key}.title`)}</span>
+              <span className="text-xs text-muted-foreground">{t(`profilemodel.templates.${templateOption.key}.description`)}</span>
             </button>
           ))}
         </div>

@@ -2,6 +2,7 @@
 
 import { describe, expect, it } from "vitest";
 import type { ToolCatalogEntry, ToolProfileEntry } from "@paperclipai/shared";
+import { i18n } from "@/i18n";
 import {
   appCheckState,
   appSelectionLabel,
@@ -133,6 +134,18 @@ describe("toggleApp / toggleTool", () => {
     for (const id of ["g-list", "g-read", "g-send", "g-delete"]) sel = toggleTool(g, sel, id);
     expect(sel).toEqual({ kind: "none" });
   });
+});
+
+it("updates the app selection summary when the language changes", async () => {
+  const group = gmail();
+  try {
+    await i18n.changeLanguage("zh-CN");
+    expect(appSelectionLabel(group, { kind: "all_except", excluded: ["g-delete"] }))
+      .toBe("Gmail 的全部工具，排除 1 个");
+    expect(appSelectionLabel(group, { kind: "none" })).toBe("未选择工具");
+  } finally {
+    await i18n.changeLanguage("en");
+  }
 });
 
 describe("buildEntries", () => {
