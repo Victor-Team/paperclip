@@ -1,0 +1,54 @@
+[
+  {
+    "name": "desktop-en",
+    "url": "http://127.0.0.1:3200/ANC/search?lng=en&q=test",
+    "httpStatus": 200,
+    "intercepted": 1,
+    "label": "Idle",
+    "title": "Idle",
+    "glyphClass": "lucide lucide-circle inline-block shrink-0 align-middle",
+    "style": "color: var(--status-task-icon-backlog);",
+    "overflow": false,
+    "errors": [],
+    "passed": true
+  },
+  {
+    "name": "desktop-zh",
+    "url": "http://127.0.0.1:3200/ANC/search?lng=zh-CN&q=test",
+    "httpStatus": 200,
+    "intercepted": 1,
+    "label": "空闲",
+    "title": "空闲",
+    "glyphClass": "lucide lucide-circle inline-block shrink-0 align-middle",
+    "style": "color: var(--status-task-icon-backlog);",
+    "overflow": false,
+    "errors": [],
+    "passed": true
+  },
+  {
+    "name": "narrow-en",
+    "url": "http://127.0.0.1:3200/ANC/search?lng=en&q=test",
+    "httpStatus": 200,
+    "intercepted": 1,
+    "label": "Idle",
+    "title": "Idle",
+    "glyphClass": "lucide lucide-circle inline-block shrink-0 align-middle",
+    "style": "color: var(--status-task-icon-backlog);",
+    "overflow": false,
+    "errors": [],
+    "passed": true
+  },
+  {
+    "name": "narrow-zh",
+    "url": "http://127.0.0.1:3200/ANC/search?lng=zh-CN&q=test",
+    "httpStatus": 200,
+    "intercepted": 1,
+    "label": "空闲",
+    "title": "空闲",
+    "glyphClass": "lucide lucide-circle inline-block shrink-0 align-middle",
+    "style": "color: var(--status-task-icon-backlog);",
+    "overflow": false,
+    "errors": [],
+    "passed": true
+  }
+]
