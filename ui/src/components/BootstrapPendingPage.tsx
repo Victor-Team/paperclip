@@ -144,7 +144,7 @@ export function BootstrapPendingPage({
           {isClaiming ? t("bootstrappendingpage.general.claiming") : t("bootstrappendingpage.general.claimthisinstance")}
         </Button>
         <span className="text-sm text-muted-foreground">
-          {t("bootstrappendingpage.general.signedinas")}<span className="font-medium text-foreground">{displayIdentity(session)}</span>
+          {t("bootstrappendingpage.general.signedinas")}{" "}<span className="font-medium text-foreground">{displayIdentity(session)}</span>
         </span>
       </div>
       <p className="mt-3 text-xs text-muted-foreground">
