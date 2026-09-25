@@ -58,7 +58,7 @@ import {
   RiskBadge,
   ToolsPageHeader,
 } from "./shared";
-import { useTranslation } from "@/i18n";
+import { t, useTranslation } from "@/i18n";
 
 const SELECTOR_TYPES: Array<{ value: ToolProfileEntrySelectorType; labelKey: string }> = [
   { value: "tool_name", labelKey: "selectorToolName" },
@@ -140,11 +140,11 @@ function entryLabel(
   applicationsById: Map<string, string>,
   connectionsById: Map<string, string>,
 ) {
-  if (entry.selectorType === "application") return applicationsById.get(entry.applicationId ?? "") ?? entry.applicationId ?? "application";
-  if (entry.selectorType === "connection") return connectionsById.get(entry.connectionId ?? "") ?? entry.connectionId ?? "connection";
-  if (entry.selectorType === "catalog_entry") return entry.catalogEntryId ?? "catalog entry";
-  if (entry.selectorType === "risk_level") return entry.riskLevel ?? "risk level";
-  return entry.toolName ?? "tool";
+  if (entry.selectorType === "application") return applicationsById.get(entry.applicationId ?? "") ?? entry.applicationId ?? t("profilestab.general.application");
+  if (entry.selectorType === "connection") return connectionsById.get(entry.connectionId ?? "") ?? entry.connectionId ?? t("profilestab.general.connection");
+  if (entry.selectorType === "catalog_entry") return entry.catalogEntryId ?? t("profilestab.general.catalogentryid");
+  if (entry.selectorType === "risk_level") return entry.riskLevel ?? t("profilestab.general.risklevel");
+  return entry.toolName ?? t("profilestab.general.tool1");
 }
 
 function bindingLabel(
@@ -958,7 +958,7 @@ export function ProfilesTab({ companyId }: { companyId: string }) {
                           <span className="truncate font-medium text-foreground">{profile.name}</span>
                           {profile.status !== "active" ? (
                             <Badge variant={statusVariant(profile.status)} className="text-(length:--text-nano)">
-                              {profile.status}
+                              {t(`profiledetail.general.status.${profile.status}`)}
                             </Badge>
                           ) : null}
                         </span>
@@ -1264,9 +1264,9 @@ function ProfileDetail({
             <div className="flex flex-wrap items-center gap-2">
               <span className="font-medium text-foreground">{profile.name}</span>
               <Badge variant="outline">{profile.profileKey}</Badge>
-              <Badge variant={statusVariant(profile.status)}>{profile.status}</Badge>
+              <Badge variant={statusVariant(profile.status)}>{t(`profiledetail.general.status.${profile.status}`)}</Badge>
               <Badge variant={profile.defaultAction === "allow" ? "secondary" : "outline"}>
-                {t("profilestab.general.defaultaction", { action: profile.defaultAction })}
+                {t("profilestab.general.defaultaction", { action: t(`profilestab.general.${profile.defaultAction}`) })}
               </Badge>
             </div>
             {profile.description ? (
@@ -1297,7 +1297,7 @@ function ProfileDetail({
               <span className="text-sm text-muted-foreground">{t("profilestab.general.notargetsbound")}</span>
             ) : profile.bindings.map((binding) => (
               <span key={binding.id} className="inline-flex items-center gap-1.5 rounded-md border border-border px-2 py-1 text-xs">
-                <Badge variant="outline">{binding.targetType}</Badge>
+                <Badge variant="outline">{t(`profilestab.general.target.${binding.targetType}`)}</Badge>
                 <span>{bindingLabel(binding.targetType, binding.targetId, { companyId, ...maps }, t)}</span>
                 <span className="text-muted-foreground">{t("profilestab.general.p")}{binding.priority}</span>
                 <button
@@ -1318,7 +1318,7 @@ function ProfileDetail({
           <h4 className="text-sm font-semibold text-foreground">{t("profilestab.general.effectivescope")}</h4>
           <div className="flex flex-wrap gap-2 text-xs">
             <span className="rounded-md border border-border px-2 py-1 text-muted-foreground">
-              {t("profilestab.general.default12")}<span className="font-medium text-foreground">{profile.defaultAction}</span>
+              {t("profilestab.general.default12")}<span className="font-medium text-foreground">{t(`profilestab.general.${profile.defaultAction}`)}</span>
             </span>
             <span className="rounded-md border border-border px-2 py-1 text-muted-foreground">
               <span className="font-medium text-foreground">{rows.length}</span> {t("profilestab.general.toolsallowed")}</span>
@@ -1336,8 +1336,8 @@ function ProfileDetail({
               <span className="text-sm text-muted-foreground">{t("profilestab.general.noselectors")}</span>
             ) : profile.entries.map((entry) => (
               <span key={entry.id} className="inline-flex items-center gap-1.5 rounded-md border border-border px-2 py-1 text-xs">
-                <Badge variant={entry.effect === "include" ? "secondary" : "destructive"}>{entry.effect}</Badge>
-                <span className="font-mono">{entry.selectorType}</span>
+                <Badge variant={entry.effect === "include" ? "secondary" : "destructive"}>{t(`profilestab.general.${entry.effect}`)}</Badge>
+                <span className="font-mono">{t(`profilestab.general.selector.${entry.selectorType}`)}</span>
                 {entry.selectorType === "risk_level" ? <RiskBadge risk={entry.riskLevel} /> : (
                   <span className="max-w-64 truncate">{entryLabel(entry, maps.applicationsById, maps.connectionsById)}</span>
                 )}

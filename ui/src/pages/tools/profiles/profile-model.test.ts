@@ -89,6 +89,14 @@ describe("groupCatalogByApp", () => {
     expect(groups[0].name).toBe("Gmail");
     expect(groups[0].tools.map((t) => t.id)).toEqual(["g-delete", "g-list", "g-read", "g-send"]);
   });
+
+  it("localizes the fallback group name", async () => {
+    const unassigned = tool({ id: "orphan", toolName: "unknown.read", applicationId: null, connectionId: "missing" });
+    expect(groupCatalogByApp([unassigned], new Map(), new Map())[0].name).toBe("Tools");
+    await i18n.changeLanguage("zh-CN");
+    expect(groupCatalogByApp([unassigned], new Map(), new Map())[0].name).toBe("工具");
+    await i18n.changeLanguage("en");
+  });
 });
 
 describe("toggleApp / toggleTool", () => {

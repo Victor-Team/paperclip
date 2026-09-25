@@ -6781,7 +6781,13 @@
         "medium": "中风险",
         "high": "高风险",
         "critical": "严重风险"
-      }
+      },
+      "key": "密钥",
+      "runsInYourWorkspace": "在工作区运行",
+      "connectsOverTheWeb": "通过网络连接",
+      "draftNoKeys": "{{where}} · 无需密钥",
+      "draftNeedsKeys_one": "{{where}} · 需要 {{count}} 个密钥",
+      "draftNeedsKeys_other": "{{where}} · 需要 {{count}} 个密钥"
     }
   },
   "profilestab": {
@@ -6916,7 +6922,9 @@
         "project": "项目",
         "routine": "例程",
         "issue": "工单"
-      }
+      },
+      "allow": "允许",
+      "deny": "拒绝"
     }
   },
   "smokelabtab": {
@@ -7038,7 +7046,8 @@
         "gateways": "网关",
         "profiles": "访问配置",
         "smoke-lab": "Smoke Lab"
-      }
+      },
+      "developerTools": "开发者工具"
     }
   },
   "connectiondialogs": {
@@ -12220,7 +12229,8 @@
       "noneSelected": "未选择工具",
       "allGroupTools": "{{group}} 的全部工具（{{count}} 个）",
       "allGroupExcept": "{{group}} 的全部工具，排除 {{count}} 个",
-      "selectedGroupTools": "{{group}} 的 {{total}} 个工具中已选 {{selected}} 个"
+      "selectedGroupTools": "{{group}} 的 {{total}} 个工具中已选 {{selected}} 个",
+      "toolsFallback": "工具"
     },
     "templates": {
       "read_only": {

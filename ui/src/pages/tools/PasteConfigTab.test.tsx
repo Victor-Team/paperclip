@@ -6,6 +6,7 @@ import { MemoryRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { ConnectToolAppResult, McpJsonImportPreview } from "@paperclipai/shared";
+import { i18n } from "@/i18n";
 import { PasteConfigTab } from "./PasteConfigTab";
 
 const toolsApiMock = vi.hoisted(() => ({
@@ -217,11 +218,13 @@ describe("PasteConfigTab — activation handoff (PAP-11092)", () => {
   let container: HTMLDivElement;
 
   beforeEach(() => {
+    void i18n.changeLanguage("en");
     container = document.createElement("div");
     document.body.appendChild(container);
   });
 
   afterEach(() => {
+    void i18n.changeLanguage("en");
     document.body.removeChild(container);
     document.body.innerHTML = "";
     vi.restoreAllMocks();
@@ -255,6 +258,29 @@ describe("PasteConfigTab — activation handoff (PAP-11092)", () => {
     });
     await flushReact();
   }
+
+  it("updates imported draft summaries when the language changes", async () => {
+    await pasteAndCheck({
+      drafts: [
+        NOTION_PREVIEW.drafts[0],
+        {
+          ...NOTION_PREVIEW.drafts[0],
+          name: "local-demo",
+          transport: "local_stdio",
+          credentialFields: [
+            { configPath: "env.KEY_A", label: "Key A", placement: "env", key: "KEY_A", prefix: null, required: true },
+            { configPath: "env.KEY_B", label: "Key B", placement: "env", key: "KEY_B", prefix: null, required: true },
+          ],
+        },
+      ],
+    }, NOTION_CONFIG);
+
+    expect(container.textContent).toContain("Connects over the web  ·  no keys needed");
+    expect(container.textContent).toContain("Runs in your workspace  ·  needs 2 keys");
+    await act(async () => { await i18n.changeLanguage("zh-CN"); });
+    expect(container.textContent).toContain("通过网络连接 · 无需密钥");
+    expect(container.textContent).toContain("在工作区运行 · 需要 2 个密钥");
+  });
 
   it("renders a Continue button for a remote draft that navigates to the prefilled connect wizard", async () => {
     await pasteAndCheck(

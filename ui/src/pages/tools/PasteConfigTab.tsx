@@ -24,7 +24,7 @@ import {
 import { endpointHost } from "@/pages/apps/generic-mcp-connect";
 import { McpConfigHelpDialog } from "./McpConfigHelpDialog";
 import { ErrorState } from "./shared";
-import { useTranslation } from "@/i18n";
+import { t, useTranslation } from "@/i18n";
 
 const SAMPLE_CONFIG = `{
   "mcpServers": {
@@ -38,15 +38,18 @@ const SAMPLE_CONFIG = `{
 /** Turn an env/header key (e.g. `GITHUB_TOKEN`) into a friendly field label. */
 function humanizeKey(raw: string): string {
   const cleaned = raw.replace(/[_-]+/g, " ").trim().toLowerCase();
-  if (!cleaned) return "Key";
+  if (!cleaned) return t("pasteconfigtab.general.key");
   return cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
 }
 
 function draftSummary(draft: McpJsonImportDraft): string {
   const keyCount = draft.credentialFields.length || draft.credentialRefs.length;
-  const where = draft.transport === "local_stdio" ? "Runs in your workspace" : "Connects over the web";
-  if (keyCount === 0) return `${where}  ·  no keys needed`;
-  return `${where}  ·  needs ${keyCount} ${keyCount === 1 ? "key" : "keys"}`;
+  const where = draft.transport === "local_stdio"
+    ? t("pasteconfigtab.general.runsInYourWorkspace")
+    : t("pasteconfigtab.general.connectsOverTheWeb");
+  return keyCount === 0
+    ? t("pasteconfigtab.general.draftNoKeys", { where })
+    : t("pasteconfigtab.general.draftNeedsKeys", { where, count: keyCount });
 }
 
 /**

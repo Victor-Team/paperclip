@@ -6781,7 +6781,13 @@
         "medium": "Medium risk",
         "high": "High risk",
         "critical": "Critical risk"
-      }
+      },
+      "key": "Key",
+      "runsInYourWorkspace": "Runs in your workspace",
+      "connectsOverTheWeb": "Connects over the web",
+      "draftNoKeys": "{{where}}  ·  no keys needed",
+      "draftNeedsKeys_one": "{{where}}  ·  needs {{count}} key",
+      "draftNeedsKeys_other": "{{where}}  ·  needs {{count}} keys"
     }
   },
   "profilestab": {
@@ -6916,7 +6922,9 @@
         "project": "project",
         "routine": "routine",
         "issue": "issue"
-      }
+      },
+      "allow": "Allow",
+      "deny": "Deny"
     }
   },
   "smokelabtab": {
@@ -7038,7 +7046,8 @@
         "gateways": "Gateways",
         "profiles": "Profiles",
         "smoke-lab": "Smoke Lab"
-      }
+      },
+      "developerTools": "Developer tools"
     }
   },
   "connectiondialogs": {
@@ -12220,7 +12229,8 @@
       "noneSelected": "None selected",
       "allGroupTools": "All {{group}} tools ({{count}})",
       "allGroupExcept": "All {{group}} except {{count}}",
-      "selectedGroupTools": "{{selected}} of {{total}} {{group}} tools"
+      "selectedGroupTools": "{{selected}} of {{total}} {{group}} tools",
+      "toolsFallback": "Tools"
     },
     "templates": {
       "read_only": {

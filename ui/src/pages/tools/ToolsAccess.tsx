@@ -38,7 +38,7 @@ export function ToolsAccess() {
   const params = useParams<{ tab?: string }>();
   const activeTab = (TOOL_TABS.find((t) => t.key === params.tab)?.key ?? "paste-config") as ToolTabKey;
   const advanced = isAdvancedSetupTab(activeTab);
-  const tabLabel = t(`toolsaccess.general.tab.${activeTab}`, { defaultValue: TOOL_TABS.find((tab) => tab.key === activeTab)?.label ?? "Developer tools" });
+  const tabLabel = t(`toolsaccess.general.tab.${activeTab}`, { defaultValue: TOOL_TABS.find((tab) => tab.key === activeTab)?.label ?? t("toolsaccess.general.developerTools") });
 
   useEffect(() => {
     setBreadcrumbs([
