@@ -16,6 +16,7 @@ import { DocumentAnnotationLayer, type AnnotationAnchorRect, type PendingAnchor 
 import { DocumentAnnotationPanel } from "./DocumentAnnotationPanel";
 import { DocumentAnnotationPopover } from "./DocumentAnnotationPopover";
 import type { CompanyUserProfile } from "@/lib/company-members";
+import { useTranslation } from "@/i18n";
 
 // Width of the right-hand comment gutter on desktop (lg+). The gutter is an
 // in-flow flex column beside the document, so it scrolls with the doc instead
@@ -396,6 +397,7 @@ export function DocumentAnnotationsCountChip({
   panelOpen,
   onToggle,
 }: DocumentAnnotationsCountChipProps) {
+  const { t } = useTranslation();
   const annotationsQuery = useQuery({
     queryKey: target?.kind === "routine"
       ? queryKeys.routines.documentAnnotations(target.routineId, target.documentKey, "all")
@@ -434,7 +436,7 @@ export function DocumentAnnotationsCountChip({
       <MessageSquare className="h-3 w-3" aria-hidden="true" />
       <span className="tabular-nums">{openCount}</span>
       <span className="hidden sm:inline">
-        {openCount === 1 ? "comment" : "comments"}
+        {openCount === 1 ? t("issuedocumentannotations.general.comment") : t("issuedocumentannotations.general.comments")}
       </span>
     </Button>
   );

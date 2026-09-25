@@ -1106,7 +1106,8 @@
       "renameTask": "Rename task",
       "chooseAShortClear": "Choose a short, clear name for this task.",
       "taskName": "Task name",
-      "saving": "Saving..."
+      "saving": "Saving...",
+      "idle": "Idle"
     }
   },
   "sidebarstarredprojects": {
@@ -1321,7 +1322,8 @@
       "open": "Open {{identifier}}: {{title}}",
       "recoveryStatusTitle": "{{label}} — {{detail}}. Open the source task to act.",
       "recoveryStatusTitleNoDetail": "{{label}} — open the source task to act.",
-      "recoveryStatusAriaLabel": "{{label}} — {{detail}}"
+      "recoveryStatusAriaLabel": "{{label}} — {{detail}}",
+      "middot": "·"
     }
   },
   "issueslist": {
@@ -2840,7 +2842,10 @@
     "general": {
       "motiontweakpanel": "Motion tweak panel",
       "resetall": "Reset all",
-      "copyastheme": "Copy as @theme"
+      "copyastheme": "Copy as @theme",
+      "copiedtoclipboard": "Copied to clipboard",
+      "copyfailedselectthetextandcopy": "Copy failed — select the text and copy it manually",
+      "clicktheboxtocopy": "Click the box to copy"
     }
   },
   "actioncard": {
@@ -7507,6 +7512,2141 @@
       }
     }
   },
+  "accountingmodelcard": {
+    "general": {
+      "accountingmodel": "Accounting model",
+      "paperclipnowseparatesrequestlevelinferenceusage": "Paperclip now separates request-level inference usage from account-level finance events. That keeps provider reporting honest when the biller is OpenRouter, Cloudflare, Bedrock, or another intermediary."
+    }
+  },
+  "activityfeed": {
+    "general": {
+      "made": "made",
+      "updatesto": "updates to",
+      "earlier": "Earlier",
+      "agentfeed": "Agent Feed",
+      "liveactivityfromyouragents": "Live activity from your agents",
+      "groupbytask": "group by task",
+      "groupbytask1": "Group by task",
+      "showflat": "Show flat",
+      "filterby": "filter by",
+      "filterby2": "Filter by",
+      "showallactivity": "Show all activity",
+      "activityfromyouragentswillappearhere": "Activity from your agents will appear here."
+    }
+  },
+  "adapterloginchrome": {
+    "general": {
+      "preparingthesignin": "Preparing the sign-in",
+      "copied": "Copied!",
+      "copythecode": "Copy the code",
+      "signinto": "Sign in to",
+      "apikey": "API key",
+      "checkinglocal": "Checking local",
+      "signin": "sign-in…",
+      "issignedinclickconnecttouse": "is signed in. Click Connect to use this account.",
+      "useadifferentaccount": "Use a different account",
+      "runthisinaterminalonthat": "Run this in a terminal on that machine and finish signing in in your browser. We’ll check automatically when you return.",
+      "copysignincommand": "Copy sign-in command",
+      "startsigninagain": "Start sign-in again",
+      "checkagain": "Check again"
+    }
+  },
+  "agentactionbuttons": {
+    "general": {
+      "resume": "Resume",
+      "pause": "Pause",
+      "clearerrorandreturnagenttoidle": "Clear error and return agent to idle",
+      "clearerror": "Clear error",
+      "exactprovidertrafficwillbecapturedfor": "Exact provider traffic will be captured for future runs and retained for up to 24 hours.",
+      "rawtracingon": "Raw tracing on",
+      "captureexactprovidertrafficforthisrun": "Capture exact provider traffic for this run (expires after 24 hours)",
+      "runwithprovidertrace": "Run with provider trace",
+      "cancel": "Cancel",
+      "pauseanyway": "Pause anyway",
+      "duplicateagent": "Duplicate Agent",
+      "copyagentid": "Copy Agent ID",
+      "resetsessions": "Reset Sessions",
+      "terminate": "Terminate"
+    }
+  },
+  "agentbubbleactionrow": {
+    "general": {
+      "moreactions": "More actions",
+      "moreactions1": "More actions",
+      "copymessage": "Copy message",
+      "helpful": "Helpful",
+      "helpful2": "Helpful",
+      "needswork": "Needs work",
+      "needswork3": "Needs work",
+      "whatcouldhavebeenbetter": "What could have been better?",
+      "addashortnote": "Add a short note",
+      "dismiss": "Dismiss",
+      "saving": "Saving...",
+      "savenote": "Save note",
+      "saveyourfeedbacksharingpreference": "Save your feedback sharing preference",
+      "choosewhethervotedaioutputscanbe": "Choose whether voted AI outputs can be shared with Paperclip Labs. This answer becomes the default for future thumbs up and thumbs down votes.",
+      "thisvoteisalwayssavedlocally": "This vote is always saved locally.",
+      "choose": "Choose",
+      "alwaysallow": "Always allow",
+      "tosharethisvoteandfuturevoted": "to share this vote and future voted AI outputs. Choose",
+      "dontallow": "Don't allow",
+      "tokeepthisvoteandfuturevotes": "to keep this vote and future votes local.",
+      "youcanchangethislaterinsettings": "You can change this later in Settings > General.",
+      "readourtermsofservice": "Read our terms of service",
+      "saving4": "Saving...",
+      "dontallow5": "Don't allow",
+      "saving6": "Saving...",
+      "alwaysallow7": "Always allow"
+    }
+  },
+  "agentchatpicker": {
+    "general": {
+      "chatwithanagent": "Chat with an agent",
+      "searchagentsbynameorrole": "Search agents by name or role",
+      "searchbynameorrole": "Search by name or role…",
+      "couldntloadagentstryagain": "Couldn’t load agents. Try again.",
+      "retry": "Retry",
+      "loadingagents": "Loading agents…",
+      "noagentsyet": "No agents yet.",
+      "tryanothernameorrole": "Try another name or role.",
+      "clearsearch": "Clear search",
+      "createanagentfromtheagentspage": "Create an agent from the Agents page to start chatting.",
+      "paused": "Paused",
+      "terminated": "Terminated",
+      "awaitingapproval": "Awaiting approval"
+    }
+  },
+  "agentchatsidebar": {
+    "general": {
+      "chats": "Chats",
+      "chats1": "Chats",
+      "chatwithanagent": "Chat with an agent",
+      "chatwithanagent2": "Chat with an agent"
+    }
+  },
+  "agentconfigform": {
+    "general": {
+      "unsavedchanges": "Unsaved changes",
+      "saving": "Saving...",
+      "save": "Save",
+      "environmentvariables": "Environment variables",
+      "environmentvariables1": "Environment variables",
+      "secretaccess": "Secret access",
+      "secretaccess2": "Secret access",
+      "unsavedchanges3": "Unsaved changes",
+      "saving4": "Saving...",
+      "save5": "Save",
+      "identity": "identity",
+      "identity6": "Identity",
+      "identity7": "Identity",
+      "name": "Name",
+      "agentname": "Agent name",
+      "title": "Title",
+      "egvpofengineering": "e.g. VP of Engineering",
+      "reportsto": "Reports to",
+      "prompttemplate": "Prompt Template",
+      "youareagentagentnameyourrole": "You are agent {{ agent.name }}. Your role is {{ agent.role }}...",
+      "prompttemplateisreplayedoneveryheartbeat": "Prompt template is replayed on every heartbeat. Keep it compact and dynamic to avoid recurring token cost and cache churn.",
+      "environment": "Environment",
+      "environment8": "Environment",
+      "defaultenvironment": "Default environment",
+      "kubernetessandbox": "· Kubernetes sandbox",
+      "thisinstancerequiresthekubernetessandboxbut": "This instance requires the Kubernetes sandbox, but no managed Kubernetes environment is available for this organization yet. Configure one before creating agents; execution will not fall back to local.",
+      "environment9": "Environment",
+      "environment10": "Environment",
+      "environmentoverride": "Environment override",
+      "default": "Default:",
+      "adapter": "adapter",
+      "adapter11": "Adapter",
+      "adapter12": "Adapter",
+      "adaptertype": "Adapter type",
+      "environmenttestfailed": "Environment test failed",
+      "workingdirectorydeprecated": "Working directory (deprecated)",
+      "failedtoloadadaptermodels": "Failed to load adapter models.",
+      "liveopencodemodeldiscoveryonlyrunsfor": "Live OpenCode model discovery only runs for Local environments. Using the curated list and manual entry for",
+      "codexmayrejectminimalthinkingwhensearch": "Codex may reject `minimal` thinking when search is enabled.",
+      "configuration": "Configuration",
+      "configuration13": "Configuration",
+      "bootstrappromptlegacy": "Bootstrap prompt (legacy)",
+      "optionalinitialsetuppromptforthefirst": "Optional initial setup prompt for the first run",
+      "bootstrappromptislegacyandwillbe": "Bootstrap prompt is legacy and will be removed in a future release. Consider moving this content into the agent's prompt template or instructions file instead.",
+      "advanced": "Advanced",
+      "command": "Command",
+      "extraargscommaseparated": "Extra args (comma-separated)",
+      "egverbosefoobar": "e.g. --verbose, --foo=bar",
+      "environmentvariables14": "Environment variables",
+      "environmentvariables15": "Environment variables",
+      "runpolicy": "Run Policy",
+      "runpolicy16": "Run Policy",
+      "heartbeatoninterval": "Heartbeat on interval",
+      "advancedrunpolicy": "Advanced Run Policy",
+      "runpolicy17": "Run Policy",
+      "runpolicy18": "Run Policy",
+      "heartbeatoninterval19": "Heartbeat on interval",
+      "advancedrunpolicy20": "Advanced Run Policy",
+      "timeoutsec": "Timeout (sec)",
+      "interruptgraceperiodsec": "Interrupt grace period (sec)",
+      "wakeondemand": "Wake on demand",
+      "cooldownsec": "Cooldown (sec)",
+      "maxconcurrentruns": "Max concurrent runs",
+      "continueaftermaxturnstop": "Continue after max-turn stop",
+      "continuationattempts": "Continuation attempts",
+      "continuationdelaysec": "Continuation delay (sec)",
+      "debugging": "Debugging",
+      "debugging21": "Debugging",
+      "capturerawprovidertraces": "Capture raw provider traces",
+      "rawtracingisonforfutureruns": "Raw tracing is on for future runs. Paperclip keeps at most 64 MiB per run and automatically deletes it after 24 hours.",
+      "authenticatedtheenvironmenthascredentialsnow": "Authenticated. The environment has credentials now.",
+      "thelogintimedoutstartitagain": "The login timed out. Start it again.",
+      "theloginwascancelled": "The login was cancelled.",
+      "thelogindidnotfinishstartit": "The login did not finish. Start it again.",
+      "cancel": "Cancel",
+      "signin": "Sign in",
+      "preparing": "Preparing...",
+      "copythecodethenopentheauthentication": "Copy the code, then open the authentication page.",
+      "1code": "1. Code",
+      "copycode": "Copy code",
+      "2authenticationurl": "2. Authentication URL",
+      "copyurl": "Copy URL",
+      "opentheauthenticationpage": "Open the authentication page",
+      "opentheauthenticationpage22": "Open the authentication page",
+      "bindingthisagenttothesignedin": "Binding this agent to the signed-in account...",
+      "agentboundtothesignedinaccount": "Agent bound to the signed-in account.",
+      "couldnotbindthisagenttothe": "Could not bind this agent to the signed-in account.",
+      "retry": "Retry",
+      "thisconnectionisnotencryptedthelogin": "This connection is not encrypted. The login code travels in clear text on this network. Continue only on a network you trust.",
+      "cancel23": "Cancel",
+      "usesavedlogin": "Use saved login",
+      "signintoreplace": "Sign in to replace",
+      "signin24": "Sign in",
+      "youhaveasavedclaudeloginuse": "You have a saved Claude login. Use it to bind this agent, or log in again to replace the stored token.",
+      "thesavedclaudeloginisboundto": "The saved Claude login is bound to this agent now.",
+      "preparing25": "Preparing...",
+      "thisconnectionisnotencryptedthelogin26": "This connection is not encrypted. The login code travels in clear text on this network. Continue only on a network you trust.",
+      "opentheauthorizationpagethenenterthe": "Open the authorization page, then enter the browser code it shows.",
+      "1authorizationurl": "1. Authorization URL",
+      "copyurl27": "Copy URL",
+      "opentheauthorizationpage": "Open the authorization page",
+      "opentheauthorizationpage28": "Open the authorization page",
+      "2browsercode": "2. Browser code",
+      "browsercode": "Browser code",
+      "submit": "Submit",
+      "completingthelogin": "Completing the login…",
+      "authenticatedtheenvironmenthascredentialsnow29": "Authenticated. The environment has credentials now.",
+      "hint": "Hint:",
+      "comingsoon": "Coming soon",
+      "experimental": "Experimental",
+      "model": "Model",
+      "detecting": "Detecting...",
+      "redetectfromconfig": "Re-detect from config",
+      "detectfromconfig": "Detect from config",
+      "refreshing": "Refreshing...",
+      "refreshmodels": "Refresh models",
+      "current": "current",
+      "detected": "detected",
+      "config": "config",
+      "default30": "Default",
+      "usemanualmodel": "Use manual model",
+      "nomodeldetectedyetenteraprovider": "No model detected yet. Enter a provider/model manually.",
+      "nomodelsfound": "No models found.",
+      "thinkingeffort": "Thinking effort",
+      "auto": "Auto"
+    }
+  },
+  "agentcontextualsidebar": {
+    "general": {
+      "audit": "Audit",
+      "loadingauditlinks": "Loading audit links…"
+    }
+  },
+  "agenticonpicker": {
+    "general": {
+      "searchicons": "Search icons...",
+      "noiconsmatch": "No icons match"
+    }
+  },
+  "agentidentity": {
+    "general": {
+      "agent": "Agent"
+    }
+  },
+  "agentproperties": {
+    "general": {
+      "status": "Status",
+      "errorreason": "Error reason",
+      "role": "Role",
+      "title": "Title",
+      "adapter": "Adapter",
+      "session": "Session",
+      "lastheartbeat": "Last Heartbeat",
+      "reportsto": "Reports To",
+      "created": "Created"
+    }
+  },
+  "agentsecretaccesseditor": {
+    "general": {
+      "envvar": "Env var",
+      "apiaccess": "API access",
+      "nosecretsareboundtothisagent": "No secrets are bound to this agent yet.",
+      "proposedaccess": "Proposed access",
+      "proposedby": "proposed by",
+      "apiaccessnoenvvar": "API access (no env var)",
+      "accessalias": "Access alias",
+      "version": "Version",
+      "latest": "latest",
+      "v": "v",
+      "removeapiaccess": "Remove API access",
+      "invalidaliasuselettersdigitsand": "Invalid alias — use letters, digits and _",
+      "duplicatealias": "Duplicate alias",
+      "addapiaccess": "Add API access",
+      "theagentreadsthembyaliasthrough": "The agent reads them by alias through",
+      "getagentsmesecrets": "GET /agents/me/secrets"
+    }
+  },
+  "animatedpaperclipicon": {
+    "general": {
+      "loading": "Loading…"
+    }
+  },
+  "announcementcard": {
+    "general": {
+      "dismissannouncement": "Dismiss announcement"
+    }
+  },
+  "announcementwell": {
+    "general": {
+      "paperclipannouncements": "Paperclip announcements"
+    }
+  },
+  "approvalcard": {
+    "general": {
+      "requestedby": "Requested by",
+      "approvalrequestcreated": "Approval request created",
+      "decisionnote": "Decision note.",
+      "approving": "Approving...",
+      "approve": "Approve",
+      "rejecting": "Rejecting...",
+      "reject": "Reject",
+      "viewdetails": "View details",
+      "viewdetails1": "View details"
+    }
+  },
+  "approvalpayload": {
+    "general": {
+      "skills": "Skills",
+      "name": "Name",
+      "role": "Role",
+      "title": "Title",
+      "icon": "Icon",
+      "capabilities": "Capabilities",
+      "adapter": "Adapter",
+      "title1": "Title",
+      "scope": "Scope",
+      "window": "Window",
+      "metric": "Metric",
+      "limit": "Limit",
+      "observed": "· Observed",
+      "title2": "Title",
+      "summary": "Summary",
+      "recommendedaction": "Recommended action",
+      "onapproval": "On approval",
+      "risks": "Risks",
+      "proposedcomment": "Proposed comment"
+    }
+  },
+  "appssidebarproduction": {
+    "general": {
+      "company": "Company",
+      "connectors": "Connectors",
+      "connectors1": "Connectors",
+      "browse": "Browse",
+      "review": "Review",
+      "developer": "Developer",
+      "advancedsetupfordevelopersmostteamsnever": "Advanced setup for developers. Most teams never open this.",
+      "connections": "Connections"
+    }
+  },
+  "appssidebar": {
+    "general": {
+      "connectors": "Connectors",
+      "browse": "Browse",
+      "review": "Review",
+      "developer": "Developer",
+      "advancedsetupfordevelopers": "Advanced setup for developers."
+    }
+  },
+  "artifactspanel": {
+    "general": {
+      "artifacts": "Artifacts",
+      "loading": "Loading...",
+      "yourteamsdeliverablesandplanswill": "Your team's deliverables and plans will appear here as they're produced.",
+      "noartifactsmatchthisfilter": "No artifacts match this filter.",
+      "generating": "Generating...",
+      "loadingdocument": "Loading document...",
+      "documentnotavailableyet": "Document not available yet.",
+      "documentisempty": "Document is empty.",
+      "thisdocumentneedsyourreview": "This document needs your review.",
+      "approve": "Approve",
+      "reject": "Reject",
+      "approvedhiretaskscreated": "Approved — hire tasks created",
+      "changesrequestedceoisrevising": "Changes requested — CEO is revising"
+    }
+  },
+  "attentioninteractionresolver": {
+    "general": {
+      "loadingdecision": "Loading decision…",
+      "thisdecisionisnolongeravailableit": "This decision is no longer available — it may have been resolved elsewhere."
+    }
+  },
+  "attentionqueuerow": {
+    "general": {
+      "open": "Open",
+      "restore": "Restore",
+      "setby": "· set by",
+      "reappears": "Reappears",
+      "rowactions": "Row actions",
+      "dismiss": "Dismiss",
+      "opensource": "Open source",
+      "decisionactions": "Decision actions",
+      "more": "more",
+      "viewissue": "View issue",
+      "more1": "more",
+      "snooze": "Snooze",
+      "custom": "Custom",
+      "snoozeuntil": "Snooze until…",
+      "missingissuereferenceforthisdecision": "Missing issue reference for this decision.",
+      "optionaldecisionnote": "Optional decision note…",
+      "requestrevision": "Request revision",
+      "reject": "Reject",
+      "approve": "Approve",
+      "reject2": "Reject",
+      "approve3": "Approve"
+    }
+  },
+  "billerspendcard": {
+    "general": {
+      "in": "in",
+      "out": "out",
+      "provider": "provider",
+      "s": "s",
+      "model": "model",
+      "s1": "s",
+      "periodspend": "Period spend",
+      "s2": "s",
+      "0meteredruns": "0 metered runs",
+      "s3": "s",
+      "0subscriptionruns": "0 subscription runs",
+      "thisweek": "this week",
+      "billingtypes": "Billing types",
+      "upstreamproviders": "Upstream providers",
+      "tok": "tok"
+    }
+  },
+  "blockedinboxview": {
+    "general": {
+      "couldntloadtheblockedtab": "Couldn't load the Blocked tab.",
+      "otherinboxtabsstillwork": "Other Inbox tabs still work.",
+      "trying": "Trying…",
+      "tryagain": "Try again",
+      "noworkisstopped": "No work is stopped.",
+      "tasksthatneedadecisionrecoveryor": "Tasks that need a decision, recovery, or external action will appear here.",
+      "nostoppeditemsmatchyoursearch": "No stopped items match your search."
+    }
+  },
+  "bootstrappendingpage": {
+    "general": {
+      "prefertofinishsetupfromthehost": "Prefer to finish setup from the host?",
+      "abootstrapinviteisalreadyactivecheck": "A bootstrap invite is already active. Check your Paperclip startup logs for the first-admin URL, or run this command on the host to rotate it:",
+      "runthiscommandonthehostthat": "Run this command on the host that runs Paperclip to print a one-time first-admin invite URL:",
+      "thispaperclipiswaitingonitsfirst": "This Paperclip is waiting on its first admin",
+      "thisinstancerunsininviteonlymode": "This instance runs in invite-only mode. The operator must generate a one-time first-admin invite URL from the host. Once you have the link, open it from this browser to finish setup.",
+      "browserbasedclaimisintentionallydisabledin": "Browser-based claim is intentionally disabled in public mode so anyone on the network can't promote themselves.",
+      "youretheinstanceadmin": "You're the instance admin",
+      "setupiscompletetakingyoutoonboarding": "Setup is complete. Taking you to onboarding to create your first organization...",
+      "redirecting": "Redirecting...",
+      "continuetodashboard": "Continue to dashboard",
+      "finishsettingupthispaperclip": "Finish setting up this Paperclip",
+      "noadminhasclaimedthisinstanceyet": "No admin has claimed this instance yet. Sign in or create your Paperclip account to become the first admin from this browser.",
+      "signincreateaccount": "Sign in / Create account",
+      "finishsettingupthispaperclip1": "Finish setting up this Paperclip",
+      "noadminhasclaimedthisinstanceyet2": "No admin has claimed this instance yet. Claim it now to become the first admin and start onboarding.",
+      "claiming": "Claiming...",
+      "claimthisinstance": "Claim this instance",
+      "signedinas": "Signed in as",
+      "wrongaccount": "Wrong account?",
+      "switchaccount": "Switch account"
+    }
+  },
+  "budgetincidentcard": {
+    "general": {
+      "hardstop": "hard stop",
+      "spendingreached": "Spending reached",
+      "againstalimitof": "against a limit of",
+      "projectexecutionispausednewworkin": "Project execution is paused. New work in this project will not start until you resolve the budget incident.",
+      "thisscopeispausednewheartbeatswill": "This scope is paused. New heartbeats will not start until you resolve the budget incident.",
+      "newbudgetusd": "New budget (USD)",
+      "applying": "Applying...",
+      "raisebudgetresume": "Raise budget & resume",
+      "thenewbudgetmustexceedcurrentobserved": "The new budget must exceed current observed spend.",
+      "keeppaused": "Keep paused"
+    }
+  },
+  "budgetpolicycard": {
+    "general": {
+      "observed": "Observed",
+      "budget": "Budget",
+      "softalertat": "Soft alert at",
+      "observed1": "Observed",
+      "budget2": "Budget",
+      "softalertat3": "Soft alert at",
+      "remaining": "Remaining",
+      "budgetusd": "Budget (USD)",
+      "paused": "Paused",
+      "warning": "Warning",
+      "hardstop": "Hard stop",
+      "healthy": "Healthy",
+      "enteravalidnonnegativedollaramount": "Enter a valid non-negative dollar amount.",
+      "paused4": "Paused",
+      "warning5": "Warning",
+      "hardstop6": "Hard stop",
+      "healthy7": "Healthy",
+      "enteravalidnonnegativedollaramount8": "Enter a valid non-negative dollar amount."
+    }
+  },
+  "builtinagentbadges": {
+    "general": {
+      "approval": "Approval",
+      "pendingapproval": "Pending approval",
+      "setup": "Setup",
+      "needssetup": "Needs setup"
+    }
+  },
+  "builtinagentgate": {
+    "general": {
+      "viewagent": "View agent",
+      "itsbuiltinagentwaspaused": "Its built-in agent was paused",
+      "sonew": ", so new",
+      "isntbeinggenerated": "isn't being generated."
+    }
+  },
+  "builtinbundlepanel": {
+    "general": {
+      "working": "Working…",
+      "cancel": "Cancel",
+      "working1": "Working…",
+      "cancel2": "Cancel",
+      "view": "View",
+      "bundlestatus": "Bundle status",
+      "bundlestatus3": "Bundle status",
+      "adapter": "Adapter",
+      "configure": "Configure",
+      "routine": "Routine",
+      "runreflectioncoachonce": "Run Reflection Coach once?",
+      "disabletheweeklyschedule": "Disable the weekly schedule?",
+      "enabletheweeklyschedule": "Enable the weekly schedule?",
+      "routine4": "routine",
+      "proposal": "Proposal",
+      "reviewproposal": "Review proposal"
+    }
+  },
+  "caseactivityfeed": {
+    "general": {
+      "noactivityyet": "No activity yet.",
+      "of": "of",
+      "events": "events",
+      "activityfilter": "Activity filter",
+      "allactivity": "All activity",
+      "noeventsmatchthisfilter": "No events match this filter."
+    }
+  },
+  "caseattachmentsgallery": {
+    "general": {
+      "noattachments": "No attachments."
+    }
+  },
+  "casechildrentree": {
+    "general": {
+      "nochildcases": "No child cases.",
+      "caseid": "case ID",
+      "show": "Show",
+      "more": "more"
+    }
+  },
+  "casefieldspanel": {
+    "general": {
+      "copied": "Copied",
+      "true": "true",
+      "fields": "Fields",
+      "fromtheskillapossschemarendered": "from the skill's schema — rendered generically",
+      "nofieldsset": "No fields set"
+    }
+  },
+  "caseidentifierkey": {
+    "general": {
+      "copied": "Copied",
+      "caseid": "case ID",
+      "casekey": "case key"
+    }
+  },
+  "caserevisionrail": {
+    "general": {
+      "via": "via",
+      "diff": "Diff -",
+      "old": "Old",
+      "selectrevision": "Select revision",
+      "new": "New",
+      "selectrevision1": "Select revision",
+      "selecttworevisionstocompare": "Select two revisions to compare.",
+      "bothsidesarethesamerevision": "Both sides are the same revision.",
+      "old2": "Old",
+      "new3": "New",
+      "content": "Content",
+      "loadingrevisions": "Loading revisions…",
+      "couldnotloadrevisions": "Could not load revisions.",
+      "norevisionsyet": "No revisions yet.",
+      "revisions": "Revisions",
+      "diff4": "Diff",
+      "rev": "rev",
+      "latest": "latest",
+      "rev5": "rev",
+      "thisrevisionhasnobody": "This revision has no body."
+    }
+  },
+  "chatcomposer": {
+    "general": {
+      "droptoattach": "Drop to attach",
+      "attachfiles": "Attach files",
+      "attachfiles1": "Attach files"
+    }
+  },
+  "claudesubscriptionpanel": {
+    "general": {
+      "anthropicsubscription": "Anthropic subscription",
+      "liveclaudequotawindows": "Live Claude quota windows.",
+      "used": "% used"
+    }
+  },
+  "apperrorboundary": {
+    "general": {
+      "papercliphitanerror": "Paperclip hit an error",
+      "somethingwentwrongwhilerunningtheapp": "Something went wrong while running the app. Reloading usually fixes this.",
+      "reloadpage": "Reload page"
+    }
+  },
+  "cloudaccessgate": {
+    "general": {
+      "noorganizationaccess": "No organization access",
+      "thisaccountissignedinbutit": "This account is signed in, but it does not have an active organization membership or instance-admin access on this Paperclip instance.",
+      "useanorganizationinviteorsignin": "Use an organization invite or sign in with an account that already belongs to this org.",
+      "failedtoloadappstate": "Failed to load app state"
+    }
+  },
+  "codexsubscriptionpanel": {
+    "general": {
+      "codexsubscription": "Codex subscription",
+      "livecodexquotawindows": "Live Codex quota windows.",
+      "accountwindows": "Account windows",
+      "modelwindows": "Model windows",
+      "used": "% used"
+    }
+  },
+  "commandpalette": {
+    "general": {
+      "searchtasksagentsprojects": "Search tasks, agents, projects...",
+      "noquicktaskmatchespress": "No quick task matches. Press",
+      "to": "to",
+      "searchall": "search all",
+      "orkeeptypingtorefine": "or keep typing to refine.",
+      "noresultsfound": "No results found.",
+      "searchallfor": "Search all for",
+      "ldquo": "“",
+      "rdquo": "”",
+      "openfullsearch": "open full search",
+      "createnewtask": "Create new task",
+      "openfileinthisissue": "Open file in this issue...",
+      "gf": "g f",
+      "createnewagent": "Create new agent",
+      "createnewproject": "Create new project",
+      "dashboard": "Dashboard",
+      "inbox": "Inbox",
+      "tasks": "Tasks",
+      "projects": "Projects",
+      "goals": "Goals",
+      "agents": "Agents",
+      "costs": "Costs",
+      "activity": "Activity"
+    }
+  },
+  "commentattributionchip": {
+    "general": {
+      "for": "for"
+    }
+  },
+  "commentthread": {
+    "general": {
+      "copycommentasmarkdown": "Copy comment as markdown",
+      "queued": "Queued",
+      "followup": "Follow-up",
+      "queueing": "Queueing...",
+      "sending": "Sending...",
+      "commentdeleted": "Comment deleted",
+      "run": "run",
+      "run1": "run",
+      "run2": "run",
+      "run3": "run",
+      "status": "Status",
+      "assignee": "Assignee",
+      "workspace": "Workspace",
+      "notimelineentriesyet": "No timeline entries yet.",
+      "run4": "run",
+      "environment": "Environment",
+      "provider": "Provider",
+      "lease": "Lease",
+      "failure": "Failure:",
+      "timeline": "Timeline (",
+      "queuedcomments": "Queued Comments (",
+      "interrupting": "Interrupting...",
+      "interrupt": "Interrupt",
+      "leaveacomment": "Leave a comment...",
+      "attachimage": "Attach image",
+      "responsible": "Responsible",
+      "responsible5": "Responsible",
+      "posting": "Posting...",
+      "comment": "Comment"
+    }
+  },
+  "companysettingssidebarproduction": {
+    "general": {
+      "company": "Company",
+      "general": "General",
+      "profile": "Profile",
+      "members": "Members",
+      "invites": "Invites",
+      "secrets": "Secrets",
+      "environments": "Environments",
+      "access": "Access",
+      "heartbeats": "Heartbeats",
+      "export": "Export",
+      "import": "Import",
+      "experimental": "Experimental",
+      "plugins": "Plugins",
+      "adapters": "Adapters"
+    }
+  },
+  "configurebuiltinagentmodal": {
+    "general": {
+      "setupthe": "Set up the",
+      "creates": "Creates",
+      "inyourrosterbadged": "in your roster, badged",
+      "builtin": "Built-in",
+      "organizationsthatrequirehireapprovalwillqueue": ". Organizations that require hire approval will queue this for the board.",
+      "adaptertype": "Adapter type",
+      "thisadapterneedscommandorendpointfields": "This adapter needs command or endpoint fields before it can run. Provision the built-in row now, then finish those fields from the full agent configuration.",
+      "monthlybudgetoptional": "Monthly budget (optional)",
+      "notnow": "Not now",
+      "configuring": "Configuring…"
+    }
+  },
+  "contextualsidebarframe": {
+    "general": {
+      "organization": "Organization"
+    }
+  },
+  "decisioncard": {
+    "general": {
+      "destructive": "Destructive",
+      "proposedby": "Proposed by",
+      "anagent": "an agent",
+      "whilerunning": "while running",
+      "appliesto": " · applies to ",
+      "viewrun": "view run",
+      "changedsincethiswasproposed": "changed since this was proposed",
+      "optionsthatrequireanunchangedtargetare": "Options that require an unchanged target are disabled below.",
+      "blockedstale": "Blocked · stale",
+      "thiscancelsanentireissuetree": "This cancels an entire issue tree",
+      "willbecancelled": "will be cancelled:",
+      "thisissueandeverysubissuebeneath": "This issue and every sub-issue beneath it will be cancelled.",
+      "type": "Type",
+      "toconfirm": "to confirm.",
+      "typetheissueidentifiertoconfirm": "Type the issue identifier to confirm",
+      "cancel": "Cancel",
+      "notnow": "Not now?",
+      "dismissnoeffects": "Dismiss — no effects",
+      "thedecisionwindowclosed": "The decision window closed",
+      "atargetissuewascancelledbeforethis": "A target issue was cancelled before this was decided.",
+      "alltargetissueswerecompletedbeforethis": "All target issues were completed before this was decided.",
+      "noresponsebeforetheexpirydeadline": "No response before the expiry deadline.",
+      "thisdecisionwaswithdrawnbytheproposer": "This decision was withdrawn by the proposer before a response.",
+      "dismissednoeffectswererun": "Dismissed — no effects were run.",
+      "someeffectsmayalreadyhavebeenapplied": "Some effects may already have been applied. Review the results before asking the proposer to re-propose."
+    }
+  },
+  "decisiondatechips": {
+    "general": {
+      "custom": "Custom",
+      "from": "From",
+      "to": "To",
+      "clear": "Clear"
+    }
+  },
+  "decisionqueuerail": {
+    "general": {
+      "decisionqueues": "Decision queues",
+      "all": "All",
+      "recentactivity": "Recent activity"
+    }
+  },
+  "decisionresolver": {
+    "general": {
+      "loadingdecision": "Loading decision…",
+      "thisdecisionisnolongeravailableit": "This decision is no longer available — it may have been resolved elsewhere."
+    }
+  },
+  "decisionshelf": {
+    "general": {
+      "idle": "Idle",
+      "day": "day",
+      "days": "days",
+      "kept": "Kept",
+      "keepondesk": "Keep on desk"
+    }
+  },
+  "decisiontriagestrip": {
+    "general": {
+      "whentodecide": "When to decide",
+      "whentodecide1": "When to decide",
+      "pickdate": "Pick date",
+      "queues": "Queues",
+      "snoozeduntil": "Snoozed until",
+      "clear": "Clear",
+      "snooze": "Snooze",
+      "queue": "Queue",
+      "newqueuename": "New queue name…",
+      "cancel": "Cancel",
+      "create": "Create",
+      "nootherqueuesyet": "No other queues yet.",
+      "newqueue": "New queue…",
+      "askagentforrecommendation": "Ask agent for recommendation"
+    }
+  },
+  "decisionstoolbar": {
+    "general": {
+      "decision": "decision",
+      "decisions": "decisions",
+      "filter": "Filter",
+      "filter1": "Filter",
+      "group": "Group",
+      "group2": "Group",
+      "sort": "Sort",
+      "sort3": "Sort",
+      "filter4": "Filter",
+      "clear": "Clear",
+      "type": "Type",
+      "severity": "Severity",
+      "project": "Project",
+      "noproject": "No project",
+      "workspace": "Workspace",
+      "noworkspace": "No workspace"
+    }
+  },
+  "devrestartbanner": {
+    "general": {
+      "restartrequired": "Restart Required",
+      "autorestarton": "Auto-Restart On",
+      "changed": "Changed:",
+      "pendingmigrations": "Pending migrations:",
+      "waitingfor": "Waiting for",
+      "tofinish": "to finish",
+      "autorestartwilltriggerwhentheinstance": "Auto-restart will trigger when the instance is idle",
+      "restart": "Restart",
+      "pnpmdevonce": "pnpm dev:once",
+      "aftertheactiveworkissafeto": "after the active work is safe to interrupt",
+      "restartrequested": "Restart requested",
+      "restartnow": "Restart now"
+    }
+  },
+  "documentannotationlayer": {
+    "general": {
+      "openannotationthread": "Open annotation thread",
+      "anchormovedneedsreview": "Anchor moved — needs review",
+      "selectionactions": "Selection actions",
+      "comment": "Comment"
+    }
+  },
+  "documentannotationpanel": {
+    "general": {
+      "commentson": "Comments on",
+      "revision": "revision",
+      "rev": "rev",
+      "closeannotationpanel": "Close annotation panel",
+      "writeacomment": "Write a comment…",
+      "cancel": "Cancel",
+      "posting": "Posting…",
+      "comment": "Comment",
+      "reply": "Reply…",
+      "reopen": "Reopen",
+      "resolve": "Resolve",
+      "sending": "Sending…",
+      "reply1": "Reply",
+      "moreactions": "More actions",
+      "morethreadactions": "More thread actions",
+      "copylink": "Copy link",
+      "comment2": "comment",
+      "s": "s",
+      "agent": "· agent"
+    }
+  },
+  "documentannotationpopover": {
+    "general": {
+      "writeacomment": "Write a comment…",
+      "cancel": "Cancel",
+      "posting": "Posting…",
+      "comment": "Comment"
+    }
+  },
+  "documentdiffmodal": {
+    "general": {
+      "diff": "Diff —",
+      "old": "Old",
+      "selectrevision": "Select revision",
+      "new": "New",
+      "selectrevision1": "Select revision",
+      "loadingrevisions": "Loading revisions...",
+      "selecttworevisionstocompare": "Select two revisions to compare.",
+      "bothsidesarethesamerevision": "Both sides are the same revision.",
+      "old2": "Old",
+      "new3": "New",
+      "content": "Content"
+    }
+  },
+  "documentframeheader": {
+    "general": {
+      "rev": "rev",
+      "revisionhistory": "Revision history",
+      "loadingrevisions": "Loading revisions...",
+      "rev1": "rev",
+      "current": "Current",
+      "norevisionsyet": "No revisions yet",
+      "updated": "updated"
+    }
+  },
+  "emailconnectionaccess": {
+    "general": {
+      "loadingaccess": "Loading access…",
+      "connectionaccesscouldnotbeloaded": "Connection access could not be loaded.",
+      "whichhumanscanusethiscredential": "Which humans can use this credential?",
+      "whichagentscanusethisconnection": "Which agents can use this connection?",
+      "removinganassignedagentstopsreceivingand": "Removing an assigned agent stops receiving and sending from its inbox."
+    }
+  },
+  "emailmessagecard": {
+    "general": {
+      "emailreceived": "Email received",
+      "emailsent": "Email sent",
+      "external": "External",
+      "to": "To:",
+      "cc": "Cc:",
+      "emaildetails": "Email details",
+      "bcc": "Bcc:",
+      "messageid": "Message ID:",
+      "delivered": "Delivered",
+      "deliveryfailed": "Delivery failed",
+      "deliveryuncertain": "Delivery uncertain",
+      "queued": "Queued",
+      "sent": "Sent",
+      "attachmentscouldnotbeloaded": "Attachments could not be loaded."
+    }
+  },
+  "emailsafetynotice": {
+    "general": {
+      "anyonecanemailanunrestrictedinbox": "Anyone can email an unrestricted inbox",
+      "incomingemailcancreatetasksandtrigger": "Incoming email can create tasks and trigger agent work. Set up an allowlist in AgentMail to limit who can contact this inbox.",
+      "paperclipdoesnotverifysenderrestrictionsagentmail": "Paperclip does not verify sender restrictions. AgentMail controls new messages and replies separately; check both lists.",
+      "openagentmail": "Open AgentMail ↗",
+      "setupallowlists": "Set up allowlists ↗"
+    }
+  },
+  "emailtaskactivity": {
+    "general": {
+      "emailsendintent": "Email send intent",
+      "emailreply": "Email reply",
+      "to": "To:",
+      "email": "Email",
+      "resolvedeliveryaftercheckingagentmail": "Resolve delivery after checking AgentMail",
+      "confirmtheoutcomeinagentmailbeforeresolving": "Confirm the outcome in AgentMail before resolving. This action does not resend.",
+      "providermessageid": "Provider message ID",
+      "providermessageid1": "Provider message ID",
+      "confirmsent": "Confirm sent",
+      "confirmnotsent": "Confirm not sent"
+    }
+  },
+  "enforcementbanner": {
+    "general": {
+      "governedtoolcall": "governed tool call",
+      "was": " was",
+      "swere": "s were",
+      "deniedorfailedinthelasthour": "denied or failed in the last hour. Access is enforced server-side by the tool gateway — open the affected connector to review what was blocked and why.",
+      "toolaccessisenforcedserversideby": "Tool access is enforced server-side by the tool gateway. These screens configure and observe that enforcement — they do not replace it. Agents see and call only the tools their profiles and policies allow; everything else is denied by default."
+    }
+  },
+  "executionblockernotice": {
+    "general": {
+      "taskrecovery": "Task recovery",
+      "automaticrecoveryofthistaskstopped": "Automatic recovery of this task stopped.",
+      "recoveryneeded": "Recovery needed. ",
+      "inspectrun": "Inspect run",
+      "retrying": "Retrying…",
+      "retry": "Retry"
+    }
+  },
+  "executionparticipantpicker": {
+    "general": {
+      "no": "No",
+      "assigntome": "Assign to me",
+      "requester": "Requester"
+    }
+  },
+  "executionworkspaceclosedialog": {
+    "general": {
+      "archive": "Archive",
+      "andcleanupanyownedworkspaceartifacts": "and clean up any owned workspace artifacts. Paperclip keeps the workspace record and task history, but removes it from active workspace views.",
+      "checkingwhetherthisworkspaceissafeto": "Checking whether this workspace is safe to close...",
+      "failedtoinspectworkspaceclosereadiness": "Failed to inspect workspace close readiness.",
+      "closeisblocked": "Close is blocked",
+      "closeisallowedwithwarnings": "Close is allowed with warnings",
+      "closeisready": "Close is ready",
+      "thisisasharedworkspacesessionarchiving": "This is a shared workspace session. Archiving it removes this session record but keeps the underlying project workspace.",
+      "thisexecutionworkspacehasitsowncheckout": "This execution workspace has its own checkout path and can be archived independently.",
+      "thisexecutionworkspacecurrentlypointsatthe": "This execution workspace currently points at the project's primary workspace path.",
+      "thisworkspaceisdisposableandcanbe": "This workspace is disposable and can be archived.",
+      "blockingtasks": "Blocking tasks",
+      "blockingreasons": "Blocking reasons",
+      "warnings": "Warnings",
+      "gitstatus": "Git status",
+      "branch": "Branch",
+      "unknown": "Unknown",
+      "baseref": "Base ref",
+      "notset": "Not set",
+      "mergedintobase": "Merged into base",
+      "unknown1": "Unknown",
+      "yes": "Yes",
+      "no": "No",
+      "aheadbehind": "Ahead / behind",
+      "dirtytrackedfiles": "Dirty tracked files",
+      "untrackedfiles": "Untracked files",
+      "otherlinkedtasks": "Other linked tasks",
+      "attachedruntimeservices": "Attached runtime services",
+      "cleanupactions": "Cleanup actions",
+      "cleanuppreviouslyfailedonthisworkspaceretrying": "Cleanup previously failed on this workspace. Retrying close will rerun the cleanup flow and update the workspace status if it succeeds.",
+      "thisworkspaceisalreadyarchived": "This workspace is already archived.",
+      "reporoot": "Repo root:",
+      "workspacepath": "Workspace path:",
+      "lastchecked": "Last checked",
+      "cancel": "Cancel"
+    }
+  },
+  "feedcard": {
+    "general": {
+      "review": "Review →"
+    }
+  },
+  "filetree": {
+    "general": {
+      "error": "error",
+      "retry": "Retry",
+      "nofiles": "No files",
+      "fileswillappearherewhentheyare": "Files will appear here when they are available."
+    }
+  },
+  "fileviewersheet": {
+    "general": {
+      "line": "Line",
+      "loadingfiledetails": "Loading file details",
+      "imagepreviewunavailable": "Image preview unavailable",
+      "videopreviewunavailable": "Video preview unavailable",
+      "previewnotsupportedforthisfiletype": "Preview not supported for this file type",
+      "markdownpreviewmode": "Markdown preview mode",
+      "showrenderedmarkdown": "Show rendered Markdown",
+      "renderedmarkdown": "Rendered Markdown",
+      "showrawmarkdown": "Show raw Markdown",
+      "rawmarkdown": "Raw Markdown",
+      "loadingfilepreview": "Loading file preview",
+      "loadingfilepreview1": "Loading file preview...",
+      "backtofiles": "Back to files",
+      "backtofiles2": "Back to files",
+      "downloadfile": "Download file",
+      "downloadfile3": "Download file",
+      "closefileviewer": "Close file viewer",
+      "close": "Close",
+      "resizefiletree": "Resize file tree",
+      "filenotfound": "File not found",
+      "tryprojectworkspace": "Try project workspace",
+      "retry": "Retry",
+      "noworkspaceavailable": "No workspace available",
+      "retry4": "Retry",
+      "remoteworkspacepreviewcomingsoon": "Remote workspace preview coming soon",
+      "retry5": "Retry"
+    }
+  },
+  "filterbar": {
+    "general": {
+      "clearall": "Clear all"
+    }
+  },
+  "financebillercard": {
+    "general": {
+      "event": "event",
+      "s": "s",
+      "across": "across",
+      "kind": "kind",
+      "s1": "s",
+      "net": "net",
+      "debits": "debits",
+      "credits": "credits",
+      "estimated": "estimated"
+    }
+  },
+  "financekindcard": {
+    "general": {
+      "financialeventmix": "Financial event mix",
+      "accountlevelchargesgroupedbyeventkind": "Account-level charges grouped by event kind.",
+      "nofinanceeventsinthisperiod": "No finance events in this period.",
+      "event": "event",
+      "biller": "biller",
+      "debits": "debits"
+    }
+  },
+  "financetimelinecard": {
+    "general": {
+      "recentfinancialevents": "Recent financial events",
+      "topupsfeescreditscommitmentsandother": "Top-ups, fees, credits, commitments, and other non-request charges.",
+      "invoice": "invoice",
+      "region": "region",
+      "tier": "tier",
+      "estimated": "estimated"
+    }
+  },
+  "frontmatterpanel": {
+    "general": {
+      "frontmatter": "Frontmatter",
+      "none": "None",
+      "fields": "Fields",
+      "fields1": "Fields",
+      "switchtoyamltoeditthisfrontmatter": "Switch to YAML to edit. This frontmatter uses YAML features the form can't safely round-trip (e.g. comments, anchors, or custom ordering). Editing here keeps it byte-for-byte.",
+      "addfrontmatter": "Add frontmatter",
+      "issue": "issue",
+      "issues": "issues",
+      "thisfilehasnofrontmatter": "This file has no frontmatter.",
+      "name": "name",
+      "description": "description",
+      "allowedtools": "allowed-tools",
+      "expectedalisteditinyaml": "Expected a list — edit in YAML.",
+      "addatool": "Add a tool…",
+      "metadata": "metadata",
+      "complexvalueeditinyaml": "Complex value — edit in YAML.",
+      "complexvalueeditinyaml2": "Complex value — edit in YAML.",
+      "key": "key",
+      "value": "value",
+      "addfield": "add field",
+      "addtool": "Add tool",
+      "editingrawyamltopreserveformattingthe": "Editing raw YAML to preserve formatting the form can't reconstruct.",
+      "frontmatteryaml": "Frontmatter YAML",
+      "rawyamlisthesourceoftruth": "Raw YAML is the source of truth in this mode."
+    }
+  },
+  "githubagenttrustwarning": {
+    "general": {
+      "isnotconfiguredforlowtrustreview": "is not configured for low-trust review",
+      "githubcommentsandpullrequestscancontain": "GitHub comments and pull requests can contain malicious instructions. We recommend a low-trust agent with a scoped work boundary and an isolated sandbox runtime.",
+      "continuingkeepsthisagentscurrentpermissions": "Continuing keeps this agent’s current permissions. A restricted guest profile does not replace the agent’s trust and runtime settings.",
+      "learnaboutlowtrustagents": "Learn about low-trust agents"
+    }
+  },
+  "goalproperties": {
+    "general": {
+      "status": "Status",
+      "level": "Level",
+      "owner": "Owner",
+      "none": "None",
+      "parentgoal": "Parent Goal",
+      "created": "Created",
+      "updated": "Updated"
+    }
+  },
+  "goaltree": {
+    "general": {
+      "nogoals": "No goals."
+    }
+  },
+  "honeycombrunlink": {
+    "general": {
+      "openthisrunstaskruntrace": "Open this run's task.run trace query in Honeycomb",
+      "viewinhoneycomb": "View in Honeycomb"
+    }
+  },
+  "imagegallerymodal": {
+    "general": {
+      "download": "Download",
+      "close": "Close",
+      "previous": "Previous",
+      "next": "Next"
+    }
+  },
+  "inlineeditor": {
+    "general": {
+      "autosaving": "Autosaving...",
+      "saved": "Saved",
+      "couldnotsave": "Could not save",
+      "idle": "Idle"
+    }
+  },
+  "issueassignedbacklognotice": {
+    "general": {
+      "parked": "Parked",
+      "willnotbeaskedtoworkon": "will not be asked to work on this until status changes to To do or In progress.",
+      "commentsstillnotifytheassigneeforquestions": "Comments still notify the assignee for questions or triage. Leave this parked only if the work is intentionally on hold.",
+      "resuming": "Resuming…",
+      "resumenow": "Resume now"
+    }
+  },
+  "issueattachmentssection": {
+    "general": {
+      "browsegallery": "Browse gallery",
+      "openinnewtab": "Open in new tab",
+      "download": "Download",
+      "deleteattachment": "Delete attachment",
+      "attachment": "Attachment ·",
+      "loadingpreview": "Loading preview...",
+      "couldnotloadmarkdownpreview": "Could not load markdown preview.",
+      "attachment1": "Attachment ·",
+      "attachments": "Attachments",
+      "delete": "Delete?",
+      "yes": "Yes",
+      "no": "No",
+      "deleteattachment2": "Delete attachment",
+      "deletethisattachmentthiscannotbeundone": "Delete this attachment? This cannot be undone.",
+      "cancel": "Cancel",
+      "deleting": "Deleting...",
+      "delete3": "Delete"
+    }
+  },
+  "issueblockednotice": {
+    "general": {
+      "paperclipwillasktheassigneetochoose": "Paperclip will ask the assignee to choose the next step",
+      "retrynowstartsthatfollowupimmediately": ". Retry now starts that follow-up immediately.",
+      "retrying": "Retrying...",
+      "alreadypromoted": "Already promoted",
+      "promoted": "Promoted",
+      "retrynow": "Retry now",
+      "running": "running",
+      "acorrectionrunisinprogressthe": "A correction run is in progress — the agent is working. This alert returns if the run stops without choosing a next step.",
+      "run": "run",
+      "run1": "run",
+      "waitingonlivework": "Waiting on live work",
+      "queuedbehind": "Queued behind",
+      "beingworkedinorderthistaskresumes": "being worked in order. This task resumes automatically when the chain is done. Comments still notify the assignee.",
+      "of": "of",
+      "done": "done",
+      "blockerchainprogress": "Blocker chain progress",
+      "thistaskresumesautomaticallywhenthechain": "This task — resumes automatically when the chain is done",
+      "nowrunning": "Now running",
+      "blockedbyparkedwork": "Blocked by parked work",
+      "thistaskstillneedsanextstep": "This task still needs a next step.",
+      "arunfinishedsuccessfullybutthetask": "A run finished successfully, but the task is still open. Paperclip needs someone to choose what happens next.",
+      "markitdoneorcancelled": "Mark it done or cancelled.",
+      "senditforrevieworaskfor": "Send it for review or ask for input.",
+      "recordwhatisblockingitandwho": "Record what is blocking it and who owns that blocker.",
+      "delegatefollowupworkorqueuea": "Delegate follow-up work or queue a continuation.",
+      "run2": "run",
+      "run3": "run",
+      "asked": "Asked",
+      "theassignee": "the assignee",
+      "tochoosethenextstep": "to choose the next step",
+      "detectedprogress": "Detected progress:",
+      "workonthistaskisblockedby": "Work on this task is blocked by",
+      "butthechainisstalledinreview": ", but the chain is stalled in review without a clear next step. Resolve the stalled reviews below or remove them as blockers.",
+      "workonthistaskisblockedby4": "Work on this task is blocked by",
+      "butthechainisstalledinreview5": ", but the chain is stalled in review without a clear next step. Resolve the stalled review below or remove it as a blocker.",
+      "amessagewonrsquotrestartthis": "A message won’t restart this task yet — it stays blocked by",
+      "until": "until",
+      "itis": "it is",
+      "theyare": "they are",
+      "donethenitreopensautomaticallycommentsstill": "done, then it reopens automatically. Comments still notify",
+      "forquestionsortriageinthemeantime": "for questions or triage in the meantime.",
+      "workonthistaskisblockedby6": "Work on this task is blocked by",
+      "until7": "until",
+      "itis8": "it is",
+      "theyare9": "they are",
+      "completecommentsstillnotifytheassigneefor": "complete. Comments still notify the assignee for questions or triage.",
+      "workonthistaskisblockeduntil": "Work on this task is blocked until someone moves it back to To do. Comments still notify the assignee for questions or triage.",
+      "stillblockedby": "Still blocked by",
+      "task": "task",
+      "tasks": "tasks",
+      "stalledinreview": "Stalled in review",
+      "ultimatelywaitingon": "Ultimately waiting on",
+      "blockedbyparkedwork10": "Blocked by parked work"
+    }
+  },
+  "issuecasespanel": {
+    "general": {
+      "cases": "Cases"
+    }
+  },
+  "issuechatthread": {
+    "general": {
+      "ispaused": "is paused.",
+      "newrunswillnotstartuntilthe": "New runs will not start until the agent is resumed.",
+      "chatrendererhitaninternalstateerror": "Chat renderer hit an internal state error.",
+      "showingasafefallbacktranscriptinsteadof": "Showing a safe fallback transcript instead of crashing the tasks page.",
+      "nomessagecontent": "No message content.",
+      "copy": "Copy",
+      "copy1": "Copy",
+      "input": "Input",
+      "input2": "Input",
+      "result": "Result",
+      "providerreported": "(provider-reported)",
+      "model": "Model",
+      "followup": "Follow-up",
+      "cancel": "Cancel",
+      "commentdeleted": "Comment deleted",
+      "sentfromimessage": "Sent from iMessage",
+      "sending": "Sending...",
+      "copymessage": "Copy message",
+      "copymessage3": "Copy message",
+      "deletecomment": "Delete comment",
+      "deletecomment4": "Delete comment",
+      "deletecomment5": "Delete comment?",
+      "thiswillreplacethecommentwitha": "This will replace the comment with a deleted-comment marker.",
+      "cancel6": "Cancel",
+      "deletecomment7": "Delete comment",
+      "copymessage8": "Copy message",
+      "copymessage9": "Copy message",
+      "moreactions": "More actions",
+      "moreactions10": "More actions",
+      "copymessage11": "Copy message",
+      "viewrun": "View run",
+      "followup12": "Follow-up",
+      "commentdeleted13": "Comment deleted",
+      "followup14": "Follow-up",
+      "running": "Running",
+      "commentdeleted15": "Comment deleted",
+      "helpful": "Helpful",
+      "helpful16": "Helpful",
+      "needswork": "Needs work",
+      "needswork17": "Needs work",
+      "whatcouldhavebeenbetter": "What could have been better?",
+      "addashortnote": "Add a short note",
+      "dismiss": "Dismiss",
+      "saving": "Saving...",
+      "savenote": "Save note",
+      "saveyourfeedbacksharingpreference": "Save your feedback sharing preference",
+      "choosewhethervotedaioutputscanbe": "Choose whether voted AI outputs can be shared with Paperclip Labs. This answer becomes the default for future thumbs up and thumbs down votes.",
+      "thisvoteisalwayssavedlocally": "This vote is always saved locally.",
+      "choose": "Choose",
+      "alwaysallow": "Always allow",
+      "tosharethisvoteandfuturevoted": "to share this vote and future voted AI outputs. Choose",
+      "dontallow": "Don't allow",
+      "tokeepthisvoteandfuturevotes": "to keep this vote and future votes local.",
+      "youcanchangethislaterinsettings": "You can change this later in Settings > General.",
+      "readourtermsofservice": "Read our terms of service",
+      "saving18": "Saving...",
+      "dontallow19": "Don't allow",
+      "saving20": "Saving...",
+      "alwaysallow21": "Always allow",
+      "updatedthistask": "updated this task",
+      "noadditionaldetails": "No additional details.",
+      "staledispositionwarning": "Stale disposition warning",
+      "copylink": "Copy link",
+      "copylinktosystemnotice": "Copy link to system notice",
+      "copynoticetext": "Copy notice text",
+      "copysystemnotice": "Copy system notice",
+      "requestedfollowup": "requested follow-up",
+      "updatedthistask22": "updated this task",
+      "status": "Status",
+      "assignee": "Assignee",
+      "workspace": "Workspace",
+      "run": "run",
+      "deletedthiscomment": "deleted this comment",
+      "droptoupload": "Drop to upload",
+      "imagesinsertintothereplyotherfiles": "Images insert into the reply. Other files are added to this task.",
+      "wecouldntconfirmwhetherthiscomment": "We couldn’t confirm whether this comment was saved. It may already be in the conversation. Review it before starting another draft.",
+      "reviewconversation": "Review conversation",
+      "couldntrefreshtheconversationtryreviewing": "Couldn’t refresh the conversation. Try reviewing it again.",
+      "discardingthisdraftdoesnotremoveany": "Discarding this draft does not remove any saved comment or uploaded file.",
+      "discarddraftandstartnew": "Discard draft and start new",
+      "reply": "Reply",
+      "attachfile": "Attach file",
+      "cmdctrlcyclesmodes": "Cmd/Ctrl+. cycles modes",
+      "responsible": "Responsible",
+      "responsible23": "Responsible",
+      "stopresponse": "Stop response",
+      "noresponsibleselected": "No responsible selected",
+      "thiscommentwillbepostedwithoutan": "This comment will be posted without an assignee, so no agent will be woken to act on it. Go back to pick a responsible, or send anyway.",
+      "goback": "Go back",
+      "sendanyway": "Send anyway",
+      "jumptolatest": "Jump to latest",
+      "legacyrecoverytask": "Legacy recovery task",
+      "legacyrecoverytasknewerrecoveryactionslive": "Legacy recovery task. Newer recovery actions live on the source task",
+      "agent": "Agent",
+      "you": "You",
+      "system": "System",
+      "itwaspausedbyabudgethardstop": "It was paused by a budget hard stop.",
+      "itarrivedpausedfromanorganizationimport2": "It arrived paused from an organization import — imported agents stay parked until you resume them.",
+      "itwaspausedbythesystem": "It was paused by the system.",
+      "itwaspausedmanually": "It was paused manually.",
+      "resuming": "Resuming…",
+      "resumeagent": "Resume agent",
+      "board": "Board",
+      "deferredwake": "Deferred wake",
+      "queuedbadge": "Queued",
+      "working": "Working",
+      "worked": "Worked",
+      "forduration": "for {{duration}}",
+      "copyfailed": "Copy failed",
+      "unabletocopytext": "Unable to copy text",
+      "unabletocopymessage": "Unable to copy message",
+      "unabletocopysystemnotice": "Unable to copy system notice",
+      "unabletocopysystemnoticelink": "Unable to copy system notice link",
+      "provideractivity": "Provider activity",
+      "childagent": "Child agent",
+      "unavailablesource": "Unavailable source",
+      "interrupting": "Interrupting...",
+      "interrupt": "Interrupt",
+      "attachedtotask": "Attached to task",
+      "commentfallback": "Comment",
+      "expiredconfirmation": "Expired confirmation",
+      "hideconfirmation": "Hide confirmation",
+      "insertedinline": "Inserted inline",
+      "noresponsible": "No responsible",
+      "noresponsiblefound": "No responsible found.",
+      "posting": "Posting...",
+      "searchresponsible": "Search responsible...",
+      "send": "Send",
+      "stopping": "Stopping...",
+      "stoprun": "Stop run",
+      "thisfiletypecannotbeattachedhere": "This file type cannot be attached here",
+      "uploadfailed": "Upload failed",
+      "uploadingtotask": "Uploading to task",
+      "user": "User"
+    }
+  },
+  "issuecolumns": {
+    "general": {
+      "columns": "Columns",
+      "desktoptaskrows": "Desktop task rows",
+      "dategroupseparators": "Date group separators",
+      "showtodayyesterdayandearlierruleson": "Show Today, Yesterday, and Earlier rules on newest-first task lists.",
+      "resetdefaults": "Reset defaults",
+      "statusidupdated": "status, id, updated",
+      "live": "Live",
+      "livebelow": "live below",
+      "unassigned": "Unassigned",
+      "unknown": "Unknown",
+      "noproject": "No project",
+      "filterbyworkspace": "Filter by workspace",
+      "subtask": "Sub-task"
+    }
+  },
+  "issuecontinuationhandoff": {
+    "general": {
+      "handoff": "handoff",
+      "updated": "Updated",
+      "copied": "Copied",
+      "copy": "Copy"
+    }
+  },
+  "issuedocumentannotations": {
+    "general": {
+      "comment": "comment",
+      "comments": "comments"
+    }
+  },
+  "issuedocumentssection": {
+    "general": {
+      "newdocument": "New document",
+      "new": "New",
+      "documents": "Documents",
+      "newdocument1": "New document",
+      "new2": "New",
+      "documentkey": "Document key",
+      "optionaltitle": "Optional title",
+      "markdownbody": "Markdown body",
+      "cancel": "Cancel",
+      "saving": "Saving...",
+      "createdocument": "Create document",
+      "lockeddocument": "Locked document",
+      "lockeddocument3": "Locked document",
+      "documentactions": "Document actions",
+      "editdocument": "Edit document",
+      "downloaddocument": "Download document",
+      "viewdiff": "View diff",
+      "deletedocument": "Delete document",
+      "viewingrevision": "Viewing revision",
+      "thisisahistoricalpreviewrestoringit": "This is a historical preview. Restoring it creates a new latest revision and keeps history append-only.",
+      "returntolatest": "Return to latest",
+      "outofdate": "Out of date",
+      "thisdocumentchangedwhileyouwereediting": "This document changed while you were editing. Your local draft is preserved and autosave is paused.",
+      "keepmydraft": "Keep my draft",
+      "reloadremote": "Reload remote",
+      "remoterevision": "Remote revision",
+      "updated": "updated",
+      "optionaltitle4": "Optional title",
+      "markdownbody5": "Markdown body",
+      "deletethisdocumentthiscannotbeundone": "Delete this document? This cannot be undone.",
+      "cancel6": "Cancel"
+    }
+  },
+  "issuefieldchangereceipt": {
+    "general": {
+      "preview": "preview",
+      "for": "for",
+      "authorizedby": "authorized by"
+    }
+  },
+  "issuelinkquicklook": {
+    "general": {
+      "unabletoloadtaskpreview": "Unable to load task preview."
+    }
+  },
+  "issuemonitorbanner": {
+    "general": {
+      "checking": "Checking…",
+      "checknow": "Check now",
+      "youcankeepsendinginstructionswhilethe": "You can keep sending instructions while the agent waits.",
+      "sendingareplywakestheagentnow": "Sending a reply wakes the agent now — before the scheduled check."
+    }
+  },
+  "issueplandecompositionssection": {
+    "general": {
+      "completed": "Completed",
+      "inflight": "In flight",
+      "plandecomposition": "Plan decomposition",
+      "1acceptedplanrevision": "1 accepted plan revision",
+      "plan": "Plan",
+      "of": "of",
+      "child": "child",
+      "created": "created",
+      "repeatattemptswiththisfingerprintreusethis": "Repeat attempts with this fingerprint reuse this record instead of creating new children",
+      "idempotentclaim": "Idempotent claim",
+      "owner": "Owner:",
+      "started": "Started",
+      "completed1": "Completed",
+      "updated": "Updated",
+      "plandocument": "Plan document"
+    }
+  },
+  "issuerecoveryactioncard": {
+    "general": {
+      "detachedunknown": "detached / unknown",
+      "divergencediagnosis": "Divergence diagnosis",
+      "expectedrecorded": "Expected · recorded",
+      "livecheckedout": "Live · checked out",
+      "worktreeclaimedby": "Worktree claimed by",
+      "activerun": "(active run)",
+      "claimheld": "(claim held)",
+      "thelosslessrepaircanapostrun": "— the lossless repair can't run while another workspace holds the live branch.",
+      "iaposveverifiedthisreconcileanyway": "I've verified this — reconcile anyway",
+      "breakglassreconciliation": "Break-glass reconciliation",
+      "thisoverridespaperclipaposssafetycheck": "This overrides Paperclip's safety check and points the recorded workspace at the live branch",
+      "withoutanancestryproof": "without an ancestry proof",
+      "confirmthedivergencebelowandrecordwhy": ". Confirm the divergence below and record why before continuing.",
+      "recordedexpected": "Recorded · expected",
+      "detached": "detached",
+      "livecheckedout1": "Live · checked out",
+      "detached2": "detached",
+      "ancestryverdict": "Ancestry verdict",
+      "reason": "Reason",
+      "requiredrecordedintheauditlog": "(required — recorded in the audit log)",
+      "egverifiedthelivebranchcarries": "e.g. Verified the live branch carries only the intended follow-up commits; safe to adopt.",
+      "reconciling": "Reconciling…",
+      "reconcileanywaybreakglass": "Reconcile anyway (break-glass)",
+      "repairworkspacequarantinechangesamprestorebranch": "Repair workspace — quarantine changes & restore branch",
+      "repairworkspace": "Repair workspace",
+      "thisislosslessnoreasonrequiredyour": "This is lossless — no reason required. Your uncommitted changes are committed onto a fresh rescue branch, then the recorded branch is restored so the task can resume. The live branch is left exactly as it is.",
+      "dirtychanges": "Dirty changes",
+      "livebranch": "Live branch",
+      "detached3": "detached",
+      "leftuntouched": "(left untouched)",
+      "rescuebranch": "Rescue branch",
+      "lttimestampgt": "<timestamp>",
+      "restoreto": "Restore to",
+      "recordedbranch": "recorded branch",
+      "repairing": "Repairing…",
+      "quarantinechangesrestorebranch": "Quarantine changes & restore branch",
+      "run": "run",
+      "taskowner": "Task owner",
+      "keepsthistask": "keeps this task",
+      "recoveryowner": "Recovery owner",
+      "originalownerretryingitself": "Original owner — retrying itself",
+      "repairsthenextsteponly": "repairs the next step only",
+      "board": "Board",
+      "decidesthenextsteponly": "decides the next step only",
+      "user": "user",
+      "unassignedpickonetowakethem": "unassigned — pick one to wake them",
+      "retryprogress": "Retry progress",
+      "attemptsnotbounded": "Attempts not bounded",
+      "attemptrunningnow": "Attempt running now",
+      "retrymissed": "Retry missed",
+      "nexttrynow": "Next try now",
+      "automaticretriesusedup": "Automatic retries used up",
+      "ownerretries": "Owner retries",
+      "theoriginalownerused": "The original owner used",
+      "of": "of",
+      "automaticattempts": "automatic attempts.",
+      "owner": "Owner",
+      "recovery": "Recovery:",
+      "board4": "Board",
+      "user5": "user",
+      "system": "System",
+      "unassignedpickonetowakethem6": "unassigned — pick one to wake them",
+      "returnsto": "→ Returns to:",
+      "sourcerun": "Source run",
+      "correctiverun": "Corrective run",
+      "evidence": "Evidence",
+      "nextaction": "Next action",
+      "followup": "Follow-up",
+      "attempt": "attempt",
+      "of7": "of",
+      "timesout": "Times out",
+      "soon": "soon",
+      "resolution": "Resolution",
+      "resolvedas": "Resolved as",
+      "resolverecovery": "Resolve recovery",
+      "resolve": "Resolve…",
+      "resolverecovery8": "Resolve recovery",
+      "reconcileforwardampcontinue": "Reconcile forward & continue",
+      "reissueonisolatedworkspace": "Re-issue on isolated workspace",
+      "recommended": "Recommended",
+      "reissueonisolatedworkspace9": "Re-issue on isolated workspace",
+      "createsafreshcopyofthistask": "Creates a fresh copy of this task on an isolated git worktree based on the live branch. Your current workspace and its commits are left untouched.",
+      "baseref": "Base ref",
+      "recorded": "Recorded",
+      "ancestry": "Ancestry",
+      "creating": "Creating…",
+      "createisolatedreissue": "Create isolated re-issue",
+      "recoveryisobservingwithoutinterruptingthelive": "Recovery is observing without interrupting the live run.",
+      "thecardstaysopenuntilanexplicit": "The card stays open until an explicit decision is recorded."
+    }
+  },
+  "issuereferenceactivitysummary": {
+    "general": {
+      "addedreferences": "Added references",
+      "removedreferences": "Removed references"
+    }
+  },
+  "issuerelatedworkpanel": {
+    "general": {
+      "externalobjects": "External objects",
+      "remoteworkreferencedfromthisissuepull": "Remote work referenced from this issue — pull requests, deployments, tickets in other systems, and more.",
+      "couldntloadexternalobjects": "Couldn't load external objects.",
+      "retry": "Retry",
+      "loadingexternalobjects": "Loading external objects…",
+      "thisissuedoesnotreferenceanyexternal": "This issue does not reference any external objects yet.",
+      "references": "References",
+      "referencedby": "Referenced by"
+    }
+  },
+  "issuerunledger": {
+    "general": {
+      "taskrunledger": "Task run ledger",
+      "runledger": "Run ledger",
+      "waitingforthefirstrunrecord": "Waiting for the first run record.",
+      "norunslinkedyet": "No runs linked yet.",
+      "latestrun": "Latest run",
+      "childwork": "Child work",
+      "more": "more",
+      "criticaloutputsilence": "Critical output silence",
+      "outputsilencewatchdogwarning": "Output silence watchdog warning",
+      "latestactiverunhasbeensilentfor": "Latest active run has been silent for",
+      "anextendedperiod": "an extended period",
+      "review": "Review",
+      "forrecoverycontext": "for recovery context.",
+      "thissignalisinformationalpaperclipdidnot": "This signal is informational. Paperclip did not create new delegated recovery work.",
+      "thissignalisinformationalpaperclipdidnot1": "This signal is informational. Paperclip did not create or assign a recovery task.",
+      "continuemonitoring": "Continue monitoring",
+      "snooze1h": "Snooze 1h",
+      "markfalsepositive": "Mark false positive",
+      "runsandactivitywillappearhereonce": "Runs and activity will appear here once this task has history.",
+      "historicalrunswithoutlivenessmetadatawillappear": "Historical runs without liveness metadata will appear here once linked to this task.",
+      "run": "Run",
+      "by": "by",
+      "onbehalfof": "on behalf of",
+      "live": "live",
+      "exhausted": "Exhausted",
+      "inspectrun": "Inspect run",
+      "elapsed": "Elapsed",
+      "lastusefulaction": "Last useful action",
+      "stop": "Stop",
+      "retryof": "Retry of",
+      "nextaction": "Next action:",
+      "olderitemsnotshown": "older items not shown"
+    }
+  },
+  "issuescheduledretrycard": {
+    "general": {
+      "waitingforworkspace": "Waiting for workspace",
+      "anothertaskisusingthisworkspacework": "Another task is using this workspace. Work starts automatically when it is available.",
+      "attempt": "Attempt",
+      "replacesrun": "Replaces run",
+      "lastattemptfailed": "Last attempt failed:",
+      "paperclipwillretryautomatically": ". Paperclip will retry automatically.",
+      "retrying": "Retrying…",
+      "alreadypromoted": "Already promoted",
+      "promoted": "Promoted",
+      "retrynow": "Retry now",
+      "promotingscheduledretry": "Promoting scheduled retry",
+      "alreadypromotedrunstarting": "Already promoted — run starting",
+      "promotedrunstarting": "Promoted — run starting",
+      "couldntretrynow": "Couldn't retry now",
+      "tryagain": "Try again"
+    }
+  },
+  "issuesiblingnavigation": {
+    "general": {
+      "subtasknavigation": "Sub-task navigation"
+    }
+  },
+  "issuethreadinteractioncard": {
+    "general": {
+      "childtask": "Child task",
+      "skipped": "Skipped",
+      "responsible": "Responsible",
+      "billing": "Billing",
+      "project": "Project",
+      "label": "Label",
+      "1followontaskhiddeninpreview": "1 follow-on task hidden in preview",
+      "1draftissue": "1 draft issue",
+      "defaultparent": "Default parent",
+      "resolutionsummary": "Resolution summary",
+      "issue": "issue",
+      "issues": "issues",
+      "issue1": "issue",
+      "issues2": "issues",
+      "rejectionreason": "Rejection reason",
+      "issue3": "issue",
+      "issues4": "issues",
+      "issue5": "issue",
+      "issues6": "issues",
+      "willbeskippedifyouacceptthis": "will be skipped if you accept this interaction.",
+      "accepting": "Accepting...",
+      "acceptdrafts": "Accept drafts",
+      "acceptselecteddrafts": "Accept selected drafts",
+      "reject": "Reject",
+      "resetselection": "Reset selection",
+      "addashortreasonforrejectingthis": "Add a short reason for rejecting this suggestion",
+      "saving": "Saving...",
+      "saverejection": "Save rejection",
+      "askuserquestions": "Ask user questions",
+      "1question": "1 question",
+      "question": "Question",
+      "typeyouranswer": "Type your answer",
+      "other": "Other",
+      "typeyouranswer7": "Type your answer",
+      "submitonceafteryoufinishthefull": "Submit once after you finish the full form.",
+      "cancelling": "Cancelling...",
+      "cancelquestion": "Cancel question",
+      "submitting": "Submitting...",
+      "submitanswers": "Submit answers",
+      "questionwithdrawn": "Question withdrawn",
+      "questionswithdrawn": "Questions withdrawn",
+      "questioncancelled": "Question cancelled",
+      "noanswerwasrecorded": "No answer was recorded.",
+      "questionexpiredwhentheissueclosed": "Question expired when the issue closed",
+      "questionsexpiredwhentheissueclosed": "Questions expired when the issue closed",
+      "questionexpiredbycomment": "Question expired by comment",
+      "questionsexpiredbycomment": "Questions expired by comment",
+      "thisquestionrequestexpiredautomaticallywhenthe": "This question request expired automatically when the issue reached a terminal state.",
+      "alaterboardusercommentsupersededthis": "A later board/user comment superseded this question request. Create a fresh request if answers are still needed.",
+      "jumptocomment": "Jump to comment",
+      "answer": "Answer",
+      "noanswerrecorded": "No answer recorded.",
+      "submittedsummary": "Submitted summary",
+      "confirmed": "Confirmed",
+      "agentresumefailed": "Agent resume failed",
+      "paperclipneedsattentionbeforetheagentcan": "Paperclip needs attention before the agent can resume this approved work.",
+      "latestcause": "Latest cause:",
+      "confirmed8": "Confirmed",
+      "declined": "Declined",
+      "withdrawn": "Withdrawn",
+      "expiredbycomment": "Expired by comment",
+      "expiredbytargetchange": "Expired by target change",
+      "aboardcommentsupersededthisconfirmationbefore": "A board comment superseded this confirmation before it was resolved.",
+      "thisconfirmationexpiredautomaticallywhentheissue": "This confirmation expired automatically when the issue reached a terminal state.",
+      "therequestedtargetchangedbeforethisconfirmation": "The requested target changed before this confirmation was resolved.",
+      "jumptocomment9": "Jump to comment",
+      "thisrequestcouldnotberesolvedtry": "This request could not be resolved. Try again or create a new request.",
+      "viewresult": "View result",
+      "declining": "Declining…",
+      "decline": "Decline",
+      "approverequest": "Approve request",
+      "saving10": "Saving…",
+      "approving": "Approving…",
+      "approverun": "Approve & run",
+      "approvaloptions": "Approval options",
+      "alwaysallow": "Always allow",
+      "bindanexistingsecret": "Bind an existing secret",
+      "sourcesecret": "Source secret",
+      "targetagent": "Target agent",
+      "newconfigpath": "New config path",
+      "approvedby": "Approved by",
+      "creatingthebinding": "— creating the binding",
+      "paperclipisrecheckingauthorityandthe": "Paperclip is re-checking authority and the proposal snapshot before writing.",
+      "bindingcreatedapprovedby": "Binding created · approved by",
+      "thetargetagentcannowusethe": "The target agent can now use the proposed config path",
+      "failedbindingwasnotcreated": "FAILED · binding was not created",
+      "therequestwasacceptedbutexecutionfailed": "The request was accepted, but execution failed closed. No secret value was exposed.",
+      "errorcode": "Error code",
+      "rejectedby": "Rejected by",
+      "thebindingwasnotcreated": "The binding was not created.",
+      "proposalexpired": "Proposal expired",
+      "thebindingwasnotcreatedafresh": "The binding was not created. A fresh proposal is required.",
+      "expires": "Expires",
+      "approving11": "Approving…",
+      "rejecting": "Rejecting…",
+      "addanotedescribingthechangesyou": "Add a note describing the changes you want.",
+      "cancel": "Cancel",
+      "sending": "Sending…",
+      "sendrevision": "Send revision",
+      "connect": "Connect",
+      "saving12": "Saving…",
+      "notnow": "Not now",
+      "connectedby": "Connected by",
+      "uploading": "Uploading...",
+      "attachscreenshots": "Attach screenshots",
+      "confirmedwithnooptionsselected": "Confirmed with no options selected",
+      "option": "option",
+      "options": "options",
+      "selected": "Selected",
+      "showless": "Show less",
+      "thisrequestcouldnotberesolvedtry13": "This request could not be resolved. Try again or create a new request.",
+      "selectall": "Select all",
+      "clearselection": "Clear selection",
+      "selectableoptions": "Selectable options",
+      "open": "Open",
+      "chooseaverdict": "Choose a verdict",
+      "thisreviewexpiredafteralatercomment": "This review expired after a later comment.",
+      "thisreviewexpiredafterthetargetchanged": "This review expired after the target changed.",
+      "thisreviewexpired": "This review expired.",
+      "1itemwas": "1 item was",
+      "alreadyappliedandcannotberevertedremaining": "already applied and cannot be reverted. Remaining items were cancelled.",
+      "itemstoreview": "Items to review",
+      "applying": "Applying…",
+      "notdecided": "Not decided",
+      "givetheagentareasonsoit": "Give the agent a reason so it can act on this item.",
+      "areasonisrequiredto": "A reason is required to",
+      "thisitem": "this item.",
+      "decided": "decided ·",
+      "approved": "approved ·",
+      "rejected": "rejected",
+      "s": "s",
+      "markverdictsthenapplytheminone": "Mark verdicts, then apply them in one pass.",
+      "approveall": "Approve all",
+      "applying14": "Applying…",
+      "reasonneeded": "Reason needed",
+      "of": "of",
+      "decided15": "decided",
+      "secretbinding": "Secret binding",
+      "plan": "Plan",
+      "for": "For",
+      "directedto": "Directed to",
+      "agentaddressedinteractionsareownedbythat": ". Agent-addressed interactions are owned by that agent and are kept out of the open organization attention feed.",
+      "suggestedtasktree": "Suggested task tree",
+      "questionsfortheoperator": "Questions for the operator",
+      "questionstoanswer": "Questions to answer",
+      "checkboxconfirmationrequested": "Checkbox confirmation requested",
+      "secretbindingrequested": "Secret binding requested",
+      "toolapprovalrequested": "Tool approval requested",
+      "reviewtheseitems": "Review these items",
+      "planreview": "Plan review",
+      "confirmationrequested": "Confirmation requested",
+      "proposedby": "proposed by",
+      "created": "Created",
+      "withdrawnby": "Withdrawn by",
+      "anagent": "an agent",
+      "resolvedby": "Resolved by",
+      "agent": "Agent",
+      "resolvedbyanagentundertheorganization": "Resolved by an agent under the organization's interaction governance policy — audit-distinct from a human board resolution.",
+      "deferred": "deferred"
+    }
+  },
+  "issueworkspacecard": {
+    "general": {
+      "cancel": "Cancel",
+      "save": "Save",
+      "edit": "Edit",
+      "repo": "Repo:",
+      "environment": "Environment:",
+      "reusedworkspace": " · reused workspace",
+      "projectdefault": " · project default",
+      "afreshisolatedworkspacewillbecreated": "A fresh isolated workspace will be created when this task runs.",
+      "thistaskwillreuseanexistingworkspace": "This task will reuse an existing workspace when it runs.",
+      "thistaskwillusetheprojectdefault": "This task will use the project default workspace configuration when it runs.",
+      "reusing": "Reusing:",
+      "viewworkspacedetails": "View workspace details →",
+      "current": "Current:",
+      "browsefiles": "Browse files…",
+      "openfilebypath": "Open file by path…"
+    }
+  },
+  "issuewritedenialnotice": {
+    "general": {
+      "whocanact": "Who can act:",
+      "trythis": "Try this:"
+    }
+  },
+  "jsonschemaform": {
+    "general": {
+      "enterajsonobjectusingtheaction": "Enter a JSON object using the action's argument names.",
+      "noconfigurationoptionsavailable": "No configuration options available.",
+      "selectanoption": "Select an option",
+      "none": "None",
+      "selectanexistingsecret": "Select an existing secret",
+      "hiderawvalueinput": "Hide raw value input",
+      "orpastearawvalue": "Or paste a raw value",
+      "item": "Item",
+      "removeitem": "Remove item",
+      "noitemsaddedyet": "No items added yet.",
+      "hidesecret": "Hide secret",
+      "showsecret": "Show secret",
+      "additem": "Add item",
+      "add": "Add",
+      "sensitivecharactershidden": "Sensitive — {{count}} characters hidden. Click the eye to reveal.",
+      "pickanexistingorganizationsecretorpaste": "Pick an existing organization secret, or paste a raw value (Paperclip will store it as a secret on save).",
+      "noactivesecretsyetcreateoneorpaste": "No active secrets yet. Create one or paste a raw value below.",
+      "advancedoptions": "Advanced options",
+      "moreoptions": "More options"
+    }
+  },
+  "kanbanboard": {
+    "general": {
+      "show": "Show",
+      "more": "more",
+      "showing": "Showing",
+      "of": "of",
+      "thistaskneedsanextstep": "This task needs a next step",
+      "needsnextstep": "Needs next step",
+      "nextstep": "Next step",
+      "live": "Live",
+      "livebelow": "live below"
+    }
+  },
+  "keyboardshortcutscheatsheet": {
+    "general": {
+      "press": "Press",
+      "esc": "Esc",
+      "toclosemiddotshortcutsaredisabledin": "to close · Shortcuts are disabled in text fields",
+      "keyboardshortcuts": "Keyboard shortcuts"
+    }
+  },
+  "legacyissueslist": {
+    "general": {
+      "searchtasks": "Search tasks...",
+      "searchtasks1": "Search tasks",
+      "done": "done",
+      "inprogress": "in progress",
+      "blocked": "blocked",
+      "tokens": "tokens",
+      "runtime": "runtime",
+      "subtaskscompletionprogress": "Sub-tasks completion progress",
+      "nextup": "Next up",
+      "waitingonblockers": "Waiting on blockers",
+      "noactivesubtasks": "No active sub-tasks",
+      "allsubtasksdone": "All sub-tasks done",
+      "noactionablesubtasks": "No actionable sub-tasks",
+      "viewmode": "View mode",
+      "listview": "List view",
+      "listview2": "List view",
+      "boardview": "Board view",
+      "boardview3": "Board view",
+      "cardspercolumn": "Cards per column",
+      "percolumn": "per column",
+      "resetboarddensity": "Reset board density",
+      "choosewhichtaskcolumnsstayvisible": "Choose which task columns stay visible",
+      "sort": "Sort",
+      "group": "Group",
+      "showingupto": "Showing up to",
+      "matchesrefinethesearchtonarrowfurther": "matches. Refine the search to narrow further.",
+      "someboardcolumnsareshowingupto": "Some board columns are showing up to",
+      "tasksrefinefiltersorsearchtoreveal": "tasks. Refine filters or search to reveal the rest.",
+      "subtask": "sub-task",
+      "paused": "Paused",
+      "paused4": "Paused",
+      "paused5": "Paused",
+      "needsnextstep": "Needs next step",
+      "thistaskneedsanextstep": "This task needs a next step",
+      "needsnextstep6": "Needs next step",
+      "assignee": "Assignee",
+      "searchresponsible": "Search responsible...",
+      "noresponsible": "No responsible",
+      "me": "Me",
+      "loadingmoretasks": "Loading more tasks...",
+      "scrolltoloadmoretasks": "Scroll to load more tasks"
+    }
+  },
+  "legacyprojectrepository": {
+    "general": {
+      "existingrepourl": "Existing repo URL",
+      "edit": "Edit",
+      "existingrepourl1": "Existing repo URL",
+      "cancel": "Cancel",
+      "saveurl": "Save URL"
+    }
+  },
+  "liverunwidget": {
+    "general": {
+      "liveruns": "Live Runs",
+      "usesthesharedchatstylerunsurface": "Uses the shared chat-style run surface from task activity.",
+      "openrun": "Open run"
+    }
+  },
+  "managedroutineslist": {
+    "general": {
+      "schedule": "Schedule"
+    }
+  },
+  "markdownbody": {
+    "general": {
+      "copycode": "Copy code",
+      "renderingmermaiddiagram": "Rendering Mermaid diagram...",
+      "scrollabletable": "Scrollable table"
+    }
+  },
+  "markdowneditor": {
+    "general": {
+      "richeditorunavailableforthismarkdownshowing": "Rich editor unavailable for this markdown. Showing raw source instead.",
+      "retryricheditor": "Retry rich editor",
+      "task": "Task",
+      "project": "Project",
+      "user": "User",
+      "skill": "Skill",
+      "routine": "Routine",
+      "drop": "Drop",
+      "toupload": "to upload",
+      "file": "file",
+      "image": "image"
+    }
+  },
+  "membermultiselect": {
+    "general": {
+      "selectpeople": "Select people",
+      "person": "person",
+      "people": "people",
+      "nomatches": "No matches.",
+      "nopeopleselected": "No people selected",
+      "cancel": "Cancel",
+      "saving": "Saving…",
+      "save": "Save",
+      "done": "Done",
+      "and": "and",
+      "more": "more"
+    }
+  },
+  "missingplugintabplaceholder": {
+    "general": {
+      "workspaceplugintabisnotavailable": "Workspace plugin tab is not available."
+    }
+  },
+  "newgoaldialog": {
+    "general": {
+      "rsaquo": "›",
+      "newsubgoal": "New sub-goal",
+      "newgoal": "New goal",
+      "times": "×",
+      "goaltitle": "Goal title",
+      "adddescription": "Add description...",
+      "parentgoal": "Parent goal",
+      "noparent": "No parent",
+      "creating": "Creating…",
+      "createsubgoal": "Create sub-goal",
+      "creategoal": "Create goal"
+    }
+  },
+  "newissuedialog": {
+    "general": {
+      "tasktitle": "Task title",
+      "adddescription": "Add description...",
+      "rsaquo": "›",
+      "newsubtask": "New sub-task",
+      "newtask": "New task",
+      "times": "×",
+      "for": "For",
+      "assignee": "Assignee",
+      "assignee1": "Assignee",
+      "lowtrustreviewagent": "Low-trust review agent",
+      "in": "in",
+      "project": "Project",
+      "project2": "Project",
+      "addreviewerapproverorwatchdog": "Add reviewer, approver, or watchdog",
+      "reviewer": "Reviewer",
+      "approver": "Approver",
+      "watchdog": "Watchdog",
+      "reviewer3": "Reviewer",
+      "reviewer4": "Reviewer",
+      "approver5": "Approver",
+      "approver6": "Approver",
+      "configurewatchdog": "Configure watchdog",
+      "setwatchdog": "Set watchdog",
+      "watchdogagent": "Watchdog agent",
+      "selectagent": "Select agent",
+      "selectagent7": "Select agent",
+      "instructions": "Instructions",
+      "optional": "(optional)",
+      "whatshouldthewatchdogwatchforand": "What should the watchdog watch for and how should it keep work moving?",
+      "remove": "Remove",
+      "done": "Done",
+      "subtaskof": "Sub-task of",
+      "executionworkspace": "Execution workspace",
+      "controlwhetherthistaskrunsinthe": "Control whether this task runs in the shared workspace, a new isolated workspace, or an existing one.",
+      "reusing": "Reusing",
+      "from": "from",
+      "existingexecutionworkspace": "existing execution workspace",
+      "warningthissubtaskwillnolonger": "Warning: this sub-task will no longer use the parent task workspace",
+      "modellane": "Model lane",
+      "modellane8": "Model lane",
+      "runsontheagentsprimarymodel": "Runs on the agent's primary model.",
+      "overridethemodelandeffortforthis": "Override the model and effort for this task only.",
+      "model": "Model",
+      "defaultmodel": "Default model",
+      "thinkingeffort": "Thinking effort",
+      "enablechromechrome": "Enable Chrome (--chrome)",
+      "documents": "Documents",
+      "removedocument": "Remove document",
+      "attachments": "Attachments",
+      "removeattachment": "Remove attachment",
+      "priority": "Priority",
+      "upload": "Upload",
+      "priority9": "Priority",
+      "startdate": "Start date",
+      "duedate": "Due date",
+      "assigningimpliesexecutableintentleavestatusas": "Assigning implies executable intent - leave status as",
+      "backlog": "Backlog",
+      "onlytodeliberatelyparkthistheassignee": "only to deliberately park this. The assignee will not be woken until status moves to",
+      "todo": "Todo",
+      "or": "or",
+      "inprogress": "In Progress",
+      "ispausedandwillnotstartwork": "is paused and will not start work on this task until it is resumed",
+      "itarrivedpausedfromanorganizationimport": " — it arrived paused from an organization import",
+      "youcanresumeitfromthetask": ". You can resume it from the task page after creating the task.",
+      "lowtrustreviewagentitcanonly": "Low-trust review agent. It can only act inside its assigned review boundary; task, project, or run policy defines the concrete scope.",
+      "discarddraft": "Discard Draft",
+      "creating": "Creating...",
+      "createsubtask": "Create Sub-Task",
+      "createtask": "Create Task"
+    }
+  },
+  "newprojectdialog": {
+    "general": {
+      "connectgithub": "Connect GitHub",
+      "createproject": "Create project",
+      "closenewproject": "Close new project",
+      "projectname": "Project name",
+      "projectname1": "Project name",
+      "sourcerepositories": "Source repositories",
+      "cancel": "Cancel",
+      "creating": "Creating…",
+      "createproject2": "Create project"
+    }
+  },
   "importfromvaultdialog": {
     "general": {
       "created": "Created",
@@ -8044,6 +10184,1508 @@
       "local": "local",
       "folder": "folder",
       "remote": "remote"
+    }
+  },
+  "onboardingchat": {
+    "general": {
+      "loadingconversation": "Loading conversation...",
+      "hiringplandetected": "Hiring plan detected",
+      "haspreparedahiringplan": "has prepared a hiring plan",
+      "reviewitmakeeditsthenapprove": "Review it, make edits, then approve.",
+      "reviewplan": "Review plan",
+      "hithanksforbringingmeonto": "Hi! Thanks for bringing me on to lead",
+      "ourmissionis": "Our mission is:",
+      "imreadytoputtogethera": "I'm ready to put together a plan for who we should bring on. Want me to get started?",
+      "letsdiscussfirst": "Let's discuss first",
+      "yesgetstarted": "Yes, get started!"
+    }
+  },
+  "onboardingwizard": {
+    "general": {
+      "paperclipworkswithyoursubscriptionorapi": "Paperclip works with your subscription or API keys.",
+      "name": "Name",
+      "egnorthwindlabs": "e.g. Northwind Labs",
+      "agentname": "Agent name",
+      "egchiefofstaff": "e.g. Chief of staff",
+      "modelsource": "Model source",
+      "savedapi": "saved API",
+      "keyavailable": "key available",
+      "keysavailable": "keys available",
+      "anexistingproviderconnectionisavailable": "An existing provider connection is available.",
+      "apikey": "API key",
+      "enterapikeyhere": "Enter API key here",
+      "thisenvironmentdoesnotsupportbrowsersign": "This environment does not support browser sign-in. Choose another sign-in environment or connect with an API key.",
+      "passed": "Passed",
+      "claudefailedwhile": "Claude failed while",
+      "issetyoucanclearitin": "is set. You can clear it in this adapter config and retry the probe.",
+      "retrying": "Retrying...",
+      "unsetanthropicapikey": "Unset ANTHROPIC_API_KEY",
+      "manualdebug": "Manual debug",
+      "prompt": "Prompt:",
+      "respondwithhello": "Respond with hello.",
+      "ifauthfailsset": "If auth fails, set",
+      "kimimodelnamekimimodelapikey": "KIMI_MODEL_NAME + KIMI_MODEL_API_KEY",
+      "inenvorrun": "in env or run",
+      "agentlogin": "agent login",
+      "codexlogin": "codex login",
+      "geminiauth": "gemini auth",
+      "kimilogin": "kimi login",
+      "opencodeauthlogin": "opencode auth login",
+      "ifloginisrequiredrun": "If login is required, run",
+      "claudelogin": "claude login",
+      "andretry": "and retry.",
+      "gatewayurl": "Gateway URL",
+      "webhookurl": "Webhook URL",
+      "hint": "Hint:"
+    }
+  },
+  "opencodelogoicon": {
+    "general": {
+      "opencode": "OpenCode",
+      "opencode1": "OpenCode"
+    }
+  },
+  "outputfeedbackbuttons": {
+    "general": {
+      "helpful": "Helpful",
+      "needswork": "Needs work",
+      "whatcouldhavebeenbetter": "What could have been better?",
+      "addashortnote": "Add a short note",
+      "dismiss": "Dismiss",
+      "saving": "Saving...",
+      "savenote": "Save note",
+      "saveyourfeedbacksharingpreference": "Save your feedback sharing preference",
+      "choosewhethervotedaioutputscanbe": "Choose whether voted AI outputs can be shared with Paperclip Labs. This answer becomes the default for future thumbs up and thumbs down votes.",
+      "thisvoteisalwayssavedlocally": "This vote is always saved locally.",
+      "choose": "Choose",
+      "alwaysallow": "Always allow",
+      "tosharethisvoteandfuturevoted": "to share this vote and future voted AI outputs. Choose",
+      "dontallow": "Don't allow",
+      "tokeepthisvoteandfuturevotes": "to keep this vote and future votes local.",
+      "youcanchangethislaterinsettings": "You can change this later in Settings > General.",
+      "readourtermsofservice": "Read our terms of service",
+      "saving1": "Saving...",
+      "dontallow2": "Don't allow",
+      "saving3": "Saving...",
+      "alwaysallow4": "Always allow"
+    }
+  },
+  "pagetabbar": {
+    "general": {
+      "pagesection": "Page section"
+    }
+  },
+  "pipelinehealthwarnings": {
+    "general": {
+      "open": "Open",
+      "somestepswontrunyet": "Some steps won't run yet —",
+      "moreinstagesettings": "more in stage settings",
+      "thisstepwontrunyet": "This step won't run yet"
+    }
+  },
+  "pipelineitembodydocument": {
+    "general": {
+      "writetheitembodyinmarkdown": "Write the item body in Markdown…",
+      "savingcreatesrev": "Saving creates rev",
+      "tosaveesctocancel": "· ⌘↵ to save · Esc to cancel",
+      "cancel": "Cancel",
+      "saving": "Saving…",
+      "save": "Save",
+      "viewingrevision": "Viewing revision",
+      "historicalpreviewnewcommentsaredisabledwhile": "Historical preview. New comments are disabled while previewing a historical revision. Restoring it creates a new latest revision and keeps history append-only.",
+      "returntolatest": "Return to latest",
+      "restoring": "Restoring…",
+      "restorethisrevision": "Restore this revision",
+      "itembody": "Item body",
+      "editingunsaved": "● Editing · unsaved",
+      "edit": "Edit"
+    }
+  },
+  "pipelinelivenessbanner": {
+    "general": {
+      "requiredpermission": "Required permission:",
+      "onthetargetpipeline": "on the target pipeline.",
+      "retrying": "Retrying…"
+    }
+  },
+  "pipelinestagehistorypanel": {
+    "general": {
+      "history": "History",
+      "pastversionsoftheseinstructions": "Past versions of these instructions.",
+      "nohistoryyetsavetheinstructionsto": "No history yet. Save the instructions to create the first revision.",
+      "loadingrevisions": "Loading revisions…",
+      "couldnotloadrevisions": "Could not load revisions.",
+      "norevisionsrecordedyet": "No revisions recorded yet.",
+      "revision": "Revision",
+      "current": "Current",
+      "restore": "Restore"
+    }
+  },
+  "pipelineworkreferences": {
+    "general": {
+      "nolinkedworkyet": "No linked work yet.",
+      "folder": "Folder"
+    }
+  },
+  "pluginappshelloverlays": {
+    "general": {
+      "applicationextensions": "Application extensions"
+    }
+  },
+  "pluginorganizationswitcher": {
+    "general": {
+      "loadingorganization": "Loading organization"
+    }
+  },
+  "projectproperties": {
+    "general": {
+      "saving": "Saving",
+      "saved": "Saved",
+      "failed": "Failed",
+      "archivethisprojecttohideitfrom": "Archive this project to hide it from the sidebar and project selectors.",
+      "unarchivethisprojecttorestoreitin": "Unarchive this project to restore it in the sidebar and project selectors.",
+      "archiving": "Archiving...",
+      "unarchiving": "Unarchiving...",
+      "copy": "“",
+      "copy1": "”?",
+      "confirm": "Confirm",
+      "cancel": "Cancel",
+      "project": "project",
+      "project2": "project",
+      "name": "Name",
+      "projectname": "Project name",
+      "description": "Description",
+      "addadescription": "Add a description...",
+      "env": "Env",
+      "updated": "Updated",
+      "targetdate": "Target Date",
+      "codebase": "Codebase",
+      "codebasehelp": "Codebase help",
+      "repoidentifiesthesourceoftruthagents": "Repo identifies the source of truth. Agents check it out in the platform-managed environment.",
+      "repoidentifiesthesourceoftruthlocal": "Repo identifies the source of truth. Local folder is the default place agents write code.",
+      "paperclipmanagedfolder": "Paperclip-managed folder.",
+      "localfolder": "Local folder",
+      "paperclipmanagedfolder3": "Paperclip-managed folder.",
+      "changelocalfolder": "Change local folder",
+      "setlocalfolder": "Set local folder",
+      "clearlocalfolder": "Clear local folder",
+      "additionallegacyworkspacerecordsexistonthis": "Additional legacy workspace records exist on this project. Paperclip is using the primary workspace as the codebase view.",
+      "save": "Save",
+      "cancel4": "Cancel",
+      "failedtosaveworkspace": "Failed to save workspace.",
+      "failedtodeleteworkspace": "Failed to delete workspace.",
+      "failedtoupdateworkspace": "Failed to update workspace.",
+      "executionworkspaces": "Execution Workspaces",
+      "executionworkspaceshelp": "Execution workspaces help",
+      "projectowneddefaultsforisolatedtaskcheckouts": "Project-owned defaults for isolated task checkouts and execution workspace behavior.",
+      "enableisolatedtaskcheckouts": "Enable isolated task checkouts",
+      "lettaskschoosebetweentheprojects": "Let tasks choose between the project's primary checkout and an isolated execution workspace.",
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "newtasksdefaulttoisolatedcheckout": "New tasks default to isolated checkout",
+      "ifdisablednewtasksstayonthe": "If disabled, new tasks stay on the project's primary checkout unless someone opts in.",
+      "sharedworkspaceconcurrency": "Shared workspace concurrency",
+      "sharedworkspaceconcurrency5": "Shared workspace concurrency",
+      "hideadvancedcheckoutsettings": "Hide advanced checkout settings",
+      "showadvancedcheckoutsettings": "Show advanced checkout settings",
+      "hostmanagedimplementation": "Host-managed implementation:",
+      "gitworktree": "Git worktree",
+      "environment": "Environment",
+      "noenvironment": "No environment",
+      "baseref": "Base ref",
+      "originmain": "origin/main",
+      "branchtemplate": "Branch template",
+      "issueidentifierslug": "{{issue.identifier}}-{{slug}}",
+      "worktreeparentdir": "Worktree parent dir",
+      "paperclipworktrees": ".paperclip/worktrees",
+      "provisioncommand": "Provision command",
+      "bashscriptsprovisionworktreesh": "bash ./scripts/provision-worktree.sh",
+      "runtimeprovisioncommand": "Runtime provision command",
+      "bashscriptsprovisionworktreeruntimesh": "bash ./scripts/provision-worktree-runtime.sh",
+      "runsoncebeforethefirstruntimeservice": "Runs once before the first runtime-service start (heavy setup, e.g. DB seed). Leave empty to keep eager provisioning.",
+      "teardowncommand": "Teardown command",
+      "bashscriptsteardownworktreesh": "bash ./scripts/teardown-worktree.sh",
+      "provisionrunsinsidethederivedworktreebefore": "Provision runs inside the derived worktree before agent execution. Teardown is stored here for future cleanup flows.",
+      "dangerzone": "Danger Zone",
+      "created": "Created"
+    }
+  },
+  "projectrepositories": {
+    "general": {
+      "repositories": "Repositories",
+      "changessaved": "Changes saved",
+      "discardchanges": "Discard changes",
+      "saving": "Saving…",
+      "savechanges": "Save changes",
+      "connectgithub": "Connect GitHub"
+    }
+  },
+  "projectrepositoryinput": {
+    "general": {
+      "somegithubconnectionscouldnotloadreconnect": "Some GitHub connections could not load. Reconnect them in Apps or try again.",
+      "tryagain": "Try again"
+    }
+  },
+  "projectworkspacesummarycard": {
+    "general": {
+      "updated": "Updated",
+      "services": "services",
+      "stopservices": "Stop services",
+      "startservices": "Start services",
+      "retryclose": "Retry close",
+      "closeworkspace": "Close workspace",
+      "branch": "Branch",
+      "path": "Path",
+      "service": "Service",
+      "linkedtasks": "Linked tasks",
+      "more": "more"
+    }
+  },
+  "projectworkspacescontent": {
+    "general": {
+      "nonondefaultworkspaceactivityyet": "No non-default workspace activity yet.",
+      "cleanupattentionneeded": "Cleanup attention needed"
+    }
+  },
+  "propertiespanel": {
+    "general": {
+      "properties": "Properties",
+      "resizepanel": "Resize panel"
+    }
+  },
+  "providerquotacard": {
+    "general": {
+      "in": "in",
+      "out": "out",
+      "runs": " runs",
+      "periodspend": "Period spend",
+      "thisweek": "This week",
+      "rollingwindows": "Rolling windows",
+      "tok": "tok",
+      "subscription": "Subscription",
+      "runs1": "runs",
+      "total": "total",
+      "in2": "in",
+      "out3": "out",
+      "oftokenusageviasubscription": "% of token usage via subscription",
+      "tok4": "tok",
+      "subscriptionquota": "Subscription quota",
+      "used": "% used",
+      "resets": "resets"
+    }
+  },
+  "reportstopicker": {
+    "general": {
+      "unknownmanagerstaleid": "Unknown manager (stale ID)",
+      "terminated": " (terminated)",
+      "nomanager": "No manager",
+      "current": "Current:",
+      "terminated1": "(terminated)",
+      "savedmanagerismissingfromthisorganization": "Saved manager is missing from this organization. Choose a new manager or clear."
+    }
+  },
+  "repositoryeditor": {
+    "general": {
+      "privaterepository": "Private repository",
+      "sourcerepos": "Source repos",
+      "optional": "optional",
+      "connectgithubtopickarepo": "Connect GitHub to pick a repo",
+      "choosefromreposyoucanaccessthrough": "Choose from repos you can access through your GitHub connections.",
+      "connectgithub": "Connect GitHub",
+      "tryagain": "Try again",
+      "connectanothergithubaccount": "Connect another GitHub account",
+      "allgithubconnectionsyoucanuse": "All GitHub connections you can use.",
+      "cancel": "Cancel"
+    }
+  },
+  "routinecontextualsidebar": {
+    "general": {
+      "routinenavigation": "Routine navigation",
+      "operate": "Operate",
+      "runs": "Runs",
+      "activity": "Activity"
+    }
+  },
+  "routinehistorytab": {
+    "general": {
+      "couldnotloadrevisions": "Could not load revisions",
+      "unknownerrorloadingrevisions": "Unknown error loading revisions.",
+      "retry": "Retry",
+      "revision1istheonlyhistorythis": "Revision 1 is the only history this routine has. Saving an edit creates the first additional revision.",
+      "viewingrevision": "Viewing revision",
+      "readonly": "(read-only)",
+      "restoringthisrevisioncreatesanewrevision": "Restoring this revision creates a new revision",
+      "withthesamecontenthistorystaysappend": "with the same content. History stays append-only.",
+      "returntocurrent": "Return to current",
+      "restoreasnewrevision": "Restore as new revision",
+      "unsavedroutineedits": "Unsaved routine edits",
+      "youchanged": "You changed",
+      "buthaventsavedyetsaveor": "but haven't saved yet. Save or discard before previewing or restoring an older revision.",
+      "discardchanges": "Discard changes",
+      "saveandcontinue": "Save and continue",
+      "revisions": "Revisions",
+      "total": "total",
+      "rev": "rev",
+      "current": "Current",
+      "restored": "Restored",
+      "show": "Show",
+      "older": "older…",
+      "rev1": "rev",
+      "saved": "Saved",
+      "by": "by",
+      "comparewithcurrent": "Compare with current",
+      "structuredfields": "Structured fields",
+      "differsfromcurrent": "differs from current",
+      "description": "Description",
+      "nodescription": "No description",
+      "triggers": "Triggers (",
+      "notriggersinthisrevision": "No triggers in this revision.",
+      "webhooksecretsarenotstoredinrevisions": "Webhook secrets are not stored in revisions. If a restored webhook trigger needs re-creation, Paperclip mints fresh secret material at restore time.",
+      "variables": "Variables (",
+      "default": "default:",
+      "restorerevision": "Restore revision",
+      "thiscreatesanewrevision": "This creates a new revision",
+      "withthesamecontentasrevision": "with the same content as revision",
+      "revisions2": ". Revisions",
+      "stayinhistoryandarenotmodified": "stay in history and are not modified.",
+      "routinefieldvaluesvariablesandschedulecron": "Routine field values, variables, and schedule cron will revert.",
+      "routinesecretswillrevert": "Routine secrets will revert:",
+      "previousrunhistoryispreserved": "Previous run history is preserved.",
+      "thewebhooktrigger": "The webhook trigger",
+      "willberecreatedwithanewurl": "will be recreated with a new URL and secret. Paperclip will show the secret once after restore — copy it before closing.",
+      "changesummaryoptional": "Change summary (optional)",
+      "whyareyourestoringvisibleinhistory": "Why are you restoring? Visible in history.",
+      "cancel": "Cancel",
+      "restoring": "Restoring…",
+      "compareroutinerevisions": "Compare routine revisions",
+      "old": "Old",
+      "new": "New",
+      "fieldchanges": "Field changes",
+      "nostructuralfieldchanges": "No structural field changes.",
+      "field": "Field",
+      "oldvalue": "Old value",
+      "newvalue": "New value",
+      "descriptiondiff": "Description diff",
+      "close": "Close",
+      "restorerev": "Restore rev",
+      "asnewrevision": "as new revision",
+      "rev3": "rev",
+      "nodescriptiononeitherrevision": "No description on either revision.",
+      "descriptionsareidentical": "Descriptions are identical.",
+      "old4": "Old",
+      "new5": "New",
+      "content": "Content"
+    }
+  },
+  "routinelist": {
+    "general": {
+      "archived": "archived",
+      "draft": "draft",
+      "paused": "paused",
+      "unknownproject": "Unknown project",
+      "noproject": "No project",
+      "unknownagent": "Unknown agent",
+      "nodefaultagent": "No default agent",
+      "running": "Running...",
+      "runnow": "Run now",
+      "archived1": "Archived",
+      "draft2": "Draft",
+      "on": "On",
+      "off": "Off",
+      "running3": "Running...",
+      "runnow4": "Run now",
+      "pause": "Pause",
+      "enable": "Enable",
+      "restore": "Restore",
+      "archive": "Archive"
+    }
+  },
+  "routineoverview": {
+    "general": {
+      "state": "State",
+      "triggers": "Triggers",
+      "nextrun": "Next run",
+      "lastrun": "Last run",
+      "defaultagent": "Default agent",
+      "nodefaultagentautomatictriggersremainpaused": "No default agent. Automatic triggers remain paused.",
+      "description": "Description",
+      "nodescriptionyet": "No description yet.",
+      "recentruns": "Recent runs",
+      "viewallruns": "View all runs",
+      "norunsyetruntheroutinenow": "No runs yet. Run the routine now or wait for its schedule.",
+      "viewroutineactivity": "View routine activity"
+    }
+  },
+  "routinerunvariablesdialog": {
+    "general": {
+      "runroutine": "Run routine",
+      "choosetheagentandoptionalprojectfor": "Choose the agent and optional project for this one run. Routine defaults are prefilled and won't be changed.",
+      "agent": "Agent *",
+      "agent1": "Agent",
+      "selectanagent": "Select an agent",
+      "project": "Project",
+      "project2": "Project",
+      "noproject": "No project",
+      "novalue": "No value",
+      "true": "True",
+      "false": "False",
+      "chooseavalue": "Choose a value",
+      "novalue3": "No value",
+      "defaultagentrequiredforthisrun": "Default agent required for this run.",
+      "missing": "Missing:",
+      "chooseanexistingworkspacebeforerunning": "Choose an existing workspace before running.",
+      "cancel": "Cancel",
+      "running": "Running...",
+      "runroutine4": "Run routine"
+    }
+  },
+  "routinesavebar": {
+    "general": {
+      "routinechangedelsewherereloadtomerge": "Routine changed elsewhere. Reload to merge.",
+      "unsaved": "unsaved",
+      "change": "change",
+      "changes": "changes",
+      "pendingchanges": "Pending changes",
+      "reloadlatest": "Reload latest",
+      "overwriteanyway": "Overwrite anyway",
+      "replacesthenewerrevisionwithyourlocal": "Replaces the newer revision with your local edits.",
+      "discard": "Discard",
+      "savechanges": "Save changes",
+      "s": "⌘S",
+      "discardchanges": "Discard changes?",
+      "thiswillrevert": "This will revert",
+      "unsaved1": "unsaved",
+      "change2": "change",
+      "changes3": "changes",
+      "inthissection": "in this section.",
+      "keepediting": "Keep editing",
+      "discardchanges4": "Discard changes",
+      "readonlyyoudontownthis": "Read-only — you don't own this routine."
+    }
+  },
+  "routinesubsidebar": {
+    "general": {
+      "routinesections": "Routine sections",
+      "unsavedchanges": "Unsaved changes",
+      "routinesection": "Routine section"
+    }
+  },
+  "routinetriggercard": {
+    "general": {
+      "webhook": "Webhook",
+      "webhookurl": "Webhook URL",
+      "sendapostrequestwithcontenttype": "Send a POST request with Content-Type: application/json. Keep this URL private when signing is disabled.",
+      "label": "Label",
+      "schedule": "Schedule",
+      "signingmode": "Signing mode",
+      "replaywindowseconds": "Replay window (seconds)",
+      "delete": "Delete",
+      "rotatesecret": "Rotate secret",
+      "savetrigger": "Save trigger"
+    }
+  },
+  "routinevariableseditor": {
+    "general": {
+      "variables": "Variables",
+      "detectedfrom": "Detected from `",
+      "name": "{{name}}",
+      "placeholdersinthetitleandinstructions": "` placeholders in the title and instructions.",
+      "prompttheuserforthisvaluebefore": "Prompt the user for this value before each manual run.",
+      "label": "Label",
+      "type": "Type",
+      "defaultvalue": "Default value",
+      "required": "Required",
+      "nodefault": "No default",
+      "true": "True",
+      "false": "False",
+      "options": "Options",
+      "highmediumlow": "high, medium, low",
+      "defaultoption": "Default option",
+      "nodefault1": "No default",
+      "nodefault2": "No default",
+      "use": "Use `",
+      "variablename": "{{variable_name}}",
+      "placeholdersinthetitleorinstructionsto": "` placeholders in the title or instructions to prompt for inputs when the routine runs.",
+      "showvariablehelp": "Show variable help",
+      "routinevariables": "Routine variables",
+      "howtopromptforinputsandwhich": "How to prompt for inputs and which variables Paperclip fills in automatically.",
+      "customvariables": "Custom variables",
+      "type3": "Type",
+      "variablename4": "{{variable_name}}",
+      "anywhereinthetitleorinstructionspaperclip": "anywhere in the title or instructions. Paperclip detects each placeholder, lists it under",
+      "variables5": "Variables",
+      "andpromptsforavaluebeforeeach": ", and prompts for a value before each run.",
+      "namesmuststartwithaletterand": "Names must start with a letter and may use letters, numbers, and underscores.",
+      "pickatypetexttextareanumberboolean": "Pick a type (text, textarea, number, boolean, select, date), default value, and whether it is required.",
+      "variablenamesendingincapitaldatesuch": "Variable names ending in capital Date, such as startDate, are created as date variables by default.",
+      "thesamenamereusedacrossthetitle": "The same name reused across the title and instructions is treated as one variable.",
+      "builtinvariables": "Built-in variables",
+      "thesearefilledinautomaticallynosetup": "These are filled in automatically — no setup needed and they will not appear in the Variables list.",
+      "placeholder": "Placeholder",
+      "example": "Example",
+      "description": "Description"
+    }
+  },
+  "runworkspacerecoverysurface": {
+    "general": {
+      "workspacerecovery": "Workspace recovery"
+    }
+  },
+  "runnerinspector": {
+    "general": {
+      "copy": "\"",
+      "copy1": "\"",
+      "null": "null",
+      "nofieldsmatch": "No fields match.",
+      "action": "Action",
+      "providerpath": "Provider path",
+      "outputpath": "Output path",
+      "reason": "Reason",
+      "nofieldlevelmappingwasrecordedat": "No field-level mapping was recorded at this stage.",
+      "productionsurface": "Production surface:",
+      "in": "in",
+      "runnerinspector": "Runner Inspector",
+      "correlateexactprovidertrafficwitheveryinterpretation": "Correlate exact provider traffic with every interpretation stage, canonical PRP event, and production surface.",
+      "runnerinspectorviews": "Runner inspector views",
+      "rawprovidertracesrequireaninstanceadministrator": "Raw provider traces require an instance administrator.",
+      "canonicalprpeventsandpresentationdecisionsremain": "Canonical PRP events and presentation decisions remain inspectable below.",
+      "rawprovidercapturewasoffforthis": "Raw provider capture was off for this run.",
+      "canonicalprpeventsandpersistedpresentationdecisions": "Canonical PRP events and persisted presentation decisions remain available below.",
+      "rerunwithprovidertrace": "Re-run with provider trace",
+      "loadingrunpipeline": "Loading run pipeline…",
+      "provider": "Provider",
+      "rawframes": "Raw frames",
+      "operations": "Operations",
+      "prpevents": "PRP events",
+      "mappings": "Mappings",
+      "runstatus": "Run status",
+      "interpretationoutcomes": "Interpretation outcomes",
+      "nointerpretationrecordswerepersisted": "No interpretation records were persisted.",
+      "recentcorrelatedoperations": "Recent correlated operations",
+      "sensitivedebugdata": "Sensitive debug data",
+      "parsedframesareredactedontheserver": "Parsed frames are redacted on the server. Exact reveals and downloads are administrator-only, warned, audited, and automatically expire.",
+      "searchoperationsfieldsandevents": "Search operations, fields, and events",
+      "direction": "Direction",
+      "alldirections": "All directions",
+      "clientprovider": "Client → provider",
+      "providerclient": "Provider → client",
+      "providerstderr": "Provider stderr",
+      "nativemethod": "Native method",
+      "allnativemethods": "All native methods",
+      "mapping": "Mapping",
+      "allmappings": "All mappings",
+      "prptype": "PRP type",
+      "allprptypes": "All PRP types",
+      "visibility": "Visibility",
+      "visiblehidden": "Visible + hidden",
+      "visible": "Visible",
+      "hidden": "Hidden",
+      "loadingrunpipeline2": "Loading run pipeline…",
+      "nooperationsmatchthesefilters": "No operations match these filters.",
+      "frames": "frames",
+      "rawframe": "raw frame",
+      "s": "s",
+      "mappingstage": "mapping stage",
+      "s3": "s",
+      "prpevent": "PRP event",
+      "s4": "s",
+      "providerframes": "Provider frames",
+      "serverredactedbydefault": "server-redacted by default",
+      "frame": "frame",
+      "withheldpaths": "Withheld paths:",
+      "revealexactframe": "Reveal exact frame",
+      "exactunredactedframe": "Exact unredacted frame",
+      "searchexactframe": "Search exact frame",
+      "thisprpeventhasnorecoverableraw": "This PRP event has no recoverable raw frame.",
+      "interpretationstages": "Interpretation stages",
+      "nointerpretationstagewasrecordedforthis": "No interpretation stage was recorded for this frame.",
+      "canonicalprpevents": "Canonical PRP events",
+      "seq": "seq",
+      "whyisntthisvisible": "Why isn’t this visible?",
+      "canonicaleventjson": "Canonical event JSON",
+      "thisprovideroperationemittednocanonicalprp": "This provider operation emitted no canonical PRP events.",
+      "productionpresentation": "Production presentation",
+      "visible5": "Visible",
+      "surface": "Surface",
+      "container": "Container",
+      "state": "State",
+      "action6": "Action",
+      "reason7": "Reason",
+      "reasoncode": "Reason code",
+      "productionsurfacepreview": "Production surface preview",
+      "nopresentationsurfacewasemittedforthis": "No presentation surface was emitted for this operation.",
+      "resolvedfinalresponsedecision": "Resolved final response decision",
+      "semanticfinalizationlineage": "Semantic finalization lineage",
+      "providernativetransportandmodelauthoredtool": "Provider-native transport and model-authored tool arguments are separate layers. PRP normalized the model payload, then server policy chose the issue disposition.",
+      "environmentconstraint": "environment_constraint",
+      "wasmodelauthoredtoolpayloaddatanot": "was model-authored tool payload data, not a Codex app-server event. It was normalized into a non-blocking verification caveat.",
+      "policy": "Policy",
+      "decisionreason": "Decision reason",
+      "normalizedcaveatsandignoredrequests": "Normalized caveats and ignored requests",
+      "selectacorrelatedoperationtoinspectits": "Select a correlated operation to inspect its pipeline.",
+      "norawframeswerecapturedforthis": "No raw frames were captured for this run.",
+      "exacttraceframe": "Exact trace frame #",
+      "revealexactframe8": "Reveal exact frame",
+      "searchexactframe9": "Search exact frame",
+      "selectaframefromthechronologicaltrace": "Select a frame from the chronological trace.",
+      "frames10": "frames ·",
+      "expires": "· expires",
+      "downloadexacttrace": "Download exact trace",
+      "deletetrace": "Delete trace"
+    }
+  },
+  "runtimetestcard": {
+    "general": {
+      "runtimetest": "Runtime test",
+      "testdetails": "Test details"
+    }
+  },
+  "scheduleeditor": {
+    "general": {
+      "schedulefrequency": "Schedule frequency",
+      "choosefrequency": "Choose frequency...",
+      "cronexpression": "Cron expression",
+      "fivefieldsminutehourdayofmonth": "Five fields: minute hour day-of-month month day-of-week",
+      "at": "at",
+      "atminute": "at minute",
+      "on": "on",
+      "onday": "on day"
+    }
+  },
+  "scrolltobottom": {
+    "general": {
+      "scrolltobottom": "Scroll to bottom"
+    }
+  },
+  "secretbindingpicker": {
+    "general": {
+      "clear": "Clear",
+      "loading": "Loading…",
+      "anotherorganization": "another organization",
+      "version": "Version",
+      "latest": "latest",
+      "v": "v",
+      "createsecret": "Create secret",
+      "boundto": "Bound to",
+      "ownedby": "Owned by",
+      "anotherorganization1": "another organization",
+      "thebindingkeepsworkingselectingasecret": ". The binding keeps working; selecting a secret from this list re-points it here.",
+      "thepreviouslyselectedsecretwasdeletedpick": "The previously selected secret was deleted. Pick another or remove the binding.",
+      "couldnotloadthissecretreferences": "Could not load this secret reference's details.",
+      "checkingthissecretreference": "Checking this secret reference…",
+      "thepreviouslyselectedsecretisnolonger": "The previously selected secret is no longer available. Pick another or remove the binding.",
+      "createnewsecret": "Create new secret",
+      "name": "Name",
+      "value": "Value",
+      "pastethesecretvalue": "Paste the secret value",
+      "thevalueisstoredonceandnever": "The value is stored once and never re-displayed. Rotate to replace.",
+      "description": "Description",
+      "optionalnotesnovalues": "Optional notes (no values)",
+      "cancel": "Cancel",
+      "createbind": "Create & bind"
+    }
+  },
+  "setupwizard": {
+    "general": {
+      "chooseagent": "Choose agent",
+      "connectprovider": "Connect provider",
+      "tryit": "Try it",
+      "connectionsetupprogress": "Connection setup progress",
+      "setupprogress": "Setup progress",
+      "saveampexit": "Save & exit"
+    }
+  },
+  "sidebarprojects": {
+    "general": {
+      "projectpausedbybudget": "Project paused by budget",
+      "leaving": "Leaving...",
+      "leaveproject": "Leave project",
+      "projects": "Projects"
+    }
+  },
+  "routeerrorboundary": {
+    "general": {
+      "thispagehitanerror": "This page hit an error",
+      "somethingwentwrongwhilerendering": "Something went wrong while rendering this page. You can go back and try again, or reload.",
+      "goback": "Go back",
+      "reloadpage": "Reload page"
+    }
+  },
+  "skillscontextualsidebar": {
+    "general": {
+      "skills": "Skills",
+      "skills1": "Skills",
+      "installed": "Installed",
+      "discover": "Discover",
+      "author": "Author",
+      "skillsyoucreateeditandtest": "Skills you create, edit, and test.",
+      "myskills": "My Skills"
+    }
+  },
+  "smokelabdashboardcard": {
+    "general": {
+      "integrationsmoke": "Integration smoke",
+      "runonefromthesmokelabtab": "Run one from the Smoke Lab tab"
+    }
+  },
+  "sourceresolvedfoldbadge": {
+    "general": {
+      "sourceresolvedwatchdogfold": "Source-resolved watchdog fold",
+      "sourceresolved": "Source-resolved"
+    }
+  },
+  "sourceresolvedfoldcallout": {
+    "general": {
+      "sourceresolvedwatchdogfold": "Source-resolved watchdog fold",
+      "sourceresolvedfold": "SOURCE-RESOLVED FOLD",
+      "systemaudit": "system audit",
+      "thisrunwasfoldedasasource": "This run was folded as a source-resolved false positive.",
+      "sourcetask": "Source task",
+      "samerunevidence": "Same-run evidence",
+      "at": "at",
+      "silenceagebeforefold": "Silence age before fold",
+      "silencestarted": "(silence started",
+      "unknown": "unknown",
+      "processcleanup": "Process cleanup",
+      "evaluationtask": "Evaluation task"
+    }
+  },
+  "stagesecretspanel": {
+    "general": {
+      "theseenvvarsareinjectedwhen": "These env vars are injected when",
+      "runsthissteptheyoverridematchingproject": "runs this step. They override matching project and agent env on collisions.",
+      "paperclip": "PAPERCLIP_*",
+      "namesarereserved": "names are reserved.",
+      "loadingsecrets": "Loading secrets…",
+      "saving": "Saving…",
+      "savesecrets": "Save secrets",
+      "unsavedchanges": "Unsaved changes"
+    }
+  },
+  "stalledreviewactions": {
+    "general": {
+      "addanoterequiredtorequestchanges": "Add a note — required to request changes, optional otherwise…",
+      "sendbacktowork": "Send back to work",
+      "requestchanges": "Request changes",
+      "approve": "Approve"
+    }
+  },
+  "standalonebrowsercontrols": {
+    "general": {
+      "refresh": "Refresh",
+      "share": "Share",
+      "openinbrowser": "Open in Browser"
+    }
+  },
+  "summaryslotcard": {
+    "general": {
+      "generating": "Generating",
+      "historicalrevision": "Historical revision",
+      "latestrevision": "Latest revision",
+      "latest": "Latest",
+      "refresh": "Refresh",
+      "summarizersetupispendingapproval": "Summarizer setup is pending approval",
+      "setupthesummarizer": "Set up the Summarizer",
+      "summariesaregeneratedbypaperclipsbuilt": "Summaries are generated by Paperclip's built-in Summarizer agent. Configure its adapter and model before requesting this summary.",
+      "setupsummarizer": "Set up Summarizer",
+      "summarizerispaused": "Summarizer is paused",
+      "existingsummariesremainreadablebutnewsummaries": "Existing summaries remain readable, but new summaries will not be generated until the agent resumes.",
+      "summaryrequestfailed": "Summary request failed",
+      "summarycouldnotbeloaded": "Summary could not be loaded",
+      "retry": "Retry",
+      "tryloadingthesummaryagain": "Try loading the summary again.",
+      "summarygenerationfailed": "Summary generation failed",
+      "thegenerationtaskendedbeforewritinga": "The generation task ended before writing a summary.",
+      "generatingsummary": "Generating summary",
+      "summarizerisworkingin": "Summarizer is working in",
+      "nosummaryyet": "No summary yet",
+      "generateaconcisestatussnapshotforthis": "Generate a concise status snapshot for this surface.",
+      "generating1": "Generating...",
+      "generatesummary": "Generate summary",
+      "updated": "Updated",
+      "selectsummaryrevision": "Select summary revision",
+      "revisions": "revisions"
+    }
+  },
+  "swipetoarchive": {
+    "general": {
+      "archive": "Archive"
+    }
+  },
+  "systemnotice": {
+    "general": {
+      "hidedetails": "Hide details",
+      "details": "Details"
+    }
+  },
+  "taskchatthread": {
+    "general": {
+      "sometaskhistorycouldnotbeloaded": "Some task history could not be loaded.",
+      "retry": "Retry",
+      "loadingconversation": "Loading conversation"
+    }
+  },
+  "tasktreecontrols": {
+    "general": {
+      "pausework": "Pause work",
+      "pausesubtree": "Pause subtree",
+      "resumework": "Resume work",
+      "resumesubtree": "Resume subtree",
+      "cancelsubtree": "Cancel subtree...",
+      "restoresubtree": "Restore subtree...",
+      "loading": "Loading…",
+      "berestored": "be restored",
+      "resume": "resume",
+      "retrypreview": "Retry preview",
+      "wakeaffectedagents": "Wake affected agents (",
+      "keeptasks": "Keep tasks",
+      "close": "Close",
+      "applying": "Applying…",
+      "subtreeispaused": "Subtree is paused.",
+      "taskispaused": "Task is paused.",
+      "resumesubtree1": "Resume subtree",
+      "resumework2": "Resume work"
+    }
+  },
+  "toastviewport": {
+    "general": {
+      "dismissnotification": "Dismiss notification"
+    }
+  },
+  "trustpresetsection": {
+    "general": {
+      "trust": "Trust",
+      "trustpreset": "Trust preset",
+      "containmentactive": "Containment active",
+      "containmentnotconfigured": "Containment not configured",
+      "thisagentcanonlyreadandmutate": "This agent can only read and mutate work inside its assigned review boundary. Raw output is quarantined from higher-trust agents until a trusted reviewer promotes it.",
+      "thisagentissettolowtrust": "This agent is set to low-trust review, but no project, root issue, or issue scope is set in the core policy. Add a scope before this agent can run without denial.",
+      "boundarytype": "Boundary type",
+      "project": "Project",
+      "rootissue": "Root issue",
+      "issue": "Issue",
+      "loading": "Loading…",
+      "projects": "projects",
+      "issues": "issues",
+      "selectboundary": "Select boundary",
+      "cesavesonecontainmentboundaryata": "CE saves one containment boundary at a time. Saved policies include this organization id.",
+      "clearboundary": "Clear boundary",
+      "managedbyeeapi": "Managed by EE/API",
+      "thispolicyhas": "This policy has",
+      "andcannotbeeditedbythece": "and cannot be edited by the CE single-boundary editor.",
+      "wanttosetmorethanonecontainment": "Want to set more than one containment boundary?",
+      "getpaperclipee": "Get Paperclip EE.",
+      "viewpolicy": "View policy",
+      "preset": "Preset",
+      "rawoutput": "Raw output",
+      "projects1": "Projects",
+      "rootissue2": "Root issue",
+      "explicitissues": "Explicit issues",
+      "allowedagents": "Allowed agents",
+      "allowedtools": "Allowed tools",
+      "allowedsecrets": "Allowed secrets",
+      "promotiontarget": "Promotion target",
+      "eefields": "EE fields",
+      "advancedpermissionsremaineditablethroughtheee": "Advanced permissions remain editable through the EE permissions extension when installed."
+    }
+  },
+  "workspaceaccesscard": {
+    "general": {
+      "signsinwiththesnapshotlocalcredentials": "Signs in with the snapshot-local credentials captured when this clone was made.",
+      "usesasingleuseloginhandoffno": "Uses a single-use login handoff — no password needed."
+    }
+  },
+  "workspacefilebrowser": {
+    "general": {
+      "currentfolder": "Current folder",
+      "loadingfolder": "Loading folder…",
+      "loadmorefromthisfolder": "Load more from this folder",
+      "workspacefiles": "Workspace files",
+      "noorganizationselected": "No organization selected",
+      "loadingprojectworkspaces": "Loading project workspaces",
+      "noprojectworkspaces": "No project workspaces",
+      "retry": "Retry",
+      "searchfilesbynameorpath": "Search files by name or path…",
+      "searchworkspacefiles": "Search workspace files",
+      "refreshworkspacefiles": "Refresh workspace files",
+      "refreshworkspacefiles1": "Refresh workspace files",
+      "loadmorefromthisfolder2": "Load more from this folder",
+      "showingfirst": "Showing first",
+      "refinethesearchtonarrow": "— refine the search to narrow."
+    }
+  },
+  "workspaceruntimecontrols": {
+    "general": {
+      "port": "Port",
+      "workspacecommands": "Workspace commands",
+      "noservicesrunning": "No services running",
+      "s": "s",
+      "eachcommandcanbecontrolledindependently": "Each command can be controlled independently.",
+      "services": "Services",
+      "jobs": "Jobs",
+      "untrackedservices": "Untracked services"
+    }
+  },
+  "workspaceservicecontrolbar": {
+    "general": {
+      "nourl": "no url",
+      "openinnewtab": "Open in new tab",
+      "openinnewtab1": "Open in new tab",
+      "start": "Start",
+      "start2": "Start",
+      "start3": "Start",
+      "start4": "Start",
+      "start5": "Start",
+      "restart": "Restart",
+      "restart6": "Restart",
+      "stop": "Stop",
+      "stop7": "Stop",
+      "restart8": "Restart",
+      "restart9": "Restart",
+      "viewlogs": "View logs",
+      "running": "running",
+      "services": "Services ·",
+      "startall": "Start all",
+      "stopall": "Stop all",
+      "restartall": "Restart all",
+      "manageinservicestab": "Manage in Services tab →",
+      "nourl10": "no url"
+    }
+  },
+  "worktreebanner": {
+    "general": {
+      "worktree": "Worktree",
+      "clicktocopyworktreename": "Click to copy worktree name",
+      "copied": "Copied!",
+      "copyfailed": "Copy failed"
+    }
+  },
+  "mediaartifactcard": {
+    "general": {
+      "video": "Video",
+      "image": "Image"
+    }
+  },
+  "chatdetailsidebar": {
+    "general": {
+      "chatconnection": "Chat connection",
+      "settings": "Settings",
+      "access": "Access",
+      "reviews": "Reviews",
+      "conversations": "Conversations",
+      "activity": "Activity"
+    }
+  },
+  "routinetriggers": {
+    "general": {
+      "thistriggerisnolongeravailable": "This trigger is no longer available.",
+      "backtotriggers": "Back to triggers",
+      "thistriggerisready": "This trigger is ready.",
+      "backtotriggers1": "Back to triggers",
+      "connectionstatusisunavailableretrying": "Connection status is unavailable. Retrying…",
+      "trigger": "trigger",
+      "triggers": "triggers",
+      "addtrigger": "Add trigger",
+      "removed": "removed.",
+      "undo": "Undo",
+      "webhookurl": "Webhook URL",
+      "secretkey": "Secret key",
+      "done": "Done",
+      "runthisroutineonascheduleor": "Run this routine on a schedule or when another app sends a webhook.",
+      "resumesetup": "Resume setup",
+      "thistriggerstartstheroutinethroughthe": "This trigger starts the routine through the API.",
+      "timezone": "Time zone",
+      "saveschedule": "Save schedule",
+      "cancel": "Cancel",
+      "webhookurl2": "Webhook URL",
+      "thesecretkeyishidden": "The secret key is hidden.",
+      "replacekey": "Replace key",
+      "hidekey": "Hide key",
+      "thiswebhookusesitsurlasthe": "This webhook uses its URL as the shared secret.",
+      "signthetimestampaperiodandthe": "Sign the timestamp, a period, and the exact JSON body with HMAC-SHA256. Send X-Paperclip-Timestamp and X-Paperclip-Signature: sha256=<signature>.",
+      "checkconnection": "Check connection",
+      "replacethewebhookkey": "Replace the webhook key?",
+      "theoldkeywillstopworkingupdate": "The old key will stop working. Update your sending app with the new key.",
+      "replacekey3": "Replace key",
+      "checkconnection4": "Check connection",
+      "thiswebhookisalreadyenabledeventssent": "This webhook is already enabled. Events sent now can start the routine. Send an event from your app to check delivery.",
+      "eventreceivedauthenticationpassed": "Event received · Authentication passed",
+      "eventarrivedbutauthenticationfailedcheckthe": "Event arrived, but authentication failed. Check the key in your app.",
+      "waitingforaneventfromyourapp": "Waiting for an event from your app…"
+    }
+  },
+  "triggercard": {
+    "general": {
+      "close": "Close"
+    }
+  },
+  "triggerwizard": {
+    "general": {
+      "back": "Back",
+      "triggertype": "Trigger type",
+      "repeat": "Repeat",
+      "everyday": "Every day",
+      "weekdaysmondayfriday": "Weekdays (Monday–Friday)",
+      "everyweek": "Every week",
+      "time": "Time",
+      "day": "Day",
+      "timezone": "Time zone",
+      "thetimefollowsthiszoneincludingdaylight": "The time follows this zone, including daylight saving changes.",
+      "eachscheduledruncreatesataskfor": "Each scheduled run creates a task for the routine’s assigned agent. Any existing webhook triggers will continue to work.",
+      "whatssendingthewebhook": "What’s sending the webhook?",
+      "publicservicesneedapubliclyreachablehttps": "Public services need a publicly reachable HTTPS webhook URL.",
+      "pastethiskeyintoyourapps": "Paste this key into your app’s signing secret field.",
+      "ifyourappusescustomheadersinstead": "If your app uses custom headers instead, set Authorization to Bearer followed by a space and this key.",
+      "thekeyishiddenafterleavingsetup": "The key is hidden after leaving setup. If you haven’t saved it in your app, generate a replacement.",
+      "generatenewkey": "Generate new key",
+      "connectiontestonly": "Connection test only",
+      "eventsreceivedduringsetupwontstart": "Events received during setup won’t start the routine or create tasks.",
+      "sendaneventfrom": "Send an event from",
+      "github": "GitHub",
+      "yourapp": "your app",
+      "openthiswebhookinyourrepositorysettings": "Open this webhook in your repository settings. Under Recent Deliveries, choose Redeliver on an event.",
+      "lookforsendtestinyourapp": "Look for “Send test” in your app’s webhook settings. If it doesn’t have one, do the action that should trigger the webhook—for example, complete a deployment.",
+      "keepthispageopentoseethe": "Keep this page open to see the test result.",
+      "testeventreceivedconnectionworking": "Test event received · Connection working",
+      "eventarrivedbutthekeywasrejected": "Event arrived, but the key was rejected",
+      "noeventreceivedyet": "No event received yet",
+      "waitingforaneventfromyourapp": "Waiting for an event from your app…",
+      "authenticationpassednoroutinerunortask": "Authentication passed. No routine run or task was created.",
+      "gobacktoconnectyourappupdate": "Go back to Connect your app, update the key in your sending app, and resend. No task was created.",
+      "waitingtoverifydeliveryandauthenticationthe": "Waiting to verify delivery and authentication. The routine is not running.",
+      "troubleshootdelivery": "Troubleshoot delivery",
+      "checkthatthewebhookisenabledin": "Check that the webhook is enabled in your sending app and that its URL matches. Scripts must send POST with a JSON body.",
+      "webhookurl": "Webhook URL",
+      "finishsetuptoenablethiswebhookfuture": "Finish setup to enable this webhook. Future events will start the routine; this test event won’t be replayed.",
+      "finishsetuptosavethiswebhookthe": "Finish setup to save this webhook. The routine is paused; enable its automatic triggers when you’re ready. This test event won’t be replayed.",
+      "theroutineispausedenableitsautomatic": "The routine is paused. Enable its automatic triggers when you’re ready to use this schedule.",
+      "continue": "Continue",
+      "reviewschedule": "Review schedule",
+      "addschedule": "Add schedule",
+      "checkconnection": "Check connection",
+      "finishsetup": "Finish setup",
+      "finishwithoutchecking": "Finish without checking"
+    }
+  },
+  "webhookfields": {
+    "general": {
+      "copied": "Copied",
+      "copy": "Copy",
+      "copyfailedselectandcopythetext": "Copy failed. Select and copy the text below.",
+      "agentinstructions": "Agent instructions",
+      "agentinstructions1": "Agent instructions",
+      "giveyouragenteverythingitneedsto": "Give your agent everything it needs to connect this webhook: the URL, authentication key, and step-by-step instructions.",
+      "copyforyouragent": "Copy for your agent",
+      "copiedinstructions": "Copied instructions",
+      "copyforyouragent2": "Copy for your agent",
+      "copyfailedselectandcopytheinstructions": "Copy failed. Select and copy the instructions below.",
+      "agentinstructionstext": "Agent instructions text"
+    }
+  },
+  "webhookurlwarning": {
+    "general": {
+      "youcancontinueforlocalorprivate": "You can continue for local or private-network use. For public senders, use a publicly reachable HTTPS URL.",
+      "learnhowtosetuphttpsand": "Learn how to set up HTTPS and public access"
+    }
+  },
+  "configfields": {
+    "general": {
+      "agentinstructionsfile": "Agent instructions file",
+      "executionengine": "Execution engine",
+      "defaultacp": "Default (ACP)",
+      "claudecli": "Claude CLI",
+      "acpservercommand": "ACP server command",
+      "claudeagentacp": "claude-agent-acp",
+      "acpsessionmode": "ACP session mode",
+      "persistent": "Persistent",
+      "oneshot": "One-shot",
+      "acpnoninteractivepermissions": "ACP non-interactive permissions",
+      "deny": "Deny",
+      "fail": "Fail",
+      "acpstatedirectory": "ACP state directory",
+      "acpwarmprocessidlems": "ACP warm process idle ms",
+      "enablechrome": "Enable Chrome",
+      "skippermissions": "Skip permissions",
+      "maxturnsperrun": "Max turns per run",
+      "codexcli": "Codex CLI",
+      "provider": "Provider",
+      "codex": "Codex",
+      "opencode11832": "OpenCode 1.18.32",
+      "claudemanaged": "Claude Managed",
+      "awsagentcore": "AWS AgentCore",
+      "acpxclaude": "ACPX Claude",
+      "managedagentprofile": "Managed Agent profile",
+      "managedprimary": "managed-primary",
+      "sessionspendceilingusd": "Session spend ceiling (USD)",
+      "acknowledgemanagedretention": "Acknowledge managed retention",
+      "agentcoreprofile": "AgentCore profile",
+      "agentcoreprimary": "agentcore-primary",
+      "estimatedsessionceilingusd": "Estimated session ceiling (USD)",
+      "maximumiterations": "Maximum iterations",
+      "maximumoutputtokens": "Maximum output tokens",
+      "invocationtimeoutseconds": "Invocation timeout (seconds)",
+      "acknowledge90daymemoryretention": "Acknowledge 90-day Memory retention",
+      "permissionmode": "Permission mode",
+      "permissionmode1": "Permission mode",
+      "unsupportedsavedmodeselectaqualifiedmode": "Unsupported saved mode — select a qualified mode",
+      "thissavedcodexmodecannotstartor": "This saved Codex mode cannot start or recover a Paperclip Runner run. Select Automatic (isolated) to remediate it.",
+      "runnerlifecycle": "Runner lifecycle",
+      "turnbyturn": "Turn by turn",
+      "warmsession": "Warm session",
+      "warmidletimeoutms": "Warm idle timeout (ms)",
+      "codexacp": "codex-acp",
+      "bypasssandbox": "Bypass sandbox",
+      "enablesearch": "Enable search",
+      "fastmode": "Fast mode",
+      "geminicli": "Gemini CLI",
+      "geminiacp": "gemini --acp",
+      "apibaseurl": "API base URL",
+      "apikey": "API key",
+      "hermesapiserverkeynotpaperclipapi": "Hermes API_SERVER_KEY, not PAPERCLIP_API_KEY",
+      "paperclipapiurl": "Paperclip API URL",
+      "sessionkeystrategy": "Session key strategy",
+      "issuescoped": "Issue scoped",
+      "agentscoped": "Agent scoped",
+      "runscoped": "Run scoped",
+      "none": "None",
+      "timeoutseconds": "Timeout seconds",
+      "eventreconnectms": "Event reconnect ms",
+      "dangerouslyallowremotehttp": "Dangerously allow remote HTTP",
+      "extraheaders": "Extra headers",
+      "xcustomheadervalue": "{\"x-custom-header\": \"value\"}",
+      "instructions": "Instructions",
+      "webhookurl": "Webhook URL",
+      "gatewayurl": "Gateway URL",
+      "ws12700118789": "ws://127.0.0.1:18789",
+      "gatewayauthtoken": "Gateway auth token",
+      "openclawgatewaytoken": "OpenClaw gateway token",
+      "agentid": "Agent ID",
+      "agent123": "agent-123",
+      "sessionstrategy": "Session strategy",
+      "fixed": "Fixed",
+      "perissue": "Per issue",
+      "perrun": "Per run",
+      "sessionkey": "Session key",
+      "paperclip": "paperclip",
+      "passwordalternativeauth": "Password (alternative auth)",
+      "gatewaysharedpassword": "Gateway shared password",
+      "role": "Role",
+      "operator": "operator",
+      "scopescommaseparated": "Scopes (comma-separated)",
+      "paperclipapiurloverride": "Paperclip API URL override",
+      "headersjson": "Headers JSON",
+      "claimedapikeypath": "Claimed API key path",
+      "openclawworkspacepaperclipclaimedapikeyjson": "~/.openclaw/workspace/paperclip-claimed-api-key.json",
+      "waittimeoutms": "Wait timeout (ms)",
+      "disabledeviceauth": "Disable device auth",
+      "skipdevicekeyauthentication": "Skip device key authentication",
+      "autopaironfirstconnect": "Auto-pair on first connect",
+      "automaticallyapprovedevicepairing": "Automatically approve device pairing",
+      "deviceauth": "Device auth",
+      "whenenabledpaperclippersistsadevicekey": "When enabled, Paperclip persists a device key during onboarding so pairing approvals remain stable across runs.",
+      "command": "Command",
+      "egnodepython": "e.g. node, python",
+      "argscommaseparated": "Args (comma-separated)",
+      "egscriptjsflag": "e.g. script.js, --flag"
+    }
+  },
+  "runtimejsonfields": {
+    "general": {
+      "runtimeservicesjson": "Runtime services JSON",
+      "payloadtemplatejson": "Payload template JSON"
+    }
+  },
+  "schemaconfigfields": {
+    "general": {
+      "select": "Select...",
+      "use": "Use \"",
+      "ascustomvaluepressenter": "\" as custom value (press Enter)"
+    }
+  },
+  "connectionintentinteractionbody": {
+    "general": {
+      "waitingfor": "Waiting for",
+      "onlytheaddressedpersoncanchoosean": "Only the addressed person can choose an identity or authorize this connection.",
+      "loadingconnectionoptions": "Loading connection options…",
+      "couldntloadconnectionsetup": "Couldn’t load connection setup",
+      "tryagain": "Try again",
+      "isready": "is ready.",
+      "youcancontinuehereonceitis": "You can continue here once it is restored.",
+      "theselectedaccountisnolongeravailable": "The selected account is no longer available to you. Ask its owner to restore access, or choose an available AI connection in the agent’s settings.",
+      "aiconnectionneedsattention": "AI connection needs attention",
+      "thistaskcantrununtilthe": "This task can’t run until the agent has a valid AI connection. Connect here and the task will resume automatically.",
+      "connectyouridentityorreuseaneligible": "Connect your identity or reuse an eligible connection. Access is added only for this agent.",
+      "authorizationdidntfinishyourpreviouschoices": "Authorization didn’t finish. Your previous choices are safe; try again.",
+      "notnow": "Not now",
+      "closesetup": "Close setup",
+      "fixconnection": "Fix connection",
+      "continuesetup": "Continue setup",
+      "tryagain1": "Try again",
+      "connectuseexisting": "Connect / Use existing",
+      "connect": "Connect",
+      "connect2": "Connect",
+      "completeconnectionsetupwithoutleavingthistask": "Complete connection setup without leaving this task.",
+      "couldntupdatethisconnectionrequest": "Couldn’t update this connection request."
+    }
+  },
+  "connectionsetupflow": {
+    "general": {
+      "loadingconnection": "Loading connection…",
+      "couldnotloadthisconnectionyoursaved": "Could not load this connection. Your saved access and credentials have not changed.",
+      "tryagain": "Try again",
+      "loadingconnectionsettings": "Loading connection settings…",
+      "enablemcpaggregatorsinsettingsexperimentalto": "Enable MCP aggregators in Settings → Experimental to set up this connection.",
+      "selectanorganizationtoconnectapps": "Select an organization to connect apps.",
+      "couldntloadconnectionsetup": "Couldn’t load connection setup",
+      "paperclipcouldntchecktheretainedconnection": "Paperclip couldn’t check the retained connection. The retained connection was not changed.",
+      "tryagain1": "Try again",
+      "backtoapps": "Back to apps",
+      "thissetupcantberesumed": "This setup can’t be resumed",
+      "thesavedconnectionnolongerexistsor": "The saved connection no longer exists or is not available to this organization.",
+      "backtoapps2": "Back to apps",
+      "thisconnectioncantbereconnected": "This connection can’t be reconnected",
+      "theretainedconnectionnolongerexistsor": "The retained connection no longer exists or is not available to this organization.",
+      "thisreconnectlinkdoesnotmatchthe": "This reconnect link does not match the retained connection's provider.",
+      "backtoapps3": "Back to apps",
+      "couldntloadconnectionsetup4": "Couldn’t load connection setup",
+      "paperclipcouldntloadtheproviderdetails": "Paperclip couldn’t load the provider details needed to restore this connection. The retained connection was not changed.",
+      "tryagain5": "Try again",
+      "backtoapps6": "Back to apps",
+      "thisconnectioncantbereconnected7": "This connection can’t be reconnected",
+      "paperclipnolongerhasasupportedsetup": "Paperclip no longer has a supported setup method for this retained connection. The retained connection was not changed.",
+      "backtoapps8": "Back to apps",
+      "loadingsavedconnectionsetup": "Loading saved connection setup",
+      "loadingretainedconnectionsetup": "Loading retained connection setup",
+      "useanexisting": "Use an existing",
+      "connection": "connection",
+      "appconnection": "app connection",
+      "reuseaconnectionwithoutchangingwhoalready": "Reuse a connection without changing who already has access, or connect a new one.",
+      "reviewconnectionsetup": "Review connection setup",
+      "connectnew": "Connect new",
+      "cancel": "Cancel",
+      "signinisunavailable": "sign-in is unavailable",
+      "thisinstanceisconnectedtopaperclipbut": "This instance is connected to Paperclip, but",
+      "signinisnotcurrentlyavailabletry": "sign-in is not currently available. Try again shortly or contact your instance administrator.",
+      "back": "Back",
+      "tryagain9": "Try again",
+      "connectwithpaperclip": "Connect with Paperclip",
+      "youmustconnectthisinstancetopaperclip": "You must connect this instance to Paperclip to connect to",
+      "youonlyneedtodothisonce": "(you only need to do this once).",
+      "paperclipcouldntcheckcloudregistrationtry": "Paperclip couldn’t check Cloud registration. Try again.",
+      "finishauthorizationintheopenedwindow": "Finish authorization in the opened window.",
+      "openauthorizationinanewtab": "Open authorization in a new tab",
+      "back10": "Back",
+      "continue": "Continue",
+      "connectwithpaperclip11": "Connect with Paperclip",
+      "connectyourownmcpserver": "Connect your own MCP server",
+      "cancel12": "Cancel",
+      "setupprogress": "Setup progress",
+      "installpaperclipongithub": "Install Paperclip on GitHub",
+      "managerepositoriesongithub": "Manage repositories on GitHub",
+      "tryagain13": "Try again",
+      "preparing": "Preparing…",
+      "opensignininanewtab": "Open sign-in in a new tab",
+      "back14": "Back",
+      "zapiermcpurl": "Zapier MCP URL",
+      "pasteavalidzapierurltocontinue": "Paste a valid Zapier URL to continue.",
+      "back15": "Back",
+      "checking": "Checking…",
+      "checklink": "Check link",
+      "connectthroughvercel": "Connect through Vercel",
+      "createandmanagetheproviderconnectorin": "Create and manage the provider connector in Vercel. Paperclip stores its reference and applies agent access, policy, approval, and audit controls here.",
+      "openvercelconnect": "Open Vercel Connect",
+      "vercelconnectisunavailableonthisinstance": "Vercel Connect is unavailable on this instance.",
+      "searchapps": "Search apps…",
+      "unavailable": "Unavailable",
+      "connect": "Connect →",
+      "noappsmatch": "No apps match “",
+      "connectzapier": "Connect Zapier",
+      "connectyourownmcpserver16": "Connect your own MCP server",
+      "connectwithalink": "Connect with a link",
+      "pastethecompletemcpurlzapiergives": "Paste the complete MCP URL Zapier gives you, including its token.",
+      "pasteyourmcpserversurland": "Paste your MCP server’s URL and every discovered tool will be available immediately.",
+      "pasteasetuplinkfromanapp": "Paste a setup link from an app that is not listed here.",
+      "anyremotetoolurlworkshereincluding": "Any remote tool URL works here — including a local MCP server like",
+      "thislookslike": "This looks like",
+      "notavailable": "Not available",
+      "continue17": "Continue",
+      "mcpserverurl": "MCP server URL",
+      "continue18": "Continue",
+      "papercliphasaguidedsetupfor": "Paperclip has a guided setup for",
+      "use": "Use",
+      "doesitneedakey": "Does it need a key?",
+      "no": "No",
+      "yes": "Yes",
+      "pastethekeythisappgaveyou": "Paste the key this app gave you.",
+      "mostserversjustworkfromtheaddress": "Most servers just work from the address — pick Yes only if the server gave you a key, or if it asks you to sign in.",
+      "appkey": "App key",
+      "advancedauthentication": "Advanced authentication",
+      "onlyneededwhentheserversdocs": "Only needed when the server's docs are specific about how to authenticate.",
+      "headername": "Header name",
+      "headername19": "Header name",
+      "value": "Value",
+      "remove": "Remove",
+      "addanotherheader": "Add another header",
+      "paperclipsetssigninuponits": "Paperclip sets sign-in up on its own whenever the server allows it. Only fill these in when the server's docs tell you to register Paperclip yourself first.",
+      "clientid": "Client ID",
+      "optional": "Optional",
+      "clientsecret": "Client secret",
+      "optional20": "Optional",
+      "back21": "Back",
+      "checking22": "Checking…",
+      "checklink23": "Check link",
+      "whatshouldpaperclipbeabletodo": "What should Paperclip be able to do?",
+      "chooseanaccessleveltocontinue": "Choose an access level to continue.",
+      "howdoyouwanttoconnect": "How do you want to connect?",
+      "chooseaconnectionmethodtocontinue": "Choose a connection method to continue.",
+      "shareeachsheetwiththisemail": "Share each sheet with this email",
+      "ingooglesheetsclickshareandadd": "In Google Sheets, click Share and add this email as an Editor. Then paste the sheet links below.",
+      "googlesheetsisnotavailableonthis": "Google Sheets is not available on this instance yet.",
+      "pastelinkstothesheetsyoushared": "Paste links to the sheets you shared",
+      "sheet": "sheet",
+      "sheets": "sheets",
+      "pasteonelinkperlinebothedit": "Paste one link per line. Both .../edit and .../edit#gid=... links work.",
+      "back24": "Back",
+      "checking25": "Checking…",
+      "connect26": "Connect",
+      "reviewrequirements": "Review requirements",
+      "createorattachtheconnectorinvercel": "Create or attach the connector in Vercel",
+      "paperclipdoesnotcopyvercelssetup": "Paperclip does not copy Vercel’s setup forms. Finish connector setup there, then paste its UID below.",
+      "openvercelconnect27": "Open Vercel Connect",
+      "connectoruidorid": "Connector UID or ID",
+      "servicemyconnectororscl": "service/my-connector or scl_…",
+      "paperclipvalidatestheconnectorandstoresonly": "Paperclip validates the connector and stores only its reference and redacted verification metadata.",
+      "advanced": "Advanced",
+      "youroauthapp": "Your OAuth app",
+      "wheredoifindthis": "Where do I find this?",
+      "back28": "Back",
+      "checking29": "Checking…",
+      "validateandcontinue": "Validate and continue",
+      "validateandconnect": "Validate and connect",
+      "continuetogithub": "Continue to GitHub",
+      "continuetosignin": "Continue to sign in",
+      "connect30": "Connect",
+      "copied": "Copied",
+      "copyfailed": "Copy failed",
+      "copy": "Copy",
+      "youroauthapp31": "Your OAuth app",
+      "useyourownoauthapp": "Use your own OAuth app",
+      "registerpaperclipscallbackuriin": "Register Paperclip's callback URI in",
+      "thenenterthecustomerownedclientdetails": ", then enter the customer-owned client details.",
+      "open": "Open",
+      "appsettings": "app settings",
+      "paperclipcallbackurl": "Paperclip callback URL",
+      "addthisexacturlto": "Add this exact URL to",
+      "beforecontinuingitmustmatchtheauthorization": "before continuing. It must match the authorization request.",
+      "clientid32": "Client ID",
+      "clientsecret33": "Client secret",
+      "optionalforpublicclients": "Optional for public clients",
+      "selectanoption": "Select an option",
+      "thisagentusesthisgithubaccountfor": "This agent uses this GitHub account for everyone’s work, instead of the person giving instructions.",
+      "loadingconnectionidentity": "Loading connection identity",
+      "mygithubaccount": "My GitHub account",
+      "justme": "Just me",
+      "adedicatedaccountforanagent": "A dedicated account for an agent",
+      "sharedorganizationgithubaccountadvanced": "Shared organization GitHub account (advanced)",
+      "anyhumanintheorganization": "Any human in the organization",
+      "agentsuseitonlyforrunswhere": "Agents use it only for runs where you are the responsible person.",
+      "thatagentalwaysusesthisaccountregardless": "That agent always uses this account, regardless of who starts the run.",
+      "eligibleagentsuseonesharedcredentialregardless": "Eligible agents use one shared credential, regardless of who starts the run.",
+      "noidentityrequired": "No identity required",
+      "existingagentaccessstaysthesame": "Existing agent access stays the same",
+      "reconnectingreplacesthecredentialwithoutchangingwhich": "Reconnecting replaces the credential without changing which agents can use it.",
+      "thistaskgrantsaccessonlyto": "This task grants access only to",
+      "existingconnectionaccessisleftunchanged": ". Existing connection access is left unchanged.",
+      "chooseexactlyoneagentthisidentitycannot": "Choose exactly one agent. This identity cannot be shared with other agents.",
+      "back34": "Back",
+      "isready": "is ready.",
+      "viewconnection": "View connection"
+    }
+  },
+  "remotemcpconnectionsetup": {
+    "general": {
+      "paperclipcontrolsaccesstothetoolslisted": "Paperclip controls access to the tools listed here. App and action permissions inside these tools are managed in",
+      "permissions": "Permissions",
+      "connectionsettings": "Connection settings",
+      "completesigninintheproviderwindow": "Complete sign-in in the provider window, then return here. Paperclip is waiting for confirmation.",
+      "ifawindowdidnotopen": "If a window did not open,",
+      "opensigninagain": "open sign-in again",
+      "cancelsignin": "Cancel sign-in",
+      "waitingforsignin": "Waiting for sign-in",
+      "connectioncancelledyoursetupdetailsarepreserved": "Connection cancelled. Your setup details are preserved; try again when you are ready.",
+      "mcpserverurl": "MCP server URL",
+      "mcpserverurl1": "MCP server URL",
+      "advancedauthentication": "Advanced authentication",
+      "authentication": "Authentication",
+      "automaticsigninifrequired": "Automatic (sign in if required)",
+      "bearertoken": "Bearer token",
+      "customheaders": "Custom headers",
+      "noadditionalauthentication": "No additional authentication",
+      "bearertoken2": "Bearer token",
+      "bearertoken3": "bearer token",
+      "pastethetokenonlywithouttheword": "Paste the token only, without the word Bearer. It is kept in the connection’s credentials.",
+      "additionalheaders": "Additional headers",
+      "headers": "Headers",
+      "header": "Header",
+      "name": "name",
+      "header4": "Header",
+      "value": "value",
+      "addheader": "Add header",
+      "connectinganddiscoveringtools": "Connecting and discovering tools…",
+      "back": "Back",
+      "disconnected": "Disconnected",
+      "agentscannotusethisconnectionreconnectto": "Agents cannot use this connection. Reconnect to restore access under the saved permission choices.",
+      "connected": "Connected",
+      "justme": "Just me",
+      "anyhumanintheorganization": "Any human in the organization",
+      "tools": "tools ·",
+      "anyagent": "Any agent",
+      "whocanusethisconnection": "Who can use this connection",
+      "permissions5": "Permissions",
+      "refreshthecatalogafterchangingtoolsin": "Refresh the catalog after changing tools in",
+      "existingoffandaskfirstchoicesare": ". Existing Off and Ask first choices are preserved.",
+      "refreshing": "Refreshing…",
+      "refreshtools": "Refresh tools",
+      "youraccesschoicesandsetupprogressare": "Your access choices and setup progress are kept with this connection.",
+      "resumesetup": "Resume setup"
+    }
+  },
+  "remotemcpmanagement": {
+    "general": {
+      "connectionsettings": "Connection settings",
+      "reconnect": "Reconnect",
+      "managein": "Manage in",
+      "disconnect": "Disconnect",
+      "disconnect1": "Disconnect",
+      "deletethisconnectionssavedcredentialsand": "Delete this connection’s saved credentials and stop further calls through Paperclip. Other connections are unaffected. Actions already sent to the provider may still complete. Connecting again requires a new sign-in or key.",
+      "cancel": "Cancel",
+      "disconnecting": "Disconnecting…",
+      "disconnectconnection": "Disconnect connection"
+    }
+  },
+  "remotemcpproductionsetup": {
+    "general": {
+      "connect": "Connect",
+      "useanexistingconnectionorconnecta": "Use an existing connection or connect a new account. Existing access stays unchanged.",
+      "cancel": "Cancel",
+      "connectnew": "Connect new",
+      "couldnotloadsavedaccessretrybefore": "Could not load saved access. Retry before changing this connection.",
+      "loadingsavedaccess": "Loading saved access…",
+      "tryagain": "Try again"
+    }
+  },
+  "launchers": {
+    "general": {
+      "couldnotresolvelaunchertarget": ": could not resolve launcher target \"",
+      "close": "Close",
+      "pluginlaunchersunavailable": "Plugin launchers unavailable:",
+      "failedtorender": ": failed to render"
+    }
+  },
+  "slots": {
+    "general": {
+      "pluginextensionsunavailable": "Plugin extensions unavailable:",
+      "failedtorender": ": failed to render"
     }
   },
   "agentdetailproduction": {
@@ -12634,16 +16276,6 @@
       "saveOAuth": "Save OAuth configuration",
       "managePermissions": "Manage action permissions",
       "loadingSearch": "Loading search access…"
-    }
-  },
-  "setupwizard": {
-    "general": {
-      "chooseagent": "Choose agent",
-      "connectprovider": "Connect provider",
-      "tryit": "Try it",
-      "connectionsetupprogress": "Connection setup progress",
-      "setupprogress": "Setup progress",
-      "saveampexit": "Save & exit"
     }
   }
 }

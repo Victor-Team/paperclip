@@ -14,6 +14,7 @@ import { instanceSettingsApi } from "@/api/instanceSettings";
 import { queryKeys } from "@/lib/queryKeys";
 import { agentUrl } from "@/lib/utils";
 import { relativeTime } from "@/lib/utils";
+import { useTranslation } from "@/i18n";
 
 export interface BuiltInAgentGateProps {
   /** Registry key of the built-in agent that powers this feature (e.g. "briefs"). */
@@ -34,6 +35,7 @@ export interface BuiltInAgentGateProps {
  * - ready → children
  */
 export function BuiltInAgentGate({ agentKey, companyId, featureLabel, children }: BuiltInAgentGateProps) {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [configureOpen, setConfigureOpen] = useState(false);
 
@@ -106,7 +108,7 @@ export function BuiltInAgentGate({ agentKey, companyId, featureLabel, children }
           actions={
             <>
               <Button variant="ghost" size="sm" asChild>
-                <Link to={agentUrl(state.agent)}>View agent</Link>
+                <Link to={agentUrl(state.agent)}>{t("builtinagentgate.general.viewagent")}</Link>
               </Button>
               <Button
                 size="sm"
@@ -118,9 +120,8 @@ export function BuiltInAgentGate({ agentKey, companyId, featureLabel, children }
             </>
           }
         >
-          Its built-in agent was paused{pausedAt ? ` ${pausedAt}` : ""}, so new{" "}
-          {label.toLowerCase()} isn't being generated.
-        </InlineBanner>
+          {t("builtinagentgate.general.itsbuiltinagentwaspaused")}{pausedAt ? ` ${pausedAt}` : ""}{t("builtinagentgate.general.sonew")}{" "}
+          {label.toLowerCase()} {t("builtinagentgate.general.isntbeinggenerated")}</InlineBanner>
         {/* Paused ≠ hidden: keep existing content readable, marked stale. */}
         <div className="opacity-70">{children}</div>
       </div>

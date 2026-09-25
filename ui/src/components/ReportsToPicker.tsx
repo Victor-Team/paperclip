@@ -9,6 +9,7 @@ import {
 import { User } from "lucide-react";
 import { cn } from "../lib/utils";
 import { roleLabels } from "./agent-config-primitives";
+import { useTranslation } from "@/i18n";
 
 export function ReportsToPicker({
   agents,
@@ -27,6 +28,7 @@ export function ReportsToPicker({
   disabledEmptyLabel?: string;
   chooseLabel?: string;
 }) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const exclude = new Set(excludeAgentIds);
   const rows = agents.filter(
@@ -51,7 +53,7 @@ export function ReportsToPicker({
           {unknownManager ? (
             <>
               <User className="h-3 w-3 shrink-0 text-muted-foreground" />
-              <span className="min-w-0 truncate text-muted-foreground">Unknown manager (stale ID)</span>
+              <span className="min-w-0 truncate text-muted-foreground">{t("reportstopicker.general.unknownmanagerstaleid")}</span>
             </>
           ) : current ? (
             <>
@@ -62,7 +64,7 @@ export function ReportsToPicker({
                   terminatedManager && "text-amber-900 dark:text-amber-200",
                 )}
               >
-                {`Reports to ${current.name}${terminatedManager ? " (terminated)" : ""}`}
+                {`Reports to ${current.name}${terminatedManager ? t("reportstopicker.general.terminated") : ""}`}
               </span>
             </>
           ) : (
@@ -87,20 +89,17 @@ export function ReportsToPicker({
             setOpen(false);
           }}
         >
-          No manager
-        </button>
+          {t("reportstopicker.general.nomanager")}</button>
         {terminatedManager && (
           <div className="flex min-w-0 items-center gap-2 overflow-hidden px-2 py-1.5 text-xs text-muted-foreground border-b border-border mb-0.5">
             <AgentAvatar agent={current} size={16} className="shrink-0 h-3 w-3"/>
             <span className="min-w-0 truncate">
-              Current: {current.name} (terminated)
-            </span>
+              {t("reportstopicker.general.current")} {current.name} {t("reportstopicker.general.terminated1")}</span>
           </div>
         )}
         {unknownManager && (
           <div className="px-2 py-1.5 text-xs text-muted-foreground border-b border-border mb-0.5">
-            Saved manager is missing from this organization. Choose a new manager or clear.
-          </div>
+            {t("reportstopicker.general.savedmanagerismissingfromthisorganization")}</div>
         )}
         {rows.map((a) => (
           <button

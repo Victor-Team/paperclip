@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { copyTextToClipboard } from "@/lib/clipboard";
+import { useTranslation } from "@/i18n";
 
 export type WorkspaceServiceControlState =
   | "stopped"
@@ -147,11 +148,12 @@ function CopyUrlButton({ url, disabled }: { url: string; disabled?: boolean }) {
 }
 
 function UrlSegment({ entry, compact }: { entry: WorkspaceServiceControlEntry; compact?: boolean }) {
+  const { t } = useTranslation();
   const displayUrl = formatServiceUrl(entry.url) ?? (entry.port ? `:${entry.port}` : null);
   const live = entry.state === "running" && Boolean(entry.url);
 
   if (!displayUrl) {
-    return <span className="font-mono text-xs text-muted-foreground/70">no url</span>;
+    return <span className="font-mono text-xs text-muted-foreground/70">{t("workspaceservicecontrolbar.general.nourl")}</span>;
   }
   return (
     <>
@@ -181,10 +183,10 @@ function UrlSegment({ entry, compact }: { entry: WorkspaceServiceControlEntry; c
           size="icon-xs"
           disabled={!live}
           className="text-muted-foreground hover:text-foreground"
-          title="Open in new tab"
+          title={t("workspaceservicecontrolbar.general.openinnewtab")}
         >
           {live ? (
-            <a href={entry.url ?? undefined} target="_blank" rel="noreferrer" aria-label="Open in new tab">
+            <a href={entry.url ?? undefined} target="_blank" rel="noreferrer" aria-label={t("workspaceservicecontrolbar.general.openinnewtab1")}>
               <ExternalLink className="size-3" />
             </a>
           ) : (
@@ -203,6 +205,7 @@ function ActionSlots({
   entry: Pick<WorkspaceServiceControlEntry, "state" | "canStart">;
   onAction: (action: WorkspaceServiceControlAction) => void;
 }) {
+  const { t } = useTranslation();
   const transitional = isTransitional(entry.state);
   const canStart = entry.canStart ?? true;
 
@@ -214,12 +217,11 @@ function ActionSlots({
         className="w-13 justify-center"
         disabled={!canStart}
         onClick={() => onAction("start")}
-        aria-label="Start"
-        title="Start"
+        aria-label={t("workspaceservicecontrolbar.general.start")}
+        title={t("workspaceservicecontrolbar.general.start2")}
       >
         <Play className="size-3" />
-        Start
-      </Button>
+        {t("workspaceservicecontrolbar.general.start3")}</Button>
     );
   }
 
@@ -231,8 +233,8 @@ function ActionSlots({
           size="icon-xs"
           disabled={!canStart}
           onClick={() => onAction("start")}
-          aria-label="Start"
-          title="Start"
+          aria-label={t("workspaceservicecontrolbar.general.start4")}
+          title={t("workspaceservicecontrolbar.general.start5")}
         >
           <Play className="size-3" />
         </Button>
@@ -241,8 +243,8 @@ function ActionSlots({
           size="icon-xs"
           disabled={!canStart}
           onClick={() => onAction("restart")}
-          aria-label="Restart"
-          title="Restart"
+          aria-label={t("workspaceservicecontrolbar.general.restart")}
+          title={t("workspaceservicecontrolbar.general.restart6")}
           className="border border-border text-foreground"
         >
           <RotateCcw className="size-3" />
@@ -258,8 +260,8 @@ function ActionSlots({
         size="icon-xs"
         disabled={transitional}
         onClick={() => onAction("stop")}
-        aria-label="Stop"
-        title="Stop"
+        aria-label={t("workspaceservicecontrolbar.general.stop")}
+        title={t("workspaceservicecontrolbar.general.stop7")}
         className="border border-border text-foreground"
       >
         <Square className="size-3" />
@@ -269,8 +271,8 @@ function ActionSlots({
         size="icon-xs"
         disabled={transitional || !canStart}
         onClick={() => onAction("restart")}
-        aria-label="Restart"
-        title="Restart"
+        aria-label={t("workspaceservicecontrolbar.general.restart8")}
+        title={t("workspaceservicecontrolbar.general.restart9")}
         className="border border-border text-foreground"
       >
         <RotateCcw className="size-3" />
@@ -286,6 +288,7 @@ function ServiceDetail({
   entry: WorkspaceServiceControlEntry;
   onViewLogs?: () => void;
 }) {
+  const { t } = useTranslation();
   const detail = entry.exposureDetail ?? (entry.state === "failed" ? entry.failureDetail : null);
   if (!detail) return null;
   const exposureFailed = entry.exposureState === "failed" || entry.exposureState === "cleanup_pending";
@@ -300,8 +303,7 @@ function ServiceDetail({
             onClick={onViewLogs}
             className="font-medium text-foreground underline underline-offset-2 hover:text-foreground/80"
           >
-            View logs
-          </button>
+            {t("workspaceservicecontrolbar.general.viewlogs")}</button>
         </>
       ) : null}
     </div>
@@ -423,6 +425,7 @@ function MultiServiceBar({
   defaultServicesOpen?: boolean;
   className?: string;
 }) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(defaultServicesOpen ?? false);
   const runningCount = services.filter((entry) => entry.state === "running").length;
   const anyTransitional = services.some((entry) => isTransitional(entry.state));
@@ -457,13 +460,13 @@ function MultiServiceBar({
                 aria-label={`${runningCount} of ${services.length} services running — show services`}
               >
                 <StatusIndicator entry={aggregateEntry} />
-                <span className="whitespace-nowrap">{runningCount}/{services.length} running</span>
+                <span className="whitespace-nowrap">{runningCount}/{services.length} {t("workspaceservicecontrolbar.general.running")}</span>
                 <ChevronDown className="size-3 text-muted-foreground" />
               </button>
             </PopoverTrigger>
             <PopoverContent align="end" className="w-96 p-0" onOpenAutoFocus={(event) => event.preventDefault()}>
               <div className="px-4 pb-1 pt-3 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                Services · {services.length}
+                {t("workspaceservicecontrolbar.general.services")} {services.length}
               </div>
               <div className="divide-y divide-border px-4">
                 {services.map((entry) => (
@@ -471,9 +474,9 @@ function MultiServiceBar({
                 ))}
               </div>
               <div className="flex items-center gap-1 border-t border-border px-4 py-2">
-                <Button variant="ghost" size="xs" onClick={() => onAction("start", null)}>Start all</Button>
-                <Button variant="ghost" size="xs" onClick={() => onAction("stop", null)}>Stop all</Button>
-                <Button variant="ghost" size="xs" onClick={() => onAction("restart", null)}>Restart all</Button>
+                <Button variant="ghost" size="xs" onClick={() => onAction("start", null)}>{t("workspaceservicecontrolbar.general.startall")}</Button>
+                <Button variant="ghost" size="xs" onClick={() => onAction("stop", null)}>{t("workspaceservicecontrolbar.general.stopall")}</Button>
+                <Button variant="ghost" size="xs" onClick={() => onAction("restart", null)}>{t("workspaceservicecontrolbar.general.restartall")}</Button>
                 {onManageServices ? (
                   <Button
                     variant="link"
@@ -481,8 +484,7 @@ function MultiServiceBar({
                     className="ml-auto text-muted-foreground"
                     onClick={onManageServices}
                   >
-                    Manage in Services tab →
-                  </Button>
+                    {t("workspaceservicecontrolbar.general.manageinservicestab")}</Button>
                 ) : null}
               </div>
             </PopoverContent>
@@ -495,7 +497,7 @@ function MultiServiceBar({
                 <UrlSegment entry={primary} />
               </>
             ) : (
-              <span className="font-mono text-xs text-muted-foreground/70">no url</span>
+              <span className="font-mono text-xs text-muted-foreground/70">{t("workspaceservicecontrolbar.general.nourl10")}</span>
             )}
           </div>
           <div className="mx-3 hidden h-5 w-px bg-border sm:block" />

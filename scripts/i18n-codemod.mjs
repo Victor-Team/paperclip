@@ -19,6 +19,29 @@ import { API } from "typescript/unstable/sync";
 import * as ts from "typescript/unstable/ast";
 
 const TRANSLATABLE_ATTRIBUTES = new Set(["placeholder", "title", "aria-label", "alt", "label"]);
+
+// JSX auto-decodes named HTML entities in literal text at compile time. Once
+// captured as a plain JS string and reinserted through {t(...)}, React no
+// longer decodes them (a JS string renders byte-for-byte), so an entity like
+// `&rsquo;` would otherwise show up literally in the UI instead of "'".
+const HTML_ENTITIES = {
+  amp: "&", apos: "'", quot: "\"", lt: "<", gt: ">",
+  hellip: "…", ldquo: "“", rdquo: "”",
+  lsquo: "‘", rsquo: "’", middot: "·",
+  rsaquo: "›", lsaquo: "‹", times: "×",
+  mdash: "—", ndash: "–", nbsp: " ", rarr: "→",
+};
+function decodeHtmlEntities(value) {
+  return value.replace(/&(#x[0-9a-fA-F]+|#\d+|[a-zA-Z]+);/g, (match, entity) => {
+    if (entity[0] === "#") {
+      const codePoint = entity[1] === "x" || entity[1] === "X"
+        ? Number.parseInt(entity.slice(2), 16)
+        : Number.parseInt(entity.slice(1), 10);
+      return Number.isFinite(codePoint) ? String.fromCodePoint(codePoint) : match;
+    }
+    return HTML_ENTITIES[entity] ?? match;
+  });
+}
 const sourceRoot = process.cwd();
 const args = process.argv.slice(2);
 const directoryArgs = args.flatMap((argument, index) => argument === "--directory" ? [args[index + 1]] : [])
@@ -139,7 +162,12 @@ function scan(file) {
   const visit = (node) => {
     if (isUserFacingLiteral(node)) {
       const text = node.getText().trim();
-      const normalized = ts.isJsxText(node) ? text : node.text;
+      // JSX collapses a newline (plus the indentation around it) inside a
+      // text run into a single space at compile time. Once captured as a
+      // plain JS string for translation and reinserted through {t(...)}, that
+      // collapsing no longer happens automatically, so it must be done here
+      // or the rendered output keeps a literal newline and indentation.
+      const normalized = ts.isJsxText(node) ? decodeHtmlEntities(text.replace(/[ \t]*[\r\n]+[ \t]*/g, " ")) : node.text;
       const component = componentAncestor(node);
       const kind = ts.isJsxText(node) ? "jsx_text" : ts.isJsxAttribute(node.parent) ? `attribute:${node.parent.name.text}` : "jsx_expression";
       if (!component) {
@@ -155,15 +183,21 @@ function scan(file) {
         // or `{page} of {total}`. Keep those literal spaces outside the
         // translation call; trimming the key must not join adjacent nodes.
         const nodeSourceText = sourceText.slice(node.getStart(source), node.getEnd());
-        const siblings = ts.isJsxElement(node.parent) ? node.parent.children : [];
+        const siblings = ts.isJsxElement(node.parent) || ts.isJsxFragment(node.parent) ? node.parent.children : [];
         const index = siblings.indexOf(node);
         const previousSibling = index > 0 ? siblings[index - 1] : null;
         const nextSibling = index >= 0 ? siblings[index + 1] : null;
-        const leadingInlineSpace = ts.isJsxText(node) && Boolean(previousSibling) && ts.isJsxExpression(previousSibling)
-          ? (nodeSourceText.match(/^[ \\t]+/)?.[0] ?? "")
+        // A leading/trailing whitespace run that crosses a newline is
+        // JSX-insignificant (React drops it entirely at compile time), so it
+        // must not be re-materialized as literal spaces once collapsed onto
+        // one line by this edit. Only a same-line run of spaces/tabs is real.
+        const leadingRun = nodeSourceText.match(/^[ \t\n\r]+/)?.[0] ?? "";
+        const trailingRun = nodeSourceText.match(/[ \t\n\r]+$/)?.[0] ?? "";
+        const leadingInlineSpace = ts.isJsxText(node) && Boolean(previousSibling) && ts.isJsxExpression(previousSibling) && !/[\n\r]/.test(leadingRun)
+          ? leadingRun
           : "";
-        const trailingInlineSpace = ts.isJsxText(node) && Boolean(nextSibling) && ts.isJsxExpression(nextSibling)
-          ? (nodeSourceText.match(/[ \\t]+$/)?.[0] ?? "")
+        const trailingInlineSpace = ts.isJsxText(node) && Boolean(nextSibling) && ts.isJsxExpression(nextSibling) && !/[\n\r]/.test(trailingRun)
+          ? trailingRun
           : "";
         const replacement = ts.isJsxText(node) || ts.isJsxAttribute(node.parent)
           ? `${leadingInlineSpace}{t(${quote})}${trailingInlineSpace}`

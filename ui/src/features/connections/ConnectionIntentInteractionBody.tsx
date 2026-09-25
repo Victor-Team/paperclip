@@ -27,6 +27,7 @@ import {
   type ConnectionSetupCompletion,
   type ConnectionSetupFlowProps,
 } from "./ConnectionSetupFlow";
+import { useTranslation } from "@/i18n";
 
 export interface ConnectionIntentInteractionBodyProps {
   interaction: ConnectionIntentInteraction;
@@ -41,6 +42,7 @@ export function ConnectionIntentInteractionBody({
   addresseeLabel,
   renderSetup,
 }: ConnectionIntentInteractionBodyProps) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const focusTargetRef = useRef<HTMLDivElement>(null);
   const setupGeneration = useRef(0);
@@ -242,12 +244,10 @@ export function ConnectionIntentInteractionBody({
           <Clock className="mt-0.5 h-5 w-5 shrink-0 text-muted-foreground" />
           <div>
             <p className="font-medium text-foreground">
-              Waiting for {addresseeLabel}
+              {t("connectionintentinteractionbody.general.waitingfor")} {addresseeLabel}
             </p>
             <p className="mt-1 text-sm text-muted-foreground">
-              Only the addressed person can choose an identity or authorize this
-              connection.
-            </p>
+              {t("connectionintentinteractionbody.general.onlytheaddressedpersoncanchoosean")}</p>
           </div>
         </div>
       </div>
@@ -261,14 +261,11 @@ export function ConnectionIntentInteractionBody({
   const selectedReady = repair && setupQuery.data?.existingConnections.some((connection) => connection.id === repair.connection.id);
   const setupContent = setupQuery.isLoading ? (
                 <div className="flex min-h-48 items-center justify-center gap-2 text-sm text-muted-foreground">
-                  <Loader2 className="h-4 w-4 animate-spin" /> Loading
-                  connection options…
-                </div>
+                  <Loader2 className="h-4 w-4 animate-spin" /> {t("connectionintentinteractionbody.general.loadingconnectionoptions")}</div>
               ) : setupQuery.isError ? (
                 <div className="py-8 text-center">
                   <p className="font-medium text-foreground">
-                    Couldn’t load connection setup
-                  </p>
+                    {t("connectionintentinteractionbody.general.couldntloadconnectionsetup")}</p>
                   <p className="mt-1 text-sm text-muted-foreground">
                     {setupQuery.error instanceof Error
                       ? setupQuery.error.message
@@ -279,15 +276,14 @@ export function ConnectionIntentInteractionBody({
                     variant="outline"
                     onClick={() => setupQuery.refetch()}
                   >
-                    Try again
-                  </Button>
+                    {t("connectionintentinteractionbody.general.tryagain")}</Button>
                 </div>
               ) : setupProps ? (
                 renderSetup ? renderSetup(setupProps) : <ConnectionSetupFlow {...setupProps} />
               ) : null;
   const inlineContent = setupQuery.isLoading || setupQuery.isError ? setupContent
     : selectedReady ? <div className="space-y-3">
-        <p className="text-sm">{repair.connection.name} is ready.</p>
+        <p className="text-sm">{repair.connection.name} {t("connectionintentinteractionbody.general.isready")}</p>
         <Button disabled={completeMutation.isPending} onClick={() => completeMutation.mutate(repair.connection.id)}>
           {completeMutation.isPending ? "Continuing…" : "Continue task"}
         </Button>
@@ -306,10 +302,9 @@ export function ConnectionIntentInteractionBody({
         onCancel={() => { closeSetup(); returnFocusToCard(); }}
       /> : <p role="status" className="text-sm text-muted-foreground">
         {repair.connection.ownership === "personal" ? `${repair.connection.ownerName ?? "The account owner"} must reconnect ${repair.connection.name}.` : `The account owner must reconnect ${repair.connection.name}.`}
-        {" "}You can continue here once it is restored.
-      </p>
+        {" "}{t("connectionintentinteractionbody.general.youcancontinuehereonceitis")}</p>
     : setupQuery.data?.aiConnection && setupQuery.data.aiConnection.mode !== "responsible_user"
-      ? <p role="status" className="text-sm text-muted-foreground">The selected account is no longer available to you. Ask its owner to restore access, or choose an available AI connection in the agent’s settings.</p>
+      ? <p role="status" className="text-sm text-muted-foreground">{t("connectionintentinteractionbody.general.theselectedaccountisnolongeravailable")}</p>
       : setupQuery.data?.aiConnection ? <AiConnectionCredentialStep
           companyId={interaction.companyId}
           provider={setupQuery.data.aiConnection.provider}
@@ -338,12 +333,12 @@ export function ConnectionIntentInteractionBody({
           />
           <div>
             <p className="font-medium text-foreground">
-              {isAi ? "AI connection needs attention" : `${interaction.payload.requestingAgentName} needs ${interaction.payload.serviceName}`}
+              {isAi ? t("connectionintentinteractionbody.general.aiconnectionneedsattention") : `${interaction.payload.requestingAgentName} needs ${interaction.payload.serviceName}`}
             </p>
             <p className="mt-1 text-sm text-muted-foreground">
               {interaction.payload.purpose === "ai"
-                ? "This task can’t run until the agent has a valid AI connection. Connect here and the task will resume automatically."
-                : "Connect your identity or reuse an eligible connection. Access is added only for this agent."}
+                ? t("connectionintentinteractionbody.general.thistaskcantrununtilthe")
+                : t("connectionintentinteractionbody.general.connectyouridentityorreuseaneligible")}
             </p>
           </div>
         </div>
@@ -351,9 +346,7 @@ export function ConnectionIntentInteractionBody({
         {needsRetry ? (
           <p className="mt-4 flex items-center gap-2 text-sm text-destructive">
             <RotateCcw className="h-4 w-4" />
-            Authorization didn’t finish. Your previous choices are safe; try
-            again.
-          </p>
+            {t("connectionintentinteractionbody.general.authorizationdidntfinishyourpreviouschoices")}</p>
         ) : null}
 
         <div className="mt-4 flex flex-wrap justify-end gap-2">
@@ -363,10 +356,9 @@ export function ConnectionIntentInteractionBody({
             disabled={declineMutation.isPending || completeMutation.isPending || authorizing}
             onClick={() => declineMutation.mutate()}
           >
-            Not now
-          </Button>}
+            {t("connectionintentinteractionbody.general.notnow")}</Button>}
           {isAi ? <Button type="button" disabled={completeMutation.isPending} onClick={() => open ? closeSetup() : setOpen(true)}>
-            <Plug className="h-4 w-4" />{open ? "Close setup" : "Fix connection"}
+            <Plug className="h-4 w-4" />{open ? t("connectionintentinteractionbody.general.closesetup") : t("connectionintentinteractionbody.general.fixconnection")}
           </Button> : <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
               <Button type="button">
@@ -376,10 +368,10 @@ export function ConnectionIntentInteractionBody({
                   <Plug className="h-4 w-4" />
                 )}
                 {authorizing
-                  ? "Continue setup"
+                  ? t("connectionintentinteractionbody.general.continuesetup")
                   : needsRetry
-                    ? "Try again"
-                    : setupQuery.data?.existingConnections.length ? "Connect / Use existing" : "Connect"}
+                    ? t("connectionintentinteractionbody.general.tryagain1")
+                    : setupQuery.data?.existingConnections.length ? t("connectionintentinteractionbody.general.connectuseexisting") : t("connectionintentinteractionbody.general.connect")}
               </Button>
             </DialogTrigger>
             <DialogContent
@@ -392,11 +384,10 @@ export function ConnectionIntentInteractionBody({
             >
               <DialogHeader className="sr-only">
                 <DialogTitle>
-                  Connect {interaction.payload.serviceName}
+                  {t("connectionintentinteractionbody.general.connect2")} {interaction.payload.serviceName}
                 </DialogTitle>
                 <DialogDescription>
-                  Complete connection setup without leaving this task.
-                </DialogDescription>
+                  {t("connectionintentinteractionbody.general.completeconnectionsetupwithoutleavingthistask")}</DialogDescription>
               </DialogHeader>
               {setupContent}
             </DialogContent>
@@ -416,7 +407,7 @@ export function ConnectionIntentInteractionBody({
                   declineMutation.error ??
                   phaseMutation.error
                 )?.message
-              : "Couldn’t update this connection request."}
+              : t("connectionintentinteractionbody.general.couldntupdatethisconnectionrequest")}
           </p>
         ) : null}
       </div>
