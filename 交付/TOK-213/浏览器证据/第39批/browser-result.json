@@ -1,0 +1,32 @@
+[
+  {
+    "name": "desktop-zh",
+    "viewport": "1366x768",
+    "errors": [],
+    "responses": [],
+    "overflow": false,
+    "avatarAlt": "Maya 的 Cliptoon 头像",
+    "hasSearch": true,
+    "hasScope": true
+  },
+  {
+    "name": "narrow-zh",
+    "viewport": "390x844",
+    "errors": [],
+    "responses": [],
+    "overflow": false,
+    "avatarAlt": "Maya 的 Cliptoon 头像",
+    "hasSearch": true,
+    "hasScope": true
+  },
+  {
+    "name": "desktop-en",
+    "viewport": "1366x768",
+    "errors": [],
+    "responses": [],
+    "overflow": false,
+    "avatarAlt": "Maya’s Cliptoon avatar",
+    "hasSearch": true,
+    "hasScope": true
+  }
+]
