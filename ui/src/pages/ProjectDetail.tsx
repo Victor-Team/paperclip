@@ -794,7 +794,7 @@ export function ProjectDetail() {
         scopeKind="project"
         scopeId={project.id}
         title={t("projectdetail.general.projectsummary")}
-        description="Summarizer keeps the latest project status, next step, and operator-needed items here."
+        description={t("projectdetail.general.summarizerkeepsthelatestprojectstatusnext")}
       />
 
       <PluginSlotOutlet

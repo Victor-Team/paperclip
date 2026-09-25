@@ -467,7 +467,7 @@ export function OrgChart({ orgTree: providedOrgTree, agents: providedAgents, emb
   }, [pan, zoom]);
 
   if (!selectedCompanyId) {
-    return <EmptyState icon={Network} message="Select an organization to view the org chart." />;
+    return <EmptyState icon={Network} message={t("orgchart.general.selectanorganizationtoviewtheorg")} />;
   }
 
   if (providedOrgTree === undefined && isLoading) {
@@ -475,7 +475,7 @@ export function OrgChart({ orgTree: providedOrgTree, agents: providedAgents, emb
   }
 
   if (orgTree && orgTree.length === 0) {
-    return <EmptyState icon={Network} message="No organizational hierarchy defined." />;
+    return <EmptyState icon={Network} message={t("orgchart.general.noorganizationalhierarchydefined")} />;
   }
 
   return (

@@ -609,7 +609,7 @@ export function ProjectWorkspaceDetail() {
               </div>
 
               <div className="grid gap-4 md:grid-cols-2">
-                <Field label={t("projectworkspacedetail.general.setupcommand")} hint="Runs when this workspace needs custom bootstrap">
+                <Field label={t("projectworkspacedetail.general.setupcommand")} hint={t("projectworkspacedetail.general.runswhenthisworkspaceneedscustombootstrap")}>
                   <textarea
                     className="min-h-28 w-full rounded-lg border border-border bg-background px-3 py-2 font-mono text-sm outline-none"
                     value={form.setupCommand}
@@ -617,7 +617,7 @@ export function ProjectWorkspaceDetail() {
                     placeholder={t("projectworkspacedetail.general.pnpminstallpnpmdev")}
                   />
                 </Field>
-                <Field label={t("projectworkspacedetail.general.cleanupcommand")} hint="Runs before project-level execution workspace teardown">
+                <Field label={t("projectworkspacedetail.general.cleanupcommand")} hint={t("projectworkspacedetail.general.runsbeforeprojectlevelexecutionworkspaceteardown")}>
                   <textarea
                     className="min-h-28 w-full rounded-lg border border-border bg-background px-3 py-2 font-mono text-sm outline-none"
                     value={form.cleanupCommand}
@@ -632,7 +632,7 @@ export function ProjectWorkspaceDetail() {
                 <p className="mt-2 text-sm text-muted-foreground">
                   {t("projectworkspacedetail.general.paperclipderivesservicesandjobsfromthis")}</p>
                 <div className="mt-3">
-                  <Field label={t("projectworkspacedetail.general.workspacecommandsjson")} hint="Execution workspaces inherit this config unless they override it. Legacy `services` arrays still work, but `commands` supports both services and jobs.">
+                  <Field label={t("projectworkspacedetail.general.workspacecommandsjson")} hint={t("projectworkspacedetail.general.executionworkspacesinheritthisconfigunlessthey")}>
                     <textarea
                       className="min-h-96 w-full rounded-lg border border-border bg-background px-3 py-2 font-mono text-sm outline-none"
                       value={form.runtimeConfig}
@@ -716,8 +716,8 @@ export function ProjectWorkspaceDetail() {
                   ? "No services have been started for this workspace yet."
                   : "No workspace command config is defined for this workspace yet."
               }
-              jobEmptyMessage="No one-shot jobs are configured for this workspace yet."
-              disabledHint="Project workspaces need a working directory before local commands can run, and services also need runtime config."
+              jobEmptyMessage={t("projectworkspacedetail.general.nooneshotjobsareconfiguredfor")}
+              disabledHint={t("projectworkspacedetail.general.projectworkspacesneedaworkingdirectorybefore")}
               onAction={(request) => controlRuntimeServices.mutate(request)}
             />
           </Card>
@@ -745,7 +745,7 @@ export function ProjectWorkspaceDetail() {
         ) : (
           <MissingPluginTabPlaceholder
             defaultTabHref={`${projectWorkspaceUrl(project, routeWorkspaceId)}?tab=configuration`}
-            defaultTabLabel="Back to configuration"
+            defaultTabLabel={t("projectworkspacedetail.general.backtoconfiguration")}
           />
         )
       ) : null}

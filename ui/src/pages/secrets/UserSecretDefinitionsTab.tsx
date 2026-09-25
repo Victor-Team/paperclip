@@ -178,8 +178,8 @@ export function UserSecretDefinitionsTab({ companyId }: { companyId: string }) {
         ) : definitions.length === 0 && !definitionsQuery.isPending ? (
           <EmptyState
             icon={UserRound}
-            message="No user secret definitions yet. Create one to require each member to supply their own credential."
-            action="New user secret"
+            message={t("usersecretdefinitionstab.general.nousersecretdefinitionsyetcreateone")}
+            action={t("usersecretdefinitionstab.general.newusersecret")}
             onAction={openCreate}
           />
         ) : (

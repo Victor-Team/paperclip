@@ -1597,19 +1597,19 @@ export function StepSourcePolicy({
       <div className="space-y-2.5 rounded-md border border-border p-3">
         <PolicyToggle
           label={t("teamcatalog.general.allowexternalsources")}
-          description="Resolve github/url skill and team sources at install time."
+          description={t("teamcatalog.general.resolvegithuburlskillandteamsources")}
           checked={allowExternalSources}
           onChange={(v) => onChange("external", v)}
         />
         <PolicyToggle
           label={t("teamcatalog.general.allowunpinnedoptionalsources")}
-          description="Permit optional sources that are not pinned to a ref or checksum."
+          description={t("teamcatalog.general.permitoptionalsourcesthatarenotpinned")}
           checked={allowUnpinnedOptionalSources}
           onChange={(v) => onChange("unpinned", v)}
         />
         <PolicyToggle
           label={t("teamcatalog.general.allowlocalpathsources")}
-          description="Required for local_path / agent_package sources. Development use only."
+          description={t("teamcatalog.general.requiredforlocalpathagentpackagesources")}
           checked={allowLocalPathSources}
           onChange={(v) => onChange("localPath", v)}
         />
@@ -2374,7 +2374,7 @@ export function TeamCatalog() {
   if (!selectedCompanyId) {
     return (
       <div className="p-8">
-        <EmptyState icon={Users2} message="Select an organization to browse the team catalog." />
+        <EmptyState icon={Users2} message={t("teamcatalog.general.selectanorganizationtobrowsetheteam")} />
       </div>
     );
   }
@@ -2489,12 +2489,12 @@ export function TeamCatalog() {
                 <RotateCcw className="h-3.5 w-3.5" /> {t("teamcatalog.general.retry26")}</Button>
             </div>
           ) : teams.length === 0 ? (
-            <EmptyState icon={Users2} message="No team catalog configured." />
+            <EmptyState icon={Users2} message={t("teamcatalog.general.noteamcatalogconfigured")} />
           ) : filtered.length === 0 ? (
             <EmptyState
               icon={Search}
-              message="No teams match this filter."
-              action="Reset filters"
+              message={t("teamcatalog.general.noteamsmatchthisfilter")}
+              action={t("teamcatalog.general.resetfilters")}
               onAction={() => setSearchParams(new URLSearchParams())}
             />
           ) : (

@@ -245,7 +245,7 @@ export function UserProfile() {
   );
 
   if (!selectedCompanyId) {
-    return <EmptyState icon={UserRound} message="Select an organization to view user profiles." />;
+    return <EmptyState icon={UserRound} message={t("userprofile.general.selectanorganizationtoviewuserprofiles")} />;
   }
 
   if (isLoading) {
@@ -253,7 +253,7 @@ export function UserProfile() {
   }
 
   if (error || !data) {
-    return <EmptyState icon={AlertCircle} message="User profile not found for this organization." />;
+    return <EmptyState icon={AlertCircle} message={t("userprofile.general.userprofilenotfoundforthisorganization")} />;
   }
 
   const allTimeTokens = allTime ? totalTokens(allTime) : 0;
@@ -353,8 +353,8 @@ export function UserProfile() {
       </div>
 
       <div className="grid gap-10 xl:grid-cols-2">
-        <UsageList title={t("userprofile.general.agentattribution")} empty="No issue-linked token usage yet." rows={agentUsageRows} />
-        <UsageList title={t("userprofile.general.providermix")} empty="No provider usage attributed yet." rows={providerUsageRows} />
+        <UsageList title={t("userprofile.general.agentattribution")} empty={t("userprofile.general.noissuelinkedtokenusageyet")} rows={agentUsageRows} />
+        <UsageList title={t("userprofile.general.providermix")} empty={t("userprofile.general.noproviderusageattributedyet")} rows={providerUsageRows} />
       </div>
     </div>
   );

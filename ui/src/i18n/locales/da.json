@@ -4749,7 +4749,10 @@
       "reviewrequestandresumeasagent": "Review the provider's request, then resume this execution as {{agentName}}. The original action will not be started again.",
       "realcallasagent": "This runs a real call against {{appName}} as {{agentName}}.",
       "waitingforapprovalbeforecall": "Waiting for your OK before this call leaves Paperclip.",
-      "actionoffforagent": "No call will be made — this action is off for {{agentName}}."
+      "actionoffforagent": "No call will be made — this action is off for {{agentName}}.",
+      "wecouldntloadtheagentsavailable": "We couldn't load the agents available for testing.",
+      "wecouldntloadtheagentsavailable1": "We couldn't load the agents available for testing.",
+      "newactionswaitswitchedoffuntilyou": "New actions wait, switched off, until you turn them on."
     }
   },
   "identitiessection": {
@@ -4831,7 +4834,8 @@
       "matchessortedaz": "matches · sorted A–Z",
       "noactionsmatch": "No actions match “",
       "clearthesearchtoseethemall": "”. Clear the search to see them all.",
-      "test": "Test"
+      "test": "Test",
+      "youcannoteditanyagentsyet": "You cannot edit any agents yet."
     }
   },
   "connectionowner": {
@@ -5392,7 +5396,8 @@
       "label": "Label",
       "alllabels": "All labels",
       "clearfilters": "Clear filters",
-      "group": "Group"
+      "group": "Group",
+      "nocasesmatchthesefilters": "No cases match these filters."
     }
   },
   "cliauth": {
@@ -5477,7 +5482,9 @@
       "corepaperclipkeepsenforcingorganizationboundariesand": "Core Paperclip keeps enforcing organization boundaries and any existing restrictive policy data, but editing advanced permissions requires an installed extension.",
       "pluginextensionsunavailable": "Plugin extensions unavailable:",
       "openmembers": "Open Members",
-      "openinvites": "Open Invites"
+      "openinvites": "Open Invites",
+      "approvehuman": "Approve human",
+      "rejecthuman": "Reject human"
     }
   },
   "companyenvironments": {
@@ -5574,7 +5581,21 @@
       "cancel12": "Cancel",
       "deleting": "Deleting...",
       "1sandbox": "1 sandbox",
-      "deleteenvironment13": "Delete environment"
+      "deleteenvironment13": "Delete environment",
+      "injectedintorunsthatresolvethroughthis": "Injected into runs that resolve through this environment. Use plain values or organization secrets.",
+      "operatorfacingnameforthisexecutiontarget": "Operator-facing name for this execution target.",
+      "optionalnoteaboutwhatthismachineis": "Optional note about what this machine is for.",
+      "sandboxstorespluginbackedproviderconfigon": "Sandbox stores plugin-backed provider config on the shared environment seam. SSH stores a remote machine target.",
+      "dnsnameoripaddressforthe": "DNS name or IP address for the remote machine.",
+      "defaultsto22": "Defaults to 22.",
+      "sshusername": "SSH username.",
+      "absolutepaththatpaperclipwillverifyduring": "Absolute path that Paperclip will verify during SSH connection tests.",
+      "optionalpemprivatekeyleaveblankto": "Optional PEM private key. Leave blank to rely on the server's SSH agent or default keychain.",
+      "optionalknownhostsblockusedwhenstrict": "Optional known_hosts block used when strict host key checking is enabled.",
+      "keepthisonunlessyoudeliberatelywant": "Keep this on unless you deliberately want probe-time host key acceptance disabled.",
+      "installedruncapablesandboxproviderpluginsappear": "Installed run-capable sandbox provider plugins appear here.",
+      "streamtheagentclisoutputlive": "Stream the agent CLI's output live while runs execute (recommended). Turn off to deliver output only when the run finishes.",
+      "injectedintorunsthatresolvethroughthis1": "Injected into runs that resolve through this environment. Use plain values or organization secrets."
     }
   },
   "companyexport": {
@@ -5608,7 +5629,14 @@
       "thepreviouspreviewremainsavailableretrywhen": "The previous preview remains available. Retry when you are ready.",
       "retrypreview": "Retry preview",
       "exportpreviewfailed5": "Export preview failed",
-      "retrypreview6": "Retry preview"
+      "retrypreview6": "Retry preview",
+      "selectafiletopreviewitscontents": "Select a file to preview its contents.",
+      "selectanorganizationtoexport": "Select an organization to export.",
+      "thepreviewrequestwascancelledyourexport": "The preview request was cancelled. Your export settings are unchanged.",
+      "retrythepreviewyoudonotneed": "Retry the preview. You do not need to reload this page.",
+      "retrypreview1": "Retry preview",
+      "noexportpreviewisloaded": "No export preview is loaded.",
+      "loadpreview": "Load preview"
     }
   },
   "companyimport": {
@@ -5694,7 +5722,13 @@
       "importfailed": "Import failed:",
       "therequestdidnotcomplete15": "the request did not complete.",
       "nothingmayhavebeencreatedorthe": "Nothing may have been created, or the import stopped partway — check the target company\n                before retrying.",
-      "packagefiles": "Package files"
+      "packagefiles": "Package files",
+      "selectafiletopreviewitscontents": "Select a file to preview its contents.",
+      "selectanorganizationtoimportinto": "Select an organization to import into.",
+      "repotreepathorbloburlto": "Repo tree path or blob URL to COMPANY.md (e.g. github.com/owner/repo/tree/main/company).",
+      "importintothisorganizationorcreatea": "Import into this organization or create a new one.",
+      "optionaloverrideleaveblanktousethe": "Optional override. Leave blank to use the package name.",
+      "boardimportscanrenameskiporreplace": "Board imports can rename, skip, or replace matching organization content."
     }
   },
   "companysettingspluginpage": {
@@ -5734,7 +5768,10 @@
       "liveagentruns": "Live agent runs",
       "activerunsfirstfollowedbythemost": "Active runs first, followed by the most recent completed runs.",
       "showingupto": "Showing up to",
-      "activerecent": "Active / recent"
+      "activerecent": "Active / recent",
+      "noactiveorrecentagentruns": "No active or recent agent runs.",
+      "createacompanytoviewliveruns": "Create an organization to view live runs.",
+      "selectacompanytoviewliveruns": "Select an organization to view live runs."
     }
   },
   "decisionqueuepage": {
@@ -5776,7 +5813,10 @@
   },
   "goals": {
     "general": {
-      "newgoal": "New Goal"
+      "newgoal": "New Goal",
+      "selectanorganizationtoviewgoals": "Select an organization to view goals.",
+      "nogoalsyet": "No goals yet.",
+      "addgoal": "Add Goal"
     }
   },
   "invitelanding": {
@@ -6127,7 +6167,9 @@
       "saving": "Saving...",
       "saveconfiguration": "Save Configuration",
       "testing": "Testing...",
-      "testconfiguration": "Test Configuration"
+      "testconfiguration": "Test Configuration",
+      "missingdirectories": "Missing directories",
+      "missingfiles": "Missing files"
     }
   },
   "projectdetail": {
@@ -6144,7 +6186,8 @@
       "pausedbybudgethardstop": "Paused by budget hard stop",
       "managedby": "Managed by",
       "projectsummary": "Project summary",
-      "loadingworkspaces": "Loading workspaces..."
+      "loadingworkspaces": "Loading workspaces...",
+      "summarizerkeepsthelatestprojectstatusnext": "Summarizer keeps the latest project status, next step, and operator-needed items here."
     }
   },
   "projectworkspacedetail": {
@@ -6197,7 +6240,13 @@
       "workspacecommands": "Workspace commands",
       "servicesandjobs": "Services and jobs",
       "longrunningservicesstaysupervisedherewhile": "Long-running services stay supervised here, while one-shot jobs run on demand against this workspace. Execution workspaces inherit this config unless they override it.",
-      "loadingworkspaceplugin": "Loading workspace plugin..."
+      "loadingworkspaceplugin": "Loading workspace plugin...",
+      "runswhenthisworkspaceneedscustombootstrap": "Runs when this workspace needs custom bootstrap",
+      "runsbeforeprojectlevelexecutionworkspaceteardown": "Runs before project-level execution workspace teardown",
+      "executionworkspacesinheritthisconfigunlessthey": "Execution workspaces inherit this config unless they override it. Legacy `services` arrays still work, but `commands` supports both services and jobs.",
+      "nooneshotjobsareconfiguredfor": "No one-shot jobs are configured for this workspace yet.",
+      "projectworkspacesneedaworkingdirectorybefore": "Project workspaces need a working directory before local commands can run, and services also need runtime config.",
+      "backtoconfiguration": "Back to configuration"
     }
   },
   "responsibleuserdenialuxlab": {
@@ -6486,7 +6535,13 @@
       "optional28": "Optional ·",
       "installed29": "Installed ·",
       "backtocatalog": "Back to catalog",
-      "selectateamtoviewdetails": "Select a team to view details."
+      "selectateamtoviewdetails": "Select a team to view details.",
+      "resolvegithuburlskillandteamsources": "Resolve github/url skill and team sources at install time.",
+      "permitoptionalsourcesthatarenotpinned": "Permit optional sources that are not pinned to a ref or checksum.",
+      "requiredforlocalpathagentpackagesources": "Required for local_path / agent_package sources. Development use only.",
+      "selectanorganizationtobrowsetheteam": "Select an organization to browse the team catalog.",
+      "noteamcatalogconfigured": "No team catalog configured.",
+      "noteamsmatchthisfilter": "No teams match this filter."
     }
   },
   "timeline": {
@@ -6509,7 +6564,11 @@
       "run": "run",
       "s": "s",
       "to4": "to",
-      "windowcapped": " · window capped"
+      "windowcapped": " · window capped",
+      "selectanorganizationtoviewitswork": "Select an organization to view its work timeline.",
+      "couldntloadthetimelinetheaggregation": "Couldn't load the timeline. The aggregation endpoint may be unavailable.",
+      "noprojectactivityinthiswindow": "No project activity in this window.",
+      "noactivityinthiswindow": "No activity in this window."
     }
   },
   "userprofile": {
@@ -6536,7 +6595,11 @@
       "recentactivity": "Recent activity",
       "nodirectuseractionsrecordedyet": "No direct user actions recorded yet.",
       "agentattribution": "Agent attribution",
-      "providermix": "Provider mix"
+      "providermix": "Provider mix",
+      "selectanorganizationtoviewuserprofiles": "Select an organization to view user profiles.",
+      "userprofilenotfoundforthisorganization": "User profile not found for this organization.",
+      "noissuelinkedtokenusageyet": "No issue-linked token usage yet.",
+      "noproviderusageattributedyet": "No provider usage attributed yet."
     }
   },
   "whatneedsme": {
@@ -6575,7 +6638,8 @@
       "of": "of",
       "workspaces1": "workspaces.",
       "loading": "Loading...",
-      "loadmore": "Load more"
+      "loadmore": "Load more",
+      "summarizertracksworkspaceactivityliveservicesand": "Summarizer tracks workspace activity, live services, and follow-up needs across projects."
     }
   },
   "agentskillreleasepicker": {
@@ -9745,7 +9809,11 @@
       "loadmorecount": "Load {{count}} more",
       "importfailed": "Import failed",
       "allsecretsimported": "All {{count}} secrets imported",
-      "importcomplete": "Import complete"
+      "importcomplete": "Import complete",
+      "noawsprovidervaultconfiguredaddone": "No AWS provider vault configured. Add one to import secrets.",
+      "nosecretsvisibletothisvault": "No secrets visible to this vault.",
+      "nosecretsselectedgobacktopick": "No secrets selected. Go back to pick remote secrets to import.",
+      "managevaults": "Manage vaults"
     }
   },
   "missingusersecretsbanner": {
@@ -9778,7 +9846,8 @@
       "setvalue": "Set value",
       "clearmyvalue": "Clear my value",
       "usersecretsintro": "These are credentials only you provide. Each value is yours alone — used when you are the user responsible for a run — and is never shown back to anyone, including admins.",
-      "requiredsecretsmissing": "{{count}} required user secret still needs your value."
+      "requiredsecretsmissing": "{{count}} required user secret still needs your value.",
+      "nousersecretsaredefinedforthis": "No user secrets are defined for this organization yet. An admin defines which credentials each member supplies."
     }
   },
   "proposalstab": {
@@ -9788,7 +9857,8 @@
       "couldntloadproposalstryagain": "Couldn’t load proposals. Try again.",
       "loadingproposals": "Loading proposals…",
       "nopendingproposals": "No pending proposals",
-      "agentsproposecredentialsandaccessbindingsyou": "Agents propose credentials and access bindings; you approve or reject them here. Proposed\n        values are never shown — only a fingerprint and length."
+      "agentsproposecredentialsandaccessbindingsyou": "Agents propose credentials and access bindings; you approve or reject them here. Proposed\n        values are never shown — only a fingerprint and length.",
+      "whenanagentproposesasecretor": "When an agent proposes a secret or an access binding, it shows up here for review."
     }
   },
   "setmyusersecretdialog": {
@@ -9846,7 +9916,8 @@
       "remove": "Remove",
       "coverage": "Coverage:",
       "notset": "not set",
-      "usersecretsintro": "Define credentials that each member supplies for themselves. You set the shape here; every user enters their own value under My secrets. Coverage shows how many members have set a value — never the values themselves."
+      "usersecretsintro": "Define credentials that each member supplies for themselves. You set the shape here; every user enters their own value under My secrets. Coverage shows how many members have set a value — never the values themselves.",
+      "nousersecretdefinitionsyetcreateone": "No user secret definitions yet. Create one to require each member to supply their own credential."
     }
   },
   "proposalreview": {
@@ -12237,7 +12308,9 @@
       "noorganizationalhierarchydefined": "No organizational hierarchy defined.",
       "invalidreportingchain4": "Invalid reporting chain",
       "setup5": "Set up",
-      "live": "Live"
+      "live": "Live",
+      "selectacompanytoviewagents": "Select a company to view agents.",
+      "createyourfirstagenttogetstarted": "Create your first agent to get started."
     }
   },
   "approvaldetail": {
@@ -14134,7 +14207,9 @@
       "board": "Board",
       "unknown": "Unknown",
       "user": "User",
-      "attributionVia": "{{label}}: {{name}} · via {{via}}"
+      "attributionVia": "{{label}}: {{name}} · via {{via}}",
+      "pausework": "Pause work",
+      "pausing": "Pausing..."
     }
   },
   "legacyinbox": {
@@ -14269,7 +14344,9 @@
       "zoomout": "Zoom out",
       "zoomout2": "Zoom out",
       "fittoscreen": "Fit to screen",
-      "fitcharttoscreen": "Fit chart to screen"
+      "fitcharttoscreen": "Fit chart to screen",
+      "selectacompanytoviewtheorg": "Select a company to view the org chart.",
+      "noorganizationalhierarchydefined": "No organizational hierarchy defined."
     }
   },
   "orgchart": {
@@ -14281,7 +14358,9 @@
       "zoomout": "Zoom out",
       "zoomout2": "Zoom out",
       "fittoscreen": "Fit to screen",
-      "fitcharttoscreen": "Fit chart to screen"
+      "fitcharttoscreen": "Fit chart to screen",
+      "selectanorganizationtoviewtheorg": "Select an organization to view the org chart.",
+      "noorganizationalhierarchydefined": "No organizational hierarchy defined."
     }
   },
   "pipelinesettings": {
@@ -16314,6 +16393,17 @@
       "saveOAuth": "Save OAuth configuration",
       "managePermissions": "Manage action permissions",
       "loadingSearch": "Loading search access…"
+    }
+  },
+  "myissues": {
+    "general": {
+      "notasksassignedtoyou": "No tasks assigned to you."
+    }
+  },
+  "org": {
+    "general": {
+      "selectanorganizationtovieworgchart": "Select an organization to view org chart.",
+      "noagentsintheorganizationcreateagents": "No agents in the organization. Create agents to build your org chart."
     }
   }
 }

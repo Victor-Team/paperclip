@@ -361,7 +361,7 @@ export function Timeline({ embedded = false }: { embedded?: boolean } = {}) {
     return (
       <>
         {!embedded && <RequestCollapsedSidebar />}
-        <EmptyState icon={GanttChartSquare} message="Select an organization to view its work timeline." />
+        <EmptyState icon={GanttChartSquare} message={t("timeline.general.selectanorganizationtoviewitswork")} />
       </>
     );
   }
@@ -494,7 +494,7 @@ export function Timeline({ embedded = false }: { embedded?: boolean } = {}) {
       {error && (
         <EmptyState
           icon={GanttChartSquare}
-          message="Couldn't load the timeline. The aggregation endpoint may be unavailable."
+          message={t("timeline.general.couldntloadthetimelinetheaggregation")}
         />
       )}
 
@@ -503,7 +503,7 @@ export function Timeline({ embedded = false }: { embedded?: boolean } = {}) {
           <div className="space-y-3">
             <EmptyState
               icon={GanttChartSquare}
-              message={scopedProjectId ? "No project activity in this window." : "No activity in this window."}
+              message={scopedProjectId ? t("timeline.general.noprojectactivityinthiswindow") : t("timeline.general.noactivityinthiswindow")}
             />
             <div className="flex flex-wrap items-center justify-end gap-3">
               {rangeControls}

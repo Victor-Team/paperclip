@@ -1424,6 +1424,7 @@ const IssueDetailChatTab = memo(function IssueDetailChatTab({
   externalReferences,
   linkCaseReferences,
 }: IssueDetailChatTabProps) {
+  const { t } = useTranslation();
   // Preserve master's Classic Task Interface seam: Streamlined UI changes the
   // TaskChatThread presentation but never swaps it for IssueChatThread.
   const { classicTaskInterfaceEnabled, streamlinedTaskDetailEnabled } =
@@ -2439,8 +2440,8 @@ const IssueDetailChatTab = memo(function IssueDetailChatTab({
                 ? (runId) => onPauseWorkRun(runId).catch(() => undefined)
                 : undefined
             }
-            stopRunLabel="Pause work"
-            stoppingRunLabel="Pausing..."
+            stopRunLabel={t("issuedetail.general.pausework")}
+            stoppingRunLabel={t("issuedetail.general.pausing")}
             stopRunVariant="pause"
             runFinalizationActions={runFinalizationActions}
             onAcceptInteraction={onAcceptInteraction}
@@ -4372,7 +4373,7 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
             issue,
             currentUserId,
           )}
-          createIssueLabel="Sub-task"
+          createIssueLabel={t("issuecolumns.general.subtask")}
           defaultSortField="workflow"
           showProgressSummary
           parentIssueIdForCostSummary={issue.id}
@@ -7459,7 +7460,7 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
                   issue,
                   currentUserId,
                 )}
-                createIssueLabel="Sub-task"
+                createIssueLabel={t("issuecolumns.general.subtask")}
                 defaultSortField="workflow"
                 showProgressSummary
                 parentIssueIdForCostSummary={issue.id}

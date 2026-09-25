@@ -29,7 +29,7 @@ export function Goals() {
   });
 
   if (!selectedCompanyId) {
-    return <EmptyState icon={Target} message="Select an organization to view goals." />;
+    return <EmptyState icon={Target} message={t("goals.general.selectanorganizationtoviewgoals")} />;
   }
 
   if (isLoading) {
@@ -43,8 +43,8 @@ export function Goals() {
       {goals && goals.length === 0 && (
         <EmptyState
           icon={Target}
-          message="No goals yet."
-          action="Add Goal"
+          message={t("goals.general.nogoalsyet")}
+          action={t("goals.general.addgoal")}
           onAction={() => openNewGoal()}
         />
       )}

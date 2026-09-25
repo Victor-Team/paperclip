@@ -822,14 +822,14 @@ function FolderRequirements({
         title={t("pluginsettings.general.requireddirectories")}
         items={requiredDirectories}
         missingItems={missingDirectories}
-        missingLabel="Missing directories"
+        missingLabel={t("pluginsettings.general.missingdirectories")}
         inspectionUnavailable={rootNotInspected}
       />
       <RequirementList
         title={t("pluginsettings.general.requiredfiles")}
         items={requiredFiles}
         missingItems={missingFiles}
-        missingLabel="Missing files"
+        missingLabel={t("pluginsettings.general.missingfiles")}
         inspectionUnavailable={rootNotInspected}
       />
     </div>

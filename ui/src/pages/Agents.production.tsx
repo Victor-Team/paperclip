@@ -330,7 +330,7 @@ export function Agents() {
   }, [builtInAgentsEnabled, instanceSettings, navigate, requestedTab, selectedCompanyId]);
 
   if (!selectedCompanyId) {
-    return <EmptyState icon={Bot} message="Select a company to view agents." />;
+    return <EmptyState icon={Bot} message={t("agentsproduction.general.selectacompanytoviewagents")} />;
   }
 
   if (isLoading) {
@@ -535,8 +535,8 @@ export function Agents() {
       {agents && agents.length === 0 && (
         <EmptyState
           icon={Bot}
-          message="Create your first agent to get started."
-          action="New Agent"
+          message={t("agentsproduction.general.createyourfirstagenttogetstarted")}
+          action={t("agentsproduction.general.newagent")}
           onAction={openNewAgent}
         />
       )}

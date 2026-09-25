@@ -159,7 +159,7 @@ export function ActionTestDialog({
             {t("testpanel.general.loadingagents")}</div>
         ) : testAgentsQuery.isError ? (
           <TestLoadError
-            message="We couldn't load the agents available for testing."
+            message={t("testpanel.general.wecouldntloadtheagentsavailable")}
             onRetry={() => { void testAgentsQuery.refetch(); }}
           />
         ) : agents.length === 0 ? (
@@ -351,7 +351,7 @@ export function TestPanel({
   if (testAgentsQuery.isError) {
     return (
       <TestLoadError
-        message="We couldn't load the agents available for testing."
+        message={t("testpanel.general.wecouldntloadtheagentsavailable1")}
         onRetry={() => { void testAgentsQuery.refetch(); }}
       />
     );
@@ -457,7 +457,7 @@ export function TestPanel({
           {visibleQuarantined.length > 0 && selectedAgent && (
             <ActionGroup
               heading={`New (${visibleQuarantined.length})`}
-              subheading="New actions wait, switched off, until you turn them on."
+              subheading={t("testpanel.general.newactionswaitswitchedoffuntilyou")}
               entries={visibleQuarantined}
               decisionFor={() => "off" as const}
               agent={selectedAgent}

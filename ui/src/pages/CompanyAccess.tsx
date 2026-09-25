@@ -321,8 +321,8 @@ export function CompanyAccess() {
                       : "Invite metadata unavailable"
                   }
                   detail={`Submitted ${new Date(request.createdAt).toLocaleString()}`}
-                  approveLabel="Approve human"
-                  rejectLabel="Reject human"
+                  approveLabel={t("companyaccess.general.approvehuman")}
+                  rejectLabel={t("companyaccess.general.rejecthuman")}
                   disabled={joinRequestActionPending}
                   onApprove={() => approveJoinRequestMutation.mutate(request.id)}
                   onReject={() => rejectJoinRequestMutation.mutate(request.id)}

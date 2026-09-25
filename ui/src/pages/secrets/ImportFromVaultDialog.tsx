@@ -878,8 +878,8 @@ function SelectStep(props: SelectStepProps) {
       <div className="flex min-h-0 flex-1 items-center justify-center p-6" data-testid="select-empty-vaults">
         <EmptyState
           icon={Cloud}
-          message="No AWS provider vault configured. Add one to import secrets."
-          action={onManageVaults ? "Manage vaults" : undefined}
+          message={t("importfromvaultdialog.general.noawsprovidervaultconfiguredaddone")}
+          action={onManageVaults ? t("importfromvaultdialog.general.managevaults") : undefined}
           onAction={onManageVaults}
         />
       </div>
@@ -1161,6 +1161,7 @@ function SkeletonRows({ rows }: { rows: number }) {
 }
 
 function EmptyCandidates({ query }: { query: string }) {
+  const { t } = useTranslation();
   if (query) {
     return (
       <EmptyState
@@ -1172,7 +1173,7 @@ function EmptyCandidates({ query }: { query: string }) {
   return (
     <EmptyState
       icon={Database}
-      message="No secrets visible to this vault."
+      message={t("importfromvaultdialog.general.nosecretsvisibletothisvault")}
     />
   );
 }
@@ -1192,7 +1193,7 @@ function ReviewStep({ drafts, reviewErrors, updateDraft, removeDraft, importing 
       <div className="flex min-h-0 flex-1 items-center justify-center p-6">
         <EmptyState
           icon={Info}
-          message="No secrets selected. Go back to pick remote secrets to import."
+          message={t("importfromvaultdialog.general.nosecretsselectedgobacktopick")}
         />
       </div>
     );

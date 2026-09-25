@@ -4749,7 +4749,10 @@
       "couldnotresumechecktheproviderbefore": "无法恢复。请检查提供商后重试。",
       "realcallasagent": "这将以 {{agentName}} 的身份对 {{appName}} 发起真实调用。",
       "waitingforapprovalbeforecall": "此调用发出 Paperclip 之前，正在等待你的批准。",
-      "actionoffforagent": "不会发起调用：此操作对 {{agentName}} 已关闭。"
+      "actionoffforagent": "不会发起调用：此操作对 {{agentName}} 已关闭。",
+      "wecouldntloadtheagentsavailable": "无法加载可供测试的智能体。",
+      "wecouldntloadtheagentsavailable1": "无法加载可供测试的智能体。",
+      "newactionswaitswitchedoffuntilyou": "新操作默认关闭，直到你将其开启。"
     }
   },
   "identitiessection": {
@@ -4831,7 +4834,8 @@
       "matchessortedaz": "项匹配 · 按 A–Z 排序",
       "noactionsmatch": "没有操作匹配“",
       "clearthesearchtoseethemall": "”。清除搜索即可查看全部。",
-      "test": "测试"
+      "test": "测试",
+      "youcannoteditanyagentsyet": "你目前无法编辑任何智能体。"
     }
   },
   "connectionowner": {
@@ -5392,7 +5396,8 @@
       "label": "标签",
       "alllabels": "全部 labels",
       "clearfilters": "清除 filters",
-      "group": "分组"
+      "group": "分组",
+      "nocasesmatchthesefilters": "没有符合筛选条件的案例。"
     }
   },
   "cliauth": {
@@ -5477,7 +5482,9 @@
       "corepaperclipkeepsenforcingorganizationboundariesand": "Core Paperclip keeps enforcing 组织 boundaries and any existing restrictive policy data, but editing advanced permissions requires an installed extension.",
       "pluginextensionsunavailable": "插件扩展不可用：",
       "openmembers": "未结成员",
-      "openinvites": "未结 Invites"
+      "openinvites": "未结 Invites",
+      "approvehuman": "批准用户",
+      "rejecthuman": "拒绝用户"
     }
   },
   "companyenvironments": {
@@ -5574,7 +5581,21 @@
       "cancel12": "取消",
       "deleting": "删除中...",
       "1sandbox": "1 个沙盒",
-      "deleteenvironment13": "删除环境"
+      "deleteenvironment13": "删除环境",
+      "injectedintorunsthatresolvethroughthis": "注入通过此环境执行的运行。可使用普通值或公司机密。",
+      "operatorfacingnameforthisexecutiontarget": "供操作人员识别此执行目标的名称。",
+      "optionalnoteaboutwhatthismachineis": "可选填，用于说明这台机器的用途。",
+      "sandboxstorespluginbackedproviderconfigon": "沙盒在共享环境接口中存储由插件提供的服务商配置。SSH 存储远程机器目标。",
+      "dnsnameoripaddressforthe": "远程机器的 DNS 名称或 IP 地址。",
+      "defaultsto22": "默认为 22。",
+      "sshusername": "SSH 用户名。",
+      "absolutepaththatpaperclipwillverifyduring": "Paperclip 在 SSH 连接测试期间验证的绝对路径。",
+      "optionalpemprivatekeyleaveblankto": "可选填 PEM 私钥。留空则使用服务器的 SSH 代理或默认密钥链。",
+      "optionalknownhostsblockusedwhenstrict": "可选填，在启用严格主机密钥检查时使用的 known_hosts 内容。",
+      "keepthisonunlessyoudeliberatelywant": "请保持开启，除非你明确要禁用探测期间接受主机密钥。",
+      "installedruncapablesandboxproviderpluginsappear": "已安装且支持运行的沙盒服务商插件会显示在这里。",
+      "streamtheagentclisoutputlive": "运行期间实时传输智能体 CLI 输出（推荐）。关闭后仅在运行结束时传输输出。",
+      "injectedintorunsthatresolvethroughthis1": "注入通过此环境执行的运行。可使用普通值或公司机密。"
     }
   },
   "companyexport": {
@@ -5608,7 +5629,14 @@
       "thepreviouspreviewremainsavailableretrywhen": "The previous 预览 remains available. 重试 when you are ready.",
       "retrypreview": "重试预览",
       "exportpreviewfailed5": "Export preview失败",
-      "retrypreview6": "重试预览"
+      "retrypreview6": "重试预览",
+      "selectafiletopreviewitscontents": "选择文件以预览其内容。",
+      "selectanorganizationtoexport": "选择要导出的公司。",
+      "thepreviewrequestwascancelledyourexport": "预览请求已取消。导出设置未更改。",
+      "retrythepreviewyoudonotneed": "重试预览，无需重新加载此页面。",
+      "retrypreview1": "重试预览",
+      "noexportpreviewisloaded": "尚未加载导出预览。",
+      "loadpreview": "加载预览"
     }
   },
   "companyimport": {
@@ -5694,7 +5722,13 @@
       "importfailed": "导入失败",
       "therequestdidnotcomplete15": "请求未完成。",
       "nothingmayhavebeencreatedorthe": "可能尚未创建任何内容，也可能导入中途停止。请在重试前检查目标公司。",
-      "packagefiles": "Package 文件"
+      "packagefiles": "Package 文件",
+      "selectafiletopreviewitscontents": "选择文件以预览其内容。",
+      "selectanorganizationtoimportinto": "选择要导入到的公司。",
+      "repotreepathorbloburlto": "指向 COMPANY.md 的仓库目录路径或文件 URL（例如 github.com/owner/repo/tree/main/company）。",
+      "importintothisorganizationorcreatea": "导入到此公司，或创建新公司。",
+      "optionaloverrideleaveblanktousethe": "可选填覆盖名称。留空则使用软件包名称。",
+      "boardimportscanrenameskiporreplace": "董事会导入时可重命名、跳过或替换匹配的公司内容。"
     }
   },
   "companysettingspluginpage": {
@@ -5734,7 +5768,10 @@
       "liveagentruns": "Live 智能体 运行",
       "activerunsfirstfollowedbythemost": "活跃 运行 first, followed by the most recent completed 运行.",
       "showingupto": "最多显示",
-      "activerecent": "活跃 / recent"
+      "activerecent": "活跃 / recent",
+      "noactiveorrecentagentruns": "没有进行中或近期的智能体运行记录。",
+      "createacompanytoviewliveruns": "创建公司以查看实时运行记录。",
+      "selectacompanytoviewliveruns": "选择公司以查看实时运行记录。"
     }
   },
   "decisionqueuepage": {
@@ -5776,7 +5813,10 @@
   },
   "goals": {
     "general": {
-      "newgoal": "新建目标"
+      "newgoal": "新建目标",
+      "selectanorganizationtoviewgoals": "选择公司以查看目标。",
+      "nogoalsyet": "暂无目标。",
+      "addgoal": "添加目标"
     }
   },
   "invitelanding": {
@@ -6127,7 +6167,9 @@
       "saving": "保存中…",
       "saveconfiguration": "保存配置",
       "testing": "正在测试...",
-      "testconfiguration": "测试配置"
+      "testconfiguration": "测试配置",
+      "missingdirectories": "缺少目录",
+      "missingfiles": "缺少文件"
     }
   },
   "projectdetail": {
@@ -6144,7 +6186,8 @@
       "pausedbybudgethardstop": "已暂停 by 预算 hard stop",
       "managedby": "管理者",
       "projectsummary": "项目摘要",
-      "loadingworkspaces": "加载中工作区"
+      "loadingworkspaces": "加载中工作区",
+      "summarizerkeepsthelatestprojectstatusnext": "摘要智能体会在这里记录最新项目状态、下一步和需要操作人员处理的事项。"
     }
   },
   "projectworkspacedetail": {
@@ -6197,7 +6240,13 @@
       "workspacecommands": "工作区 commands",
       "servicesandjobs": "服务与作业",
       "longrunningservicesstaysupervisedherewhile": "Long-运行中 services stay supervised here, while one-shot jobs run on demand against this 工作区. Execution 工作区 inherit this config unless they override it.",
-      "loadingworkspaceplugin": "加载中 工作区 plugin..."
+      "loadingworkspaceplugin": "加载中 工作区 plugin...",
+      "runswhenthisworkspaceneedscustombootstrap": "此工作区需要自定义引导时运行",
+      "runsbeforeprojectlevelexecutionworkspaceteardown": "项目级执行工作区销毁前运行",
+      "executionworkspacesinheritthisconfigunlessthey": "执行工作区会继承此配置，除非自行覆盖。旧版 `services` 数组仍可使用，`commands` 同时支持服务和作业。",
+      "nooneshotjobsareconfiguredfor": "此工作区尚未配置一次性作业。",
+      "projectworkspacesneedaworkingdirectorybefore": "项目工作区需要设置工作目录才能运行本地命令；服务还需要运行时配置。",
+      "backtoconfiguration": "返回配置"
     }
   },
   "responsibleuserdenialuxlab": {
@@ -6486,7 +6535,13 @@
       "optional28": "可选·",
       "installed29": "已安装 ·",
       "backtocatalog": "返回 to catalog",
-      "selectateamtoviewdetails": "选择a team to view details."
+      "selectateamtoviewdetails": "选择a team to view details.",
+      "resolvegithuburlskillandteamsources": "安装时解析 github/url 技能和团队来源。",
+      "permitoptionalsourcesthatarenotpinned": "允许未固定到引用或校验和的可选来源。",
+      "requiredforlocalpathagentpackagesources": "local_path / agent_package 来源必须启用此项。仅供开发使用。",
+      "selectanorganizationtobrowsetheteam": "选择公司以浏览团队目录。",
+      "noteamcatalogconfigured": "尚未配置团队目录。",
+      "noteamsmatchthisfilter": "没有符合筛选条件的团队。"
     }
   },
   "timeline": {
@@ -6509,7 +6564,11 @@
       "run": "运行",
       "s": "秒",
       "to4": "至",
-      "windowcapped": "· 窗口已限制"
+      "windowcapped": "· 窗口已限制",
+      "selectanorganizationtoviewitswork": "选择公司以查看工作时间线。",
+      "couldntloadthetimelinetheaggregation": "无法加载时间线。聚合端点可能不可用。",
+      "noprojectactivityinthiswindow": "此时间段内没有项目动态。",
+      "noactivityinthiswindow": "此时间段内没有动态。"
     }
   },
   "userprofile": {
@@ -6536,7 +6595,11 @@
       "recentactivity": "最近活动",
       "nodirectuseractionsrecordedyet": "暂无direct user actions recorded。",
       "agentattribution": "智能体 attribution",
-      "providermix": "提供商 mix"
+      "providermix": "提供商 mix",
+      "selectanorganizationtoviewuserprofiles": "选择公司以查看用户资料。",
+      "userprofilenotfoundforthisorganization": "未找到此公司的用户资料。",
+      "noissuelinkedtokenusageyet": "暂无关联工单的 Token 用量。",
+      "noproviderusageattributedyet": "暂无归因到服务商的用量。"
     }
   },
   "whatneedsme": {
@@ -6575,7 +6638,8 @@
       "of": "步，共",
       "workspaces1": "工作区",
       "loading": "加载中",
-      "loadmore": "加载更多"
+      "loadmore": "加载更多",
+      "summarizertracksworkspaceactivityliveservicesand": "摘要智能体会跟踪跨项目的工作区动态、运行中的服务和后续待办事项。"
     }
   },
   "agentskillreleasepicker": {
@@ -9745,7 +9809,11 @@
       "loadmorecount": "再加载 {{count}} 项",
       "importfailed": "导入失败",
       "allsecretsimported": "已导入全部 {{count}} 项机密",
-      "importcomplete": "导入完成"
+      "importcomplete": "导入完成",
+      "noawsprovidervaultconfiguredaddone": "尚未配置 AWS 服务商保管库。添加后即可导入机密。",
+      "nosecretsvisibletothisvault": "此保管库没有可见的机密。",
+      "nosecretsselectedgobacktopick": "尚未选择机密。返回上一步，选择要导入的远程机密。",
+      "managevaults": "管理保管库"
     }
   },
   "missingusersecretsbanner": {
@@ -9778,7 +9846,8 @@
       "setvalue": "设置值",
       "clearmyvalue": "清除我的值",
       "usersecretsintro": "这些凭证仅由您提供。每个值仅归您所有——当您是某次运行的负责用户时使用，且绝不会向任何人（包括管理员）重新显示。",
-      "requiredsecretsmissing": "仍有 {{count}} 项必需的用户机密需要设置您的值。"
+      "requiredsecretsmissing": "仍有 {{count}} 项必需的用户机密需要设置您的值。",
+      "nousersecretsaredefinedforthis": "此公司尚未定义用户机密。管理员可指定每位成员需要提供的凭据。"
     }
   },
   "proposalstab": {
@@ -9788,7 +9857,8 @@
       "couldntloadproposalstryagain": "无法加载提议。请重试。",
       "loadingproposals": "正在加载提议…",
       "nopendingproposals": "没有待处理的提议",
-      "agentsproposecredentialsandaccessbindingsyou": "Agents propose credentials and access bindings; you approve or reject them here. Proposed\n        values are never shown — only a fingerprint and length."
+      "agentsproposecredentialsandaccessbindingsyou": "Agents propose credentials and access bindings; you approve or reject them here. Proposed\n        values are never shown — only a fingerprint and length.",
+      "whenanagentproposesasecretor": "智能体提议机密或访问绑定后，会在此显示以供审核。"
     }
   },
   "setmyusersecretdialog": {
@@ -9846,7 +9916,8 @@
       "remove": "移除",
       "coverage": "覆盖率：",
       "notset": "未设置",
-      "usersecretsintro": "定义由每位成员自行提供的凭证。您在此定义结构；每位用户在“我的机密”中输入自己的值。覆盖率仅显示已设置值的成员数量，绝不显示值本身。"
+      "usersecretsintro": "定义由每位成员自行提供的凭证。您在此定义结构；每位用户在“我的机密”中输入自己的值。覆盖率仅显示已设置值的成员数量，绝不显示值本身。",
+      "nousersecretdefinitionsyetcreateone": "暂无用户机密定义。创建后可要求每位成员提供自己的凭据。"
     }
   },
   "proposalreview": {
@@ -12237,7 +12308,9 @@
       "noorganizationalhierarchydefined": "No organizational hierarchy defined.",
       "invalidreportingchain4": "Invalid reporting chain",
       "setup5": "设置",
-      "live": "运行中"
+      "live": "运行中",
+      "selectacompanytoviewagents": "选择公司以查看智能体。",
+      "createyourfirstagenttogetstarted": "创建你的第一个智能体，开始使用吧。"
     }
   },
   "approvaldetail": {
@@ -14134,7 +14207,9 @@
       "board": "董事会",
       "unknown": "未知",
       "user": "用户",
-      "attributionVia": "{{label}}：{{name}} · 经由 {{via}}"
+      "attributionVia": "{{label}}：{{name}} · 经由 {{via}}",
+      "pausework": "暂停工作",
+      "pausing": "正在暂停…"
     }
   },
   "legacyinbox": {
@@ -14269,7 +14344,9 @@
       "zoomout": "缩小",
       "zoomout2": "缩小",
       "fittoscreen": "Fit to screen",
-      "fitcharttoscreen": "Fit chart to screen"
+      "fitcharttoscreen": "Fit chart to screen",
+      "selectacompanytoviewtheorg": "选择公司以查看组织架构图。",
+      "noorganizationalhierarchydefined": "尚未定义组织架构。"
     }
   },
   "orgchart": {
@@ -14281,7 +14358,9 @@
       "zoomout": "缩小",
       "zoomout2": "缩小",
       "fittoscreen": "Fit to screen",
-      "fitcharttoscreen": "Fit chart to screen"
+      "fitcharttoscreen": "Fit chart to screen",
+      "selectanorganizationtoviewtheorg": "选择公司以查看组织架构图。",
+      "noorganizationalhierarchydefined": "尚未定义组织架构。"
     }
   },
   "pipelinesettings": {
@@ -16314,6 +16393,17 @@
       "saveOAuth": "保存 OAuth 配置",
       "managePermissions": "管理操作权限",
       "loadingSearch": "正在加载搜索权限…"
+    }
+  },
+  "myissues": {
+    "general": {
+      "notasksassignedtoyou": "暂无分配给你的任务。"
+    }
+  },
+  "org": {
+    "general": {
+      "selectanorganizationtovieworgchart": "选择公司以查看组织架构图。",
+      "noagentsintheorganizationcreateagents": "公司中暂无智能体。创建智能体以建立组织架构图。"
     }
   }
 }

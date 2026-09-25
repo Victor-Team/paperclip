@@ -127,7 +127,7 @@ export function Workspaces() {
         companyId={selectedCompanyId}
         scopeKind="workspaces_overview"
         title={t("workspaces.general.workspacesummary")}
-        description="Summarizer tracks workspace activity, live services, and follow-up needs across projects."
+        description={t("workspaces.general.summarizertracksworkspaceactivityliveservicesand")}
       />
 
       {groups.length === 0 ? (

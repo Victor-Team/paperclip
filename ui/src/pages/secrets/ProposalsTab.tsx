@@ -186,7 +186,7 @@ export function ProposalsTab({
       <EmptyState
         icon={Inbox}
         title={t("proposalstab.general.nopendingproposals")}
-        message="When an agent proposes a secret or an access binding, it shows up here for review."
+        message={t("proposalstab.general.whenanagentproposesasecretor")}
       />
     );
   }

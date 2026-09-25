@@ -215,7 +215,7 @@ function ImportPreviewPane({
   const { t } = useTranslation();
   if (!selectedFile || content === null) {
     return (
-      <EmptyState icon={Package} message="Select a file to preview its contents." />
+      <EmptyState icon={Package} message={t("companyimport.general.selectafiletopreviewitscontents")} />
     );
   }
 
@@ -1829,7 +1829,7 @@ export function CompanyImport() {
   }
 
   if (!selectedCompanyId) {
-    return <EmptyState icon={Download} message="Select an organization to import into." />;
+    return <EmptyState icon={Download} message={t("companyimport.general.selectanorganizationtoimportinto")} />;
   }
 
   return (
@@ -1907,7 +1907,7 @@ export function CompanyImport() {
         ) : (
           <Field
             label={t("companyimport.general.githuburl")}
-            hint="Repo tree path or blob URL to COMPANY.md (e.g. github.com/owner/repo/tree/main/company)."
+            hint={t("companyimport.general.repotreepathorbloburlto")}
           >
             <input
               className="w-full rounded-md border border-border bg-transparent px-2.5 py-1.5 text-sm outline-none"
@@ -1923,7 +1923,7 @@ export function CompanyImport() {
           </Field>
         )}
 
-        <Field label={t("companyimport.general.target")} hint="Import into this organization or create a new one.">
+        <Field label={t("companyimport.general.target")} hint={t("companyimport.general.importintothisorganizationorcreatea")}>
           <select
             className="w-full rounded-md border border-border bg-transparent px-2.5 py-1.5 text-sm outline-none"
             value={targetMode}
@@ -1943,7 +1943,7 @@ export function CompanyImport() {
         {targetMode === "new" && (
           <Field
             label={t("companyimport.general.neworganizationname")}
-            hint="Optional override. Leave blank to use the package name."
+            hint={t("companyimport.general.optionaloverrideleaveblanktousethe")}
           >
             <input
               className="w-full rounded-md border border-border bg-transparent px-2.5 py-1.5 text-sm outline-none"
@@ -1960,7 +1960,7 @@ export function CompanyImport() {
 
         <Field
           label={t("companyimport.general.collisionstrategy")}
-          hint="Board imports can rename, skip, or replace matching organization content."
+          hint={t("companyimport.general.boardimportscanrenameskiporreplace")}
         >
           <select
             className="w-full rounded-md border border-border bg-transparent px-2.5 py-1.5 text-sm outline-none"

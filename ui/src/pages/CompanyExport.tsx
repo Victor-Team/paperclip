@@ -541,7 +541,7 @@ function ExportPreviewPane({
   const { t } = useTranslation();
   if (!selectedFile || content === null) {
     return (
-      <EmptyState icon={Package} message="Select a file to preview its contents." />
+      <EmptyState icon={Package} message={t("companyexport.general.selectafiletopreviewitscontents")} />
     );
   }
 
@@ -1026,7 +1026,7 @@ export function CompanyExport() {
   }
 
   if (!selectedCompanyId) {
-    return <EmptyState icon={Package} message="Select an organization to export." />;
+    return <EmptyState icon={Package} message={t("companyexport.general.selectanorganizationtoexport")} />;
   }
 
   if (exportPreviewMutation.isPending && !exportData) {
@@ -1038,8 +1038,8 @@ export function CompanyExport() {
       <EmptyState
         icon={Package}
         title={t("companyexport.general.exportpreviewcancelled")}
-        message="The preview request was cancelled. Your export settings are unchanged."
-        action="Retry preview"
+        message={t("companyexport.general.thepreviewrequestwascancelledyourexport")}
+        action={t("companyexport.general.retrypreview")}
         onAction={startPreviewRequest}
         hideActionIcon
       />
@@ -1052,8 +1052,8 @@ export function CompanyExport() {
         icon={Package}
         title={t("companyexport.general.exportpreviewfailed")}
         message={previewErrorMessage(exportPreviewMutation.error)}
-        description="Retry the preview. You do not need to reload this page."
-        action="Retry preview"
+        description={t("companyexport.general.retrythepreviewyoudonotneed")}
+        action={t("companyexport.general.retrypreview1")}
         onAction={startPreviewRequest}
         hideActionIcon
       />
@@ -1065,8 +1065,8 @@ export function CompanyExport() {
       <EmptyState
         icon={Package}
         title={t("companyexport.general.exportpreviewunavailable")}
-        message="No export preview is loaded."
-        action="Load preview"
+        message={t("companyexport.general.noexportpreviewisloaded")}
+        action={t("companyexport.general.loadpreview")}
         onAction={startPreviewRequest}
         hideActionIcon
       />
