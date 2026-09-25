@@ -5755,7 +5755,7 @@
       "routine": "例程",
       "s7": "秒",
       "processed": "已处理。",
-      "skillimportresults": "技能 导入 results",
+      "skillimportresults": "技能导入结果",
       "as": "身份执行",
       "activateimportedagentsandroutines": "启用导入的智能体和例程",
       "importedpaused": "已导入（暂停）",
@@ -5765,7 +5765,7 @@
       "activating": "正在激活…",
       "anythingleftpausedherestaysvisibleon": "此处保持暂停的项目仍会显示在公司的智能体和例程页面；您也可以在那些页面恢复它们，离开本页不会丢失内容。",
       "gotodashboard": "前往仪表盘",
-      "resumewatchingimport": "Resume watching 导入",
+      "resumewatchingimport": "继续查看导入进度",
       "animportyoustartedearlierisstill": "您先前启动的导入仍在服务器上运行。",
       "importrunningontheserversafeto": "导入正在服务器上运行，您可以继续等待；重新连接不会丢失进度。",
       "importsource": "导入来源",
@@ -5777,7 +5777,7 @@
       "githuburl": "GitHub 地址",
       "target": "目标",
       "createneworganization": "创建新公司",
-      "existingcompany": "Existing 公司",
+      "existingcompany": "现有公司：",
       "neworganizationname": "新公司名称",
       "importedorganization": "已导入的公司",
       "collisionstrategy": "冲突处理方式",
@@ -5793,20 +5793,16 @@
       "retryorreexportthepackagewithout": "请重试，或重新导出不含大附件的包以减小体积。",
       "importpreview": "导入预览",
       "file9": "文件",
-      "s10": "秒",
       "selected": "已选中",
       "conflict": "项冲突",
-      "s11": "秒",
       "error": "错误",
-      "s12": "秒",
       "startimportedagentsandroutinespaused": "启动导入的智能体和例程（当前已暂停）",
       "importing": "正在导入...",
-      "s13": "秒",
       "importrunningontheserversafeto14": "导入正在服务器上运行，您可以继续等待；重新连接不会丢失进度。大型导入包可能需要几分钟。",
       "importfailed": "导入失败",
       "therequestdidnotcomplete15": "请求未完成。",
       "nothingmayhavebeencreatedorthe": "可能尚未创建任何内容，也可能导入中途停止。请在重试前检查目标公司。",
-      "packagefiles": "Package 文件",
+      "packagefiles": "软件包文件",
       "selectafiletopreviewitscontents": "选择文件以预览其内容。",
       "selectanorganizationtoimportinto": "选择要导入到的公司。",
       "repotreepathorbloburlto": "指向 COMPANY.md 的仓库目录路径或文件 URL（例如 github.com/owner/repo/tree/main/company）。",
@@ -5819,7 +5815,15 @@
       "agentCountOther": "{{count}} 个智能体",
       "importSummary": "{{companyName}}：已处理 {{agentCount}} 个智能体、{{skillCount}} 项技能、{{projectCount}} 个项目和 {{routineCount}} 个例程。",
       "fileCountOne": "{{count}} 个文件",
-      "fileCountOther": "{{count}} 个文件"
+      "fileCountOther": "{{count}} 个文件",
+      "selectedFilesSummary": "已选择 {{totalFiles}} 个文件中的 {{selectedCount}} 个",
+      "conflictCountOne": "{{count}} 项冲突",
+      "conflictCountOther": "{{count}} 项冲突",
+      "errorCountOne": "{{count}} 项错误",
+      "errorCountOther": "{{count}} 项错误",
+      "importFileCountOne": "导入 {{count}} 个文件",
+      "importFileCountOther": "导入 {{count}} 个文件",
+      "uploadProgressWithResume": "正在上传第 {{currentPart}} / {{totalParts}} 部分，已上传 {{uploadedBytes}} / {{totalBytes}}。中断后会从已完成的部分继续。"
     }
   },
   "companysettingspluginpage": {
@@ -6622,11 +6626,8 @@
       "r": " 例程 ·",
       "s13": "秒",
       "agent": "智能体",
-      "s14": "秒",
       "project": "项目",
-      "s15": "秒",
       "routine": "例程",
-      "s16": "秒",
       "teams": "团队",
       "searchteams": "搜索团队",
       "allkinds": "全部类型",
@@ -6666,7 +6667,13 @@
       "externalSourceWarningOne": "此团队引用了 {{count}} 个外部来源",
       "externalSourceWarningOther": "此团队引用了 {{count}} 个外部来源",
       "externalSourceReviewOne": "此团队引用了 {{count}} 个外部来源。继续前请逐一检查并决定允许哪些来源。",
-      "externalSourceReviewOther": "此团队引用了 {{count}} 个外部来源。继续前请逐一检查并决定允许哪些来源。"
+      "externalSourceReviewOther": "此团队引用了 {{count}} 个外部来源。继续前请逐一检查并决定允许哪些来源。",
+      "agentCountOne": "{{count}} 个智能体",
+      "agentCountOther": "{{count}} 个智能体",
+      "projectCountOne": "{{count}} 个项目",
+      "projectCountOther": "{{count}} 个项目",
+      "routineCountOne": "{{count}} 个例程",
+      "routineCountOther": "{{count}} 个例程"
     }
   },
   "timeline": {
@@ -8177,6 +8184,14 @@
       "billingtypes": "计费类型",
       "upstreamproviders": "上游供应商",
       "tok": "tok"
+    },
+    "billingTypes": {
+      "metered_api": "计量 API",
+      "subscription_included": "订阅内额度",
+      "subscription_overage": "订阅超额",
+      "credits": "点数",
+      "fixed": "固定费用",
+      "unknown": "未知"
     }
   },
   "blockedinboxview": {
@@ -10725,6 +10740,14 @@
       "used": "% 已用",
       "resets": "重置",
       "allocationPercent": "已用分配额度的 {{percent}}%"
+    },
+    "billingTypes": {
+      "metered_api": "计量 API",
+      "subscription_included": "订阅内额度",
+      "subscription_overage": "订阅超额",
+      "credits": "点数",
+      "fixed": "固定费用",
+      "unknown": "未知"
     }
   },
   "reportstopicker": {
@@ -12846,7 +12869,25 @@
       "moreActionsForSkill": "{{name}} 的更多操作",
       "useColor": "使用颜色 {{color}}",
       "removeTag": "移除标签 {{tag}}",
-      "installedFromSource": "安装来源：{{source}}"
+      "installedFromSource": "安装来源：{{source}}",
+      "sourceFilterAll": "全部",
+      "sourceFilterCompany": "公司",
+      "sourceFilterBundled": "内置",
+      "sourceFilterOptional": "可选",
+      "sourceFilterExternal": "外部",
+      "filter": "筛选",
+      "filterCount": "筛选条件：{{count}}",
+      "noSourceSkillsInstalled": "没有已安装的{{source}}来源技能。",
+      "sourceFilterLocal": "文件夹",
+      "sourceFilterCatalog": "目录",
+      "sortMostAgents": "智能体最多",
+      "sortMostStars": "收藏最多",
+      "sortMostForks": "派生最多",
+      "sortRecentlyUpdated": "最近更新",
+      "sortAlphabetical": "按字母排序",
+      "noSkillsYet": "还没有技能。创建技能或从目录安装。",
+      "noSkillsMatchFilters": "没有符合筛选条件的技能。",
+      "noSkillsInTab": "此标签页还没有技能。"
     }
   },
   "companyskills": {
@@ -16577,13 +16618,5 @@
       "selectanorganizationtovieworgchart": "选择公司以查看组织架构图。",
       "noagentsintheorganizationcreateagents": "公司中暂无智能体。创建智能体以建立组织架构图。"
     }
-  },
-  "billingTypes": {
-    "metered_api": "计量 API",
-    "subscription_included": "订阅内额度",
-    "subscription_overage": "订阅超额",
-    "credits": "点数",
-    "fixed": "固定费用",
-    "unknown": "未知"
   }
 }

@@ -105,7 +105,7 @@ export function BillerSpendCard({
               <div className="space-y-1.5">
                 {billingTypeBreakdown.map(([billingType, costCents]) => (
                   <div key={billingType} className="flex items-center justify-between gap-2 text-xs">
-                    <span className="text-muted-foreground">{t(`billingTypes.${billingType}`)}</span>
+                    <span className="text-muted-foreground">{t(`billerspendcard.billingTypes.${billingType}`)}</span>
                     <span className="font-medium tabular-nums">{formatCents(costCents)}</span>
                   </div>
                 ))}

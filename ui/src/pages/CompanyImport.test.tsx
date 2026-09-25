@@ -9,6 +9,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ApiError } from "../api/client";
 import type { CompanyImportJobAccepted } from "../api/companies";
 import { CompanyImport } from "./CompanyImport";
+import { i18n } from "../i18n";
 
 // jsdom's crypto has no SubtleCrypto; the chunked transfer path hashes parts
 // with WebCrypto, so back the global with Node's implementation.
@@ -301,6 +302,7 @@ describe("CompanyImport", () => {
     document.body.innerHTML = "";
     sessionStorage.clear();
     vi.clearAllMocks();
+    await i18n.changeLanguage("en");
   });
 
   function findButton(matches: (text: string) => boolean) {
@@ -372,6 +374,42 @@ describe("CompanyImport", () => {
     await clickButton((text) => text.startsWith("Import 3 file"));
     await settle();
   }
+
+  it("renders Chinese preview counts, import action, and skill result header", async () => {
+    await i18n.changeLanguage("zh-CN");
+    mockCompaniesApi.getImportJob.mockResolvedValue({
+      job: {
+        id: "job-1",
+        status: "succeeded",
+        importResult: {
+          ...buildImportResult(),
+          skills: [{ originalKey: "review", originalSlug: "review", key: "review", slug: "review", id: "skill-1", action: "created", reason: null }],
+        },
+      },
+    });
+    await renderPage();
+    await enterGithubUrl();
+    await clickButton((text) => text === "预览导入");
+
+    expect(container.textContent).toContain("已选择 3 个文件中的 3 个");
+    expect(container.textContent).not.toContain("文件秒");
+    await clickButton((text) => text === "导入 3 个文件");
+    await settle();
+
+    expect(container.textContent).toContain("技能导入结果");
+    expect(container.textContent).not.toContain("技能 导入 results");
+  });
+
+  it("renders Chinese preview error counts without a suffix fragment", async () => {
+    await i18n.changeLanguage("zh-CN");
+    mockCompaniesApi.importPreview.mockResolvedValue({ ...buildPreviewResult(), errors: ["Invalid package"] });
+    await renderPage();
+    await enterGithubUrl();
+    await clickButton((text) => text === "预览导入");
+
+    expect(container.textContent).toContain("1 项错误");
+    expect(container.textContent).not.toContain("错误秒");
+  });
 
   it("submits the import as an async job, then activates selected agents and routines", async () => {
     await renderPageAndImport();

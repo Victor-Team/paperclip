@@ -735,9 +735,14 @@ interface ImportTransferProgress {
   totalBytes: number;
 }
 
-function formatTransferProgress(progress: ImportTransferProgress): string {
+function formatTransferProgress(progress: ImportTransferProgress, t: ReturnType<typeof useTranslation>["t"]): string {
   const currentPart = Math.min(progress.uploadedParts + 1, progress.totalParts);
-  return `Uploading part ${currentPart} of ${progress.totalParts} — ${formatMegabytes(progress.uploadedBytes)} of ${formatMegabytes(progress.totalBytes)} uploaded.`;
+  return t("companyimport.general.uploadProgressWithResume", {
+    currentPart,
+    totalParts: progress.totalParts,
+    uploadedBytes: formatMegabytes(progress.uploadedBytes),
+    totalBytes: formatMegabytes(progress.totalBytes),
+  });
 }
 
 // ── Async import job flow ─────────────────────────────────────────────
@@ -2005,7 +2010,7 @@ export function CompanyImport() {
             <Loader2 className="mt-0.5 h-3.5 w-3.5 shrink-0 animate-spin text-muted-foreground" />
             <p className="text-xs text-muted-foreground">
               {transferProgress
-                ? `${formatTransferProgress(transferProgress)} An interrupted upload resumes from the finished parts.`
+                ? formatTransferProgress(transferProgress, t)
                 : `Uploading and analyzing your package${
                     localCompressedBytes !== null ? ` (${formatMegabytes(localCompressedBytes)} zip)` : ""
                   } — large packages can take a few minutes. Keep this page open.`}
@@ -2035,15 +2040,15 @@ export function CompanyImport() {
               <span className="font-medium">
                 {t("companyimport.general.importpreview")}</span>
               <span className="text-muted-foreground">
-                {selectedCount} / {totalFiles} {t("companyimport.general.file9")}{totalFiles === 1 ? "" : t("companyimport.general.s10")} {t("companyimport.general.selected")}</span>
+                {t("companyimport.general.selectedFilesSummary", { selectedCount, totalFiles })}</span>
               {conflicts.length > 0 && (
                 <span className="text-amber-500">
-                  {conflicts.length} {t("companyimport.general.conflict")}{conflicts.length === 1 ? "" : t("companyimport.general.s11")}
+                  {t(conflicts.length === 1 ? "companyimport.general.conflictCountOne" : "companyimport.general.conflictCountOther", { count: conflicts.length })}
                 </span>
               )}
               {importPreview.errors.length > 0 && (
                 <span className="text-destructive">
-                  {importPreview.errors.length} {t("companyimport.general.error")}{importPreview.errors.length === 1 ? "" : t("companyimport.general.s12")}
+                  {t(importPreview.errors.length === 1 ? "companyimport.general.errorCountOne" : "companyimport.general.errorCountOther", { count: importPreview.errors.length })}
                 </span>
               )}
             </div>
@@ -2093,7 +2098,7 @@ export function CompanyImport() {
               <Download className="mr-1.5 h-3.5 w-3.5" />
               {importMutation.isPending
                 ? t("companyimport.general.importing")
-                : `Import ${selectedCount} file${selectedCount === 1 ? "" : t("companyimport.general.s13")}`}
+                : t(selectedCount === 1 ? "companyimport.general.importFileCountOne" : "companyimport.general.importFileCountOther", { count: selectedCount })}
             </Button>
           </div>
           {importMutation.isPending && (
@@ -2101,7 +2106,7 @@ export function CompanyImport() {
               <Loader2 className="mt-0.5 h-3.5 w-3.5 shrink-0 animate-spin text-muted-foreground" />
               <p className="text-xs text-muted-foreground">
                 {transferProgress
-                  ? `${formatTransferProgress(transferProgress)} An interrupted upload resumes from the finished parts.`
+                  ? formatTransferProgress(transferProgress, t)
                   : t("companyimport.general.importrunningontheserversafeto14")}
               </p>
             </div>

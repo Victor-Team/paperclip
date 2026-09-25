@@ -568,6 +568,7 @@ describe("DiscoveryGrid IA presentation", () => {
     });
     expect(container.querySelector('button[aria-label="刷新 Acme 项目的技能"]')).not.toBeNull();
     expect(container.querySelector('button[title="从 Acme 刷新技能"]')).not.toBeNull();
+    expect(container.textContent).toContain("还没有技能。创建技能或从目录安装。");
   });
 
   it("does not open a skill when keyboard-activating its actions button", async () => {

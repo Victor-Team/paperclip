@@ -322,12 +322,12 @@ function parentDirectoryPaths(filePath: string) {
 
 type SourceFilter = "all" | "company" | "bundled" | "optional" | "external";
 
-const SOURCE_FILTER_LABELS: Record<SourceFilter, string> = {
-  all: "All",
-  company: "Company",
-  bundled: "Bundled",
-  optional: "Optional",
-  external: "External",
+const SOURCE_FILTER_LABEL_KEYS: Record<SourceFilter, string> = {
+  all: "companyskillsproduction.general.sourceFilterAll",
+  company: "companyskillsproduction.general.sourceFilterCompany",
+  bundled: "companyskillsproduction.general.sourceFilterBundled",
+  optional: "companyskillsproduction.general.sourceFilterOptional",
+  external: "companyskillsproduction.general.sourceFilterExternal",
 };
 
 function readonlyMetadataValue(metadata: Record<string, unknown> | null | undefined, key: string): string | null {
@@ -386,7 +386,7 @@ function SourceFilterMenu({
           variant="ghost"
           size="icon-sm"
           className={cn("relative shrink-0", activeFilterCount > 0 && "text-blue-600 dark:text-blue-400")}
-          title={activeFilterCount > 0 ? `Filters: ${activeFilterCount}` : "Filter"}
+          title={activeFilterCount > 0 ? t("companyskillsproduction.general.filterCount", { count: activeFilterCount }) : t("companyskillsproduction.general.filter")}
         >
           <Filter className="h-3.5 w-3.5" />
           {activeFilterCount > 0 ? (
@@ -401,7 +401,7 @@ function SourceFilterMenu({
         <DropdownMenuRadioGroup value={value} onValueChange={(next) => onChange(next as SourceFilter)}>
           {filters.map((filter) => (
             <DropdownMenuRadioItem key={filter} value={filter}>
-              <span>{SOURCE_FILTER_LABELS[filter]}</span>
+              <span>{t(SOURCE_FILTER_LABEL_KEYS[filter])}</span>
               <span className="ml-auto text-xs text-muted-foreground">{counts[filter] ?? 0}</span>
             </DropdownMenuRadioItem>
           ))}
@@ -433,7 +433,7 @@ function CatalogFilterMenu({
           variant="ghost"
           size="icon-sm"
           className={cn("relative shrink-0", activeFilterCount > 0 && "text-blue-600 dark:text-blue-400")}
-          title={activeFilterCount > 0 ? `Filters: ${activeFilterCount}` : "Filter"}
+          title={activeFilterCount > 0 ? t("companyskillsproduction.general.filterCount", { count: activeFilterCount }) : t("companyskillsproduction.general.filter")}
         >
           <Filter className="h-3.5 w-3.5" />
           {activeFilterCount > 0 ? (
@@ -596,12 +596,12 @@ export function skillDetailBreadcrumbs(
 
 type DiscoverySort = "agents" | "stars" | "forks" | "recent" | "alphabetical";
 
-const DISCOVERY_SORT_LABELS: Record<DiscoverySort, string> = {
-  agents: "Most agents",
-  stars: "Most stars",
-  forks: "Most forks",
-  recent: "Recently updated",
-  alphabetical: "Alphabetical",
+const DISCOVERY_SORT_LABEL_KEYS: Record<DiscoverySort, string> = {
+  agents: "companyskillsproduction.general.sortMostAgents",
+  stars: "companyskillsproduction.general.sortMostStars",
+  forks: "companyskillsproduction.general.sortMostForks",
+  recent: "companyskillsproduction.general.sortRecentlyUpdated",
+  alphabetical: "companyskillsproduction.general.sortAlphabetical",
 };
 const DISCOVERY_SORTS: DiscoverySort[] = ["agents", "stars", "forks", "recent", "alphabetical"];
 
@@ -1137,6 +1137,11 @@ export function DiscoveryGrid({
     [cards, sourceBadgeFilter],
   );
   const sourceFilterActive = sourceBadgeFilter !== "all";
+  const sourceBadgeLabel = (badge: string) => badge === "local"
+    ? t("companyskillsproduction.general.sourceFilterLocal")
+    : badge === "catalog"
+      ? t("companyskillsproduction.general.sourceFilterCatalog")
+      : sourceMeta(badge as CompanySkillSourceBadge, null).label;
   const folderActionsReady = Boolean(
     onCreateFolderIn && onRenameFolder && onEditFolder && onMoveFolder && onDeleteFolder,
   );
@@ -1211,7 +1216,7 @@ export function DiscoveryGrid({
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm">
                 <span className="text-muted-foreground">{t("companyskillsproduction.general.sort")}</span>
-                <span className="ml-1.5">{DISCOVERY_SORT_LABELS[sort]}</span>
+                <span className="ml-1.5">{t(DISCOVERY_SORT_LABEL_KEYS[sort])}</span>
                 <ChevronDown className="ml-1 h-3.5 w-3.5" />
               </Button>
             </DropdownMenuTrigger>
@@ -1219,7 +1224,7 @@ export function DiscoveryGrid({
               <DropdownMenuRadioGroup value={sort} onValueChange={(value) => onSortChange(value as DiscoverySort)}>
                 {DISCOVERY_SORTS.map((option) => (
                   <DropdownMenuRadioItem key={option} value={option}>
-                    {DISCOVERY_SORT_LABELS[option]}
+                    {t(DISCOVERY_SORT_LABEL_KEYS[option])}
                   </DropdownMenuRadioItem>
                 ))}
               </DropdownMenuRadioGroup>
@@ -1231,7 +1236,7 @@ export function DiscoveryGrid({
                 <Button variant="outline" size="sm">
                   <span className="text-muted-foreground">{t("companyskillsproduction.general.source3")}</span>
                   <span className="ml-1.5 capitalize">
-                    {sourceBadgeFilter === "all" ? t("companyskillsproduction.general.all4") : sourceMeta(sourceBadgeFilter as CompanySkillSourceBadge, null).label}
+                    {sourceBadgeFilter === "all" ? t("companyskillsproduction.general.all4") : sourceBadgeLabel(sourceBadgeFilter)}
                   </span>
                   <ChevronDown className="ml-1 h-3.5 w-3.5" />
                 </Button>
@@ -1241,7 +1246,7 @@ export function DiscoveryGrid({
                   <DropdownMenuRadioItem value="all">{t("companyskillsproduction.general.allsources")}</DropdownMenuRadioItem>
                   {availableSources.map((badge) => (
                     <DropdownMenuRadioItem key={badge} value={badge}>
-                      {sourceMeta(badge as CompanySkillSourceBadge, null).label}
+                      {sourceBadgeLabel(badge)}
                     </DropdownMenuRadioItem>
                   ))}
                 </DropdownMenuRadioGroup>
@@ -1407,10 +1412,10 @@ export function DiscoveryGrid({
                 icon={LayoutGrid}
                 message={
                   totalCount === 0
-                    ? "No skills yet. Create one or install from the catalog."
+                    ? t("companyskillsproduction.general.noSkillsYet")
                     : search || activeCategory || sourceFilterActive
-                      ? "No skills match your filters."
-                      : "No skills in this tab yet."
+                      ? t("companyskillsproduction.general.noSkillsMatchFilters")
+                      : t("companyskillsproduction.general.noSkillsInTab")
                 }
               />
               {totalCount === 0 ? (
@@ -2448,7 +2453,7 @@ function SkillList({
     if (sourceFilter !== "all" && skills.length > 0) {
       return (
         <div className="px-4 py-6 text-sm text-muted-foreground">
-          {t("companyskillsproduction.general.no")} {SOURCE_FILTER_LABELS[sourceFilter].toLowerCase()} {t("companyskillsproduction.general.skillsinstalled")}{" "}
+          {t("companyskillsproduction.general.noSourceSkillsInstalled", { source: t(SOURCE_FILTER_LABEL_KEYS[sourceFilter]).toLowerCase() })}{" "}
           <button type="button" className="text-foreground underline" onClick={onClearFilters}>
             {t("companyskillsproduction.general.clearfilter")}</button>
         </div>

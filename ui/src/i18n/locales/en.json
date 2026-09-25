@@ -5793,15 +5793,11 @@
       "retryorreexportthepackagewithout": "Retry, or re-export the package without large attachments to shrink it.",
       "importpreview": "Import preview",
       "file9": "file",
-      "s10": "s",
       "selected": "selected",
       "conflict": "conflict",
-      "s11": "s",
       "error": "error",
-      "s12": "s",
       "startimportedagentsandroutinespaused": "Start imported agents and routines paused",
       "importing": "Importing...",
-      "s13": "s",
       "importrunningontheserversafeto14": "Import running on the server — safe to keep waiting; reconnecting won't lose it. Large packages can take several minutes.",
       "importfailed": "Import failed:",
       "therequestdidnotcomplete15": "the request did not complete.",
@@ -5819,7 +5815,15 @@
       "agentCountOther": "{{count}} agents",
       "importSummary": "Processed for {{companyName}}: agents {{agentCount}}, skills {{skillCount}}, projects {{projectCount}}, and routines {{routineCount}}.",
       "fileCountOne": "{{count}} file",
-      "fileCountOther": "{{count}} files"
+      "fileCountOther": "{{count}} files",
+      "selectedFilesSummary": "{{selectedCount}} / {{totalFiles}} files selected",
+      "conflictCountOne": "{{count}} conflict",
+      "conflictCountOther": "{{count}} conflicts",
+      "errorCountOne": "{{count}} error",
+      "errorCountOther": "{{count}} errors",
+      "importFileCountOne": "Import {{count}} file",
+      "importFileCountOther": "Import {{count}} files",
+      "uploadProgressWithResume": "Uploading part {{currentPart}} of {{totalParts}} — {{uploadedBytes}} of {{totalBytes}} uploaded. An interrupted upload resumes from the finished parts."
     }
   },
   "companysettingspluginpage": {
@@ -6622,11 +6626,8 @@
       "r": "r ·",
       "s13": "s",
       "agent": "agent",
-      "s14": "s",
       "project": "project",
-      "s15": "s",
       "routine": "routine",
-      "s16": "s",
       "teams": "Teams",
       "searchteams": "Search teams",
       "allkinds": "All kinds",
@@ -6666,7 +6667,13 @@
       "externalSourceWarningOne": "This team references {{count}} external source",
       "externalSourceWarningOther": "This team references {{count}} external sources",
       "externalSourceReviewOne": "This team references {{count}} external source. Review each one and decide what to allow before continuing.",
-      "externalSourceReviewOther": "This team references {{count}} external sources. Review each one and decide what to allow before continuing."
+      "externalSourceReviewOther": "This team references {{count}} external sources. Review each one and decide what to allow before continuing.",
+      "agentCountOne": "{{count}} agent",
+      "agentCountOther": "{{count}} agents",
+      "projectCountOne": "{{count}} project",
+      "projectCountOther": "{{count}} projects",
+      "routineCountOne": "{{count}} routine",
+      "routineCountOther": "{{count}} routines"
     }
   },
   "timeline": {
@@ -8177,6 +8184,14 @@
       "billingtypes": "Billing types",
       "upstreamproviders": "Upstream providers",
       "tok": "tok"
+    },
+    "billingTypes": {
+      "metered_api": "Metered API",
+      "subscription_included": "Subscription",
+      "subscription_overage": "Subscription overage",
+      "credits": "Credits",
+      "fixed": "Fixed",
+      "unknown": "Unknown"
     }
   },
   "blockedinboxview": {
@@ -10725,6 +10740,14 @@
       "used": "% used",
       "resets": "resets",
       "allocationPercent": "{{percent}}% of allocation"
+    },
+    "billingTypes": {
+      "metered_api": "Metered API",
+      "subscription_included": "Subscription",
+      "subscription_overage": "Subscription overage",
+      "credits": "Credits",
+      "fixed": "Fixed",
+      "unknown": "Unknown"
     }
   },
   "reportstopicker": {
@@ -12846,7 +12869,25 @@
       "moreActionsForSkill": "More actions for {{name}}",
       "useColor": "Use {{color}}",
       "removeTag": "Remove tag {{tag}}",
-      "installedFromSource": "Installed from {{source}}"
+      "installedFromSource": "Installed from {{source}}",
+      "sourceFilterAll": "All",
+      "sourceFilterCompany": "Company",
+      "sourceFilterBundled": "Bundled",
+      "sourceFilterOptional": "Optional",
+      "sourceFilterExternal": "External",
+      "filter": "Filter",
+      "filterCount": "Filters: {{count}}",
+      "noSourceSkillsInstalled": "No {{source}} skills installed.",
+      "sourceFilterLocal": "Folder",
+      "sourceFilterCatalog": "Catalog",
+      "sortMostAgents": "Most agents",
+      "sortMostStars": "Most stars",
+      "sortMostForks": "Most forks",
+      "sortRecentlyUpdated": "Recently updated",
+      "sortAlphabetical": "Alphabetical",
+      "noSkillsYet": "No skills yet. Create one or install from the catalog.",
+      "noSkillsMatchFilters": "No skills match your filters.",
+      "noSkillsInTab": "No skills in this tab yet."
     }
   },
   "companyskills": {
@@ -16577,13 +16618,5 @@
       "selectanorganizationtovieworgchart": "Select an organization to view org chart.",
       "noagentsintheorganizationcreateagents": "No agents in the organization. Create agents to build your org chart."
     }
-  },
-  "billingTypes": {
-    "metered_api": "Metered API",
-    "subscription_included": "Subscription",
-    "subscription_overage": "Subscription overage",
-    "credits": "Credits",
-    "fixed": "Fixed",
-    "unknown": "Unknown"
   }
 }

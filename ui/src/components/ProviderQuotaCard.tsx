@@ -264,7 +264,7 @@ export function ProviderQuotaCard({
                           {row.model}
                         </span>
                         <span className="text-(length:--text-micro) text-muted-foreground truncate block">
-                          {providerDisplayName(row.biller)} · {t(`billingTypes.${row.billingType}`)}
+                          {providerDisplayName(row.biller)} · {t(`providerquotacard.billingTypes.${row.billingType}`)}
                         </span>
                       </div>
                       <div className="flex items-center gap-3 shrink-0 tabular-nums text-xs">

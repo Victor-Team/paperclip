@@ -44,4 +44,22 @@ describe("BillerSpendCard localization", () => {
     expect(html).toContain("已用分配额度的 50%");
     expect(html).not.toContain("供应商s");
   });
+
+  it("renders billing type labels from the component's three-level namespace", async () => {
+    await i18n.changeLanguage("zh-CN");
+    const html = renderToStaticMarkup(<BillerSpendCard
+      row={row}
+      weekSpendCents={1000}
+      budgetMonthlyCents={10000}
+      totalCompanySpendCents={5000}
+      providerRows={[{
+        provider: "openai", biller: "openai", billingType: "metered_api", model: "test-model",
+        costCents: 1000, inputTokens: 0, cachedInputTokens: 0, outputTokens: 0,
+        apiRunCount: 1, subscriptionRunCount: 0, subscriptionCachedInputTokens: 0,
+        subscriptionInputTokens: 0, subscriptionOutputTokens: 0,
+      }]}
+    />);
+    expect(html).toContain("计量 API");
+    expect(html).not.toContain("billerspendcard.billingTypes.metered_api");
+  });
 });
