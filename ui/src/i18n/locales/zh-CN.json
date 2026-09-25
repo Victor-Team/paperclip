@@ -16755,5 +16755,55 @@
       "selectanorganizationtovieworgchart": "选择公司以查看组织架构图。",
       "noagentsintheorganizationcreateagents": "公司中暂无智能体。创建智能体以建立组织架构图。"
     }
+  },
+  "searchfilters": {
+    "general": {
+      "sortrelevance": "相关性",
+      "sortupdated": "最近更新",
+      "sortcreated": "最新创建",
+      "sortpriority": "优先级",
+      "last24hours": "最近 24 小时",
+      "last7days": "最近 7 天",
+      "last30days": "最近 30 天",
+      "last90days": "最近 90 天",
+      "updatedwithinother": "更新于 {{value}} 内",
+      "statusbacklog": "待办列表",
+      "statustodo": "待办",
+      "statusinprogress": "进行中",
+      "statusinreview": "审查中",
+      "statusdone": "已完成",
+      "statusblocked": "已阻塞",
+      "statuscancelled": "已取消",
+      "prioritycritical": "严重",
+      "priorityhigh": "高",
+      "prioritymedium": "中",
+      "prioritylow": "低",
+      "unassigned": "未分配",
+      "agent": "智能体",
+      "me": "我",
+      "user": "用户",
+      "assignee": "受派人",
+      "project": "项目",
+      "label": "标签",
+      "statuschip": "状态：{{value}}",
+      "prioritychip": "优先级：{{value}}",
+      "assigneechip": "受派人：{{value}}",
+      "projectchip": "项目：{{value}}",
+      "labelchip": "标签：{{value}}",
+      "updatedchip": "更新：{{value}}",
+      "updatedwindow": "更新时间段"
+    }
+  },
+  "searchresultrow": {
+    "general": {
+      "comment": "评论",
+      "document": "文档",
+      "artifact": "产物",
+      "description": "描述",
+      "agent": "智能体",
+      "project": "项目",
+      "identifier": "编号",
+      "title": "标题"
+    }
   }
 }

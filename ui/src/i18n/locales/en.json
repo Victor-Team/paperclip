@@ -16755,5 +16755,55 @@
       "selectanorganizationtovieworgchart": "Select an organization to view org chart.",
       "noagentsintheorganizationcreateagents": "No agents in the organization. Create agents to build your org chart."
     }
+  },
+  "searchfilters": {
+    "general": {
+      "sortrelevance": "Relevance",
+      "sortupdated": "Recently updated",
+      "sortcreated": "Newest created",
+      "sortpriority": "Priority",
+      "last24hours": "Last 24 hours",
+      "last7days": "Last 7 days",
+      "last30days": "Last 30 days",
+      "last90days": "Last 90 days",
+      "updatedwithinother": "Updated ≤ {{value}}",
+      "statusbacklog": "Backlog",
+      "statustodo": "Todo",
+      "statusinprogress": "In Progress",
+      "statusinreview": "In Review",
+      "statusdone": "Done",
+      "statusblocked": "Blocked",
+      "statuscancelled": "Cancelled",
+      "prioritycritical": "Critical",
+      "priorityhigh": "High",
+      "prioritymedium": "Medium",
+      "prioritylow": "Low",
+      "unassigned": "Unassigned",
+      "agent": "Agent",
+      "me": "Me",
+      "user": "User",
+      "assignee": "Assignee",
+      "project": "Project",
+      "label": "Label",
+      "statuschip": "Status: {{value}}",
+      "prioritychip": "Priority: {{value}}",
+      "assigneechip": "Assignee: {{value}}",
+      "projectchip": "Project: {{value}}",
+      "labelchip": "Label: {{value}}",
+      "updatedchip": "Updated: {{value}}",
+      "updatedwindow": "Updated window"
+    }
+  },
+  "searchresultrow": {
+    "general": {
+      "comment": "Comment",
+      "document": "Doc",
+      "artifact": "Artifact",
+      "description": "Description",
+      "agent": "Agent",
+      "project": "Project",
+      "identifier": "Identifier",
+      "title": "Title"
+    }
   }
 }

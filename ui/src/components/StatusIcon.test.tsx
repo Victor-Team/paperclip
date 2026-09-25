@@ -94,6 +94,12 @@ describe("StatusIcon", () => {
     expect(html).toContain('aria-label="Change status (current: Todo)"');
   });
 
+  it("uses a caller-provided localized label for search result glyphs", () => {
+    const html = renderToStaticMarkup(<StatusIcon status="todo" labelOverride="待办" showLabel />);
+    expect(html).toContain("待办");
+    expect(html).not.toContain('title="Todo"');
+  });
+
 });
 
 describe("StatusIcon — glyph size (PAP-243a)", () => {
@@ -116,7 +122,7 @@ describe("Slack idle status presentation", () => {
     const props = { status: "in_review", externalConversationState: "waiting" as const };
     expect(renderToStaticMarkup(<StatusIcon {...props} showLabel />)).toContain(">Idle<");
     expect(renderToStaticMarkup(<StatusIcon {...props} onChange={() => {}} />)).toContain('current: Idle');
-    expect(renderToStaticMarkup(<IssueStatusBadge {...props} />)).toContain(">Idle<");
+    expect(renderToStaticMarkup(<IssueStatusBadge {...props} />)).toContain(">idle<");
   });
 
   it.each(["in_review", "blocked", "done", "cancelled"])("preserves %s without verified waiting", (status) => {

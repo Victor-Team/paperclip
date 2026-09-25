@@ -16,7 +16,7 @@ import {
   applyAssigneeToken,
   assigneeToken,
   countActiveFilters,
-  SORT_LABELS,
+  sortLabel,
   type SearchFilters,
 } from "@/lib/search-filters";
 import { buildSearchFilterOptions, type SearchFilterDataProps } from "./SearchFilterBar";
@@ -205,7 +205,7 @@ export function SearchFilterSheet({
                   )}
                   onClick={() => onSortChange(value)}
                 >
-                  {SORT_LABELS[value]}
+                  {sortLabel(value)}
                 </button>
               ))}
             </div>
