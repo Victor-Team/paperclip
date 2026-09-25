@@ -787,6 +787,16 @@ describeEmbeddedPostgres("heartbeat stale queued-run invalidation", () => {
           .then((rows) => rows[0] ?? null);
         return run?.status === "succeeded";
       }, 10_000);
+      // The run row reaches "succeeded" slightly before the wakeup request is
+      // finalized, so wait for the wakeup as well instead of reading it once.
+      await waitForCondition(async () => {
+        const wakeupRow = await db
+          .select({ status: agentWakeupRequests.status })
+          .from(agentWakeupRequests)
+          .where(eq(agentWakeupRequests.id, wakeupRequestId))
+          .then((rows) => rows[0] ?? null);
+        return wakeupRow?.status === "completed";
+      }, 10_000);
 
       const [run, wakeup, issue] = await Promise.all([
         db.select({ status: heartbeatRuns.status, errorCode: heartbeatRuns.errorCode })
