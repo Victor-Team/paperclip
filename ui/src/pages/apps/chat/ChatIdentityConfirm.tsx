@@ -79,7 +79,10 @@ export function ChatIdentityConfirm() {
         <div>
           <h1 className="text-xl font-bold">{t("chatidentityconfirm.general.identitylinked")}</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            {t("chatidentityconfirm.general.futuremessagesfrom")} {identity.externalLabel} {t("chatidentityconfirm.general.useyourcurrentpaperclippermissionsin")} {identity.companyName}.
+            {t("chatidentityconfirm.general.futuremessagesusepermissions", {
+              externalLabel: identity.externalLabel,
+              companyName: identity.companyName,
+            })}
           </p>
         </div>
         {identity.provider === "slack" && <Button asChild><a href="https://app.slack.com/" target="_blank" rel="noopener noreferrer">{t("chatidentityconfirm.general.returntoslack")}</a></Button>}
@@ -118,8 +121,9 @@ export function ChatIdentityConfirm() {
         </div>
       </dl>
       <p className="text-sm text-muted-foreground">
-        {t("chatidentityconfirm.general.confirmonlyifthisisyour")} {providerNames[identity.provider]}{" "}
-        {t("chatidentityconfirm.general.identitypaperclipwillcheckyourcurrentorganization")}</p>
+        {t("chatidentityconfirm.general.confirmidentitywarning", {
+          providerName: providerNames[identity.provider],
+        })}</p>
       {confirm.isError && (
         <p className="text-sm text-destructive">
           {t("chatidentityconfirm.general.thislinkcouldnotbeconfirmedit")}</p>

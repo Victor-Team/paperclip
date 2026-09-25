@@ -8,6 +8,7 @@ import { resolveAgentAppearance } from "@paperclipai/shared";
 import { GitHubBotManagement, GitHubReviews } from "./GitHubBotManagement";
 import { EmailEndpointSettings } from "./EmailEndpointSetup";
 import { useEffect, useMemo, useState } from "react";
+import { Trans } from "react-i18next";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   AlertTriangle,
@@ -666,7 +667,12 @@ function Access({
               </div>
             </li>
             <li>{t("chatendpointdetail.general.opentheprivatelinkfromthebot")}</li>
-            <li>{t("chatendpointdetail.general.iftheyarentamemberof")} <strong>{t("chatendpointdetail.general.requestaccess")}</strong>{t("chatendpointdetail.general.anadminmustapprovetheirrequestbefore")}</li>
+            <li>
+              <Trans
+                i18nKey="chatendpointdetail.general.requestaccessinstruction"
+                components={{ strong: <strong /> }}
+              />
+            </li>
           </ol>
           <p className="text-sm text-muted-foreground">{t("chatendpointdetail.general.eachpersonlinkstheirownaccountand")}</p>
         </div>
@@ -1285,7 +1291,10 @@ function Activity({
           <AlertDialogHeader>
             <AlertDialogTitle>{t("chatendpointdetail.general.removethisconnection")}</AlertDialogTitle>
             <AlertDialogDescription>
-              {endpoint.assignedAgentName} {t("chatendpointdetail.general.willstopreceivingnewworkfrom")}              {` ${providerNames[endpoint.provider]}`}{t("chatendpointdetail.general.existingpapercliptasksremainavailable")}{" "}
+              {t("chatendpointdetail.general.removeconnectionwarning", {
+                agentName: endpoint.assignedAgentName,
+                providerName: providerNames[endpoint.provider],
+              })}{" "}
               {lifecycleGuidance[endpoint.provider].remove}
             </AlertDialogDescription>
           </AlertDialogHeader>
