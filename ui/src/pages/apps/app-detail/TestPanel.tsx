@@ -831,12 +831,6 @@ function splitRequiredOptional(schema: JsonSchemaNode): JsonSchemaNode {
   return { ...schema, properties: next };
 }
 
-const GUT_CHECK: Record<ToolConnectionTestDecision, (app: string, agent: string) => string> = {
-  allowed: (app, agent) => `This runs a real call against ${app} as ${agent}.`,
-  ask_first: () => `Waiting for your OK before this call leaves Paperclip.`,
-  off: (_app, agent) => `No call will be made — this action is off for ${agent}.`,
-};
-
 function ActionTester({
   entry,
   decision,
@@ -959,13 +953,17 @@ function ActionTester({
           onChange={setValues}
           errors={errors}
           disabled={running}
-          advancedLabel="More options"
+          advancedLabel={t("testpanel.general.moreoptions")}
         />
       ) : (
         <p className="text-xs text-muted-foreground">{t("testpanel.general.thisactiontakesnoinputs")}</p>
       )}
 
-      <p className="text-xs text-muted-foreground">{GUT_CHECK[decision](appName, agent.name)}</p>
+      <p className="text-xs text-muted-foreground">{decision === "allowed"
+        ? t("testpanel.general.realcallasagent", { appName, agentName: agent.name })
+        : decision === "ask_first"
+          ? t("testpanel.general.waitingforapprovalbeforecall")
+          : t("testpanel.general.actionoffforagent", { agentName: agent.name })}</p>
 
       <div className="flex items-center gap-2">
         <Button onClick={onRun} disabled={running || !!outcome?.result.upstreamPending?.resumeTool || outcome?.result.decision === "ask_first"} size="sm">
@@ -982,7 +980,7 @@ function ActionTester({
           {t("testpanel.general.reset")}</Button>
       </div>
 
-      {(outcome?.result.decision === "ask_first" || outcome?.result.upstreamPending?.resumeTool) && <p className="text-xs text-muted-foreground">Finish the existing request below. Use Reset only when you intend to start a new call.</p>}
+      {(outcome?.result.decision === "ask_first" || outcome?.result.upstreamPending?.resumeTool) && <p className="text-xs text-muted-foreground">{t("testpanel.general.finishtheexistingrequestbelowusereset")}</p>}
 
       {running && (
         <RunningCard entry={entry} appName={appName} agentName={agent.name} elapsedMs={elapsedMs} onCancel={onCancelRunning} />
@@ -1079,35 +1077,38 @@ function ResultPanel({
 }
 
 function ProviderPendingResult({ pending, appName, connectionId, agent }: { pending: ToolUpstreamPending; appName: string; connectionId: string; agent?: TestAgentWithAccess }) {
+  const { t, i18n } = useTranslation();
   const [resumed, setResumed] = useState<{ outcome: RunOutcome; entry: ToolCatalogEntry; action: "accept" | "decline" | "cancel" } | null>(null);
   const resumeError = resumed && (resumed.outcome.result.error ?? mcpToolError(resumed.outcome.result.result));
   const stoppedByUser = resumed && resumeError?.reasonCode === "tool_error" &&
     ((resumed.action === "decline" && /request was declined by the user/i.test(resumeError.message)) ||
       (resumed.action === "cancel" && /request was cancelled by the user/i.test(resumeError.message)));
   if (stoppedByUser) return <div role="status" className="space-y-2 rounded-md border border-border bg-muted/40 p-4 text-sm">
-    <p className="font-medium">{resumed.action === "decline" ? "Request declined" : "Request cancelled"}</p>
+    <p className="font-medium">{resumed.action === "decline" ? t("testpanel.general.requestdeclined") : t("testpanel.general.requestcancelled")}</p>
     <p>{resumeError.message}</p>
-    <p className="text-muted-foreground">The original call was not repeated.</p>
-    {pending.executionId && <p>Execution: <code className="break-all">{pending.executionId}</code></p>}
+    <p className="text-muted-foreground">{t("testpanel.general.theoriginalcallwasnotrepeated")}</p>
+    {pending.executionId && <p>{t("testpanel.general.execution")} <code className="break-all">{pending.executionId}</code></p>}
   </div>;
   if (resumed) return <ResultPanel outcome={resumed.outcome} entry={resumed.entry} appName={appName} connectionId={connectionId} agent={agent} />;
   return (
     <div role="status" className="space-y-3 rounded-md border border-border bg-muted/40 p-4 text-sm">
-      <p className="font-medium">{pending.kind === "approval" ? "Approval needed" : "Authorization needed"} in {appName}</p>
-      <p className="text-muted-foreground">Paperclip allowed this call. The provider needs your input before it can continue.</p>
+      <p className="font-medium">{pending.kind === "approval"
+        ? t("testpanel.general.approvalneededinapp", { appName })
+        : t("testpanel.general.authorizationneededinapp", { appName })}</p>
+      <p className="text-muted-foreground">{t("testpanel.general.paperclipallowedthiscalltheproviderneeds")}</p>
       {pending.links.map((link) => {
         const checked = checkOAuthEndpointUrl(link.url);
-        return checked.ok ? <Button key={checked.url} variant="outline" asChild><a href={checked.url} target="_blank" rel="noopener noreferrer">Continue at {checked.host}</a></Button> : null;
+        return checked.ok ? <Button key={checked.url} variant="outline" asChild><a href={checked.url} target="_blank" rel="noopener noreferrer">{t("testpanel.general.continueatprovider", { host: checked.host })}</a></Button> : null;
       })}
       {pending.message && <p className="whitespace-pre-wrap break-words">{pending.message}</p>}
-      {pending.links.length === 0 && !pending.resumeTool && <p>Open the provider dashboard to complete this request.</p>}
-      {pending.executionId && <p>Execution: <code className="break-all">{pending.executionId}</code></p>}
-      {pending.elicitationId && <p>Request: <code className="break-all">{pending.elicitationId}</code></p>}
-      {pending.expiresAt && <p>Approval expires {new Date(pending.expiresAt).toLocaleTimeString()}.</p>}
+      {pending.links.length === 0 && !pending.resumeTool && <p>{t("testpanel.general.opentheproviderdashboardtocompletethis")}</p>}
+      {pending.executionId && <p>{t("testpanel.general.execution")} <code className="break-all">{pending.executionId}</code></p>}
+      {pending.elicitationId && <p>{t("testpanel.general.request")} <code className="break-all">{pending.elicitationId}</code></p>}
+      {pending.expiresAt && <p>{t("testpanel.general.approvalexpiresat", { time: new Date(pending.expiresAt).toLocaleTimeString(i18n.language) })}</p>}
       {pending.resumeTool && agent ? <ProviderResumeControls pending={pending} connectionId={connectionId} agent={agent} onResult={setResumed} /> :
       <p className="text-muted-foreground">{pending.resumeTool
-        ? `After approval, test the ${pending.resumeTool} action with this execution ID. Do not start the original action again.`
-        : "After authorizing, check the provider's result before using Run again. Paperclip will not repeat the call automatically."}</p>}
+        ? t("testpanel.general.afterapprovaltestresumeaction", { toolName: pending.resumeTool })
+        : t("testpanel.general.afterauthorizingchecktheprovidersresult")}</p>}
     </div>
   );
 }
@@ -1116,6 +1117,7 @@ function ProviderResumeControls({ pending, connectionId, agent, onResult }: {
   pending: ToolUpstreamPending; connectionId: string; agent: TestAgentWithAccess;
   onResult: (result: { outcome: RunOutcome; entry: ToolCatalogEntry; action: "accept" | "decline" | "cancel" }) => void;
 }) {
+  const { t } = useTranslation();
   const catalog = useQuery({ queryKey: queryKeys.tools.catalog(connectionId), queryFn: () => toolsApi.listCatalog(connectionId) });
   const entry = catalog.data?.catalog.find((item) => item.toolName === pending.resumeTool && item.status === "active");
   const schema = (pending.requestedSchema ?? { type: "object", properties: {} }) as JsonSchemaNode;
@@ -1137,18 +1139,18 @@ function ProviderResumeControls({ pending, connectionId, agent, onResult }: {
     if (!Object.keys(validation).length) resume.mutate(action);
   };
   return <div className="space-y-3">
-    <p className="text-muted-foreground">Review the provider's request, then resume this execution as {agent.name}. The original action will not be started again.</p>
-    <div className="flex items-center gap-2"><span>Resume permission</span><DecisionBadge decision={permission} /></div>
+    <p className="text-muted-foreground">{t("testpanel.general.reviewrequestandresumeasagent", { agentName: agent.name })}</p>
+    <div className="flex items-center gap-2"><span>{t("testpanel.general.resumepermission")}</span><DecisionBadge decision={permission} /></div>
     {Object.keys(schema.properties ?? {}).length > 0 && <JsonSchemaForm schema={schema} values={content} onChange={setContent} errors={errors} disabled={resume.isPending} />}
     <div className="flex flex-wrap gap-2">
-      <Button disabled={!entry || expired || permission === "off" || resume.isPending} onClick={() => submit("accept")}>{resume.isPending ? "Resuming…" : "Approve and resume"}</Button>
-      <Button variant="outline" disabled={!entry || expired || permission === "off" || resume.isPending} onClick={() => submit("decline")}>Decline</Button>
-      <Button variant="ghost" disabled={!entry || expired || permission === "off" || resume.isPending} onClick={() => submit("cancel")}>Cancel request</Button>
+      <Button disabled={!entry || expired || permission === "off" || resume.isPending} onClick={() => submit("accept")}>{resume.isPending ? t("testpanel.general.resuming") : t("testpanel.general.approveandresume")}</Button>
+      <Button variant="outline" disabled={!entry || expired || permission === "off" || resume.isPending} onClick={() => submit("decline")}>{t("testpanel.general.decline")}</Button>
+      <Button variant="ghost" disabled={!entry || expired || permission === "off" || resume.isPending} onClick={() => submit("cancel")}>{t("testpanel.general.cancelrequest")}</Button>
     </div>
-    {expired && <p>This provider approval expired. Check the provider before starting a new action.</p>}
-    {permission === "off" && <p>Allow the resume action in Permissions before continuing.</p>}
-    {catalog.isError && <p role="alert">Could not load the resume action. Close this test and try again.</p>}
-    {resume.isError && <p role="alert">{resume.error instanceof Error ? resume.error.message : "Could not resume. Check the provider before trying again."}</p>}
+    {expired && <p>{t("testpanel.general.thisproviderapprovalexpiredchecktheprovider")}</p>}
+    {permission === "off" && <p>{t("testpanel.general.allowtheresumeactioninpermissionsbefore")}</p>}
+    {catalog.isError && <p role="alert">{t("testpanel.general.couldnotloadtheresumeactionclose")}</p>}
+    {resume.isError && <p role="alert">{resume.error instanceof Error ? resume.error.message : t("testpanel.general.couldnotresumechecktheproviderbefore")}</p>}
   </div>;
 }
 

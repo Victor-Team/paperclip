@@ -47,7 +47,12 @@
       "revoked": "Revoked",
       "paused": "Paused",
       "needsattention": "Needs attention",
-      "connected": "Connected"
+      "connected": "Connected",
+      "connectionretired": "Connection retired",
+      "removeeachobsoleteconnectionseparatelyremovingthis": "Remove each obsolete connection separately. Removing this one does not remove other connections.",
+      "addcomposiomcpconnection": "Add Composio MCP connection",
+      "paperclipcontrolsaccesstothetoolslisted": "Paperclip controls access to the tools listed here. App and action permissions inside these tools are managed in {{appName}}.",
+      "legacycomposioconnectionretired": "This legacy Composio connection is no longer supported. Add a new Composio MCP connection from Connectors, then remove this connection. Existing credentials and permissions are not migrated."
     }
   },
   "browse": {
@@ -4335,7 +4340,8 @@
       "viavercelconnect": "via Vercel Connect",
       "viacomposio": "via Composio",
       "brokeredbycomposiowithtoolkit": "Brokered by Composio ({{toolkitSlug}})",
-      "brokeredbycomposioopentab": "Brokered by Composio ({{toolkitSlug}}) — open the Composio Services tab"
+      "brokeredbycomposioopentab": "Brokered by Composio ({{toolkitSlug}}) — open the Composio Services tab",
+      "credentialsmanagedbyvercelconnectwithid": "Credentials managed by Vercel Connect ({{connectorUid}})"
     }
   },
   "advancedpanel": {
@@ -4712,7 +4718,34 @@
       "openpermissions": "Open Permissions →",
       "nocallwillbemadethisaction": "No call will be made — this action is off for",
       "whythisisoff": "Why this is off",
-      "tryasadifferentagent": "Try as a different agent:"
+      "tryasadifferentagent": "Try as a different agent:",
+      "finishtheexistingrequestbelowusereset": "Finish the existing request below. Use Reset only when you intend to start a new call.",
+      "requestdeclined": "Request declined",
+      "requestcancelled": "Request cancelled",
+      "theoriginalcallwasnotrepeated": "The original call was not repeated.",
+      "execution": "Execution:",
+      "paperclipallowedthiscalltheproviderneeds": "Paperclip allowed this call. The provider needs your input before it can continue.",
+      "opentheproviderdashboardtocompletethis": "Open the provider dashboard to complete this request.",
+      "request": "Request:",
+      "afterauthorizingchecktheprovidersresult": "After authorizing, check the provider's result before using Run again. Paperclip will not repeat the call automatically.",
+      "resumepermission": "Resume permission",
+      "resuming": "Resuming…",
+      "approveandresume": "Approve and resume",
+      "decline": "Decline",
+      "cancelrequest": "Cancel request",
+      "thisproviderapprovalexpiredchecktheprovider": "This provider approval expired. Check the provider before starting a new action.",
+      "allowtheresumeactioninpermissionsbefore": "Allow the resume action in Permissions before continuing.",
+      "couldnotloadtheresumeactionclose": "Could not load the resume action. Close this test and try again.",
+      "couldnotresumechecktheproviderbefore": "Could not resume. Check the provider before trying again.",
+      "approvalneededinapp": "Approval needed in {{appName}}",
+      "authorizationneededinapp": "Authorization needed in {{appName}}",
+      "continueatprovider": "Continue at {{host}}",
+      "approvalexpiresat": "Approval expires {{time}}.",
+      "afterapprovaltestresumeaction": "After approval, test the {{toolName}} action with this execution ID. Do not start the original action again.",
+      "reviewrequestandresumeasagent": "Review the provider's request, then resume this execution as {{agentName}}. The original action will not be started again.",
+      "realcallasagent": "This runs a real call against {{appName}} as {{agentName}}.",
+      "waitingforapprovalbeforecall": "Waiting for your OK before this call leaves Paperclip.",
+      "actionoffforagent": "No call will be made — this action is off for {{agentName}}."
     }
   },
   "identitiessection": {

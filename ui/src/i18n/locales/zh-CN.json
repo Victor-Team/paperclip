@@ -47,7 +47,12 @@
       "revoked": "已撤销",
       "paused": "已暂停",
       "needsattention": "需要关注",
-      "connected": "已连接"
+      "connected": "已连接",
+      "connectionretired": "连接已停用",
+      "legacycomposioconnectionretired": "此旧版 Composio 连接已不再受支持。请从连接器添加新的 Composio MCP 连接，然后移除此连接。现有凭据和权限不会迁移。",
+      "removeeachobsoleteconnectionseparatelyremovingthis": "请分别移除每个旧连接。移除此连接不会删除其他连接。",
+      "addcomposiomcpconnection": "添加 Composio MCP 连接",
+      "paperclipcontrolsaccesstothetoolslisted": "Paperclip 控制对这里所列工具的访问。这些工具中的应用和操作权限由 {{appName}} 管理。"
     }
   },
   "browse": {
@@ -4335,7 +4340,8 @@
       "viavercelconnect": "通过 Vercel Connect",
       "viacomposio": "通过 Composio",
       "brokeredbycomposiowithtoolkit": "由 Composio 代理（{{toolkitSlug}}）",
-      "brokeredbycomposioopentab": "由 Composio 代理（{{toolkitSlug}}）— 打开 Composio 服务页"
+      "brokeredbycomposioopentab": "由 Composio 代理（{{toolkitSlug}}）— 打开 Composio 服务页",
+      "credentialsmanagedbyvercelconnectwithid": "凭据由 Vercel Connect 管理（{{connectorUid}}）"
     }
   },
   "advancedpanel": {
@@ -4712,7 +4718,34 @@
       "openpermissions": "打开权限设置 →",
       "nocallwillbemadethisaction": "不会发起调用 — 此操作已对以下智能体关闭：",
       "whythisisoff": "为何已关闭",
-      "tryasadifferentagent": "换一个智能体尝试："
+      "tryasadifferentagent": "换一个智能体尝试：",
+      "finishtheexistingrequestbelowusereset": "请先完成下方现有请求。只有需要发起新调用时才使用“重置”。",
+      "requestdeclined": "请求已拒绝",
+      "requestcancelled": "请求已取消",
+      "theoriginalcallwasnotrepeated": "原调用未重复执行。",
+      "execution": "执行：",
+      "approvalneededinapp": "需要在 {{appName}} 中批准",
+      "authorizationneededinapp": "需要在 {{appName}} 中授权",
+      "paperclipallowedthiscalltheproviderneeds": "Paperclip 已允许此调用。提供商需要你输入信息才能继续。",
+      "continueatprovider": "前往 {{host}} 继续",
+      "opentheproviderdashboardtocompletethis": "打开提供商控制台以完成此请求。",
+      "request": "请求：",
+      "approvalexpiresat": "批准将于 {{time}} 到期。",
+      "afterapprovaltestresumeaction": "批准后，请使用此执行 ID 测试 {{toolName}} 操作。不要再次启动原操作。",
+      "afterauthorizingchecktheprovidersresult": "授权后，请先检查提供商返回的结果，再次点击“运行”。Paperclip 不会自动重复调用。",
+      "reviewrequestandresumeasagent": "请复核提供商的请求，然后以 {{agentName}} 的身份恢复此次执行。原操作不会再次启动。",
+      "resumepermission": "恢复权限",
+      "resuming": "正在恢复…",
+      "approveandresume": "批准并恢复",
+      "decline": "拒绝",
+      "cancelrequest": "取消请求",
+      "thisproviderapprovalexpiredchecktheprovider": "此提供商批准已过期。发起新操作前请检查提供商的状态。",
+      "allowtheresumeactioninpermissionsbefore": "继续之前，请在“权限”中允许恢复操作。",
+      "couldnotloadtheresumeactionclose": "无法加载恢复操作。请关闭此测试后重试。",
+      "couldnotresumechecktheproviderbefore": "无法恢复。请检查提供商后重试。",
+      "realcallasagent": "这将以 {{agentName}} 的身份对 {{appName}} 发起真实调用。",
+      "waitingforapprovalbeforecall": "此调用发出 Paperclip 之前，正在等待你的批准。",
+      "actionoffforagent": "不会发起调用：此操作对 {{agentName}} 已关闭。"
     }
   },
   "identitiessection": {
