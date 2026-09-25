@@ -3598,7 +3598,9 @@
       "deselectall": "Deselect all",
       "done": "Done",
       "folderactionsfor": "Folder actions for {{folderName}}",
-      "usefoldercolor": "Use folder color {{color}}"
+      "usefoldercolor": "Use folder color {{color}}",
+      "deletefoldercontentswarning": "The {{count}} {{itemLabelPlural}} in this folder won't be deleted. They'll move to Unfiled.",
+      "grouptheseintofolders": "Group these {{itemLabelPlural}} into folders to keep things tidy."
     }
   },
   "skillfoldertree": {

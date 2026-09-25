@@ -4,6 +4,7 @@ import { flushSync } from "react-dom";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { FolderListResult } from "@paperclipai/shared";
+import { i18n } from "@/i18n";
 import {
   AllUnfiledBanner,
   BulkBar,
@@ -373,6 +374,25 @@ describe("FolderControls", () => {
       confirmButton?.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }));
     });
     expect(onConfirm).toHaveBeenCalled();
+  });
+
+  it("keeps the folder delete warning in Chinese when the language changes", async () => {
+    await act(async () => { await i18n.changeLanguage("zh-CN"); });
+    root = createRoot(container);
+    act(() => {
+      root?.render(
+        <DeleteFolderDialog
+          open
+          folder={folderResult.folders[0]!}
+          itemLabelPlural="例程"
+          onOpenChange={vi.fn()}
+          onConfirm={vi.fn()}
+        />,
+      );
+    });
+
+    expect(document.body.textContent).toContain("此文件夹中的 3 个例程不会被删除");
+    await act(async () => { await i18n.changeLanguage("en"); });
   });
 
   it("selects a folder from the mobile sheet and dismisses", () => {

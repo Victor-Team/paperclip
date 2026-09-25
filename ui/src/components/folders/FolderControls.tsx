@@ -394,7 +394,7 @@ export function AllUnfiledBanner({
     <div className="mb-3 flex flex-wrap items-center gap-2 rounded-md border border-border bg-muted/40 px-3 py-2 text-sm">
       <FolderIcon className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
       <span className="min-w-0 flex-1 text-muted-foreground">
-        {t("foldercontrols.general.groupthese")} {itemLabelPlural} {t("foldercontrols.general.intofolderstokeepthingstidy")}</span>
+        {t("foldercontrols.general.grouptheseintofolders", { itemLabelPlural })}</span>
       <Button size="sm" variant="outline" onClick={onCreateFolder}>
         {t("foldercontrols.general.createyourfirstfolder")}</Button>
       <Button size="icon-sm" variant="ghost" aria-label={t("foldercontrols.general.dismissfoldersuggestion")} onClick={dismiss}>
@@ -718,7 +718,7 @@ export function DeleteFolderDialog({
         <AlertDialogHeader>
           <AlertDialogTitle>{t("foldercontrols.general.deletefolder")}</AlertDialogTitle>
           <AlertDialogDescription>
-            {t("foldercontrols.general.the")} {folder?.itemCount ?? 0} {itemLabelPlural} {t("foldercontrols.general.inthisfolderwontbedeleted")}</AlertDialogDescription>
+            {t("foldercontrols.general.deletefoldercontentswarning", { count: folder?.itemCount ?? 0, itemLabelPlural })}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel disabled={pending}>{t("foldercontrols.general.cancel6")}</AlertDialogCancel>
