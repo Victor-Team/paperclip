@@ -1,8 +1,39 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
+import en from "@/i18n/locales/en.json";
+
+function englishCopy(key: string): string | undefined {
+  let value: unknown = en;
+  for (const segment of key.split(".")) {
+    if (!value || typeof value !== "object" || !(segment in value)) return;
+    value = (value as Record<string, unknown>)[segment];
+  }
+  return typeof value === "string" ? value : undefined;
+}
+
+function rawSource(relativePath: string) {
+  return readFileSync(new URL(relativePath, import.meta.url), "utf8");
+}
 
 function source(relativePath: string) {
-  return readFileSync(new URL(relativePath, import.meta.url), "utf8");
+  const code = rawSource(relativePath);
+  // Keep contract assertions near their source calls after UI copy moves to i18n.
+  return code
+    .replace(/\bt\(\s*"([^"]+)"\s*\)/g, (call, key: string) => {
+      const value = englishCopy(key);
+      return value === undefined ? call : `${call} /* default English: ${value} */`;
+    })
+    .replace(/i18nKey="([^"]+)"/g, (attribute, key: string) => {
+      const value = englishCopy(key);
+      return value === undefined ? attribute : `${attribute} /* default English: ${value} */`;
+    });
+}
+
+function expectLocalizedCopy(code: string, phrase: string) {
+  const referencedKeys = [
+    ...code.matchAll(/\bt\(\s*"([^"]+)"|i18nKey="([^"]+)"/g),
+  ].map((match) => match[1] ?? match[2]);
+  expect(referencedKeys.some((key) => englishCopy(key)?.includes(phrase))).toBe(true);
 }
 
 describe("chat connector UI contract", () => {
@@ -35,7 +66,7 @@ describe("chat connector UI contract", () => {
     for (const file of ["Inbox.tsx", "LegacyInbox.tsx"]) {
       const page = source(`../../${file}`);
       expect(page).toMatch(
-        /const retryRunMutation = useMutation\(\{[\s\S]*?onError: \(error\) => \{\s*pushToast\(\{\s*title: "Run retry failed"/,
+        /const retryRunMutation = useMutation\(\{[\s\S]*?onError: \(error\) => \{\s*pushToast\(\{\s*title: t\("(?:inbox|legacyinbox)\.general\.runretryfailed"\)/,
       );
     }
   });
@@ -53,7 +84,7 @@ describe("chat connector UI contract", () => {
       expect(detail).toContain(`"${tab}"`);
     }
     expect(detail).not.toContain('"overview"');
-    expect(detail).toContain("Open {providerNames[provider]}");
+    expect(rawSource("./ChatEndpointDetail.tsx")).toMatch(/\{t\("chatendpointdetail\.general\.open"\)\}\s*\{providerNames\[provider\]\}/);
     expect(detail).toContain("Open task");
     expect(detail.toLowerCase()).not.toContain("detach");
   });
@@ -84,7 +115,7 @@ describe("chat connector UI contract", () => {
     expect(detail).toContain("Their tasks run only with an isolated workspace");
     expect(detail).toContain("otherwise Paperclip safely refuses the request");
     expect(setup).toContain("Link the account you’re testing");
-    expect(setup).toContain("Paperclip does not replay the refused request");
+    expectLocalizedCopy(setup, "Paperclip does not replay the refused request");
     expect(setup).toContain("Review identity access");
     expect(setup).toContain("instanceSettingsApi.getExperimental()");
     expect(setup).toContain("chatEndpointsApi.listPrincipals(endpointId)");
@@ -190,9 +221,7 @@ describe("chat connector UI contract", () => {
     expect(setup).not.toContain("/setprivacy");
     expect(setup).toContain("/task@bot_username");
     expect(setup).toContain("registers its command menu automatically");
-    expect(setup).toContain(
-      "ordinary\n          mentions are not delivered to bots",
-    );
+    expect(setup).toContain("ordinary mentions are not delivered to bots");
     expect(setup).toContain("Create Azure Bot");
     expect(setup).toContain("Microsoft 365 work or school organization");
     expect(setup).toContain("teams.live.com");
@@ -201,9 +230,7 @@ describe("chat connector UI contract", () => {
     expect(setup).toContain("operated by 21Vianet");
     expect(setup).toContain("Client secret value");
     expect(setup).toContain("Microsoft portal field map");
-    expect(setup).toContain(
-      "Accounts in this organizational directory only (Single tenant)",
-    );
+    expectLocalizedCopy(setup, "Accounts in this organizational directory only (Single tenant)");
     expect(setup).toContain("Use existing app registration");
     expect(setup).toContain("Settings · Configuration");
     expect(setup).toContain("Configure · App features · Bot");
