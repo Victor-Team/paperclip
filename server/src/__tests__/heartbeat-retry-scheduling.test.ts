@@ -314,7 +314,7 @@ describeEmbeddedPostgres("heartbeat bounded retry scheduling", () => {
       resultJson: { executionRecovery: { kind: "bootstrap", providerWorkStarted: false } } }).where(eq(heartbeatRuns.id, scheduled.run!.id));
     expect(await heartbeat.scheduleBoundedRetry(scheduled.run!.id, { now, random: () => 0 })).toMatchObject({ outcome: "retry_exhausted" });
   });
-  it("records pre-provider quota rejection, schedules the reset-time retry, and leaves the agent idle", async () => {
+  it("records pre-provider quota rejection, schedules a capped reset-time retry, and leaves the agent idle", async () => {
     const companyId = randomUUID();
     const agentId = randomUUID();
 
@@ -376,10 +376,13 @@ describeEmbeddedPostgres("heartbeat bounded retry scheduling", () => {
       .then((rows) => rows[0] ?? null);
     expect(retryRun?.status).toBe("scheduled_retry");
     expect(retryRun?.scheduledRetryReason).toBe("transient_failure");
-    expect(retryRun?.scheduledRetryAt?.toISOString()).toBe("2030-04-22T21:00:00.000Z");
+    // A far-off reset is probed at least hourly so restored quota resumes promptly.
+    const probeDelayMs = (retryRun?.scheduledRetryAt?.getTime() ?? 0) - (failedRun?.finishedAt?.getTime() ?? 0);
+    expect(probeDelayMs).toBeGreaterThan(59 * 60 * 1000);
+    expect(probeDelayMs).toBeLessThanOrEqual(60 * 60 * 1000 + 5_000);
     expect((retryRun?.contextSnapshot as Record<string, unknown> | null)?.errorFamily).toBe("provider_quota");
     expect((retryRun?.contextSnapshot as Record<string, unknown> | null)?.providerQuotaRetryNotBefore).toBe(
-      "2030-04-22T21:00:00.000Z",
+      retryRun?.scheduledRetryAt?.toISOString(),
     );
     expect((retryRun?.contextSnapshot as Record<string, unknown> | null)?.codexTransientFallbackMode ?? null).toBeNull();
 

@@ -497,6 +497,7 @@ import {
 import { withRecoveryContext } from "./recovery/status-only-context.js";
 import {
   ACTIVE_RUN_OUTPUT_SUSPICION_THRESHOLD_MS as RECOVERY_ACTIVE_RUN_OUTPUT_SUSPICION_THRESHOLD_MS,
+  capProviderQuotaWait,
   isProviderQuotaFailureMessage,
   recoveryService,
 } from "./recovery/service.js";
@@ -11610,11 +11611,16 @@ export function heartbeatService(
           const targetAgent = await getAgent(targetAgentId);
           if (!targetAgent)
             throw conflict("The quota recovery agent is unavailable.");
+          // The quota wait is a fresh attempt: the source run already spent the
+          // bounded transient budget, so without its own budget this trigger
+          // resolves to retry_exhausted and the wait spins without ever running.
           const scheduled = await scheduleBoundedRetryForRun(
             sourceRun,
             targetAgent,
             {
               now: input.now,
+              delayMs: 0,
+              maxAttempts: executionFailureRetryCount(sourceRun) + 1,
               ...(isProviderQuotaReviewMonitor
                 ? {
                     retryReason:
@@ -11625,8 +11631,12 @@ export function heartbeatService(
                 : {}),
             },
           );
-          if (scheduled.outcome === "not_scheduled")
-            throw conflict(scheduled.reason);
+          if (scheduled.outcome !== "scheduled")
+            throw conflict(
+              scheduled.outcome === "not_scheduled"
+                ? scheduled.reason
+                : "The quota recovery retry budget is exhausted.",
+            );
         }
       } else
         await enqueueWakeup(targetAgentId, {
@@ -15253,7 +15263,12 @@ export function heartbeatService(
       transientRecovery?.errorFamily === "transient_upstream"
         ? resolveCodexTransientFallbackMode(nextAttempt)
         : null;
-    const transientRetryNotBefore = transientRecovery?.retryNotBefore ?? null;
+    // Probe quota at least hourly even when the reset is days away, so a
+    // restored quota (top-up) resumes the work without anyone stepping in.
+    const transientRetryNotBefore =
+      transientRecovery?.retryNotBefore && transientRecovery.errorFamily === "provider_quota"
+        ? capProviderQuotaWait(transientRecovery.retryNotBefore, now)
+        : (transientRecovery?.retryNotBefore ?? null);
     const contextSnapshot = parseObject(run.contextSnapshot);
     const issueId = readNonEmptyString(contextSnapshot.issueId);
 

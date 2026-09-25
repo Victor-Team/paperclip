@@ -521,6 +521,15 @@ const CONTINUATION_RECOVERY_TRANSIENT_MAX_ATTEMPTS = 3;
 const CONTINUATION_RECOVERY_DEFAULT_MAX_ATTEMPTS = 1;
 const CONTINUATION_RECOVERY_TRANSIENT_BASE_BACKOFF_MS = 60_000;
 export const PROVIDER_QUOTA_RECOVERY_DEFAULT_BACKOFF_MS = 60 * 60 * 1000;
+/**
+ * A provider's reset time can be days away (weekly quota), yet the operator
+ * may restore quota sooner (top-up, plan change). Never wait longer than one
+ * default backoff before probing again; a quota-rejected probe costs nothing.
+ */
+export function capProviderQuotaWait(at: Date, now: Date): Date {
+  const latest = now.getTime() + PROVIDER_QUOTA_RECOVERY_DEFAULT_BACKOFF_MS;
+  return at.getTime() > latest ? new Date(latest) : at;
+}
 
 // `RESOURCE_EXHAUSTED` is the gRPC/Gemini status for a rate or quota limit, and
 // the Gemini-CLI family words its 429 as "exceeded the weekly usage quota" /
@@ -2694,7 +2703,7 @@ export function recoveryService(
     ) {
       const parsed = new Date(raw);
       if (!Number.isNaN(parsed.getTime()) && parsed.getTime() > now.getTime())
-        return parsed;
+        return capProviderQuotaWait(parsed, now);
     }
     // TOK-206: the provider's own reset timestamp (when the error text
     // carries one) is the exact earliest-retry moment; falling straight to
@@ -2706,7 +2715,7 @@ export function recoveryService(
     ].join("\n");
     const parsedReset = parseProviderQuotaClockReset(errorText, now);
     if (parsedReset && parsedReset.getTime() > now.getTime())
-      return parsedReset;
+      return capProviderQuotaWait(parsedReset, now);
     return new Date(now.getTime() + PROVIDER_QUOTA_RECOVERY_DEFAULT_BACKOFF_MS);
   }
 
@@ -4410,7 +4419,8 @@ export function recoveryService(
         stages: [],
       }),
       monitor: {
-        nextCheckAt: input.classification.retryAt.toISOString(),
+        // Probe at least hourly even when the reset is days away (top-up).
+        nextCheckAt: capProviderQuotaWait(input.classification.retryAt, new Date()).toISOString(),
         notes: input.classification.parsedResetTime
           ? `Provider usage quota reached; retry ${retryTargetDescription} at the provider reset time.`
           : `Provider usage quota reached; retry ${retryTargetDescription} after the default recovery backoff.`,
@@ -4452,7 +4462,8 @@ export function recoveryService(
         source: "recovery.provider_quota",
         latestRunId: input.latestRun.id,
         errorCode: "provider_quota",
-        nextCheckAt: input.classification.retryAt.toISOString(),
+        nextCheckAt: policy.monitor.nextCheckAt,
+        providerResetAt: input.classification.retryAt.toISOString(),
         parsedResetTime: input.classification.parsedResetTime,
         targetAgentId,
       },
