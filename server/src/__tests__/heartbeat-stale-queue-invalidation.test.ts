@@ -12,6 +12,7 @@ import {
   heartbeatRuns,
   issueComments,
   issueDocuments,
+  issueRecoveryActions,
   issueThreadInteractions,
   issues,
 } from "@paperclipai/db";
@@ -1756,6 +1757,92 @@ describeEmbeddedPostgres("heartbeat stale queued-run invalidation", () => {
     expect(staleRun?.errorCode).toBe("issue_assignee_changed");
     expect(deferred?.status).not.toBe("deferred_issue_execution");
     expect(promotedRun?.agentId).toBe(newOwnerAgentId);
+  });
+
+  it("keeps deferred wakes waiting when a queued run is cancelled for a reconciliation blocker", async () => {
+    const { companyId, agentId } = await seedCompanyAndAgent();
+    const peerAgentId = randomUUID();
+    const issueId = randomUUID();
+    const queuedRunId = randomUUID();
+    const deferredWakeupId = randomUUID();
+    await db.insert(agents).values({
+      id: peerAgentId,
+      companyId,
+      name: "PeerAgent",
+      role: "engineer",
+      status: "active",
+      adapterType: "codex_local",
+      adapterConfig: {},
+      runtimeConfig: { heartbeat: { wakeOnDemand: true, maxConcurrentRuns: 1 } },
+      permissions: {},
+    });
+    await db.insert(heartbeatRuns).values({
+      id: queuedRunId,
+      companyId,
+      agentId,
+      invocationSource: "on_demand",
+      triggerDetail: "manual",
+      status: "queued",
+      contextSnapshot: { issueId },
+    });
+    await db.insert(issues).values({
+      id: issueId,
+      companyId,
+      title: "Awaiting operator reconciliation",
+      status: "in_progress",
+      priority: "high",
+      assigneeAgentId: agentId,
+      executionRunId: queuedRunId,
+    });
+    await db.insert(issueRecoveryActions).values({
+      companyId,
+      sourceIssueId: issueId,
+      kind: "active_run_watchdog",
+      ownerType: "board",
+      cause: "uncertain_external_action",
+      status: "active",
+      evidence: {},
+      fingerprint: queuedRunId,
+      nextAction: "Verify whether the external action happened before continuing.",
+    });
+    await db.insert(agentWakeupRequests).values({
+      id: deferredWakeupId,
+      companyId,
+      agentId: peerAgentId,
+      source: "comment",
+      triggerDetail: "mention",
+      reason: "issue_execution_deferred",
+      payload: {
+        issueId,
+        _paperclipWakeContext: { issueId, wakeReason: "issue_mention" },
+      },
+      status: "deferred_issue_execution",
+    });
+
+    await heartbeat.resumeQueuedRuns();
+    await waitForCondition(async () => {
+      const [run] = await db
+        .select({ status: heartbeatRuns.status })
+        .from(heartbeatRuns)
+        .where(eq(heartbeatRuns.id, queuedRunId));
+      return run?.status === "cancelled";
+    });
+    // Give any (wrong) release drain time to promote before asserting it did not.
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    const [staleRun] = await db
+      .select({ status: heartbeatRuns.status, errorCode: heartbeatRuns.errorCode })
+      .from(heartbeatRuns)
+      .where(eq(heartbeatRuns.id, queuedRunId));
+    const [deferred] = await db
+      .select({ status: agentWakeupRequests.status, runId: agentWakeupRequests.runId })
+      .from(agentWakeupRequests)
+      .where(eq(agentWakeupRequests.id, deferredWakeupId));
+
+    expect(staleRun?.status).toBe("cancelled");
+    expect(staleRun?.errorCode).toBe("execution_reconciliation_required");
+    expect(deferred?.status).toBe("deferred_issue_execution");
+    expect(deferred?.runId).toBeNull();
   });
 
   it("cancels queued max-turn continuations when another continuation owns the issue lock", async () => {

@@ -912,7 +912,7 @@ export function createPostgresRunDispatchAdapter(
             // never reached the provider. Without this evidence the release
             // drain treats it as a failed provider attempt and strands the
             // deferred wakes queued behind it (e.g. the new owner's).
-            ...(run.runtimeMode !== "native"
+            ...(run.runtimeMode !== "native" && decision.errorCode !== "execution_reconciliation_required"
               ? { executionRecovery: { kind: "bootstrap", providerWorkStarted: false } }
               : {}),
             effectiveTimeoutSec: 0,
