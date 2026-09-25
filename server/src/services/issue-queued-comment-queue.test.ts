@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { buildQueuedCommentQueueSnapshot, decideQueuedCommentQueueSteering } from "./issue-queued-comment-queue.js";
+import {
+  buildQueuedCommentQueueSnapshot,
+  decideQueuedCommentQueueSteering,
+  queuedCommentIdsFromRunContext,
+  queuedCommentIdsFromWakePayload,
+} from "./issue-queued-comment-queue.js";
 
 describe("decideQueuedCommentQueueSteering", () => {
   it("answers unsupported on the legacy protocol", () => {
@@ -113,5 +118,42 @@ describe("buildQueuedCommentQueueSnapshot entry permissions", () => {
 
     expect(queue.entries[0]?.canEdit).toBe(false);
     expect(queue.entries[0]?.canDiscard).toBe(false);
+  });
+});
+
+describe("queued comment id extraction drops malformed ids", () => {
+  // Regression for a live outage: a truncated comment id ("0422d095") sat in one
+  // wake payload and took down every query that read this queue, because each
+  // caller passes these ids straight to `inArray(issueComments.id, ...)` and
+  // Postgres fails the whole statement on the first malformed uuid. One bad id
+  // must never cost the good ones their dispatch.
+  const good = "18a18072-3e89-4c1b-b622-934af641bf62";
+  const alsoGood = "b2652bf9-ca3f-48c6-97e9-4bc7ce9e5c76";
+  const truncated = "0422d095";
+
+  it("keeps the well-formed ids in a wake payload and drops the truncated one", () => {
+    const ids = queuedCommentIdsFromWakePayload({
+      _paperclipWakeContext: { wakeCommentIds: [truncated, good, alsoGood] },
+    });
+    expect(ids).toEqual([good, alsoGood]);
+  });
+
+  it("returns an empty list when a wake payload holds nothing but a malformed id", () => {
+    const ids = queuedCommentIdsFromWakePayload({
+      _paperclipWakeContext: { wakeCommentIds: [truncated] },
+    });
+    expect(ids).toEqual([]);
+  });
+
+  it("applies the same guard to ids read back from a run context", () => {
+    const ids = queuedCommentIdsFromRunContext({ wakeCommentIds: [good, truncated] });
+    expect(ids).toEqual([good]);
+  });
+
+  it("still drops duplicates and non-strings alongside the malformed ids", () => {
+    const ids = queuedCommentIdsFromWakePayload({
+      _paperclipWakeContext: { wakeCommentIds: [good, good, null, "", truncated, alsoGood] },
+    });
+    expect(ids).toEqual([good, alsoGood]);
   });
 });

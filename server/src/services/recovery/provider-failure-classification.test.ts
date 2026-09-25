@@ -114,6 +114,21 @@ describe("classifyAdapterFailureForRecovery", () => {
     });
   });
 
+  it("parses the five-hour quota absolute reset timestamp with a numeric offset", () => {
+    const classification = classifyAdapterFailureForRecovery({
+      errorCode: "adapter_failed",
+      error:
+        "You have exceeded the 5-hour usage quota. It will reset at 2026-09-17 16:33:02 +0800 CST.",
+      resultJson: null,
+    }, new Date("2026-09-17T08:00:00.000Z"));
+
+    expect(classification).toEqual({
+      kind: "provider_quota",
+      retryAt: new Date("2026-09-17T08:33:02.000Z"),
+      parsedResetTime: true,
+    });
+  });
+
   it.each([
     "model_not_found: requested model does not exist",
     "No API credentials were found for this provider",

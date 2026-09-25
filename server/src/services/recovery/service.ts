@@ -164,6 +164,7 @@ const DEFERRED_WAKE_CONTEXT_KEY = "_paperclipWakeContext";
 const EXECUTION_REVIEW_PARTICIPANT_RECOVERY_REASON =
   "execution_review_participant_recovery";
 const STRANDED_BOARD_ESCALATION_POLICY = "board_escalation_no_takeover_v1";
+const STRANDED_LIVENESS_RETRY_DELAY_MS = 5 * 60 * 1000;
 const DISPOSITION_REPAIR_IDEMPOTENCY_INDEX =
   "agent_wakeup_requests_disposition_repair_idempotency_uq";
 const RESOLVED_DEPENDENCY_WAKE_BACKSTOP_CANDIDATE_LIMIT = 500;
@@ -1026,6 +1027,10 @@ export function recoveryService(
     ) => Promise<typeof heartbeatRuns.$inferSelect | null>;
     liveRunExecutions?: Readonly<{ has(id: string): boolean }>;
     beforeOrphanedRunTerminalWrite?: (runId: string) => Promise<void>;
+    /** Settle the agent row after the backstop ends a run the agent itself never finalized. */
+    afterOrphanedRunTerminalized?: (
+      run: typeof heartbeatRuns.$inferSelect,
+    ) => Promise<void>;
   },
 ) {
   const issuesSvc = issueService(db);
@@ -2694,6 +2699,24 @@ export function recoveryService(
     return new Date(now.getTime() + PROVIDER_QUOTA_RECOVERY_DEFAULT_BACKOFF_MS);
   }
 
+  async function resolvePersistedRetryOfRunId(input: {
+    companyId: string;
+    runId: string | null | undefined;
+  }) {
+    if (!input.runId) return null;
+    const [sourceRun] = await db
+      .select({ id: heartbeatRuns.id })
+      .from(heartbeatRuns)
+      .where(
+        and(
+          eq(heartbeatRuns.companyId, input.companyId),
+          eq(heartbeatRuns.id, input.runId),
+        ),
+      )
+      .limit(1);
+    return sourceRun?.id ?? null;
+  }
+
   async function ensureProviderQuotaWaitRecoveryMonitor(input: {
     issue: typeof issues.$inferSelect;
     latestRun: LatestIssueRun;
@@ -2718,6 +2741,10 @@ export function recoveryService(
 
     const now = new Date();
     const retryAt = readProviderQuotaRetryAt(input.latestRun, now);
+    const retryOfRunId = await resolvePersistedRetryOfRunId({
+      companyId: input.issue.companyId,
+      runId: input.latestRun?.id,
+    });
     return db.transaction(async (tx) => {
       const wakeup = await tx
         .insert(agentWakeupRequests)
@@ -2753,7 +2780,7 @@ export function recoveryService(
           triggerDetail: "system",
           status: "scheduled_retry",
           wakeupRequestId: wakeup.id,
-          retryOfRunId: input.latestRun?.id ?? null,
+          retryOfRunId,
           scheduledRetryAt: retryAt,
           scheduledRetryAttempt: 1,
           scheduledRetryReason: "provider_quota_recovery",
@@ -2778,6 +2805,124 @@ export function recoveryService(
       await tx
         .update(issueRecoveryActions)
         .set({
+          monitorPolicy: {
+            type: "wait_recovery",
+            retryAgentId: input.agentId,
+            scheduledRunId: scheduledRun.id,
+            retryAt: retryAt.toISOString(),
+          },
+          timeoutAt: retryAt,
+          updatedAt: now,
+        })
+        .where(eq(issueRecoveryActions.id, input.actionId));
+      return scheduledRun;
+    });
+  }
+
+  async function ensureStrandedLivenessRetry(input: {
+    issue: typeof issues.$inferSelect;
+    latestRun: LatestIssueRun;
+    actionId: string;
+    agentId: string;
+    recoveryCause: StrandedRecoveryCause;
+  }) {
+    const existing = await db
+      .select()
+      .from(heartbeatRuns)
+      .where(
+        and(
+          eq(heartbeatRuns.companyId, input.issue.companyId),
+          eq(heartbeatRuns.agentId, input.agentId),
+          eq(heartbeatRuns.status, "scheduled_retry"),
+          sql`${heartbeatRuns.contextSnapshot} ->> 'issueId' = ${input.issue.id}`,
+        ),
+      )
+      .orderBy(desc(heartbeatRuns.scheduledRetryAt))
+      .limit(1)
+      .then((rows) => rows[0] ?? null);
+    if (existing) return existing;
+
+    const now = new Date();
+    const isProviderQuota = input.recoveryCause === "provider_quota";
+    const retryAt = isProviderQuota
+      ? readProviderQuotaRetryAt(input.latestRun, now)
+      : new Date(now.getTime() + STRANDED_LIVENESS_RETRY_DELAY_MS);
+    const retryReason = isProviderQuota
+      ? "provider_quota_recovery"
+      : "stranded_liveness_recovery";
+    const retryOfRunId = await resolvePersistedRetryOfRunId({
+      companyId: input.issue.companyId,
+      runId: input.latestRun?.id,
+    });
+
+    return db.transaction(async (tx) => {
+      const wakeup = await tx
+        .insert(agentWakeupRequests)
+        .values({
+          companyId: input.issue.companyId,
+          agentId: input.agentId,
+          source: "automation",
+          triggerDetail: "system",
+          reason: retryReason,
+          payload: withRecoveryContext(
+            {
+              issueId: input.issue.id,
+              retryOfRunId: input.latestRun?.id ?? null,
+              retryReason,
+            },
+            "normal_model",
+          ),
+          status: "queued",
+          requestedByActorType: "system",
+          requestedByActorId: null,
+          idempotencyKey: `${retryReason}:${input.issue.id}:${retryAt.toISOString()}`,
+          updatedAt: now,
+        })
+        .returning()
+        .then((rows) => rows[0]!);
+      const scheduledRun = await tx
+        .insert(heartbeatRuns)
+        .values({
+          companyId: input.issue.companyId,
+          agentId: input.agentId,
+          invocationSource: "automation",
+          triggerDetail: "system",
+          status: "scheduled_retry",
+          wakeupRequestId: wakeup.id,
+          retryOfRunId,
+          scheduledRetryAt: retryAt,
+          scheduledRetryAttempt: 1,
+          scheduledRetryReason: retryReason,
+          contextSnapshot: withRecoveryContext(
+            {
+              issueId: input.issue.id,
+              taskId: input.issue.id,
+              wakeReason: retryReason,
+              retryReason,
+            },
+            "normal_model",
+          ),
+          updatedAt: now,
+        })
+        .returning()
+        .then((rows) => rows[0]!);
+      await tx
+        .update(agentWakeupRequests)
+        .set({ runId: scheduledRun.id, updatedAt: now })
+        .where(eq(agentWakeupRequests.id, wakeup.id));
+      await tx
+        .update(issueRecoveryActions)
+        .set({
+          ownerType: "system",
+          ownerAgentId: null,
+          ownerUserId: null,
+          wakePolicy: {
+            type: "scheduled_retry",
+            retryAgentId: input.agentId,
+            retryAt: retryAt.toISOString(),
+            scheduledRunId: scheduledRun.id,
+            reason: retryReason,
+          },
           monitorPolicy: {
             type: "wait_recovery",
             retryAgentId: input.agentId,
@@ -3904,17 +4049,33 @@ export function recoveryService(
       input.issue.companyId,
       input.issue.id,
     );
-    // TOK-206: a `blocked` issue with no blocker edges, no scheduled monitor,
-    // and no unblock descriptor is a permanent dead issue — nothing can ever
-    // wake it again. Recovery must never create that state. When none of the
-    // three first-class liveness paths is available, the escalation still
-    // needs a wakeable owner, so it records a board-owned unblock descriptor
-    // naming the action the board must take. `deliverAgentUnblockNotification`
-    // only routes agent-owned descriptors (an agent wakes on the descriptor),
-    // so the board-owned form relies on the board inbox attention rule for
-    // blocked issues with a human-owned unblockDescriptor (attention.ts),
-    // which is exactly the first-class intervention path this escalation
-    // promises in its notice.
+    const hasExistingMonitor = Boolean(input.issue.monitorNextCheckAt);
+    const retryAgentId = recoveryAction.returnOwnerAgentId;
+    if (blockerIds.length === 0 && !hasExistingMonitor) {
+      // A recovery action or a board descriptor is evidence of an escalation,
+      // not an execution path. Keep the source runnable only after the retry
+      // row has been durably scheduled; otherwise leave its current state
+      // untouched rather than manufacturing a bare blocked issue.
+      if (!retryAgentId) return null;
+      const scheduledRetry = await ensureStrandedLivenessRetry({
+        issue: input.issue,
+        latestRun: input.latestRun,
+        actionId: recoveryAction.id,
+        agentId: retryAgentId,
+        recoveryCause,
+      });
+      if (!scheduledRetry) return null;
+      const updated = await issuesSvc.update(input.issue.id, {
+        status: "in_progress",
+        blockedByIssueIds: [],
+        unblockDescriptor: null,
+      });
+      return updated ?? null;
+    }
+    // A blocked recovery may retain only a real unresolved blocker or an
+    // already-scheduled monitor. The no-path case returned above after
+    // persisting a retry, so a recovery action or board descriptor can never
+    // masquerade as the liveness mechanism for this transition.
     const unblockDescriptor =
       blockerIds.length === 0 && !input.issue.monitorNextCheckAt
         ? {
@@ -5912,6 +6073,18 @@ export function recoveryService(
       },
       "terminalized orphaned running heartbeat run in stale-lock sweep",
     );
+    // The run's own lifecycle normally moves the agent off "running"; an
+    // orphaned run never reaches that code, so without this the agent keeps
+    // showing "running" with nothing executing. Best-effort, like the audit
+    // event above: a failure must not keep the sweep from clearing the lock.
+    try {
+      await deps.afterOrphanedRunTerminalized?.(updated);
+    } catch (error) {
+      logger.error(
+        { err: error, runId: run.id, agentId: run.agentId },
+        "failed to settle agent status after terminalizing orphaned run",
+      );
+    }
     return { terminalized: true, status: updated.status };
   }
 

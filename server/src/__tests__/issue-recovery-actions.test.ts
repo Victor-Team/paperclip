@@ -28,6 +28,7 @@ import { errorHandler } from "../middleware/index.js";
 import { issueRoutes } from "../routes/issues.js";
 import { buildPaperclipWakePayload, heartbeatService } from "../services/heartbeat.js";
 import { deliverReconciledExecutions } from "../services/execution-recovery-resolution.js";
+import { getExecutionBlocker } from "../services/execution-blocker.js";
 import { issueRecoveryActionService } from "../services/issue-recovery-actions.js";
 import { recoveryService } from "../services/recovery/service.js";
 import { noticeMetadataReferencesRecoveryAction } from "../services/recovery/successful-run-handoff.js";
@@ -414,7 +415,7 @@ describeEmbeddedPostgres("issue recovery actions", () => {
       companyId,
       kind: "stranded_assigned_issue",
       status: "active",
-      ownerType: "board",
+      ownerType: "system",
       ownerAgentId: null,
       previousOwnerAgentId: coderId,
       returnOwnerAgentId: coderId,
@@ -427,7 +428,7 @@ describeEmbeddedPostgres("issue recovery actions", () => {
 
     const [updatedIssue] = await db.select().from(issues).where(eq(issues.id, sourceIssue.id));
     expect(updatedIssue).toMatchObject({
-      status: "blocked",
+      status: "in_progress",
     });
     const recoveryIssues = await db
       .select()
@@ -536,7 +537,8 @@ describeEmbeddedPostgres("issue recovery actions", () => {
       `source_scoped_recovery:${sourceIssue.companyId}:${sourceIssue.id}:configuration_incomplete:workspace_base_ref:origin/fix/foo`,
     );
 
-    // The operator gets one notice, bound to the one action.
+    // A durable scheduled retry is the live path; it does not need a system
+    // comment to wake a board owner.
     const notices = await db
       .select({ metadata: issueComments.metadata })
       .from(issueComments)
@@ -546,11 +548,7 @@ describeEmbeddedPostgres("issue recovery actions", () => {
           eq(issueComments.authorType, "system"),
         ),
       );
-    expect(
-      notices.filter((row) =>
-        noticeMetadataReferencesRecoveryAction(row.metadata, actions[0]!.id),
-      ),
-    ).toHaveLength(1);
+    expect(notices).toHaveLength(0);
   });
 
   it("gives a distinct recovery identity and a new operator notice when the unresolved base ref changes", async () => {
@@ -590,7 +588,7 @@ describeEmbeddedPostgres("issue recovery actions", () => {
     expect(newAction?.attemptCount).toBe(1);
     expect(newAction?.id).not.toBe(priorAction?.id);
 
-    // The operator gets one notice per distinct ref, each bound to its action.
+    // Both retry records are self-scheduling rather than board notices.
     const systemComments = await db
       .select({ metadata: issueComments.metadata })
       .from(issueComments)
@@ -600,16 +598,7 @@ describeEmbeddedPostgres("issue recovery actions", () => {
           eq(issueComments.authorType, "system"),
         ),
       );
-    expect(
-      systemComments.some((row) =>
-        noticeMetadataReferencesRecoveryAction(row.metadata, priorAction!.id),
-      ),
-    ).toBe(true);
-    expect(
-      systemComments.some((row) =>
-        noticeMetadataReferencesRecoveryAction(row.metadata, newAction!.id),
-      ),
-    ).toBe(true);
+    expect(systemComments).toHaveLength(0);
   });
 
   it.each([
@@ -651,7 +640,7 @@ describeEmbeddedPostgres("issue recovery actions", () => {
         .from(issueRecoveryActions)
         .where(eq(issueRecoveryActions.sourceIssueId, sourceIssue.id));
       expect(action).toMatchObject({
-        ownerType: "board",
+        ownerType: "system",
         ownerAgentId: null,
         previousOwnerAgentId: coderId,
         returnOwnerAgentId: coderId,
@@ -659,8 +648,7 @@ describeEmbeddedPostgres("issue recovery actions", () => {
           routingPolicy: "board_escalation_no_takeover_v1",
         }),
         wakePolicy: expect.objectContaining({
-          type: "board_escalation",
-          preservesSourceAssignee: true,
+          type: "scheduled_retry",
         }),
       });
       expect(enqueueWakeup).not.toHaveBeenCalled();
@@ -1175,7 +1163,7 @@ describeEmbeddedPostgres("issue recovery actions", () => {
     expect(result).toMatchObject({ escalated: 1, reviewParticipantRequeued: 0 });
     const [updatedIssue] = await db.select().from(issues).where(eq(issues.id, sourceIssueId));
     expect(updatedIssue).toMatchObject({
-      status: "blocked",
+      status: "in_progress",
       assigneeAgentId: coderId,
     });
     const [updatedRun] = await db.select().from(heartbeatRuns).where(eq(heartbeatRuns.id, runId));
@@ -1183,7 +1171,7 @@ describeEmbeddedPostgres("issue recovery actions", () => {
     const [action] = await db.select().from(issueRecoveryActions);
     expect(action).toMatchObject({
       sourceIssueId,
-      ownerType: "board",
+      ownerType: "system",
       ownerAgentId: null,
       previousOwnerAgentId: coderId,
       cause: "configuration_incomplete",
@@ -1244,7 +1232,7 @@ describeEmbeddedPostgres("issue recovery actions", () => {
 
     expect(result).toMatchObject({ escalated: 1, skipped: 0 });
     const [updatedIssue] = await db.select().from(issues).where(eq(issues.id, sourceIssueId));
-    expect(updatedIssue?.status).toBe("blocked");
+    expect(updatedIssue?.status).toBe("in_progress");
     const [updatedRun] = await db.select().from(heartbeatRuns).where(eq(heartbeatRuns.id, runId));
     expect(updatedRun?.errorCode).toBe("configuration_incomplete");
     const [action] = await db.select().from(issueRecoveryActions);
@@ -1428,9 +1416,8 @@ describeEmbeddedPostgres("issue recovery actions", () => {
       }),
       nextAction: expect.stringContaining("git worktree branch incoherence"),
       wakePolicy: expect.objectContaining({
-        type: "board_escalation",
-        reason: "workspace_validation_failed",
-        preservesSourceAssignee: true,
+        type: "scheduled_retry",
+        reason: "stranded_liveness_recovery",
       }),
     });
 
@@ -1438,12 +1425,7 @@ describeEmbeddedPostgres("issue recovery actions", () => {
     const escalationComments = comments.filter((comment) =>
       noticeMetadataReferencesRecoveryAction(comment.metadata, actionRows[0]!.id),
     );
-    expect(escalationComments).toHaveLength(1);
-    expect(escalationComments[0]?.presentation).toMatchObject({
-      kind: "system_notice",
-      tone: "danger",
-      title: "Workspace validation failed",
-    });
+    expect(escalationComments).toHaveLength(0);
     expect(enqueueWakeup).not.toHaveBeenCalled();
   });
 
@@ -1476,7 +1458,7 @@ describeEmbeddedPostgres("issue recovery actions", () => {
     });
 
     const [afterFirst] = await db.select().from(issues).where(eq(issues.id, sourceIssue.id));
-    expect(afterFirst?.status).toBe("blocked");
+    expect(afterFirst?.status).toBe("in_progress");
     expect(afterFirst?.assigneeAgentId).toBe(coderId);
 
     const secondLatestRun = {
@@ -1505,15 +1487,10 @@ describeEmbeddedPostgres("issue recovery actions", () => {
       attemptCount: 2,
     });
     const [afterSecond] = await db.select().from(issues).where(eq(issues.id, sourceIssue.id));
-    expect(afterSecond?.status).toBe("blocked");
+    expect(afterSecond?.status).toBe("in_progress");
 
     const comments = await db.select().from(issueComments).where(eq(issueComments.issueId, sourceIssue.id));
-    expect(comments).toHaveLength(1);
-    // Dedupe for structured notices is metadata-based: the short body no longer
-    // carries the `Recovery action: \`id\`` marker line.
-    expect(comments[0]?.body).not.toContain("Recovery action:");
-    expect(noticeMetadataReferencesRecoveryAction(comments[0]?.metadata, actionRows[0]!.id)).toBe(true);
-    expect(comments[0]?.presentation).toMatchObject({ kind: "system_notice", tone: "danger" });
+    expect(comments).toHaveLength(0);
   });
 
   it("does not create nested recovery artifacts when issue-backed fallback work itself fails", async () => {
@@ -1814,6 +1791,188 @@ describeEmbeddedPostgres("issue recovery actions", () => {
     expect(receipt!.evidence).toMatchObject({
       continuationDelivery: "delivered",
       continuationRunId: successorId,
+    });
+  });
+
+  it("delivers a resolved automatic no-replay hold through one fresh recovery-only wake", async () => {
+    const { companyId, coderId, sourceIssueId } = await seedCompany();
+    const responsibleUserId = randomUUID();
+    await db.insert(authUsers).values({
+      id: responsibleUserId,
+      name: "Recovery operator",
+      email: `${responsibleUserId}@example.test`,
+      emailVerified: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+    await db
+      .update(companies)
+      .set({ defaultResponsibleUserId: responsibleUserId })
+      .where(eq(companies.id, companyId));
+    await db
+      .update(agents)
+      .set({ runtimeConfig: { heartbeat: { maxConcurrentRuns: 1 } } })
+      .where(eq(agents.id, coderId));
+    const previousRunId = randomUUID();
+    await seedHeartbeatRun({
+      companyId,
+      agentId: coderId,
+      runId: previousRunId,
+      issueId: sourceIssueId,
+      status: "failed",
+    });
+    await seedHeartbeatRun({
+      companyId,
+      agentId: coderId,
+      runId: randomUUID(),
+      status: "running",
+    });
+    await db.update(issues).set({ status: "blocked" }).where(eq(issues.id, sourceIssueId));
+    const [action] = await db.insert(issueRecoveryActions).values({
+      companyId,
+      sourceIssueId,
+      kind: "active_run_watchdog",
+      status: "resolved",
+      outcome: "blocked",
+      ownerType: "system",
+      returnOwnerAgentId: coderId,
+      cause: "uncertain_external_action",
+      fingerprint: previousRunId,
+      nextAction: "Preserve work without replaying the unknown action.",
+      evidence: {
+        automaticRecovery: {
+          policy: "preserve_without_replay_v1",
+          runId: previousRunId,
+          replay: "blocked",
+          actionOutcome: "unknown",
+        },
+      },
+    }).returning();
+    const heartbeat = heartbeatService(db, { runtimeEnv: {} });
+
+    expect(
+      await getExecutionBlocker(db, companyId, sourceIssueId),
+    ).toMatchObject({ recoveryActionId: action!.id });
+
+    await Promise.all([
+      deliverReconciledExecutions(db, heartbeat.wakeup),
+      deliverReconciledExecutions(db, heartbeat.wakeup),
+    ]);
+
+    const wakes = await db.select().from(agentWakeupRequests).where(eq(
+      agentWakeupRequests.idempotencyKey,
+      `execution-recovery-only:${action!.id}`,
+    ));
+    expect(wakes).toHaveLength(1);
+    expect(wakes[0]).toMatchObject({
+      status: "queued",
+      requestedByActorType: "system",
+      requestedByActorId: "execution-recovery",
+    });
+    const [successor] = await db.select().from(heartbeatRuns).where(eq(
+      heartbeatRuns.id,
+      wakes[0]!.runId!,
+    ));
+    expect(successor).toMatchObject({
+      retryOfRunId: previousRunId,
+      contextSnapshot: expect.objectContaining({
+        recoveryActionId: action!.id,
+        previousRunId,
+        forceFreshSession: true,
+        source: "execution.recovery_only",
+      }),
+    });
+    const [receipt] = await db.select().from(issueRecoveryActions).where(eq(
+      issueRecoveryActions.id,
+      action!.id,
+    ));
+    expect(receipt!.evidence).toMatchObject({
+      automaticRecovery: expect.objectContaining({
+        replay: "recovery_only_delivered",
+        recoveryOnlyContinuationRunId: successor!.id,
+      }),
+    });
+    expect(await getExecutionBlocker(db, companyId, sourceIssueId)).toBeNull();
+  });
+
+  it("skips a recovery-only wake unless its requester is the system", async () => {
+    const { companyId, coderId, sourceIssueId } = await seedCompany();
+    const responsibleUserId = randomUUID();
+    await db.insert(authUsers).values({
+      id: responsibleUserId,
+      name: "Recovery operator",
+      email: `${responsibleUserId}@example.test`,
+      emailVerified: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+    await db
+      .update(companies)
+      .set({ defaultResponsibleUserId: responsibleUserId })
+      .where(eq(companies.id, companyId));
+    await db
+      .update(agents)
+      .set({ runtimeConfig: { heartbeat: { maxConcurrentRuns: 1 } } })
+      .where(eq(agents.id, coderId));
+    const previousRunId = randomUUID();
+    await seedHeartbeatRun({
+      companyId,
+      agentId: coderId,
+      runId: previousRunId,
+      issueId: sourceIssueId,
+      status: "failed",
+    });
+    await db.update(issues).set({ status: "blocked" }).where(eq(issues.id, sourceIssueId));
+    const [action] = await db.insert(issueRecoveryActions).values({
+      companyId,
+      sourceIssueId,
+      kind: "active_run_watchdog",
+      status: "resolved",
+      outcome: "blocked",
+      ownerType: "system",
+      returnOwnerAgentId: coderId,
+      cause: "uncertain_external_action",
+      fingerprint: previousRunId,
+      nextAction: "Preserve work without replaying the unknown action.",
+      evidence: {
+        automaticRecovery: {
+          policy: "preserve_without_replay_v1",
+          runId: previousRunId,
+          replay: "blocked",
+          actionOutcome: "unknown",
+        },
+      },
+    }).returning();
+    const heartbeat = heartbeatService(db, { runtimeEnv: {} });
+
+    const run = await heartbeat.wakeup(coderId, {
+      source: "automation",
+      triggerDetail: "system",
+      reason: "issue_recovery_only_continuation",
+      idempotencyKey: `execution-recovery-only:${action!.id}`,
+      payload: { issueId: sourceIssueId, recoveryActionId: action!.id },
+      requestedByActorType: "agent",
+      requestedByActorId: "execution-recovery",
+      contextSnapshot: {
+        issueId: sourceIssueId,
+        taskId: sourceIssueId,
+        recoveryActionId: action!.id,
+        previousRunId,
+        retryOfRunId: previousRunId,
+        forceFreshSession: true,
+        wakeReason: "issue_recovery_only_continuation",
+        source: "execution.recovery_only",
+      },
+    });
+
+    expect(run).toBeNull();
+    const wakes = await db
+      .select()
+      .from(agentWakeupRequests)
+      .where(eq(agentWakeupRequests.idempotencyKey, `execution-recovery-only:${action!.id}`));
+    expect(wakes).toHaveLength(0);
+    expect(await getExecutionBlocker(db, companyId, sourceIssueId)).toMatchObject({
+      recoveryActionId: action!.id,
     });
   });
 

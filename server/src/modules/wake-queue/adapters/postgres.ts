@@ -4,7 +4,7 @@ import { currentConversationCommentCondition } from "../../../services/agent-con
 import { getExecutionBlocker } from "../../../services/execution-blocker.js";
 import { and, asc, eq, inArray, isNull, notInArray, or, sql } from "drizzle-orm";
 import type { Db } from "@paperclipai/db";
-import { extractIssueReferenceIdentifiers } from "@paperclipai/shared";
+import { extractIssueReferenceIdentifiers, isUuidLike } from "@paperclipai/shared";
 import {
   activityLog,
   agentWakeupRequests,
@@ -269,10 +269,17 @@ function buildTransaction(tx: Db, deps: WakeQueuePostgresAdapterDeps, db: Db, ru
     },
 
     async getQueuedCommentLiveness({ companyId, issueId, wakeAgentId, finishingRunId, finishingRunAgentId, queuedCommentIds }) {
-      const rows = await tx
+      // A queued wake can carry a comment id that is not a uuid (e.g. a truncated
+      // short form pasted into a wake payload). Postgres fails the whole statement
+      // on the first malformed uuid, so one bad id would drop every wake queued for
+      // this issue, not just its own. Skip the malformed ones and keep the rest
+      // dispatchable; a bad id simply never matches a row, so it is treated as not
+      // live by the filters below.
+      const validQueuedCommentIds = queuedCommentIds.filter((commentId) => isUuidLike(commentId));
+      const rows = validQueuedCommentIds.length === 0 ? [] : await tx
         .select({ id: issueComments.id, deletedAt: issueComments.deletedAt, createdByRunId: issueComments.createdByRunId })
         .from(issueComments)
-        .where(and(eq(issueComments.companyId, companyId), eq(issueComments.issueId, issueId), inArray(issueComments.id, queuedCommentIds), currentConversationCommentCondition()));
+        .where(and(eq(issueComments.companyId, companyId), eq(issueComments.issueId, issueId), inArray(issueComments.id, validQueuedCommentIds), currentConversationCommentCondition()));
       const targetsFinishingRunAgent = wakeAgentId === finishingRunAgentId;
       const liveNonSelfCommentIds = queuedCommentIds.filter((commentId) => {
         const row = rows.find((candidate) => candidate.id === commentId);

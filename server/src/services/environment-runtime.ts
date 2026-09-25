@@ -1133,6 +1133,13 @@ function createLocalEnvironmentDriver(db: Db): EnvironmentRuntimeDriver {
       // There is no provider sandbox to destroy; process ownership is checked
       // separately by conversation continuation before another run is admitted.
       // Never treat an unexpected provider resource as a local no-op cleanup.
+      //
+      // Without this method the dispatcher throws "does not support orphan
+      // sandbox teardown" on every sweep. The sweep catches it, records
+      // `cleanupStatus: "failed"`, and the lease stays `pending_cleanup` forever.
+      // `getConversationOwnershipBlocker` reads exactly those two fields, so the
+      // stranded lease also blocks its issue permanently — the run can never be
+      // continued even though its process is long gone.
       if (lease.provider !== "local" || lease.providerLeaseId !== null) {
         throw new Error("Local lease cleanup cannot release a provider resource.");
       }

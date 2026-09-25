@@ -516,6 +516,7 @@ import {
   deriveCommentId,
   allowsIssueInteractionWake,
   isResolvedInteractionContinuationWakeContext,
+  verifyAddresseeInteractionWake,
 } from "../modules/run-dispatch/index.js";
 import {
   createWakeQueue,
@@ -9484,6 +9485,19 @@ export function heartbeatService(
       const result = await scheduleBoundedRetryForRun(run, agent);
       return result.outcome === "scheduled" ? result.run : null;
     },
+    afterOrphanedRunTerminalized: async (run) => {
+      if (
+        run.status === "succeeded" ||
+        run.status === "cancelled" ||
+        run.status === "interrupted"
+      ) {
+        // A backstop cleanup is not a heartbeat the agent completed, so it
+        // must not count as the agent's first heartbeat.
+        await finalizeAgentStatus(run.agentId, run.status, run.error, {
+          wasFirstHeartbeat: false,
+        });
+      }
+    },
   });
   const runDispatch = createRunDispatch(db);
 
@@ -17627,6 +17641,36 @@ export function heartbeatService(
     const claimed = queuedCommentClaim
       ? queuedCommentClaim.run
       : await withChatControlRecoveryGate(run, "claim", async (tx) => {
+          // A named-addressee interaction wake passed the staleness gate on
+          // stored interaction state. Re-read that state inside the claim
+          // transaction so a non-assignee run cannot start after the
+          // interaction was resolved in between. A wake that no longer
+          // verifies stays queued; the next claim attempt cancels it through
+          // the ordinary staleness gate.
+          if (issueId && readNonEmptyString(context.wakeReason) === "interaction_pending") {
+            const issueOwner = await tx
+              .select({ assigneeAgentId: issues.assigneeAgentId })
+              .from(issues)
+              .where(and(eq(issues.id, issueId), eq(issues.companyId, run.companyId)))
+              .limit(1)
+              .then((rows) => rows[0] ?? null);
+            if (
+              issueOwner &&
+              issueOwner.assigneeAgentId !== run.agentId &&
+              !(await verifyAddresseeInteractionWake(tx, {
+                companyId: run.companyId,
+                issueId,
+                agentId: run.agentId,
+                contextSnapshot: context,
+              }))
+            ) {
+              logger.info(
+                { runId: run.id, issueId, agentId: run.agentId },
+                "claimQueuedRun: addressee interaction is no longer actionable; leaving run queued for the staleness gate",
+              );
+              return null;
+            }
+          }
           const claimValues = {
             status: "running",
             runnerProfileJson: sql`(case when jsonb_typeof(${heartbeatRuns.runnerProfileJson}) = 'object' then ${heartbeatRuns.runnerProfileJson} else '{}'::jsonb end) || ${JSON.stringify({ adapterDispatch: { adapterType: agent.adapterType } })}::jsonb`,
@@ -26093,6 +26137,11 @@ export function heartbeatService(
     const executionReconciliationWake =
       contextSnapshot.source === "execution.reconciled" ||
       opts.idempotencyKey?.startsWith("execution-reconciliation:") === true;
+    const executionRecoveryOnlyWake =
+      contextSnapshot.source === "execution.recovery_only" ||
+      opts.idempotencyKey?.startsWith("execution-recovery-only:") === true;
+    const executionRecoveryWake =
+      executionReconciliationWake || executionRecoveryOnlyWake;
     const {
       contextSnapshot: enrichedContextSnapshot,
       issueIdFromPayload,
@@ -26107,7 +26156,7 @@ export function heartbeatService(
     });
     let issueId =
       readNonEmptyString(enrichedContextSnapshot.issueId) ?? issueIdFromPayload;
-    if (executionReconciliationWake && !issueId) return null;
+    if (executionRecoveryWake && !issueId) return null;
 
     let agent = await getAgent(agentId);
     if (!agent) throw notFound("Agent not found");
@@ -26878,7 +26927,8 @@ export function heartbeatService(
           }
 
           let reconciledSourceRunId: string | null = null;
-          if (executionReconciliationWake) {
+          let recoveryOnlyActionId: string | null = null;
+          if (executionRecoveryWake) {
             const actionId = readNonEmptyString(
               enrichedContextSnapshot.recoveryActionId,
             );
@@ -26887,11 +26937,20 @@ export function heartbeatService(
               !isUuidLike(actionId) ||
               source !== "automation" ||
               triggerDetail !== "system" ||
-              reason !== "issue_recovery_action_restored" ||
+              reason !==
+                (executionRecoveryOnlyWake
+                  ? "issue_recovery_only_continuation"
+                  : "issue_recovery_action_restored") ||
               opts.requestedByActorType !== "system" ||
               opts.requestedByActorId !== "execution-recovery" ||
-              opts.idempotencyKey !== `execution-reconciliation:${actionId}` ||
-              enrichedContextSnapshot.source !== "execution.reconciled" ||
+              opts.idempotencyKey !==
+                (executionRecoveryOnlyWake
+                  ? `execution-recovery-only:${actionId}`
+                  : `execution-reconciliation:${actionId}`) ||
+              enrichedContextSnapshot.source !==
+                (executionRecoveryOnlyWake
+                  ? "execution.recovery_only"
+                  : "execution.reconciled") ||
               enrichedContextSnapshot.forceFreshSession !== true ||
               payload?.issueId !== issue.id ||
               payload?.recoveryActionId !== actionId ||
@@ -26917,7 +26976,25 @@ export function heartbeatService(
             const decision = parseObject(
               action?.evidence.executionReconciliation,
             );
-            const sourceRunId = readNonEmptyString(decision.runId);
+            const automaticRecovery = parseObject(
+              action?.evidence.automaticRecovery,
+            );
+            const sourceRunId = readNonEmptyString(
+              executionRecoveryOnlyWake
+                ? automaticRecovery.runId
+                : decision.runId,
+            );
+            const [automaticSourceRun] = executionRecoveryOnlyWake && sourceRunId
+              ? await tx
+                  .select()
+                  .from(heartbeatRuns)
+                  .where(
+                    and(
+                      eq(heartbeatRuns.companyId, issue.companyId),
+                      eq(heartbeatRuns.id, sourceRunId),
+                    ),
+                  )
+              : [];
             if (
               !action ||
               action.status !== "resolved" ||
@@ -26925,16 +27002,28 @@ export function heartbeatService(
               action.returnOwnerAgentId !== agentId ||
               !sourceRunId ||
               !isUuidLike(sourceRunId) ||
-              decision.providerStopped !== true ||
-              !["completed", "not_performed", "mixed"].includes(
-                String(decision.actionOutcome),
-              ) ||
-              !readNonEmptyString(decision.outcomeEvidence) ||
+              (executionRecoveryOnlyWake
+                ? automaticRecovery.policy !== "preserve_without_replay_v1" ||
+                  automaticRecovery.replay !== "blocked" ||
+                  automaticRecovery.actionOutcome !== "unknown" ||
+                  !automaticSourceRun ||
+                  automaticSourceRun.agentId !== agentId ||
+                  (automaticSourceRun.nativeIssueId ??
+                    automaticSourceRun.contextSnapshot?.issueId) !== issue.id ||
+                  !["failed", "interrupted", "timed_out", "cancelled"].includes(
+                    automaticSourceRun.status,
+                  )
+                : decision.providerStopped !== true ||
+                  !["completed", "not_performed", "mixed"].includes(
+                    String(decision.actionOutcome),
+                  ) ||
+                  !readNonEmptyString(decision.outcomeEvidence)) ||
               enrichedContextSnapshot.previousRunId !== sourceRunId ||
               enrichedContextSnapshot.retryOfRunId !== sourceRunId ||
-              !["pending", "delivered"].includes(
-                String(action.evidence.continuationDelivery),
-              )
+              (!executionRecoveryOnlyWake &&
+                !["pending", "delivered"].includes(
+                  String(action.evidence.continuationDelivery),
+                ))
             )
               return { kind: "skipped" as const };
 
@@ -26979,9 +27068,13 @@ export function heartbeatService(
                 return { kind: "deferred" as const };
               return { kind: "replayed" as const, run: existingRun };
             }
-            if (action.evidence.continuationDelivery !== "pending")
+            if (
+              !executionRecoveryOnlyWake &&
+              action.evidence.continuationDelivery !== "pending"
+            )
               return { kind: "skipped" as const };
             reconciledSourceRunId = sourceRunId;
+            if (executionRecoveryOnlyWake) recoveryOnlyActionId = action.id;
           }
 
           let continuationWait = { reason: "execution_recovery", message: "Waiting for execution recovery. Your message is saved." };
@@ -27043,7 +27136,7 @@ export function heartbeatService(
           // A bound chat request has already rechecked its current principal
           // above. Treat its new user message like a board comment, but keep
           // failed-run retry actions on their separate exact-request path.
-          if (executionBlocker && !(await admitExplicitNativeContinuation({
+          if (executionBlocker && !executionRecoveryOnlyWake && !(await admitExplicitNativeContinuation({
             db: tx as unknown as Db, companyId: issue.companyId, issueId: issue.id,
             agentId, actorType: opts.requestedByActorType, actorId: opts.requestedByActorId,
             reason: durableRequest && !failedChatRetry ? "issue_commented" : reason,
@@ -27817,11 +27910,39 @@ export function heartbeatService(
             queuedCommentInterruptId: opts.queuedCommentInterruptId,
             queuedCommentRequestId: opts.queuedCommentRequestId,
           });
-          if (!explicitContinuation && executionBlocker) return deferBlockedExecution(executionBlocker);
+          if (!explicitContinuation && executionBlocker && !executionRecoveryOnlyWake) return deferBlockedExecution(executionBlocker);
           if (explicitContinuation) {
             enrichedContextSnapshot.forceFreshSession = true;
             enrichedContextSnapshot.previousRunId = explicitContinuation.previousRunId;
             enrichedContextSnapshot.explicitUserContinuation = explicitContinuation;
+          }
+
+          if (recoveryOnlyActionId) {
+            // This is an exact, system-authenticated fresh-session admission;
+            // only this transaction may retire its own no-replay hold.  The
+            // successor below is still linked to the stopped run and cannot
+            // reuse the prior provider session or side effects.
+            await tx
+              .update(issues)
+              .set({ status: "in_progress", updatedAt: new Date() })
+              .where(
+                and(
+                  eq(issues.id, issue.id),
+                  eq(issues.status, "blocked"),
+                ),
+              );
+            await tx
+              .update(issueRecoveryActions)
+              .set({
+                evidence: sql`jsonb_set(${issueRecoveryActions.evidence}, '{automaticRecovery,replay}', '"recovery_only_admitted"'::jsonb)`,
+              })
+              .where(
+                and(
+                  eq(issueRecoveryActions.companyId, issue.companyId),
+                  eq(issueRecoveryActions.id, recoveryOnlyActionId),
+                  sql`${issueRecoveryActions.evidence}->'automaticRecovery'->>'replay' = 'blocked'`,
+                ),
+              );
           }
 
           const wakeupRequest = await tx
@@ -27938,6 +28059,21 @@ export function heartbeatService(
               updatedAt: new Date(),
             })
             .where(eq(agentWakeupRequests.id, wakeupRequest.id));
+
+          if (recoveryOnlyActionId) {
+            await tx
+              .update(issueRecoveryActions)
+              .set({
+                evidence: sql`jsonb_set(jsonb_set(${issueRecoveryActions.evidence}, '{automaticRecovery,replay}', '"recovery_only_delivered"'::jsonb), '{automaticRecovery,recoveryOnlyContinuationRunId}', ${JSON.stringify(newRun.id)}::jsonb)`,
+              })
+              .where(
+                and(
+                  eq(issueRecoveryActions.companyId, issue.companyId),
+                  eq(issueRecoveryActions.id, recoveryOnlyActionId),
+                  sql`${issueRecoveryActions.evidence}->'automaticRecovery'->>'replay' = 'recovery_only_admitted'`,
+                ),
+              );
+          }
 
           if (adoptedComments.length) {
             await tx

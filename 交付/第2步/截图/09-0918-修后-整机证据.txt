@@ -1,0 +1,42 @@
+=== 09-18 重做 · 修后整机证据 时间 2026-09-18T08:43:46-07:00 ===
+HEAD = 9fcdf5c44ec0a44ba1f763e561d2093c3f781d6d
+① doctor 摘要（来自 08 日志）
+47:│  ✓ Managed install: Not present (optional for npx, global npm, and source-checkout usage)
+51:◇  Summary ───╮
+53:│  12 passed  │
+57:└  All checks passed!
+
+② ss -ltn（四端口）
+LISTEN 0      511         127.0.0.1:13200      0.0.0.0:*          
+LISTEN 0      511         127.0.0.1:3200       0.0.0.0:*          
+LISTEN 0      511         127.0.0.1:3100       0.0.0.0:*          
+LISTEN 0      200         127.0.0.1:54329      0.0.0.0:*          
+LISTEN 0      200         127.0.0.1:54339      0.0.0.0:*          
+LISTEN 0      200         127.0.1.1:54329      0.0.0.0:*          
+LISTEN 0      200         127.0.1.1:54339      0.0.0.0:*          
+
+③ curl 127.0.0.1:3200/api/health
+{"status":"ok","version":"2026.916.0+40.git.9fcdf5c44","serverVersion":"2026.916.0+40.git.9fcdf5c44","commit":"9fcdf5c44ec0a44ba1f763e561d2093c3f781d6d","deploymentMode":"local_trusted","deploymentExposure":"private","localAiLoginSupported":true,"authReady":true,"bootstrapStatus":"ready","bootstrapInviteActive":false,"features":{"companyDeletionEnabled":true},"serverInfo":{"processStartedAt":"2026
+HTTP 200
+
+④ 正式实例 health（3100）
+status = ok | processStartedAt = 2026-09-18T15:04:34.127Z
+
+⑤ 正式实例公司清单
+公司数 = 14
+是否出现「ANC 测试公司」= False
+
+⑥ 3200 进程链与实际环境
+3200 监听 pid=827870
+  827870:  827870  827829 /home/linuxbrew/.linuxbrew/Cellar/node/26.6.0/bin/node --require /home/yuanjian/dev/ANC/node_modules/.pnpm/tsx@4.23.12/node_modules/tsx/dist/preflight.cjs
+  827858:  827858  827829 node cli/node_modules/tsx/dist/cli.mjs cli/src/index.ts run
+  827857:  827857  827829 sh -c node cli/node_modules/tsx/dist/cli.mjs cli/src/index.ts "run"
+  827840:  827840  827829 node /home/yuanjian/.local/share/pnpm/store/v11/links/@/pnpm/9.15.4/76695b47ae5d9f8b9ca1c67b8a6e22cc484187e8eea696c8b2d4942620154e98/bin/../node_modules/p
+  827829:  827829  827829 node /home/linuxbrew/.linuxbrew/bin/pnpm paperclipai run
+  352:     352     352 /usr/lib/systemd/systemd --user
+  进程实际环境中的 PAPERCLIP_* / PORT：
+PAPERCLIP_HOME=/home/yuanjian/.paperclip-anc
+PORT=3200
+PAPERCLIP_INSTANCE_ID=anc
+  3200 进程持有 default 目录 fd 数 = 0
+  PGID = 827829

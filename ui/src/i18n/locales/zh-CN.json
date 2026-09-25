@@ -3588,7 +3588,7 @@
       "save": "保存",
       "createfolder5": "创建文件夹",
       "deletefolder": "删除文件夹",
-      "the": "The",
+      "the": "该",
       "inthisfolderwontbedeleted": "此文件夹中的内容不会被删除。它们将移至“未归档”。",
       "cancel6": "取消",
       "deleting": "删除中...",
@@ -6538,7 +6538,7 @@
       "component": "组件",
       "use": "使用",
       "systemnotice": "<SystemNotice />",
-      "from": "from",
+      "from": "来自 ",
       "componentssystemnotice": "@/components/SystemNotice",
       "itaccepts": "。它接受",
       "tone": "通知类型",
@@ -10087,22 +10087,22 @@
     "general": {
       "usersecret": "user secret",
       "s": "秒",
-      "youareresponsiblefor": "you are responsible for",
+      "youareresponsiblefor": "由您负责",
       "has": " has",
       "have": " have",
-      "novalueyetrunsthatrequire": "no value yet. Runs that require",
+      "novalueyetrunsthatrequire": "尚未设置值。需要",
       "it": " it",
       "them": " them",
-      "willfailuntilyousetyourvalue": "will fail until you set your value.",
+      "willfailuntilyousetyourvalue": "的运行会失败，直到您设置自己的值。",
       "setvalue": "设置值",
       "manageallmysecrets": "管理我的全部机密",
-      "oneusersecretmissing": "您负责的 {{count}} 项用户机密尚未设置值。需要它的运行会失败，直到您设置自己的值。",
-      "multipleusersecretsmissing": "您负责的 {{count}} 项用户机密尚未设置值。需要它们的运行会失败，直到您设置自己的值。"
+      "oneusersecretmissing": "您负责的 {{count}} 项用户机密尚未设置值。依赖该机密的运行会失败，直到您设置自己的值。",
+      "multipleusersecretsmissing": "您负责的 {{count}} 项用户机密尚未设置值。依赖这些机密的运行会失败，直到您设置自己的值。"
     }
   },
   "myusersecretstab": {
     "general": {
-      "thesearecredentialsonlyyouprovideeach": "These are credentials only you provide. Each value is yours alone — used when you are the\n          user responsible for a run — and is never shown back to anyone, including admins.",
+      "thesearecredentialsonlyyouprovideeach": "这些凭据仅由您提供。每个值都只属于您，仅在您是运行的负责用户时使用，且不会再次显示给任何人，包括管理员。",
       "requiredsecret": "required secret",
       "stillneeds": " still needs",
       "sstillneed": "s still need",
@@ -10132,7 +10132,7 @@
     "general": {
       "updateyourvalue": "更新您的值",
       "setyourvalue": "设置您的值",
-      "thisvalueisyoursonlyitis": "This value is yours only. It is used when you are the user responsible for a run that\n                needs",
+      "thisvalueisyoursonlyitis": "此值仅归您所有。当您负责的运行需要",
       "externalreference": "外部引用",
       "providerreferenceorarn": "提供商引用或 ARN",
       "pointsatyourowncredentialinthe": "指向您在已配置提供商中的个人凭据。Paperclip 只存储引用，不存储凭据值。",
@@ -10143,14 +10143,14 @@
       "saving": "正在保存…",
       "updatevalue": "更新值",
       "savevalue": "保存值",
-      "valueusedforrun": "此值仅归您所有。您作为负责用户执行需要 {{key}} 的运行时会使用它。"
+      "valueusedforrun": "此值仅供您使用。当运行需要 {{key}} 且由您负责时，系统会使用该值。"
     }
   },
   "usersecretdefinitionstab": {
     "general": {
       "definecredentialsthat": "定义凭证，",
-      "eachmembersuppliesforthemselves": "each member supplies for\n          themselves",
-      "yousettheshapehereeveryuser": ". You set the shape here; every user enters their own value under My\n          secrets. Coverage shows how many members have set a value — never the values themselves.",
+      "eachmembersuppliesforthemselves": "由每位成员自行提供",
+      "yousettheshapehereeveryuser": "。您在此定义凭据结构；每位用户在“我的机密”中输入自己的值。覆盖情况仅显示已设置值的成员人数，不显示值本身。",
       "newusersecret": "新建用户机密",
       "failedtoloaddefinitions": "无法加载定义：",
       "retry": "重试",
