@@ -450,6 +450,9 @@ describe("CompanyImport", () => {
       const row = Array.from(container.querySelectorAll("div"))
         .find((element) => element.firstElementChild?.textContent === slug && element.children.length >= 2);
       expect(row?.children[1]?.textContent).toBe(translatedAction);
+      if (action === "renamed") {
+        expect(row?.children[2]?.textContent).toBe("为 review-renamed-2");
+      }
     }
   });
 

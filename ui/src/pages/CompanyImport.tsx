@@ -1768,7 +1768,7 @@ export function CompanyImport() {
             <div className="divide-y divide-border">
               {skillResults.map((skill) => (
                 <div key={`${skill.originalKey}:${skill.id}`} className="flex items-center gap-3 px-4 py-2.5 text-sm">
-                  <span className="min-w-0 flex-1 truncate">{skill.originalSlug}</span>
+                  <span className="min-w-0 flex-1 break-words">{skill.originalSlug}</span>
                   <span className="shrink-0 text-xs text-muted-foreground">{t(SKILL_RESULT_ACTION_KEYS[skill.action])}</span>
                   {skill.slug !== skill.originalSlug && (
                     <span className="shrink-0 text-xs text-muted-foreground">{t("companyimport.general.as")} {skill.slug}</span>

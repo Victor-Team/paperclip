@@ -9,7 +9,7 @@
 import type { ReactNode } from "react";
 import { flushSync } from "react-dom";
 import { createRoot } from "react-dom/client";
-import { MemoryRouter, useLocation } from "react-router-dom";
+import { MemoryRouter, useLocation, useParams } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { App } from "./App";
 
@@ -90,6 +90,14 @@ vi.mock("./pages/Issues", () => ({
   Issues: () => {
     const location = useLocation();
     return <div>{`TASKS_PAGE@${location.pathname}`}</div>;
+  },
+}));
+
+vi.mock("./pages/TeamCatalog", () => ({
+  TeamCatalog: () => {
+    const location = useLocation();
+    const params = useParams();
+    return <div>{`TEAM_CATALOG@${location.pathname}${location.search}|${params["*"] ?? ""}`}</div>;
   },
 }));
 
@@ -303,5 +311,25 @@ describe("App Activity routing (PAP-16302)", () => {
     });
     await waitForRoute(container, "PRODUCTION_ACTIVITY@/PAP/activity");
     flushSync(() => root.unmount());
+  });
+
+  describe("Team Catalog routes", () => {
+    it.each([true, false])("serves the company-prefixed root and deep link when streamlined UI is %s", async (enabled) => {
+      streamlinedUiState.enabled = enabled;
+      const root = renderAppAt(container, "/PAP/teams-catalog?lng=zh-CN");
+      await waitForRoute(container, "TEAM_CATALOG@/PAP/teams-catalog?lng=zh-CN|");
+      expect(container.textContent).not.toContain("NOT_FOUND");
+      flushSync(() => root.unmount());
+
+      const deepLinkRoot = renderAppAt(container, "/PAP/teams-catalog/core-team/files/TEAM.md?lng=zh-CN");
+      await waitForRoute(container, "TEAM_CATALOG@/PAP/teams-catalog/core-team/files/TEAM.md?lng=zh-CN|core-team/files/TEAM.md");
+      flushSync(() => deepLinkRoot.unmount());
+    });
+
+    it("redirects a bare Team Catalog link into the selected company's route", async () => {
+      const root = renderAppAt(container, "/teams-catalog?lng=zh-CN");
+      await waitForRoute(container, "TEAM_CATALOG@/PAP/teams-catalog?lng=zh-CN|");
+      flushSync(() => root.unmount());
+    });
   });
 });
