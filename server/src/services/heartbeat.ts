@@ -17295,6 +17295,15 @@ export function heartbeatService(
           { runId: run.id, issueId, errorCode: staleness.errorCode },
           "claimQueuedRun: cancelled stale queued run",
         );
+        // The stale run may have held the issue's execution slot; drain the
+        // deferred wakes queued behind it (e.g. the new owner's) instead of
+        // stranding them. Immediate recovery would re-queue the stale work.
+        // A reconciliation blocker keeps them waiting for the operator.
+        if (staleness.errorCode !== "execution_reconciliation_required") {
+          await releaseIssueExecutionAndPromote(run, { suppressImmediateRecovery: true }).catch((err) => {
+            logger.error({ err, runId: run.id, issueId }, "failed to release issue execution after stale queued-run cancellation");
+          });
+        }
         return null;
       }
     }
@@ -20282,6 +20291,11 @@ export function heartbeatService(
           });
           if (staleness.outcome === "cancelled") {
             applyRunDispatchPostCommitEffects(staleness.postCommitEffects);
+            if (staleness.errorCode !== "execution_reconciliation_required") {
+              await releaseIssueExecutionAndPromote(run, { suppressImmediateRecovery: true }).catch((err) => {
+                logger.error({ err, runId: run.id, issueId }, "failed to release issue execution after stale running-run cancellation");
+              });
+            }
             return;
           }
           throw error;
