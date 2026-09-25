@@ -1,0 +1,42 @@
+[
+  {
+    "name": "desktop-zh",
+    "status": 200,
+    "url": "http://127.0.0.1:3200/TOK/apps/chat/connect?provider=github&purpose=chat",
+    "buttonCount": 1,
+    "overflow": false,
+    "errors": [],
+    "failures": [
+      {
+        "status": 404,
+        "url": "http://127.0.0.1:3200/api/assets/2b9bc29c-97ce-4ba6-b2eb-8619cc453517/content"
+      }
+    ],
+    "hasFirstStep": true
+  },
+  {
+    "name": "narrow-zh",
+    "status": 200,
+    "url": "http://127.0.0.1:3200/TOK/apps/chat/connect?provider=github&purpose=chat",
+    "buttonCount": 1,
+    "overflow": false,
+    "errors": [],
+    "failures": [],
+    "hasFirstStep": true
+  },
+  {
+    "name": "desktop-en",
+    "status": 200,
+    "url": "http://127.0.0.1:3200/TOK/apps/chat/connect?provider=github&purpose=chat",
+    "buttonCount": 1,
+    "overflow": false,
+    "errors": [],
+    "failures": [
+      {
+        "status": 404,
+        "url": "http://127.0.0.1:3200/api/assets/2b9bc29c-97ce-4ba6-b2eb-8619cc453517/content"
+      }
+    ],
+    "hasFirstStep": true
+  }
+]
