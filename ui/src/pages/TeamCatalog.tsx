@@ -292,14 +292,15 @@ function TrustChip({ level, iconOnly = false }: { level: CatalogTeamTrustLevel; 
 
 const COMPAT_META: Record<
   CatalogTeamCompatibility,
-  { label: string; tone: string }
+  { labelKey: string; tone: string }
 > = {
-  compatible: { label: "Compatible", tone: "text-emerald-600 dark:text-emerald-300 border-emerald-500/30" },
-  unknown: { label: "Unknown compat", tone: "text-muted-foreground border-border" },
-  invalid: { label: "Invalid", tone: "text-rose-600 dark:text-rose-300 border-rose-500/30" },
+  compatible: { labelKey: "teamcatalog.general.compatible", tone: "text-emerald-600 dark:text-emerald-300 border-emerald-500/30" },
+  unknown: { labelKey: "teamcatalog.general.unknownCompat", tone: "text-muted-foreground border-border" },
+  invalid: { labelKey: "teamcatalog.general.invalid", tone: "text-rose-600 dark:text-rose-300 border-rose-500/30" },
 };
 
 function CompatChip({ compatibility }: { compatibility: CatalogTeamCompatibility }) {
+  const { t } = useTranslation();
   const meta = COMPAT_META[compatibility];
   return (
     <Badge variant="outline"
@@ -308,7 +309,7 @@ function CompatChip({ compatibility }: { compatibility: CatalogTeamCompatibility
         meta.tone,
       )}
     >
-      {meta.label}
+      {t(meta.labelKey)}
     </Badge>
   );
 }
@@ -350,7 +351,7 @@ function RiskBanner({ team }: { team: CatalogTeam }) {
           <li key={`${s.type}:${s.ref}`} className="font-mono">
             {s.ref}{" "}
             <span className="not-italic font-sans opacity-80">
-              ({sourceWarningCode(s) === "unsupported_in_ui" ? "unsupported in browser install" : "unpinned"})
+              ({t(sourceWarningCode(s) === "unsupported_in_ui" ? "teamcatalog.general.unsupportedinbrowserinstall" : "teamcatalog.general.unpinned")})
             </span>
           </li>
         ))}
@@ -375,6 +376,25 @@ function sourceKindIcon(type: CatalogTeamSourceRef["type"]) {
       return Link2;
   }
 }
+
+const SOURCE_TYPE_LABELS: Record<string, string> = {
+  github: "teamcatalog.general.sourceGithub",
+  url: "teamcatalog.general.sourceUrl",
+  local_path: "teamcatalog.general.sourceLocalPath",
+  agent_package: "teamcatalog.general.sourceAgentPackage",
+  skills_sh: "teamcatalog.general.sourceSkillsSh",
+  include: "teamcatalog.general.sourceIncluded",
+};
+
+const SKILL_TYPE_LABELS: Record<CatalogTeamSkillRequirement["type"], string> = {
+  catalog: "teamcatalog.general.skillTypeCatalog",
+  local: "teamcatalog.general.skillTypeLocal",
+  skills_sh: "teamcatalog.general.sourceSkillsSh",
+  github: "teamcatalog.general.sourceGithub",
+  url: "teamcatalog.general.sourceUrl",
+  local_path: "teamcatalog.general.sourceLocalPath",
+  agent_package: "teamcatalog.general.sourceAgentPackage",
+};
 
 // ---------------------------------------------------------------------------
 // File tree
@@ -573,7 +593,7 @@ export function RequiredSkillsList({ skills }: { skills: CatalogTeamSkillRequire
           <Boxes className="h-3.5 w-3.5 text-muted-foreground" />
           <span className="font-mono text-xs">{skill.ref}</span>
           <Badge variant="outline" className="ml-auto text-(length:--text-nano)">
-            {skill.type}
+            {t(SKILL_TYPE_LABELS[skill.type])}
           </Badge>
           {skill.resolved ? (
             <Badge variant="outline" className="text-(length:--text-nano) text-emerald-600 dark:text-emerald-300 border-emerald-500/30">
@@ -611,7 +631,7 @@ export function EnvInputsList({ inputs }: { inputs: CatalogTeamEnvInputSummary[]
                   : "text-muted-foreground",
               )}
             >
-              {input.kind}
+              {t(input.kind === "secret" ? "teamcatalog.general.inputSecret" : "teamcatalog.general.inputEnvironment")}
             </Badge>
             {input.requirement === "required" && (
               <Badge variant="outline" className="text-(length:--text-nano)">{t("teamcatalog.general.required")}</Badge>
@@ -721,7 +741,7 @@ export function TeamDetailPane({
       ) : (
         <Download className="h-4 w-4" />
       )}
-      {isInstalled ? "Re-install latest" : "Install team"}
+      {t(isInstalled ? "teamcatalog.general.reinstallLatest" : "teamcatalog.general.installTeam")}
     </Button>
   );
 
@@ -734,7 +754,7 @@ export function TeamDetailPane({
             <h2 className="text-base font-semibold">{team.name}</h2>
             <div className="flex flex-wrap items-center gap-1.5">
               <Badge variant={team.kind === "bundled" ? "secondary" : "outline"} className="text-(length:--text-nano) capitalize">
-                {team.kind}
+                {t(team.kind === "bundled" ? "teamcatalog.general.bundled" : "teamcatalog.general.optional")}
               </Badge>
               <span className="text-xs text-muted-foreground">{team.category}</span>
               <TrustChip level={team.trustLevel} />
@@ -872,10 +892,10 @@ export function TeamDetailPane({
 type WizardStep = "target_manager" | "source_policy" | "skill_plan" | "preview";
 
 const STEP_LABELS: Record<WizardStep, string> = {
-  target_manager: "Target manager",
-  source_policy: "Source policy",
-  skill_plan: "Prerequisite skills",
-  preview: "Preview",
+  target_manager: "teamcatalog.general.stepTargetManager",
+  source_policy: "teamcatalog.general.stepSourcePolicy",
+  skill_plan: "teamcatalog.general.stepPrerequisiteSkills",
+  preview: "teamcatalog.general.stepPreview",
 };
 
 // `simplified` is the onboarding seam (design §6): the newly created company is
@@ -969,6 +989,7 @@ export function useInstallTeamCatalogEntry({
   simplified = false,
   onInstalled,
 }: UseInstallTeamCatalogEntryOptions): UseInstallTeamCatalogEntryResult {
+  const { t } = useTranslation();
   const [phase, setPhase] = useState<ApplyPhase>("form");
   const [previewResult, setPreviewResult] = useState<CatalogTeamImportPreviewResult | null>(null);
   const [previewError, setPreviewError] = useState<string | null>(null);
@@ -1017,7 +1038,7 @@ export function useInstallTeamCatalogEntry({
       setPreviewError(null);
     },
     onError: (error) => {
-      setPreviewError(error instanceof Error ? error.message : "Failed to load install preview.");
+      setPreviewError(error instanceof Error ? error.message : t("teamcatalog.general.previewLoadFailed"));
     },
   });
 
@@ -1035,7 +1056,7 @@ export function useInstallTeamCatalogEntry({
     },
     onError: (error) => {
       setPhase("error");
-      setApplyError(error instanceof Error ? error.message : "Install failed.");
+      setApplyError(error instanceof Error ? error.message : t("teamcatalog.general.installFailedFallback"));
     },
   });
 
@@ -1162,7 +1183,7 @@ function TeamInstallerDialog({
           selectableAdapterTypes,
         );
         if (!resolvedAdapterType) {
-          throw new Error("Enable a legacy adapter before installing this team.");
+          throw new Error(t("teamcatalog.general.enablealegacyadaptertoinstallthis"));
         }
         overrides[slug] = {
           adapterType: resolvedAdapterType,
@@ -1176,7 +1197,7 @@ function TeamInstallerDialog({
         selectableAdapterTypes,
       );
       if (!adapterType) {
-        throw new Error("Enable a legacy adapter before installing this team.");
+        throw new Error(t("teamcatalog.general.enablealegacyadaptertoinstallthis"));
       }
       if (adapterType !== agent.adapterType) {
         overrides[agent.slug] = { adapterType };
@@ -1199,7 +1220,7 @@ function TeamInstallerDialog({
       setPreviewError(null);
     },
     onError: (error) => {
-      setPreviewError(error instanceof Error ? error.message : "Failed to load install preview.");
+      setPreviewError(error instanceof Error ? error.message : t("teamcatalog.general.previewLoadFailed"));
     },
   });
 
@@ -1216,7 +1237,7 @@ function TeamInstallerDialog({
     },
     onError: (error) => {
       setPhase("error");
-      setApplyError(error instanceof Error ? error.message : "Install failed.");
+      setApplyError(error instanceof Error ? error.message : t("teamcatalog.general.installFailedFallback"));
     },
   });
 
@@ -1289,7 +1310,7 @@ function TeamInstallerDialog({
     phase === "form" ? (
       <span className="flex items-center gap-2">
         <span>
-          {t("teamcatalog.general.step")} {stepIndex + 1} {t("teamcatalog.general.of")} {totalSteps} · {STEP_LABELS[currentStep]}
+          {t("teamcatalog.general.step")} {stepIndex + 1} {t("teamcatalog.general.of")} {totalSteps} · {t(STEP_LABELS[currentStep])}
         </span>
         <span className="flex items-center gap-1" aria-hidden>
           {steps.map((s, i) => (
@@ -1393,7 +1414,7 @@ function TeamInstallerDialog({
         <div className="flex items-center gap-3">
           {currentStep === "preview" && hasErrors && (
             <span className="text-xs text-rose-600 dark:text-rose-300">
-              {t("teamcatalog.general.installblocked")} {blockedCount} {t("teamcatalog.general.error")}{blockedCount === 1 ? "" : "s"}
+              {t("teamcatalog.general.installBlockedCount", { count: blockedCount })}
             </span>
           )}
           {currentStep === "preview" && !hasErrors && missingRequiredSecretCount > 0 && (
@@ -1413,7 +1434,7 @@ function TeamInstallerDialog({
             ) : (
               <Button onClick={submitInstall} disabled={installBlocked || previewMutation.isPending || !previewResult}>
                 {needsScriptsConfirm ? <AlertTriangle className="h-4 w-4" /> : <Download className="h-4 w-4" />}
-                {needsScriptsConfirm ? "Install with executables" : "Install team"}
+                {t(needsScriptsConfirm ? "teamcatalog.general.installWithExecutables" : "teamcatalog.general.installTeam")}
               </Button>
             )
           ) : (
@@ -1572,9 +1593,7 @@ export function StepSourcePolicy({
               <div className="min-w-0">
                 <p className="font-mono text-xs truncate">{source.ref}</p>
                 <p className="text-(length:--text-micro) text-muted-foreground">
-                  {code === "ok" && "pinned"}
-                  {code === "unpinned" && "unpinned reference"}
-                  {code === "unsupported_in_ui" && "not installable from the browser"}
+                  {t(code === "ok" ? "teamcatalog.general.pinned" : code === "unpinned" ? "teamcatalog.general.unpinnedReference" : "teamcatalog.general.notInstallableBrowser")}
                 </p>
               </div>
               <Badge
@@ -1588,7 +1607,7 @@ export function StepSourcePolicy({
                       : "text-emerald-600 dark:text-emerald-300 border-emerald-500/30",
                 )}
               >
-                {source.type}
+                {t(SOURCE_TYPE_LABELS[source.type])}
               </Badge>
             </li>
           );
@@ -1648,12 +1667,12 @@ function PolicyToggle({
 
 const SKILL_ACTION_META: Record<
   CatalogTeamSkillPreparation["action"],
-  { label: string; tone: string }
+  { labelKey: string; tone: string }
 > = {
-  already_in_package: { label: "Bundled in package", tone: "text-emerald-600 dark:text-emerald-300 border-emerald-500/30" },
-  catalog_install_required: { label: "Will install from catalog", tone: "text-blue-600 dark:text-blue-300 border-blue-500/30" },
-  external_import_required: { label: "Will import from source", tone: "text-amber-600 dark:text-amber-300 border-amber-500/30" },
-  blocked: { label: "Blocked", tone: "text-rose-600 dark:text-rose-300 border-rose-500/30" },
+  already_in_package: { labelKey: "teamcatalog.general.skillBundled", tone: "text-emerald-600 dark:text-emerald-300 border-emerald-500/30" },
+  catalog_install_required: { labelKey: "teamcatalog.general.skillInstallCatalog", tone: "text-blue-600 dark:text-blue-300 border-blue-500/30" },
+  external_import_required: { labelKey: "teamcatalog.general.skillImportSource", tone: "text-amber-600 dark:text-amber-300 border-amber-500/30" },
+  blocked: { labelKey: "teamcatalog.general.skillBlocked", tone: "text-rose-600 dark:text-rose-300 border-rose-500/30" },
 };
 
 export function StepSkillPlan({
@@ -1682,7 +1701,7 @@ export function StepSkillPlan({
                 {prep.reason && <p className="text-(length:--text-micro) text-muted-foreground">{prep.reason}</p>}
               </div>
               <Badge variant="outline" className={cn("ml-auto text-(length:--text-nano)", meta.tone)}>
-                {meta.label}
+                {t(meta.labelKey)}
               </Badge>
             </li>
           );
@@ -1717,6 +1736,12 @@ const PLAN_ACTION_TONE: Record<string, string> = {
   skip: "text-muted-foreground border-border",
 };
 
+const PLAN_ACTION_KEYS: Record<string, string> = {
+  create: "teamcatalog.general.planAction_create",
+  update: "teamcatalog.general.planAction_update",
+  skip: "teamcatalog.general.planAction_skip",
+};
+
 function PlanRow({
   slug,
   action,
@@ -1734,10 +1759,11 @@ function PlanRow({
   override?: string;
   onRename?: (slug: string, name: string) => void;
 }) {
+  const { t } = useTranslation();
   return (
     <li className="flex items-center gap-2 px-3 py-2 text-sm">
       <Badge variant="outline" className={cn("text-(length:--text-nano) uppercase", PLAN_ACTION_TONE[action] ?? "border-border")}>
-        {action}
+        {PLAN_ACTION_KEYS[action] ? t(PLAN_ACTION_KEYS[action]) : action}
       </Badge>
       <span className={cn("font-mono text-xs", action === "skip" && "line-through opacity-60")}>{slug}</span>
       <ArrowRight className="h-3 w-3 text-muted-foreground" />
@@ -1862,7 +1888,7 @@ export function StepPreview({
 
       {/* Agents */}
       {plan.agentPlans.length > 0 && (
-        <PreviewSection title={`Agents · ${plan.agentPlans.length}`}>
+        <PreviewSection title={t("teamcatalog.general.previewAgents", { count: plan.agentPlans.length })}>
           {plan.agentPlans.map((p) => (
             <PlanRow
               key={p.slug}
@@ -1880,7 +1906,7 @@ export function StepPreview({
 
       {/* Projects */}
       {plan.projectPlans.length > 0 && (
-        <PreviewSection title={`Projects · ${plan.projectPlans.length}`}>
+        <PreviewSection title={t("teamcatalog.general.previewProjects", { count: plan.projectPlans.length })}>
           {plan.projectPlans.map((p) => (
             <PlanRow
               key={p.slug}
@@ -1898,7 +1924,7 @@ export function StepPreview({
 
       {/* Starter tasks */}
       {plan.issuePlans.length > 0 && (
-        <PreviewSection title={`Starter tasks · ${plan.issuePlans.length}`}>
+        <PreviewSection title={t("teamcatalog.general.previewStarterTasks", { count: plan.issuePlans.length })}>
           {plan.issuePlans.map((p) => (
             <PlanRow key={p.slug} slug={p.slug} action={p.action} plannedName={p.plannedTitle} reason={p.reason} canRename={false} />
           ))}
@@ -1907,7 +1933,7 @@ export function StepPreview({
 
       {/* Adapter selection — install schema accepts adapterOverrides (design §4.4) */}
       {manifestAgents.length > 0 && (
-        <PreviewSection title={`Adapter selection · ${manifestAgents.length}`}>
+        <PreviewSection title={t("teamcatalog.general.previewAdapters", { count: manifestAgents.length })}>
           {manifestAgents.map((agent) => {
             const selected = resolveTeamInstallAdapterType(
               adapterOverrides[agent.slug] ?? agent.adapterType,
@@ -1943,7 +1969,7 @@ export function StepPreview({
 
       {/* Env inputs */}
       {envInputs.length > 0 && (
-        <PreviewSection title={`Secrets & env inputs · ${envInputs.length}`}>
+        <PreviewSection title={t("teamcatalog.general.previewSecrets", { count: envInputs.length })}>
           {envInputs.map((input) => {
             const formKey = envInputFormKey(input);
             const visible = Boolean(visibleSecretKeys[formKey]);
@@ -1961,7 +1987,7 @@ export function StepPreview({
                     variant="outline"
                     className={cn("ml-auto text-(length:--text-nano)", input.kind === "secret" ? "text-rose-600 dark:text-rose-300 border-rose-500/30" : "text-muted-foreground")}
                   >
-                    {input.kind}
+                    {t(input.kind === "secret" ? "teamcatalog.general.inputSecret" : "teamcatalog.general.inputEnvironment")}
                   </Badge>
                 </div>
                 <div className="flex items-center gap-1.5">
@@ -1969,8 +1995,8 @@ export function StepPreview({
                     type={visible ? "text" : "password"}
                     value={secretValues[formKey] ?? ""}
                     onChange={(event) => onSecretChange(formKey, event.target.value)}
-                    placeholder={input.requirement === "required" ? "Required" : "Optional"}
-                    aria-label={`${input.key} value`}
+                    placeholder={t(input.requirement === "required" ? "teamcatalog.general.required" : "teamcatalog.general.optional")}
+                    aria-label={t("teamcatalog.general.inputValue", { key: input.key })}
                     aria-invalid={missingRequired || undefined}
                     className={cn("h-8 min-w-0", missingRequired && "border-rose-500/60 focus-visible:ring-rose-500/30")}
                   />
@@ -1982,12 +2008,12 @@ export function StepPreview({
                         size="icon-xs"
                         className="h-8 w-8"
                         onClick={() => onToggleSecretVisibility(formKey)}
-                        aria-label={visible ? `Hide ${input.key}` : `Show ${input.key}`}
+                        aria-label={t(visible ? "teamcatalog.general.hideInput" : "teamcatalog.general.showInput", { key: input.key })}
                       >
                         {visible ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
                       </Button>
                     </TooltipTrigger>
-                    <TooltipContent>{visible ? "Hide value" : "Show value"}</TooltipContent>
+                    <TooltipContent>{t(visible ? "teamcatalog.general.hideValue" : "teamcatalog.general.showValue")}</TooltipContent>
                   </Tooltip>
                 </div>
               </li>
@@ -2283,10 +2309,10 @@ export function TeamCatalog() {
 
   useEffect(() => {
     setBreadcrumbs([
-      { label: "Org Chart", href: "/org" },
-      { label: "Teams", href: TEAM_CATALOG_ROUTE_ROOT },
+      { label: t("teamcatalog.general.orgChartBreadcrumb"), href: "/org" },
+      { label: t("teamcatalog.general.teamsBreadcrumb"), href: TEAM_CATALOG_ROUTE_ROOT },
     ]);
-  }, [setBreadcrumbs]);
+  }, [setBreadcrumbs, t]);
 
   const catalogQuery = useQuery({
     queryKey: queryKeys.teamCatalog.catalog({ kind: kindFilter === "all" ? undefined : kindFilter }),

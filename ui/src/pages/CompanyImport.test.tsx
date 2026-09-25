@@ -375,6 +375,18 @@ describe("CompanyImport", () => {
     await settle();
   }
 
+  it("renders the Chinese source chooser and local ZIP help in the default and expanded states", async () => {
+    await i18n.changeLanguage("zh-CN");
+    await renderPage();
+
+    expect(container.textContent).toContain("GitHub 仓库");
+    expect(container.textContent).toContain("本地 ZIP 包");
+    expect(container.textContent).not.toContain("GitHub repo");
+    await clickButton((text) => text === "本地 ZIP 包");
+    expect(container.textContent).toContain("请上传从 Paperclip 直接导出的 ZIP 包");
+    expect(container.textContent).not.toContain("Re-zipped archives");
+  });
+
   it("renders Chinese preview counts, import action, and skill result header", async () => {
     await i18n.changeLanguage("zh-CN");
     mockCompaniesApi.getImportJob.mockResolvedValue({

@@ -67,7 +67,7 @@ import {
   writeStoredImportJob,
 } from "../lib/import-job-watch";
 import { Badge } from "@/components/ui/badge";
-import { useTranslation } from "@/i18n";
+import { t as translate, useTranslation } from "@/i18n";
 
 // ── Import-specific helpers ───────────────────────────────────────────
 
@@ -133,14 +133,48 @@ const ACTION_COLORS: Record<string, string> = {
   none: "text-muted-foreground border-border",
 };
 
+const IMPORT_ACTION_KEYS: Record<string, string> = {
+  create: "companyimport.general.actionCreate",
+  update: "companyimport.general.actionUpdate",
+  overwrite: "companyimport.general.actionOverwrite",
+  replace: "companyimport.general.actionReplace",
+  skip: "companyimport.general.actionSkip",
+  skipped: "companyimport.general.actionSkipped",
+  none: "companyimport.general.actionNone",
+};
+
+const IMPORT_KIND_KEYS: Record<string, string> = {
+  agent: "companyimport.general.kindAgent",
+  project: "companyimport.general.kindProject",
+  issue: "companyimport.general.kindIssue",
+  skill: "companyimport.general.kindSkill",
+  routine: "companyimport.general.kindRoutine",
+};
+
+const FRONTMATTER_LABEL_KEYS: Record<string, string> = {
+  name: "companyimport.general.fieldName",
+  title: "companyimport.general.fieldTitle",
+  kind: "companyimport.general.fieldKind",
+  reportsTo: "companyimport.general.fieldReportsTo",
+  skills: "companyimport.general.fieldSkills",
+  status: "companyimport.general.fieldStatus",
+  description: "companyimport.general.fieldDescription",
+  priority: "companyimport.general.fieldPriority",
+  assignee: "companyimport.general.fieldAssignee",
+  project: "companyimport.general.fieldProject",
+  recurring: "companyimport.general.fieldRecurring",
+  targetDate: "companyimport.general.fieldTargetDate",
+};
+
 function FrontmatterCard({ data }: { data: FrontmatterData }) {
+  const { t } = useTranslation();
   return (
     <div className="rounded-md border border-border bg-accent/20 px-4 py-3 mb-4">
       <dl className="grid grid-cols-(--gtc-5) gap-x-4 gap-y-1.5 text-sm">
         {Object.entries(data).map(([key, value]) => (
           <div key={key} className="contents">
             <dt className="text-muted-foreground whitespace-nowrap py-0.5">
-              {FRONTMATTER_FIELD_LABELS[key] ?? key}
+              {FRONTMATTER_LABEL_KEYS[key] ? t(FRONTMATTER_LABEL_KEYS[key]) : FRONTMATTER_FIELD_LABELS[key] ?? key}
             </dt>
             <dd className="py-0.5">
               {Array.isArray(value) ? (
@@ -175,7 +209,7 @@ function renderImportFileExtra(node: FileTreeNode, checked: boolean, renameMap: 
       "text-(length:--text-nano) uppercase tracking-wide",
       ACTION_COLORS[node.action] ?? ACTION_COLORS.skip,
     )}>
-      {checked ? node.action : "skip"}
+      {translate(IMPORT_ACTION_KEYS[checked ? node.action : "skip"] ?? "companyimport.general.actionSkip")}
     </Badge>
   ) : null;
 
@@ -254,7 +288,7 @@ function ImportPreviewPane({
               "uppercase tracking-wide",
               actionColor,
             )}>
-              {action}
+              {t(IMPORT_ACTION_KEYS[action] ?? "companyimport.general.actionSkip")}
             </Badge>
           )}
         </div>
@@ -486,7 +520,7 @@ function ConflictResolutionList({
                   )}
                   onClick={() => onToggleSkip(item.slug, item.filePath)}
                 >
-                  {isSkipped ? "skipped" : "skip"}
+                  {t(isSkipped ? "companyimport.general.actionSkipped" : "companyimport.general.actionSkip")}
                 </button>
 
                 <Badge variant="outline" className={cn(
@@ -497,7 +531,7 @@ function ConflictResolutionList({
                       ? "text-emerald-500 border-emerald-500/30"
                       : "text-amber-500 border-amber-500/30",
                 )}>
-                  {item.kind}
+                  {t(IMPORT_KIND_KEYS[item.kind])}
                 </Badge>
 
                 <span className={cn(
@@ -541,7 +575,7 @@ function ConflictResolutionList({
                         <Check className="h-3 w-3" />
                         {t("companyimport.general.confirmed")}</>
                     ) : (
-                      "confirm rename"
+                      t("companyimport.general.confirmRename")
                     )}
                   </button>
                 )}
@@ -698,11 +732,11 @@ async function readLocalPackageZip(file: File): Promise<{
   files: Record<string, CompanyPortabilityFileEntry>;
 }> {
   if (!/\.zip$/i.test(file.name)) {
-    throw new Error("Select a .zip organization package.");
+    throw new Error(translate("companyimport.general.selectZipPackage"));
   }
   const archive = await readZipArchive(await file.arrayBuffer());
   if (Object.keys(archive.files).length === 0) {
-    throw new Error("No package files were found in the selected zip archive.");
+    throw new Error(translate("companyimport.general.noZipFiles"));
   }
   return {
     name: file.name,
@@ -801,7 +835,7 @@ async function watchImportJob(
         // refreshed company list lets the user confirm what actually landed.
         clearStoredImportJob(storageKey);
         throw new Error(
-          "The server no longer reports this import job — it may have restarted while the import ran.",
+          translate("companyimport.general.importJobMissing"),
         );
       }
       if (
@@ -816,7 +850,7 @@ async function watchImportJob(
         // 429 (rate limited) and 5xx stay transient and fall through below.
         clearStoredImportJob(storageKey);
         throw new Error(
-          "The import status can no longer be read — your session may have expired. Reload and sign in to check on it.",
+          translate("companyimport.general.importStatusUnavailable"),
         );
       }
       // Any other poll failure is treated as transient (network blip,
@@ -839,7 +873,7 @@ async function watchImportJob(
     }
     if (job?.status === "failed") {
       clearStoredImportJob(storageKey);
-      throw new Error(job.error?.message ?? "Import failed on the server.");
+      throw new Error(job.error?.message ?? translate("companyimport.general.serverImportFailed"));
     }
     await waitForNextImportJobPoll();
   }
@@ -988,7 +1022,7 @@ export function CompanyImport() {
           // preview/import resumes from them instead of starting over.
           throw lastError instanceof Error
             ? lastError
-            : new Error(`Part ${part.index + 1} of ${manifest.parts.length} failed to upload.`);
+            : new Error(t("companyimport.general.uploadPartFailed", { part: part.index + 1, total: manifest.parts.length }));
         }
         uploadedParts += 1;
         uploadedBytes += part.byteSize;
@@ -1045,16 +1079,15 @@ export function CompanyImport() {
     [nativeRunnerAvailable],
   );
 
-  const localZipHelpText =
-    "Upload a .zip exported directly from Paperclip. Re-zipped archives created by Finder, Explorer, or other zip tools may not import correctly.";
+  const localZipHelpText = t("companyimport.general.localZipHelp");
 
   useEffect(() => {
     setBreadcrumbs([
-      { label: selectedCompany?.name ?? "Company", href: "/dashboard" },
-      { label: "Settings", href: "/company/settings" },
-      { label: "Import" },
+      { label: selectedCompany?.name ?? t("companyimport.general.companyBreadcrumb"), href: "/dashboard" },
+      { label: t("companyimport.general.settingsBreadcrumb"), href: "/company/settings" },
+      { label: t("companyimport.general.importBreadcrumb") },
     ]);
-  }, [selectedCompany?.name, setBreadcrumbs]);
+  }, [selectedCompany?.name, setBreadcrumbs, t]);
 
   // The GitHub/URL source still travels inline (it is just a URL, so it never
   // hits the inline-size ceiling). The local .zip source uploads its raw
@@ -1091,7 +1124,7 @@ export function CompanyImport() {
     mutationFn: async (_generation: number) => {
       const meta = buildImportMetaCommon();
       if (sourceMode === "local") {
-        if (!localPackage) throw new Error("No source configured.");
+        if (!localPackage) throw new Error(t("companyimport.general.noSourceConfigured"));
         if (usesChunkedTransfer(localPackage.file)) {
           // Too large for one request: upload (or resume) the chunked
           // transfer, then preview against the server-side assembled spool.
@@ -1103,7 +1136,7 @@ export function CompanyImport() {
         return companiesApi.importPreviewPackage(localPackage.file, meta);
       }
       const source = buildGithubSource();
-      if (!source) throw new Error("No source configured.");
+      if (!source) throw new Error(t("companyimport.general.noSourceConfigured"));
       return companiesApi.importPreview({ source, ...meta });
     },
     onSuccess: (result, generation) => {
@@ -1230,7 +1263,7 @@ export function CompanyImport() {
       const localFile = sourceMode === "local" ? localPackage?.file : null;
       const githubSource = sourceMode === "local" ? null : buildGithubSource();
       if (sourceMode === "local" ? !localFile : !githubSource) {
-        throw new Error("No source configured.");
+        throw new Error(t("companyimport.general.noSourceConfigured"));
       }
       const storageKey = currentImportJobStorageKey();
       let accepted: CompanyImportJobAccepted;
@@ -1729,7 +1762,7 @@ export function CompanyImport() {
               {skillResults.map((skill) => (
                 <div key={`${skill.originalKey}:${skill.id}`} className="flex items-center gap-3 px-4 py-2.5 text-sm">
                   <span className="min-w-0 flex-1 truncate">{skill.originalSlug}</span>
-                  <span className="shrink-0 text-xs text-muted-foreground">{skill.action}</span>
+                  <span className="shrink-0 text-xs text-muted-foreground">{t("companyimport.general.skillCreated")}</span>
                   {skill.slug !== skill.originalSlug && (
                     <span className="shrink-0 text-xs text-muted-foreground">{t("companyimport.general.as")} {skill.slug}</span>
                   )}
@@ -1772,7 +1805,7 @@ export function CompanyImport() {
                         ? "text-blue-500 border-blue-500/30"
                         : "text-purple-500 border-purple-500/30",
                     )}>
-                      {item.kind}
+                      {t(IMPORT_KIND_KEYS[item.kind])}
                     </Badge>
                     <span className="min-w-0 flex-1 truncate">{item.name}</span>
                     {isActivated ? (
@@ -1792,7 +1825,7 @@ export function CompanyImport() {
                 onClick={() => void handleActivateSelected()}
                 disabled={isActivating || pendingCount === 0}
               >
-                {isActivating ? t("companyimport.general.activating") : `Activate selected (${pendingCount})`}
+                {isActivating ? t("companyimport.general.activating") : t("companyimport.general.activateSelected", { count: pendingCount })}
               </Button>
             </div>
           </div>
@@ -1853,8 +1886,8 @@ export function CompanyImport() {
         <div className="grid gap-2 md:grid-cols-2">
           {(
             [
-              { key: "github", icon: GithubIcon, label: "GitHub repo" },
-              { key: "local", icon: Upload, label: "Local zip" },
+              { key: "github", icon: GithubIcon, label: t("companyimport.general.githubRepo") },
+              { key: "local", icon: Upload, label: t("companyimport.general.localZip") },
             ] as const
           ).map(({ key, icon: Icon, label }) => (
             <button
@@ -1902,7 +1935,7 @@ export function CompanyImport() {
                 <span className="text-xs text-muted-foreground">
                   {localPackage.name} {t("companyimport.general.with")}{" "}
                   {t(Object.keys(localPackage.files).length === 1 ? "companyimport.general.fileCountOne" : "companyimport.general.fileCountOther", { count: Object.keys(localPackage.files).length })}
-                  {localCompressedBytes !== null ? ` (${formatMegabytes(localCompressedBytes)} zip)` : ""}
+                  {localCompressedBytes !== null ? t("companyimport.general.compressedZipSize", { size: formatMegabytes(localCompressedBytes) }) : ""}
                 </span>
               )}
             </div>

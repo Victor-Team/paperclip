@@ -315,6 +315,27 @@ describe("TeamCatalog install preview path", () => {
     expect(document.body.textContent).toContain("Projects");
   });
 
+  it("renders Chinese compatibility, installer button, and opened preview labels", async () => {
+    await i18n.changeLanguage("zh-CN");
+    try {
+      await renderPage();
+      expect(document.body.textContent).toContain("兼容");
+      expect(document.body.textContent).toContain("安装团队");
+      expect(document.body.textContent).not.toContain("Compatible");
+
+      const install = findButton("安装团队");
+      expect(install).toBeTruthy();
+      await act(async () => { install!.click(); });
+      await flushReact();
+      expect(document.body.textContent).toContain("预览");
+      expect(document.body.textContent).toContain("智能体 ·");
+      expect(document.body.textContent).toContain("项目 ·");
+      expect(document.body.textContent).not.toContain("Agents ·");
+    } finally {
+      await i18n.changeLanguage("en");
+    }
+  });
+
   it("opens the installer, fetches the preview, and submits the install", async () => {
     await renderPage();
 
