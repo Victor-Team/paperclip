@@ -412,6 +412,47 @@ describe("CompanyImport", () => {
     expect(container.textContent).not.toContain("技能 导入 results");
   });
 
+  it("renders each imported skill's actual action in Chinese", async () => {
+    await i18n.changeLanguage("zh-CN");
+    const skillActions = ["created", "renamed", "replaced", "skipped"] as const;
+    mockCompaniesApi.getImportJob.mockResolvedValue({
+      job: {
+        id: "job-1",
+        status: "succeeded",
+        importResult: {
+          ...buildImportResult(),
+          skills: skillActions.map((action) => ({
+            originalKey: `review-${action}`,
+            originalSlug: `review-${action}`,
+            key: `review-${action}`,
+            slug: action === "renamed" ? "review-renamed-2" : `review-${action}`,
+            id: `skill-${action}`,
+            action,
+            reason: null,
+          })),
+        },
+      },
+    });
+    await renderPage();
+    await enterGithubUrl();
+    await clickButton((text) => text === "预览导入");
+    await clickButton((text) => text === "导入 3 个文件");
+    await settle();
+
+    const expectedActions = {
+      created: "已创建",
+      renamed: "已重命名",
+      replaced: "已替换",
+      skipped: "已跳过",
+    };
+    for (const [action, translatedAction] of Object.entries(expectedActions)) {
+      const slug = `review-${action}`;
+      const row = Array.from(container.querySelectorAll("div"))
+        .find((element) => element.firstElementChild?.textContent === slug && element.children.length >= 2);
+      expect(row?.children[1]?.textContent).toBe(translatedAction);
+    }
+  });
+
   it("renders Chinese preview error counts without a suffix fragment", async () => {
     await i18n.changeLanguage("zh-CN");
     mockCompaniesApi.importPreview.mockResolvedValue({ ...buildPreviewResult(), errors: ["Invalid package"] });

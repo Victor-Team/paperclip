@@ -69,6 +69,13 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { t as translate, useTranslation } from "@/i18n";
 
+const SKILL_RESULT_ACTION_KEYS: Record<CompanyPortabilityImportResult["skills"][number]["action"], string> = {
+  created: "companyimport.general.skillCreated",
+  renamed: "companyimport.general.skillRenamed",
+  replaced: "companyimport.general.skillReplaced",
+  skipped: "companyimport.general.skillSkipped",
+};
+
 // ── Import-specific helpers ───────────────────────────────────────────
 
 /** Build a map from file path → planned action (create/update/skip) using the manifest + plan */
@@ -1762,7 +1769,7 @@ export function CompanyImport() {
               {skillResults.map((skill) => (
                 <div key={`${skill.originalKey}:${skill.id}`} className="flex items-center gap-3 px-4 py-2.5 text-sm">
                   <span className="min-w-0 flex-1 truncate">{skill.originalSlug}</span>
-                  <span className="shrink-0 text-xs text-muted-foreground">{t("companyimport.general.skillCreated")}</span>
+                  <span className="shrink-0 text-xs text-muted-foreground">{t(SKILL_RESULT_ACTION_KEYS[skill.action])}</span>
                   {skill.slug !== skill.originalSlug && (
                     <span className="shrink-0 text-xs text-muted-foreground">{t("companyimport.general.as")} {skill.slug}</span>
                   )}
