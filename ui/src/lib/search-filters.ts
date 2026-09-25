@@ -23,9 +23,12 @@ export function updatedWithinLabel(value: string): string {
   return key ? t(`searchfilters.general.${key}`) : t("searchfilters.general.updatedwithinother", { value });
 }
 
-export function statusLabel(value: string): string {
-  const known = ["backlog", "todo", "in_progress", "in_review", "done", "blocked", "cancelled"];
-  return known.includes(value) ? t(`searchfilters.general.status${value.replaceAll("_", "")}`) : humanize(value);
+export function statusLabel(value: string, externalConversationState?: "active" | "waiting" | null): string {
+  const displayStatus = value === "in_review" && externalConversationState === "waiting" ? "idle" : value;
+  const known = ["backlog", "todo", "in_progress", "in_review", "done", "blocked", "cancelled", "idle"];
+  return known.includes(displayStatus)
+    ? t(`searchfilters.general.status${displayStatus.replaceAll("_", "")}`)
+    : humanize(displayStatus);
 }
 
 export function priorityLabel(value: string): string {
@@ -210,7 +213,7 @@ export function buildFilterChips(filters: SearchFilters, lookups: FilterChipLook
 export function describeLoosenSuggestion(filterKey: string, values: string[], lookups: FilterChipLookups): string {
   switch (filterKey) {
     case "status":
-      return t("searchfilters.general.statuschip", { value: values.map(statusLabel).join(", ") });
+      return t("searchfilters.general.statuschip", { value: values.map((value) => statusLabel(value)).join(", ") });
     case "priority":
       return t("searchfilters.general.prioritychip", { value: values.map(priorityLabel).join(", ") });
     case "assigneeAgentId":

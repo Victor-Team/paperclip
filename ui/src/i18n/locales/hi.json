@@ -16771,6 +16771,7 @@
       "statustodo": "Todo",
       "statusinprogress": "In Progress",
       "statusinreview": "In Review",
+      "statusidle": "Idle",
       "statusdone": "Done",
       "statusblocked": "Blocked",
       "statuscancelled": "Cancelled",

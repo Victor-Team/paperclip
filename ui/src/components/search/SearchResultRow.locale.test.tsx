@@ -8,7 +8,6 @@ import { SearchResultRow, formatSearchRelativeTime } from "./SearchResultRow";
 
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 vi.mock("@/lib/router", () => ({ Link: ({ children }: { children: React.ReactNode }) => <a>{children}</a> }));
-vi.mock("../StatusIcon", () => ({ StatusIcon: () => <span /> }));
 
 let root: ReturnType<typeof createRoot> | null = null;
 let container: HTMLDivElement | null = null;
@@ -21,6 +20,35 @@ afterEach(async () => {
 });
 
 describe("SearchResultRow locale", () => {
+  it("labels a waiting in-review conversation as idle in English and Chinese", async () => {
+    const result: CompanySearchResult = {
+      id: "issue-1", type: "issue", score: 1, title: "Example", href: "/issues/1",
+      matchedFields: [], sourceLabel: "", snippet: "", snippets: [],
+      issue: {
+        id: "issue-1", identifier: "TOK-1", title: "Example", status: "in_review", priority: "medium",
+        externalConversationState: "waiting", assigneeAgentId: null, assigneeUserId: null,
+        projectId: null, updatedAt: new Date().toISOString(),
+      },
+      updatedAt: new Date().toISOString(), previewImageUrl: null,
+    };
+    container = document.createElement("div");
+    document.body.append(container);
+    root = createRoot(container);
+    await act(async () => root?.render(<SearchResultRow result={result} />));
+    const statusIcon = () => container?.querySelector('svg[role="img"]');
+    expect(statusIcon()?.getAttribute("aria-label")).toBe("Idle");
+    expect(statusIcon()?.querySelector("title")?.textContent).toBe("Idle");
+
+    await act(async () => { await i18n.changeLanguage("zh-CN"); });
+    expect(statusIcon()?.getAttribute("aria-label")).toBe("空闲");
+    expect(statusIcon()?.querySelector("title")?.textContent).toBe("空闲");
+
+    await act(async () => root?.render(<SearchResultRow result={{
+      ...result, issue: { ...result.issue!, externalConversationState: "active" },
+    }} />));
+    expect(statusIcon()?.getAttribute("aria-label")).toBe("审查中");
+  });
+
   it("keeps English shorthand and formats Chinese relative time", () => {
     const now = Date.parse("2026-09-25T12:00:00Z");
     const earlier = "2026-09-20T12:00:00Z";

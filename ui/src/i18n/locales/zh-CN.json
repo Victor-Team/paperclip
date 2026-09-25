@@ -16771,6 +16771,7 @@
       "statustodo": "待办",
       "statusinprogress": "进行中",
       "statusinreview": "审查中",
+      "statusidle": "空闲",
       "statusdone": "已完成",
       "statusblocked": "已阻塞",
       "statuscancelled": "已取消",
