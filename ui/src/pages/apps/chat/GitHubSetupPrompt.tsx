@@ -3,6 +3,7 @@ import { Check, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { copyTextToClipboard } from "@/lib/clipboard";
+import { useTranslation } from "@/i18n";
 
 export const githubSetupPrompt = `Help me set up a GitHub review bot in Paperclip. Use your embedded browser to operate the real Paperclip and GitHub interfaces. Do not use a Chrome extension. If you do not have embedded browser tools, tell me before starting.
 
@@ -57,6 +58,7 @@ export function buildGitHubSetupPrompt(instanceUrl: string) {
 }
 
 export function GitHubSetupPrompt({ instanceUrl = window.location.origin }: { instanceUrl?: string }) {
+  const { t } = useTranslation();
   const [status, setStatus] = useState<"idle" | "copied" | "failed">("idle");
   const prompt = buildGitHubSetupPrompt(instanceUrl);
   return (
@@ -78,14 +80,14 @@ export function GitHubSetupPrompt({ instanceUrl = window.location.origin }: { in
           <img src="/brands/claude-color.svg" alt="" className="size-4 rounded-full bg-background ring-2 ring-background" />
           <img src="/brands/codex-color.svg" alt="" className="size-4 rounded-full bg-background ring-2 ring-background" />
         </span>
-        {status === "copied" ? "Copied setup prompt" : "Copy setup prompt"}
+        {status === "copied" ? t("githubsetupprompt.general.copiedsetupprompt") : t("githubsetupprompt.general.copysetupprompt")}
         {status === "copied" ? <Check className="size-3.5" /> : <Copy className="size-3.5" />}
       </Button>
-      <span className="sr-only" role="status">{status === "copied" ? "Setup prompt copied. Paste it into Codex or Claude with browser tools." : ""}</span>
+      <span className="sr-only" role="status">{status === "copied" ? t("githubsetupprompt.general.setuppromptcopiedpasteitintocodex") : ""}</span>
       {status === "failed" && (
         <div className="space-y-2">
-          <p role="alert" className="text-sm text-muted-foreground">Could not copy automatically. Select and copy the setup prompt below.</p>
-          <Textarea aria-label="Setup prompt" readOnly value={prompt} onFocus={(event) => event.currentTarget.select()} rows={8} />
+          <p role="alert" className="text-sm text-muted-foreground">{t("githubsetupprompt.general.couldnotcopyautomaticallyselectandcopy")}</p>
+          <Textarea aria-label={t("githubsetupprompt.general.setupprompt")} readOnly value={prompt} onFocus={(event) => event.currentTarget.select()} rows={8} />
         </div>
       )}
     </div>
