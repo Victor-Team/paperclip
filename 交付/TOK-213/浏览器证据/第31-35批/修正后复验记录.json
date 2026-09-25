@@ -1,0 +1,26 @@
+[
+  {
+    "file": "复验-桌面-paste-config-帮助展开.png",
+    "dialog": "请智能体协助创建 MCP 配置\n\n不知道工具需要的 URL 或请求头？请让智能体查找配置，并将结果粘贴回来。\n\n复制此提示词，发送给能查阅服务器文档的智能体或助手。\n只将对方回复中的 JSON 内容粘贴到本页输入框。\nPaperclip 会读取 JSON 中的请求头名称、向你询问对应值，并将这些值保存为 Paperclip 机密。因此，粘贴的配置应使用占位符，不要填入真实凭据。\n要发送的提示词\n复制提示词\n关闭"
+  },
+  {
+    "file": "复验-窄屏-paste-config-帮助展开.png",
+    "dialog": "请智能体协助创建 MCP 配置\n\n不知道工具需要的 URL 或请求头？请让智能体查找配置，并将结果粘贴回来。\n\n复制此提示词，发送给能查阅服务器文档的智能体或助手。\n只将对方回复中的 JSON 内容粘贴到本页输入框。\nPaperclip 会读取 JSON 中的请求头名称、向你询问对应值，并将这些值保存为 Paperclip 机密。因此，粘贴的配置应使用占位符，不要填入真实凭据。\n要发送的提示词\n复制提示词\n关闭"
+  },
+  {
+    "file": "复验-窄屏-smoke-lab-矩阵左.png",
+    "before": {
+      "clientWidth": 356,
+      "scrollWidth": 806,
+      "scrollLeft": 0
+    }
+  },
+  {
+    "file": "复验-窄屏-smoke-lab-矩阵右.png",
+    "after": {
+      "clientWidth": 356,
+      "scrollWidth": 806,
+      "scrollLeft": 450
+    }
+  }
+]

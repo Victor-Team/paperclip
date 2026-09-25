@@ -7,6 +7,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { PasteConfigTab } from "./PasteConfigTab";
 import { MCP_CONFIG_HELP_PROMPT } from "@paperclipai/shared";
+import { i18n } from "@/i18n";
 
 const toolsApiMock = vi.hoisted(() => ({
   importMcpJson: vi.fn(),
@@ -33,7 +34,7 @@ async function flushReact() {
 
 function helpTrigger(): HTMLButtonElement {
   const button = Array.from(document.body.querySelectorAll("button")).find(
-    (candidate) => candidate.getAttribute("aria-label") === "Get help creating an MCP config",
+    (candidate) => candidate.getAttribute("aria-label") === i18n.t("mcpconfighelpdialog.general.gethelpcreatinganmcpconfig"),
   );
   if (!button) throw new Error("help trigger not found");
   return button as HTMLButtonElement;
@@ -119,6 +120,20 @@ describe("Paste a config — MCP config help", () => {
     // The prompt has an associated label, so a screen reader announces what the
     // focused field is.
     expect(document.body.querySelector('label[for="mcp-config-help-prompt"]')).toBeTruthy();
+  });
+
+  it("translates the visible instructions without changing the copied prompt", async () => {
+    await i18n.changeLanguage("zh-CN");
+    try {
+      await render();
+      await openHelp();
+
+      expect(document.body.textContent).toContain("只将对方回复中的 JSON 内容粘贴到本页输入框。");
+      expect(document.body.textContent).not.toContain("Paste only the JSON block");
+      expect(promptTextarea()?.value).toBe(MCP_CONFIG_HELP_PROMPT);
+    } finally {
+      await i18n.changeLanguage("en");
+    }
   });
 
   it("copies the prompt and confirms it", async () => {

@@ -72,8 +72,10 @@ export function McpConfigHelpDialog() {
         </DialogHeader>
 
         <ol className="list-decimal space-y-1.5 pl-5 text-sm text-muted-foreground">
-          {MCP_CONFIG_HELP_INSTRUCTIONS.map((instruction) => (
-            <li key={instruction}>{instruction}</li>
+          {MCP_CONFIG_HELP_INSTRUCTIONS.map((instruction, index) => (
+            <li key={instruction}>
+              {t(`mcpconfighelpdialog.instructions.step${index + 1}`, { defaultValue: instruction })}
+            </li>
           ))}
         </ol>
 

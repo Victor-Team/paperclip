@@ -328,12 +328,12 @@ export function SmokeLabTab({ companyId }: { companyId: string }) {
           </div>
         </div>
         <div className="overflow-x-auto rounded-lg border border-border">
-          <table className="w-full border-collapse text-xs">
+          <table className="w-full min-w-max border-collapse text-xs">
             <thead>
               <tr className="border-b border-border bg-muted/40">
                 <th className="sticky left-0 z-10 bg-muted/40 px-3 py-2 text-left font-semibold text-foreground">{t("smokelabtab.general.path")}</th>
                 {LIFECYCLE_STAGES.map((stage) => (
-                  <th key={stage.key} className="px-2 py-2 text-center font-medium text-muted-foreground">
+                  <th key={stage.key} className="whitespace-nowrap px-2 py-2 text-center font-medium text-muted-foreground">
                     {t(`smokelabtab.general.stage.${stage.key}`, { defaultValue: stage.label })}
                   </th>
                 ))}

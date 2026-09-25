@@ -6733,6 +6733,11 @@
       "copyprompt": "Copy prompt",
       "copiedtoclipboard": "Copied to clipboard.",
       "couldntcopyautomaticallyselectthetext": "Couldn't copy automatically — select the text above and copy it."
+    },
+    "instructions": {
+      "step1": "Copy this prompt and send it to an agent or assistant that can look up the server's documentation.",
+      "step2": "Paste only the JSON block it replies with back into the box on this page.",
+      "step3": "Paperclip reads the header names from that JSON and asks you for the values, then stores them as Paperclip secrets — so the config you paste should contain placeholders, not live credentials."
     }
   },
   "pasteconfigtab": {

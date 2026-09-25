@@ -6733,6 +6733,11 @@
       "copyprompt": "复制提示词",
       "copiedtoclipboard": "已复制到剪贴板。",
       "couldntcopyautomaticallyselectthetext": "无法自动复制。请选择上方文字并手动复制。"
+    },
+    "instructions": {
+      "step1": "复制此提示词，发送给能查阅服务器文档的智能体或助手。",
+      "step2": "只将对方回复中的 JSON 内容粘贴到本页输入框。",
+      "step3": "Paperclip 会读取 JSON 中的请求头名称、向你询问对应值，并将这些值保存为 Paperclip 机密。因此，粘贴的配置应使用占位符，不要填入真实凭据。"
     }
   },
   "pasteconfigtab": {
