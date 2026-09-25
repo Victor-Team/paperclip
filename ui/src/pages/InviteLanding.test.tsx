@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { InviteLandingPage } from "./InviteLanding";
+import { i18n } from "@/i18n";
 import { queryKeys } from "../lib/queryKeys";
 
 const getInviteMock = vi.hoisted(() => vi.fn());
@@ -123,7 +124,8 @@ describe("InviteLandingPage", () => {
     setSelectedCompanyIdMock.mockReset();
   });
 
-  afterEach(() => {
+  afterEach(async () => {
+    await i18n.changeLanguage("en");
     container.remove();
     document.body.innerHTML = "";
     vi.clearAllMocks();
@@ -636,6 +638,14 @@ describe("InviteLandingPage", () => {
     );
     expect(container.querySelector('img[alt="Acme Robotics logo"]')).not.toBeNull();
     expect(container.textContent).not.toContain("http://localhost/company/settings/members");
+
+    await act(async () => { await i18n.changeLanguage("zh-CN"); });
+    await flushReact();
+    expect(container.textContent).toContain("您的请求仍在等待审批。公司管理员必须批准您的加入请求。");
+    expect(container.textContent).toContain("获批后刷新此页面，系统会自动跳转。");
+    expect(container.textContent).not.toContain("Your request is still awaiting");
+    await act(async () => { await i18n.changeLanguage("en"); });
+    await flushReact();
 
     // The "Settings → Members" guidance addresses the company admin,
     // not the requester. It must render as plain text so the requester cannot

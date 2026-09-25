@@ -37,7 +37,7 @@ const reassignmentIssueStatuses = "backlog,todo,in_progress,in_review,blocked,fa
 type EditableMemberStatus = "pending" | "active" | "suspended";
 
 export function CompanyAccess() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { selectedCompany, selectedCompanyId } = useCompany();
   const { setBreadcrumbs } = useBreadcrumbs();
   const { pushToast } = useToast();
@@ -68,14 +68,33 @@ export function CompanyAccess() {
   const [reassignmentTarget, setReassignmentTarget] = useState<string>("__unassigned");
   const [draftRole, setDraftRole] = useState<CompanyMember["membershipRole"]>(null);
   const [draftStatus, setDraftStatus] = useState<EditableMemberStatus>("active");
+  const roleLabels = {
+    owner: t("companyaccess.general.roleowner"),
+    admin: t("companyaccess.general.roleadmin"),
+    operator: t("companyaccess.general.roleoperator"),
+    viewer: t("companyaccess.general.roleviewer"),
+  };
+  const statusLabels = {
+    pending: t("companyaccess.general.pending1"),
+    active: t("companyaccess.general.active"),
+    suspended: t("companyaccess.general.suspended"),
+    archived: t("companyaccess.general.statusarchived"),
+  };
+  const joinTypeLabel = (type: string) => type === "both"
+    ? t("companyaccess.general.joinboth")
+    : type === "human"
+      ? t("companyaccess.general.joinhuman")
+      : type === "agent"
+        ? t("companyaccess.general.joinagent")
+        : type;
 
   useEffect(() => {
     setBreadcrumbs([
-      { label: selectedCompany?.name ?? "Organization", href: "/dashboard" },
-      { label: "Settings", href: "/company/settings" },
-      { label: "Members" },
+      { label: selectedCompany?.name ?? t("companyaccess.general.organization"), href: "/dashboard" },
+      { label: t("companyaccess.general.settings"), href: "/company/settings" },
+      { label: t("companyaccess.general.members") },
     ]);
-  }, [selectedCompany?.name, setBreadcrumbs]);
+  }, [selectedCompany?.name, setBreadcrumbs, t]);
 
   const membersQuery = useQuery({
     queryKey: queryKeys.access.companyMembers(selectedCompanyId ?? ""),
@@ -113,14 +132,14 @@ export function CompanyAccess() {
       setEditingMemberId(null);
       await refreshAccessData();
       pushToast({
-        title: "Member updated",
+        title: t("companyaccess.general.memberupdated"),
         tone: "success",
       });
     },
     onError: (error) => {
       pushToast({
-        title: "Failed to update member",
-        body: error instanceof Error ? error.message : "Unknown error",
+        title: t("companyaccess.general.failedupdatemember"),
+        body: error instanceof Error ? error.message : t("companyaccess.general.unknownerror"),
         tone: "error",
       });
     },
@@ -131,14 +150,14 @@ export function CompanyAccess() {
     onSuccess: async () => {
       await refreshAccessData();
       pushToast({
-        title: "Join request approved",
+        title: t("companyaccess.general.joinrequestapproved"),
         tone: "success",
       });
     },
     onError: (error) => {
       pushToast({
-        title: "Failed to approve join request",
-        body: error instanceof Error ? error.message : "Unknown error",
+        title: t("companyaccess.general.failedtoapprovejoinrequest"),
+        body: error instanceof Error ? error.message : t("companyaccess.general.unknownerror"),
         tone: "error",
       });
     },
@@ -149,14 +168,14 @@ export function CompanyAccess() {
     onSuccess: async () => {
       await refreshAccessData();
       pushToast({
-        title: "Join request rejected",
+        title: t("companyaccess.general.joinrequestrejected"),
         tone: "success",
       });
     },
     onError: (error) => {
       pushToast({
-        title: "Failed to reject join request",
-        body: error instanceof Error ? error.message : "Unknown error",
+        title: t("companyaccess.general.failedtorejectjoinrequest"),
+        body: error instanceof Error ? error.message : t("companyaccess.general.unknownerror"),
         tone: "error",
       });
     },
@@ -201,18 +220,23 @@ export function CompanyAccess() {
         await queryClient.invalidateQueries({ queryKey: queryKeys.issues.listTouchedByMe(selectedCompanyId) });
       }
       pushToast({
-        title: "Member removed",
+        title: t("companyaccess.general.memberremoved"),
         body:
           result.reassignedIssueCount > 0
-            ? `${result.reassignedIssueCount} assigned task${result.reassignedIssueCount === 1 ? "" : "s"} cleaned up.`
+            ? t(
+                result.reassignedIssueCount === 1
+                  ? "companyaccess.general.assignedtaskcleanedup"
+                  : "companyaccess.general.assignedtaskscleanedup",
+                { count: result.reassignedIssueCount },
+              )
             : undefined,
         tone: "success",
       });
     },
     onError: (error) => {
       pushToast({
-        title: "Failed to remove member",
-        body: error instanceof Error ? error.message : "Unknown error",
+        title: t("companyaccess.general.failedtoremovemember"),
+        body: error instanceof Error ? error.message : t("companyaccess.general.unknownerror"),
         tone: "error",
       });
     },
@@ -240,10 +264,10 @@ export function CompanyAccess() {
   if (membersQuery.error) {
     const message =
       membersQuery.error instanceof ApiError && membersQuery.error.status === 403
-        ? "You do not have permission to manage organization members."
+        ? t("companyaccess.general.nopermissiontomanagemembers")
         : membersQuery.error instanceof Error
           ? membersQuery.error.message
-          : "Failed to load organization members.";
+          : t("companyaccess.general.failedtoloadmembers");
     return <div className="text-sm text-destructive">{message}</div>;
   }
 
@@ -273,8 +297,8 @@ export function CompanyAccess() {
         {!hideInvitesTab && (
           <PageTabBar
             items={[
-              { value: "members", label: "Members" },
-              { value: "invites", label: "Invites" },
+              { value: "members", label: t("companyaccess.general.members") },
+              { value: "invites", label: t("companyaccess.general.invites") },
             ]}
             align="start"
             value={activeTab}
@@ -307,20 +331,29 @@ export function CompanyAccess() {
                     request.requesterUser?.name ||
                     request.requestEmailSnapshot ||
                     request.requestingUserId ||
-                    "Unknown human requester"
+                    t("companyaccess.general.unknownhumanrequester")
                   }
                   subtitle={
                     request.requesterUser?.email ||
                     request.requestEmailSnapshot ||
                     request.requestingUserId ||
-                    "No email available"
+                    t("companyaccess.general.noemailavailable")
                   }
                   context={
                     request.invite
-                      ? `${request.invite.allowedJoinTypes} join invite${request.invite.humanRole ? ` • default role ${request.invite.humanRole}` : ""}`
-                      : "Invite metadata unavailable"
+                      ? request.invite.humanRole
+                        ? t("companyaccess.general.joininvitewithrole", {
+                            joinTypes: joinTypeLabel(request.invite.allowedJoinTypes),
+                            role: roleLabels[request.invite.humanRole],
+                          })
+                        : t("companyaccess.general.joininvite", {
+                            joinTypes: joinTypeLabel(request.invite.allowedJoinTypes),
+                          })
+                      : t("companyaccess.general.invitemetadataunavailable")
                   }
-                  detail={`Submitted ${new Date(request.createdAt).toLocaleString()}`}
+                  detail={t("companyaccess.general.submittedat", {
+                    date: new Date(request.createdAt).toLocaleString(i18n.resolvedLanguage === "zh-CN" ? "zh-CN" : "en-US"),
+                  })}
                   approveLabel={t("companyaccess.general.approvehuman")}
                   rejectLabel={t("companyaccess.general.rejecthuman")}
                   disabled={joinRequestActionPending}
@@ -369,12 +402,12 @@ export function CompanyAccess() {
                     </td>
                     <td className="px-3 py-3">
                       {member.membershipRole
-                        ? HUMAN_COMPANY_MEMBERSHIP_ROLE_LABELS[member.membershipRole]
-                        : "Unset"}
+                        ? roleLabels[member.membershipRole]
+                        : t("companyaccess.general.unset")}
                     </td>
                     <td className="px-3 py-3">
                       <Badge variant={member.status === "active" ? "secondary" : member.status === "suspended" ? "destructive" : "outline"}>
-                        {member.status.replace("_", " ")}
+                        {statusLabels[member.status]}
                       </Badge>
                     </td>
                     <td className="px-3 py-3 text-right">
@@ -410,7 +443,9 @@ export function CompanyAccess() {
           <DialogHeader>
             <DialogTitle>{t("companyaccess.general.editmember")}</DialogTitle>
             <DialogDescription>
-              {t("companyaccess.general.updateorganizationroleandmembershipstatusfor")} {editingMember?.user?.name || editingMember?.user?.email || editingMember?.principalId}.
+              {t("companyaccess.general.updatememberdescription", {
+                member: editingMember?.user?.name || editingMember?.user?.email || editingMember?.principalId || t("companyaccess.general.thismember"),
+              })}
             </DialogDescription>
           </DialogHeader>
           {editingMember && (
@@ -428,7 +463,7 @@ export function CompanyAccess() {
                     <option value="">{t("companyaccess.general.unset")}</option>
                     {Object.entries(HUMAN_COMPANY_MEMBERSHIP_ROLE_LABELS).map(([value, label]) => (
                       <option key={value} value={value}>
-                        {label}
+                        {roleLabels[value as keyof typeof roleLabels] ?? label}
                       </option>
                     ))}
                   </select>
@@ -475,7 +510,9 @@ export function CompanyAccess() {
           <DialogHeader>
             <DialogTitle>{t("companyaccess.general.removemember")}</DialogTitle>
             <DialogDescription>
-              {t("companyaccess.general.archive")} {memberDisplayName(removingMember)} {t("companyaccess.general.andmoveactiveassignmentsbeforehidingthis")}</DialogDescription>
+              {t("companyaccess.general.removememberdescription", {
+                member: memberDisplayName(removingMember, t("companyaccess.general.thismember")),
+              })}</DialogDescription>
           </DialogHeader>
           {removingMember && (
             <div className="space-y-5">
@@ -485,7 +522,12 @@ export function CompanyAccess() {
                 <div className="mt-2 text-sm text-muted-foreground">
                   {assignedIssuesQuery.isLoading
                     ? t("companyaccess.general.checkingassignedtasks")
-                    : `${assignedIssues.length} open assigned task${assignedIssues.length === 1 ? "" : t("companyaccess.general.s")}`}
+                    : t(
+                        assignedIssues.length === 1
+                          ? "companyaccess.general.openassignedtask"
+                          : "companyaccess.general.openassignedtasks",
+                        { count: assignedIssues.length },
+                      )}
                 </div>
               </div>
 
@@ -526,7 +568,12 @@ export function CompanyAccess() {
                     ))}
                     {assignedIssues.length > 6 ? (
                       <div className="px-3 py-2 text-sm text-muted-foreground">
-                        {assignedIssues.length - 6} {t("companyaccess.general.moretask")}{assignedIssues.length - 6 === 1 ? "" : t("companyaccess.general.s2")}
+                        {t(
+                          assignedIssues.length - 6 === 1
+                            ? "companyaccess.general.moreassignedtask"
+                            : "companyaccess.general.moreassignedtasks",
+                          { count: assignedIssues.length - 6 },
+                        )}
                       </div>
                     ) : null}
                   </div>
@@ -576,10 +623,10 @@ export function CompanyAccessLegacyRoute() {
 
   useEffect(() => {
     setBreadcrumbs([
-      { label: "Settings", href: "/company/settings" },
-      { label: "Access" },
+      { label: t("companyaccess.general.settings"), href: "/company/settings" },
+      { label: t("companyaccess.general.access") },
     ]);
-  }, [setBreadcrumbs]);
+  }, [setBreadcrumbs, t]);
 
   const permissionsSlot = slots.find((slot) => slot.routePath === "permissions");
   if (permissionsSlot) {
@@ -623,8 +670,8 @@ export function CompanyAccessLegacyRoute() {
   );
 }
 
-function memberDisplayName(member: CompanyMember | null) {
-  if (!member) return "this member";
+function memberDisplayName(member: CompanyMember | null, fallback = "") {
+  if (!member) return fallback;
   return member.user?.name?.trim() || member.user?.email || member.principalId;
 }
 
