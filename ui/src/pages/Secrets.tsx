@@ -1888,7 +1888,7 @@ export function Secrets() {
                       : "text-muted-foreground hover:text-foreground",
                   )}
                 >
-                  {mode}
+                  {mode === "folders" ? t("secrets.general.foldersview") : t("secrets.general.flatview")}
                 </button>
               ))}
             </div>

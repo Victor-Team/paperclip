@@ -15655,6 +15655,8 @@
       "searchbynamekeyref": "Search by name, key, ref",
       "searchsecrets": "Search secrets",
       "viewmode": "View mode",
+      "foldersview": "Folders",
+      "flatview": "Flat",
       "newfolder": "New folder",
       "newsecret": "New secret",
       "createfolder": "Create folder",

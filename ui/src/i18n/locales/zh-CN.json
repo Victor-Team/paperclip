@@ -15655,6 +15655,8 @@
       "searchbynamekeyref": "按名称、密钥或引用搜索",
       "searchsecrets": "搜索机密",
       "viewmode": "视图模式",
+      "foldersview": "文件夹",
+      "flatview": "平铺",
       "newfolder": "新建文件夹",
       "newsecret": "新建机密",
       "createfolder": "创建文件夹",
