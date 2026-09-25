@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "@/i18n";
 
 export function AiConnectionLegacyNotice({
   onAdopt,
@@ -7,20 +8,16 @@ export function AiConnectionLegacyNotice({
   onAdopt: () => void;
   readOnly?: boolean;
 }) {
+  const { t } = useTranslation();
   return (
     <div className="flex flex-col gap-3 rounded-lg border border-border p-4">
       <h3 className="text-sm font-semibold">
-        Existing authentication — not managed by Connections
-      </h3>
+        {t("aiconnectionmanagement.general.existingauthenticationnotmanagedbyconnections")}</h3>
       <p className="text-sm text-muted-foreground">
-        This agent keeps its current authentication until you choose and test a
-        managed connection. Confirm the account and who may use it before
-        adopting.
-      </p>
+        {t("aiconnectionmanagement.general.thisagentkeepsitscurrentauthenticationuntil")}</p>
       {!readOnly && (
         <Button variant="outline" className="self-start" onClick={onAdopt}>
-          Choose a managed connection
-        </Button>
+          {t("aiconnectionmanagement.general.chooseamanagedconnection")}</Button>
       )}
     </div>
   );

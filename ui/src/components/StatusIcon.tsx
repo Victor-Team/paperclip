@@ -13,6 +13,9 @@ function statusLabel(status: string): string {
 
 interface StatusIconProps {
   status: string;
+  /** Localized text for a read-only status glyph supplied by its caller. */
+  labelOverride?: string;
+  externalConversationState?: "active" | "waiting" | null;
   blockerAttention?: IssueBlockerAttention | null;
   onChange?: (status: string) => void;
   className?: string;
@@ -75,11 +78,12 @@ function blockedAttentionLabel(blockerAttention: IssueBlockerAttention | null | 
  * glyph — the blocked shape recoloured blue — while the full blocked reason
  * still rides on the accessible label.
  */
-export function StatusIcon({ status, blockerAttention, onChange, className, showLabel, size = "md" }: StatusIconProps) {
+export function StatusIcon({ status, labelOverride, externalConversationState, blockerAttention, onChange, className, showLabel, size = "md" }: StatusIconProps) {
   const [open, setOpen] = useState(false);
+  const displayStatus = status === "in_review" && externalConversationState === "waiting" ? "idle" : status;
   const isCoveredBlocked = status === "blocked" && blockerAttention?.state === "covered";
-  const ariaLabel = status === "blocked" ? blockedAttentionLabel(blockerAttention) : statusLabel(status);
-  const glyphStatus = isCoveredBlocked ? "in_queue" : status;
+  const ariaLabel = labelOverride ?? (status === "blocked" ? blockedAttentionLabel(blockerAttention) : statusLabel(displayStatus));
+  const glyphStatus = isCoveredBlocked ? "in_queue" : displayStatus;
 
   const glyph = (
     <StatusGlyph
@@ -94,7 +98,7 @@ export function StatusIcon({ status, blockerAttention, onChange, className, show
     return showLabel ? (
       <span className="inline-flex items-center gap-1.5">
         {glyph}
-        <span className="text-sm">{statusLabel(status)}</span>
+        <span className="text-sm">{ariaLabel}</span>
       </span>
     ) : (
       glyph
@@ -108,7 +112,7 @@ export function StatusIcon({ status, blockerAttention, onChange, className, show
       className="inline-flex min-h-5 items-center gap-1.5 cursor-pointer hover:bg-accent/50 rounded px-1 -mx-1 py-0.5 transition-colors"
     >
       {glyph}
-      <span className="text-sm">{statusLabel(status)}</span>
+      <span className="text-sm">{ariaLabel}</span>
     </button>
   ) : (
     <button

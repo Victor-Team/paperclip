@@ -1,3 +1,4 @@
+import { useWorkspaceIsolationControls } from "@/hooks/useWorkspaceIsolationControls";
 import { AgentAvatar } from "@/components/AgentAvatar";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -112,6 +113,7 @@ import {
   type BreakdownCopyNames,
 } from "../lib/pipeline-breakdown";
 import { getPipelineStageColumnTone } from "../lib/pipeline-stage-presentation";
+import { t as translate, useTranslation } from "@/i18n";
 
 type StageSectionKey = "instructions" | "advanced" | "secrets" | "activity" | "history";
 type ApproverKind = "any_human" | "user" | "agent";
@@ -166,28 +168,28 @@ const STAGE_NAV_GROUPS: Array<{
   items: Array<{ id: StageSectionKey; label: string; icon: typeof Circle }>;
 }> = [
   {
-    label: "Stage",
+    label: "navStage",
     items: [
-      { id: "instructions", label: "Automation", icon: LayoutGrid },
-      { id: "advanced", label: "Advanced", icon: SlidersHorizontal },
-      { id: "secrets", label: "Secrets", icon: KeyRound },
+      { id: "instructions", label: "navAutomation", icon: LayoutGrid },
+      { id: "advanced", label: "navAdvanced", icon: SlidersHorizontal },
+      { id: "secrets", label: "navSecrets", icon: KeyRound },
     ],
   },
   {
-    label: "Operate",
+    label: "navOperate",
     items: [
-      { id: "activity", label: "Activity", icon: ActivityIcon },
-      { id: "history", label: "History", icon: HistoryIcon },
+      { id: "activity", label: "navActivity", icon: ActivityIcon },
+      { id: "history", label: "navHistory", icon: HistoryIcon },
     ],
   },
 ];
 
 const STAGE_SECTION_TITLES: Record<StageSectionKey, string> = {
-  instructions: "Automation",
-  secrets: "Secrets",
-  activity: "Activity",
-  history: "History",
-  advanced: "Advanced",
+  instructions: "navAutomation",
+  secrets: "navSecrets",
+  activity: "navActivity",
+  history: "navHistory",
+  advanced: "navAdvanced",
 };
 
 function parseStageSectionKey(value: string | null): StageSectionKey | null {
@@ -221,26 +223,26 @@ const STAGE_KIND_OPTIONS: Array<{
 }> = [
   {
     value: "working",
-    label: "Working",
-    description: "Items wait here while work happens. An agent or a person moves them forward.",
+    label: "kindWorking",
+    description: "kindWorkingDescription",
     icon: Hammer,
   },
   {
     value: "review",
-    label: "Review",
-    description: "Someone has to approve before items leave. Use this when a person or an agent has to say yes or no.",
+    label: "kindReview",
+    description: "kindReviewDescription",
     icon: BadgeCheck,
   },
   {
     value: "done",
-    label: "Done",
-    description: "The final step. Items that reach here are finished.",
+    label: "kindDone",
+    description: "kindDoneDescription",
     icon: CircleCheck,
   },
   {
     value: "cancelled",
-    label: "Cancelled",
-    description: "The dead end. Items that reach here are dropped or rejected.",
+    label: "kindCancelled",
+    description: "kindCancelledDescription",
     icon: Ban,
   },
 ];
@@ -310,9 +312,9 @@ function stageConfig(stage: PipelineStage | null | undefined): StageConfig {
 }
 
 const STAGE_EXECUTION_WORKSPACE_OPTIONS = [
-  { value: "shared_workspace", label: "Project default" },
-  { value: "isolated_workspace", label: "New isolated workspace" },
-  { value: "reuse_existing", label: "Reuse existing workspace" },
+  { value: "shared_workspace", label: "workspaceProjectDefault" },
+  { value: "isolated_workspace", label: "workspaceNewIsolated" },
+  { value: "reuse_existing", label: "workspaceReuseExisting" },
 ] as const;
 
 function nullableString(value: unknown) {
@@ -535,11 +537,11 @@ function readVariableField(variable: unknown): { key: string; label: string; req
   return { key, label, required: record.required === true };
 }
 
-function fieldOriginLabel(depth: number, pipelineName: string) {
-  if (depth === 0) return "This item";
-  if (depth === 1) return `Parent: ${pipelineName}`;
-  if (depth === 2) return `Grandparent: ${pipelineName}`;
-  return `Ancestor ${depth}: ${pipelineName}`;
+export function fieldOriginLabel(depth: number, pipelineName: string) {
+  if (depth === 0) return translate("pipelinesettings.general.originThisItem");
+  if (depth === 1) return translate("pipelinesettings.general.originParent", { pipeline: pipelineName });
+  if (depth === 2) return translate("pipelinesettings.general.originGrandparent", { pipeline: pipelineName });
+  return translate("pipelinesettings.general.originAncestor", { depth, pipeline: pipelineName });
 }
 
 function pipelineCarryOverFields(source: { pipeline: PipelineWithOptionalConnections; depth: number }): CarryOverFieldOption[] {
@@ -928,12 +930,12 @@ function automationVariableKind(value: unknown) {
 
 function automationVariablePreviewTitle(variable: AutomationVariableOption) {
   const preview = primitiveAutomationVariablePreview(variable.example);
-  const size = typeof variable.example === "string" ? `${variable.example.length} chars` : `${preview.length} chars`;
+  const size = typeof variable.example === "string" ? variable.example.length : preview.length;
   const lines = [
     variable.description,
-    `Example: ${automationVariableKind(variable.example)}, ${size}`,
+    translate("pipelinesettings.general.variableExample", { kind: automationVariableKind(variable.example), size }),
   ];
-  if (variable.exampleSource) lines.push(`From ${variable.exampleSource}`);
+  if (variable.exampleSource) lines.push(translate("pipelinesettings.general.variableFrom", { source: variable.exampleSource }));
   if (preview) lines.push(preview.length > 500 ? `${preview.slice(0, 500)}...` : preview);
   return lines.join("\n");
 }
@@ -953,43 +955,43 @@ function buildAutomationVariableGroups(input: {
   const pipelineVariables: AutomationVariableOption[] = [
     {
       key: "pipeline_id",
-      label: "Pipeline ID",
-      description: "ID of the pipeline this automation runs in.",
+      label: translate("pipelinesettings.general.variablePipelineId"),
+      description: translate("pipelinesettings.general.variablePipelineIdDescription"),
       example: input.pipeline.id,
       exampleSource: null,
     },
     {
       key: "pipeline_key",
-      label: "Pipeline key",
-      description: "Stable key of the pipeline this automation runs in.",
+      label: translate("pipelinesettings.general.variablePipelineKey"),
+      description: translate("pipelinesettings.general.variablePipelineKeyDescription"),
       example: input.pipeline.key,
       exampleSource: null,
     },
     {
       key: "pipeline_name",
-      label: "Pipeline name",
-      description: "Display name of the pipeline this automation runs in.",
+      label: translate("pipelinesettings.general.variablePipelineName"),
+      description: translate("pipelinesettings.general.variablePipelineNameDescription"),
       example: input.pipeline.name,
       exampleSource: null,
     },
     {
       key: "stage_id",
-      label: "Stage ID",
-      description: "ID of this automation stage.",
+      label: translate("pipelinesettings.general.variableStageId"),
+      description: translate("pipelinesettings.general.variableStageIdDescription"),
       example: input.stage.id,
       exampleSource: null,
     },
     {
       key: "stage_key",
-      label: "Stage key",
-      description: "Stable key of this automation stage.",
+      label: translate("pipelinesettings.general.variableStageKey"),
+      description: translate("pipelinesettings.general.variableStageKeyDescription"),
       example: input.stage.key,
       exampleSource: null,
     },
     {
       key: "stage_name",
-      label: "Stage name",
-      description: "Display name of this automation stage.",
+      label: translate("pipelinesettings.general.variableStageName"),
+      description: translate("pipelinesettings.general.variableStageNameDescription"),
       example: input.stage.name,
       exampleSource: null,
     },
@@ -997,43 +999,43 @@ function buildAutomationVariableGroups(input: {
   const itemVariables: AutomationVariableOption[] = [
     {
       key: "title",
-      label: "Item title",
-      description: "Title of the item being automated.",
+      label: translate("pipelinesettings.general.variableItemTitle"),
+      description: translate("pipelinesettings.general.variableItemTitleDescription"),
       example: sampleCase?.title ?? "",
       exampleSource,
     },
     {
       key: "body",
-      label: "Item body",
-      description: "Body text of the item being automated.",
+      label: translate("pipelinesettings.general.variableItemBody"),
+      description: translate("pipelinesettings.general.variableItemBodyDescription"),
       example: sampleCase?.summary ?? "",
       exampleSource,
     },
     {
       key: "case_id",
-      label: "Item ID",
-      description: "ID of the item being automated.",
+      label: translate("pipelinesettings.general.variableItemId"),
+      description: translate("pipelinesettings.general.variableItemIdDescription"),
       example: sampleCase?.id ?? "",
       exampleSource,
     },
     {
       key: "case_key",
-      label: "Item key",
-      description: "Stable key of the item being automated.",
+      label: translate("pipelinesettings.general.variableItemKey"),
+      description: translate("pipelinesettings.general.variableItemKeyDescription"),
       example: sampleCase?.caseKey ?? "",
       exampleSource,
     },
     {
       key: "case_title",
-      label: "Item title alias",
-      description: "Compatibility alias for the item title.",
+      label: translate("pipelinesettings.general.variableItemTitleAlias"),
+      description: translate("pipelinesettings.general.variableItemTitleAliasDescription"),
       example: sampleCase?.title ?? "",
       exampleSource,
     },
     {
       key: "case_version",
-      label: "Item version",
-      description: "Current item version when the automation runs.",
+      label: translate("pipelinesettings.general.variableItemVersion"),
+      description: translate("pipelinesettings.general.variableItemVersionDescription"),
       example: sampleCase?.version ?? "",
       exampleSource,
     },
@@ -1047,17 +1049,17 @@ function buildAutomationVariableGroups(input: {
     fieldVariables.push({
       key,
       label: key.replace(/[_-]+/g, " ").replace(/([a-z0-9])([A-Z])/g, "$1 $2"),
-      description: `Field copied from the current item data.`,
+      description: translate("pipelinesettings.general.variableFieldDescription"),
       example: value,
       exampleSource,
     });
   }
   const groups: AutomationVariableGroup[] = [
-    { id: "pipeline", label: "Pipeline and stage", variables: pipelineVariables },
-    { id: "item", label: "Current item", variables: itemVariables },
+    { id: "pipeline", label: translate("pipelinesettings.general.variableGroupPipeline"), variables: pipelineVariables },
+    { id: "item", label: translate("pipelinesettings.general.variableGroupItem"), variables: itemVariables },
   ];
   if (fieldVariables.length > 0) {
-    groups.push({ id: "fields", label: "Item fields", variables: fieldVariables });
+    groups.push({ id: "fields", label: translate("pipelinesettings.general.variableGroupFields"), variables: fieldVariables });
   }
   return groups;
 }
@@ -1088,13 +1090,13 @@ function CarriedFieldTokenHelper({
   groups: CarryOverFieldGroup[];
   onInsert: (fieldKey: string) => void;
 }) {
+  const { t } = useTranslation();
   if (groups.length === 0) return null;
   return (
     <div className="rounded-md border border-dashed border-border bg-muted/25 px-3 py-2">
       <div className="mb-2 flex flex-wrap items-center gap-2">
         <span className="text-xs font-semibold uppercase text-muted-foreground">
-          Already available on child items
-        </span>
+          {t("pipelinesettings.general.alreadyavailableonchilditems")}</span>
       </div>
       <div className="space-y-2">
         {groups.map((group) => (
@@ -1110,8 +1112,8 @@ function CarriedFieldTokenHelper({
                   type="button"
                   onClick={() => onInsert(field.key)}
                   className="inline-flex h-7 items-center rounded-md border border-border bg-background px-2 font-mono text-xs text-foreground transition-colors hover:bg-accent"
-                  title={`Insert {{${field.key}}}`}
-                  aria-label={`Insert {{${field.key}}}`}
+                  title={t("pipelinesettings.general.insertVariable", { name: `{{${field.key}}}` })}
+                  aria-label={t("pipelinesettings.general.insertVariable", { name: `{{${field.key}}}` })}
                 >
                   {`{{${field.key}}}`}
                 </button>
@@ -1127,18 +1129,19 @@ function CarriedFieldTokenHelper({
 function AutomationVariableTokenHelper({
   groups,
   onInsert,
-  label = "Available variables",
+  label,
 }: {
   groups: AutomationVariableGroup[];
   onInsert: (fieldKey: string) => void;
   label?: string;
 }) {
+  const { t } = useTranslation();
   if (groups.length === 0) return null;
   return (
     <div className="rounded-md border border-border bg-muted/20 px-3 py-2">
       <div className="mb-2 flex flex-wrap items-center gap-2">
         <span className="text-xs font-semibold uppercase text-muted-foreground">
-          {label}
+          {label ?? t("pipelinesettings.general.availableVariables")}
         </span>
       </div>
       <div className="space-y-2">
@@ -1153,7 +1156,7 @@ function AutomationVariableTokenHelper({
                   onClick={() => onInsert(variable.key)}
                   className="inline-flex h-7 items-center rounded-md border border-border bg-background px-2 font-mono text-xs text-foreground transition-colors hover:bg-accent"
                   title={automationVariablePreviewTitle(variable)}
-                  aria-label={`Insert {{${variable.key}}}`}
+                  aria-label={t("pipelinesettings.general.insertVariable", { name: `{{${variable.key}}}` })}
                 >
                   {`{{${variable.key}}}`}
                 </button>
@@ -1175,11 +1178,12 @@ function StageSubSidebar({
   stageKind: string;
   onSectionChange: (section: StageSectionKey) => void;
 }) {
+  const { t } = useTranslation();
   const groups = stageNavGroups(stageKind);
   return (
     <>
       <div className="md:hidden">
-        <label className="sr-only" htmlFor="stage-section-picker">Stage section</label>
+        <label className="sr-only" htmlFor="stage-section-picker">{t("pipelinesettings.general.stagesection")}</label>
         <select
           id="stage-section-picker"
           value={activeSection}
@@ -1187,22 +1191,22 @@ function StageSubSidebar({
           className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
         >
           {groups.map((group) => (
-            <optgroup key={group.label} label={group.label}>
+            <optgroup key={group.label} label={t(`pipelinesettings.general.${group.label}`)}>
               {group.items.map((item) => (
-                <option key={item.id} value={item.id}>{item.label}</option>
+                <option key={item.id} value={item.id}>{t(`pipelinesettings.general.${item.label}`)}</option>
               ))}
             </optgroup>
           ))}
         </select>
       </div>
       <nav
-        aria-label="Stage sections"
+        aria-label={t("pipelinesettings.general.stagesections")}
         className="sticky top-14 hidden max-h-(--sz-calc-39) w-52 shrink-0 flex-col gap-4 self-start overflow-y-auto border-r border-border bg-sidebar/30 px-3 py-4 md:flex"
       >
         {groups.map((group) => (
           <div key={group.label} className="flex flex-col gap-0.5">
             <p className="px-3 py-2 text-(length:--text-micro) font-semibold uppercase tracking-(--tracking-eyebrow) text-muted-foreground/80">
-              {group.label}
+              {t(`pipelinesettings.general.${group.label}`)}
             </p>
             {group.items.map((item) => {
               const Icon = item.icon;
@@ -1221,7 +1225,7 @@ function StageSubSidebar({
                   )}
                 >
                   <Icon className="h-3.5 w-3.5 shrink-0" />
-                  <span className="truncate">{item.label}</span>
+                  <span className="truncate">{t(`pipelinesettings.general.${item.label}`)}</span>
                 </button>
               );
             })}
@@ -1241,6 +1245,20 @@ function StageEventsList({
   stages: PipelineStage[];
   emptyMessage: string;
 }) {
+  const { t, i18n } = useTranslation();
+  const localizedTime = (value: string | Date) => {
+    if (i18n.resolvedLanguage !== "zh-CN") return relativeTime(value);
+    const date = value instanceof Date ? value : new Date(value);
+    const minutes = Math.max(0, Math.round((Date.now() - date.getTime()) / 60_000));
+    if (minutes < 1) return t("pipelinesettings.general.justNow");
+    const formatter = new Intl.RelativeTimeFormat("zh-CN", { numeric: "auto" });
+    if (minutes < 60) return formatter.format(-minutes, "minute");
+    const hours = Math.round(minutes / 60);
+    if (hours < 24) return formatter.format(-hours, "hour");
+    const days = Math.round(hours / 24);
+    if (days < 30) return formatter.format(-days, "day");
+    return date.toLocaleDateString("zh-CN");
+  };
   if (events.length === 0) {
     return <EmptyState icon={ActivityIcon} message={emptyMessage} />;
   }
@@ -1251,8 +1269,8 @@ function StageEventsList({
           key={event.id}
           className="grid min-h-11 grid-cols-(--gtc-15) items-center gap-3 border-b border-border/70 px-3 py-2 text-sm last:border-b-0"
         >
-          <span className="text-xs text-muted-foreground" title={new Date(event.createdAt).toLocaleString()}>
-            {relativeTime(event.createdAt)}
+          <span className="text-xs text-muted-foreground" title={new Date(event.createdAt).toLocaleString(i18n.resolvedLanguage ?? "en")}>
+            {localizedTime(event.createdAt)}
           </span>
           <div className="min-w-0">
             <Link
@@ -1263,7 +1281,7 @@ function StageEventsList({
             </Link>
             <p className="mt-0.5 text-sm text-muted-foreground">
               {formatPipelineItemEvent(event, stages)}
-              {event.actorAgent ? ` by ${event.actorAgent.name}` : null}
+              {event.actorAgent ? t("pipelinesettings.general.eventByAgent", { name: event.actorAgent.name }) : null}
             </p>
           </div>
         </div>
@@ -1273,6 +1291,7 @@ function StageEventsList({
 }
 
 export function PipelineSettings() {
+  const { t, i18n } = useTranslation();
   const { pipelineId } = useParams<{ pipelineId: string }>();
   const { selectedCompanyId } = useCompany();
   const { setBreadcrumbs } = useBreadcrumbs();
@@ -1391,7 +1410,7 @@ export function PipelineSettings() {
 
   const createSecret = useMutation({
     mutationFn: (input: { name: string; value: string }) => {
-      if (!selectedCompanyId) throw new Error("Select an organization to create secrets");
+      if (!selectedCompanyId) throw new Error(translate("pipelinesettings.general.chooseOrganizationForSecrets"));
       return secretsApi.create(selectedCompanyId, input);
     },
     onSuccess: () => {
@@ -1430,7 +1449,7 @@ export function PipelineSettings() {
   const selectedStage = stages.find((stage) => stage.id === selectedStageId) ?? stages[0] ?? null;
   const incomingCarryOverFieldGroups = useMemo(
     () => buildIncomingCarryOverFieldGroups(pipeline, selectedStage, pipelinesListQuery.data ?? []),
-    [pipeline, pipelinesListQuery.data, selectedStage],
+    [pipeline, pipelinesListQuery.data, selectedStage, i18n.resolvedLanguage],
   );
   const incomingCarryOverFieldKeys = useMemo(
     () => [...new Set(flattenCarryOverFields(incomingCarryOverFieldGroups).map((field) => field.key))],
@@ -1444,7 +1463,7 @@ export function PipelineSettings() {
     () => pipeline && selectedStage
       ? buildAutomationVariableGroups({ pipeline, stage: selectedStage, sampleRow: sampleCaseRow })
       : [],
-    [pipeline, sampleCaseRow, selectedStage],
+    [pipeline, sampleCaseRow, selectedStage, i18n.resolvedLanguage],
   );
   const automationVariableKeys = useMemo(
     () => flattenAutomationVariableKeys(automationVariableGroups),
@@ -1559,7 +1578,9 @@ export function PipelineSettings() {
       ?? null,
     [selectedAutomationProject, stageProjectWorkspaceId],
   );
+  const { visible: workspaceIsolationControlsVisible } = useWorkspaceIsolationControls();
   const selectedProjectSupportsExecutionWorkspace =
+    workspaceIsolationControlsVisible &&
     experimentalSettingsQuery.data?.enableIsolatedWorkspaces === true
     && Boolean(selectedAutomationProject?.executionWorkspacePolicy?.enabled);
   const reusableExecutionWorkspacesQuery = useQuery({
@@ -1643,11 +1664,11 @@ export function PipelineSettings() {
   useEffect(() => {
     if (!pipeline) return;
     setBreadcrumbs([
-      { label: "Pipelines", href: "/pipelines" },
+      { label: t("pipelinesettings.general.breadcrumbPipelines"), href: "/pipelines" },
       { label: pipeline.name, href: `/pipelines/${pipeline.id}` },
-      { label: "Settings" },
+      { label: t("pipelinesettings.general.breadcrumbSettings") },
     ]);
-  }, [pipeline, setBreadcrumbs]);
+  }, [pipeline, setBreadcrumbs, t]);
 
   // Deep-link from a board-header health warning: ?stage=<id> preselects the
   // flagged stage so the warning's "fix" lands on the right panel.
@@ -1705,11 +1726,12 @@ export function PipelineSettings() {
     if (!stageProjectWorkspaceId) {
       setStageProjectWorkspaceId(defaultProjectWorkspaceIdForProject(selectedAutomationProject));
     }
-    if (!stageExecutionWorkspacePreference) {
+    if (workspaceIsolationControlsVisible && !stageExecutionWorkspacePreference) {
       setStageExecutionWorkspacePreference(defaultExecutionWorkspaceModeForProject(selectedAutomationProject));
     }
   }, [
     selectedAutomationProject,
+    workspaceIsolationControlsVisible,
     stageExecutionWorkspacePreference,
     stageProjectId,
     stageProjectWorkspaceId,
@@ -1775,7 +1797,7 @@ export function PipelineSettings() {
         stageExecutionWorkspacePreference === "reuse_existing" &&
         !stageExecutionWorkspaceId
       ) {
-        throw new Error("Choose an existing workspace before saving this stage.");
+        throw new Error(t("pipelinesettings.general.chooseWorkspaceBeforeSave"));
       }
       const parsedApproval = parseApprovalValue(selectedApproval);
       const nextRequiresApproval = stageKind === "review";
@@ -1899,12 +1921,12 @@ export function PipelineSettings() {
         ]);
       }
       await refreshPipeline();
-      pushToast({ title: "Stage saved", tone: "success" });
+      pushToast({ title: t("pipelinesettings.general.stageSaved"), tone: "success" });
     },
     onError: async (error) => {
       pushToast({
-        title: "Failed to save stage",
-        body: error instanceof Error ? error.message : "Paperclip could not save the stage.",
+        title: t("pipelinesettings.general.saveStageFailed"),
+        body: error instanceof Error ? error.message : t("pipelinesettings.general.saveStageFallback"),
         tone: "error",
       });
     },
@@ -1928,16 +1950,16 @@ export function PipelineSettings() {
       if (selectedCompanyId) {
         await queryClient.invalidateQueries({ queryKey: queryKeys.secrets.list(selectedCompanyId) });
       }
-      pushToast({ title: "Stage secrets saved", tone: "success" });
+      pushToast({ title: t("pipelinesettings.general.stageSecretsSaved"), tone: "success" });
     },
     onError: async (error) => {
       pushToast({
-        title: "Failed to save secrets",
+        title: t("pipelinesettings.general.saveSecretsFailed"),
         body: error instanceof ApiError
           ? error.message
           : error instanceof Error
             ? error.message
-            : "Paperclip could not save the stage secrets.",
+            : t("pipelinesettings.general.saveSecretsFallback"),
         tone: "error",
       });
     },
@@ -1955,7 +1977,7 @@ export function PipelineSettings() {
       const autoAdvanceTarget = nextStageForInsert(stages, insertPosition);
       const created = await pipelinesApi.createStage(pipelineId, {
         key: nextStageKey("New stage", existingKeys),
-        name: "New stage",
+        name: t("pipelinesettings.general.newStage"),
         kind: "working",
         position: insertPosition,
         config: {
@@ -1990,7 +2012,7 @@ export function PipelineSettings() {
       if (created) {
         setSelectedStageId(created.id);
       }
-      pushToast({ title: "Stage added", tone: "success" });
+      pushToast({ title: t("pipelinesettings.general.stageAdded"), tone: "success" });
     },
   });
 
@@ -2009,12 +2031,12 @@ export function PipelineSettings() {
       if (selectedCompanyId) {
         await queryClient.invalidateQueries({ queryKey: queryKeys.pipelines.list(selectedCompanyId) });
       }
-      pushToast({ title: "Stage deleted", tone: "success" });
+      pushToast({ title: t("pipelinesettings.general.stageDeleted"), tone: "success" });
     },
     onError: (error) => {
       pushToast({
-        title: "Failed to delete stage",
-        body: error instanceof Error ? error.message : "Paperclip could not delete the stage.",
+        title: t("pipelinesettings.general.deleteStageFailed"),
+        body: error instanceof Error ? error.message : t("pipelinesettings.general.deleteStageFallback"),
         tone: "error",
       });
     },
@@ -2031,7 +2053,7 @@ export function PipelineSettings() {
       if (selectedCompanyId) {
         await queryClient.invalidateQueries({ queryKey: queryKeys.pipelines.list(selectedCompanyId) });
       }
-      pushToast({ title: "Pipeline updated", tone: "success" });
+      pushToast({ title: t("pipelinesettings.general.pipelineUpdated"), tone: "success" });
     },
   });
 
@@ -2040,13 +2062,13 @@ export function PipelineSettings() {
       pipelinesApi.update(pipelineId!, { enforceTransitions }),
     onSuccess: async () => {
       await refreshPipeline();
-      pushToast({ title: "Transition rules updated", tone: "success" });
+      pushToast({ title: t("pipelinesettings.general.transitionRulesUpdated"), tone: "success" });
     },
     onError: (error) => {
       setStrictTransitionsEnabled(pipeline?.enforceTransitions ?? false);
       pushToast({
-        title: "Failed to update transition rules",
-        body: error instanceof Error ? error.message : "Paperclip could not update transition rules.",
+        title: t("pipelinesettings.general.transitionRulesFailed"),
+        body: error instanceof Error ? error.message : t("pipelinesettings.general.transitionRulesFallback"),
         tone: "error",
       });
     },
@@ -2064,7 +2086,7 @@ export function PipelineSettings() {
         navigate("/pipelines");
       } else {
         await refreshPipeline();
-        pushToast({ title: "Pipeline restored", tone: "success" });
+        pushToast({ title: t("pipelinesettings.general.pipelineRestored"), tone: "success" });
       }
     },
   });
@@ -2082,7 +2104,7 @@ export function PipelineSettings() {
     const nextProject = orderedProjects.find((project) => project.id === nextProjectId);
     setStageProjectId(nextProjectId);
     setStageProjectWorkspaceId(defaultProjectWorkspaceIdForProject(nextProject));
-    setStageExecutionWorkspacePreference(nextProject ? defaultExecutionWorkspaceModeForProject(nextProject) : "");
+    setStageExecutionWorkspacePreference(nextProject && workspaceIsolationControlsVisible ? defaultExecutionWorkspaceModeForProject(nextProject) : "");
     setStageExecutionWorkspaceId("");
     setStageExecutionWorkspaceSettings(null);
   };
@@ -2119,11 +2141,11 @@ export function PipelineSettings() {
   };
 
   if (!selectedCompanyId) {
-    return <EmptyState icon={Hexagon} message="Select an organization to edit pipeline settings." />;
+    return <EmptyState icon={Hexagon} message={t("pipelinesettings.general.chooseOrganizationForSettings")} />;
   }
 
   if (!pipelineId) {
-    return <EmptyState icon={Hexagon} message="No pipeline selected." />;
+    return <EmptyState icon={Hexagon} message={t("pipelinesettings.general.noPipelineSelected")} />;
   }
 
   if (pipelineQuery.isLoading) {
@@ -2135,7 +2157,7 @@ export function PipelineSettings() {
   }
 
   if (!pipeline) {
-    return <EmptyState icon={Hexagon} message="Pipeline not found." />;
+    return <EmptyState icon={Hexagon} message={t("pipelinesettings.general.pipelineNotFound")} />;
   }
 
   const isArchived = Boolean(pipeline.archivedAt);
@@ -2241,6 +2263,12 @@ export function PipelineSettings() {
     ? `/pipelines/${breakdownTargetPipelineId}/settings${breakdownIntakeStageId ? `?stage=${breakdownIntakeStageId}` : ""}`
     : null;
   const breakdownPieceNounPlural = pieceNounPlural(breakdownPieceNoun);
+  const displayPieceNoun = breakdownPieceNoun.trim() === "piece"
+    ? t("pipelinesettings.general.piece")
+    : breakdownPieceNoun.trim() || t("pipelinesettings.general.piece");
+  const displayPieceNounPlural = breakdownPieceNoun.trim() === "piece" && i18n.resolvedLanguage === "zh-CN"
+    ? displayPieceNoun
+    : breakdownPieceNounPlural;
   const stageKeyToName = new Map(stages.map((stage) => [stage.key, stage.name]));
   const breakdownCopyNames: BreakdownCopyNames = {
     targetPipelineName: breakdownTargetPipeline?.name ?? "",
@@ -2262,10 +2290,34 @@ export function PipelineSettings() {
     whenFinishedMoveTo: breakdownWhenFinishedMoveTo || null,
   };
   const breakdownSummary = breakdownEnabled
-    ? breakdownSummarySentence(breakdownConfigForCopy, breakdownCopyNames)
+    ? (() => {
+      const englishSummary = breakdownSummarySentence(breakdownConfigForCopy, breakdownCopyNames);
+      if (!englishSummary || i18n.resolvedLanguage !== "zh-CN") return englishSummary;
+      const noun = displayPieceNoun;
+      const parts = [t("pipelinesettings.general.summaryBase", {
+        noun,
+        pipeline: breakdownCopyNames.targetPipelineName,
+        stage: breakdownCopyNames.entryStageName,
+      })];
+      if (breakdownCopyNames.inheritedFieldLabels.length > 0) {
+        parts.push(t("pipelinesettings.general.summaryCarryOver", {
+          fields: breakdownCopyNames.inheritedFieldLabels.join(t("pipelinesettings.general.summaryFieldsSeparator")),
+        }));
+      }
+      if (breakdownCopyNames.advanceToName) {
+        parts.push(t("pipelinesettings.general.summaryMoveTo", { stage: breakdownCopyNames.advanceToName }));
+      }
+      if (breakdownWaitForPieces && breakdownCopyNames.whenFinishedName) {
+        parts.push(t("pipelinesettings.general.summaryWait", {
+          noun,
+          stage: breakdownCopyNames.whenFinishedName,
+        }));
+      }
+      return parts.join(t("pipelinesettings.general.summarySeparator")) + t("pipelinesettings.general.summaryEnd");
+    })()
     : null;
   const transitionTargetsControl = !isReviewStage && !isPipelineTerminalStageKind(stageKind) ? (
-    <FieldRow label="Allowed next steps">
+    <FieldRow label={t("pipelinesettings.general.allowednextsteps")}>
       <div className="space-y-2">
         {otherStages.map((stage) => {
           const isCancelled = stage.kind === "cancelled";
@@ -2294,7 +2346,7 @@ export function PipelineSettings() {
               />
               <span className="flex-1">{stage.name}</span>
               {isCancelled ? (
-                <span className="text-xs text-muted-foreground">Always available</span>
+                <span className="text-xs text-muted-foreground">{t("pipelinesettings.general.alwaysavailable")}</span>
               ) : null}
             </label>
           );
@@ -2306,13 +2358,12 @@ export function PipelineSettings() {
     <div className="rounded-lg border border-border">
       <div className="flex items-start justify-between gap-4 border-b border-border p-4">
         <div className="space-y-1">
-          <h3 className="text-sm font-semibold text-foreground">Break into smaller pieces</h3>
+          <h3 className="text-sm font-semibold text-foreground">{t("pipelinesettings.general.breakintosmallerpieces")}</h3>
           <p className="max-w-md text-sm text-muted-foreground">
-            The agent decides what the pieces are. Paperclip creates and tracks them.
-          </p>
+            {t("pipelinesettings.general.theagentdecideswhatthepiecesare")}</p>
         </div>
         <ToggleSwitch
-          aria-label="Break into smaller pieces"
+          aria-label={t("pipelinesettings.general.breakintosmallerpieces1")}
           checked={breakdownEnabled}
           onCheckedChange={(checked) => {
             setBreakdownEnabled(checked);
@@ -2324,11 +2375,11 @@ export function PipelineSettings() {
       </div>
       {breakdownEnabled ? (
         <div className="divide-y divide-border px-4">
-          <FieldRow label="Create each piece in">
+          <FieldRow label={t("pipelinesettings.general.createeachpiecein")}>
             <div className="space-y-1">
               <div className="flex w-full max-w-sm items-center">
                 <select
-                  aria-label="Create each piece in"
+                  aria-label={t("pipelinesettings.general.createeachpiecein2")}
                   value={breakdownTargetPipelineId}
                   onChange={(event) => {
                     setBreakdownTargetPipelineId(event.target.value);
@@ -2336,7 +2387,7 @@ export function PipelineSettings() {
                   }}
                   className="h-10 min-w-0 flex-1 rounded-md border border-input bg-background px-3 text-sm"
                 >
-                  <option value="">Choose a pipeline</option>
+                  <option value="">{t("pipelinesettings.general.chooseapipeline")}</option>
                   {breakdownTargetOptions.map((candidate) => (
                     <option key={candidate.id} value={candidate.id}>{candidate.name}</option>
                   ))}
@@ -2344,8 +2395,8 @@ export function PipelineSettings() {
                 {breakdownTargetPipelineId ? (
                   <Link
                     to={`/pipelines/${breakdownTargetPipelineId}`}
-                    aria-label={`Open ${breakdownTargetPipeline?.name ?? "selected"} pipeline`}
-                    title={`Open ${breakdownTargetPipeline?.name ?? "selected"} pipeline`}
+                    aria-label={t("pipelinesettings.general.openPipeline", { name: breakdownTargetPipeline?.name ?? t("pipelinesettings.general.selected") })}
+                    title={t("pipelinesettings.general.openPipeline", { name: breakdownTargetPipeline?.name ?? t("pipelinesettings.general.selected") })}
                     className="ml-2 inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   >
                     <ArrowUpRight className="h-4 w-4" />
@@ -2353,52 +2404,50 @@ export function PipelineSettings() {
                 ) : null}
               </div>
               {!breakdownTargetPipelineId ? (
-                <p className="text-xs text-muted-foreground">A pipeline in this workspace</p>
+                <p className="text-xs text-muted-foreground">{t("pipelinesettings.general.apipelineinthisworkspace")}</p>
               ) : null}
             </div>
           </FieldRow>
-          <FieldRow label="starting at">
+          <FieldRow label={t("pipelinesettings.general.startingat")}>
             <div className="space-y-1">
               <select
-                aria-label="Starting stage for each piece"
+                aria-label={t("pipelinesettings.general.startingstageforeachpiece")}
                 value={breakdownTargetStageKey}
                 onChange={(event) => setBreakdownTargetStageKey(event.target.value)}
                 disabled={!breakdownTargetPipelineId}
                 className="h-10 w-full max-w-sm rounded-md border border-input bg-background px-3 text-sm disabled:opacity-50"
               >
-                <option value="">Choose a stage</option>
+                <option value="">{t("pipelinesettings.general.chooseastage")}</option>
                 {breakdownTargetStages.map((stage) => (
                   <option key={stage.id} value={stage.key}>{stage.name}</option>
                 ))}
               </select>
-              <p className="text-xs text-muted-foreground">The stage every new piece starts in</p>
+              <p className="text-xs text-muted-foreground">{t("pipelinesettings.general.thestageeverynewpiecestartsin")}</p>
             </div>
           </FieldRow>
-          <FieldRow label="Call each piece a">
+          <FieldRow label={t("pipelinesettings.general.calleachpiecea")}>
             <div className="space-y-1">
               <Input
-                aria-label="Call each piece a"
+                aria-label={t("pipelinesettings.general.calleachpiecea3")}
                 value={breakdownPieceNoun}
                 onChange={(event) => setBreakdownPieceNoun(event.target.value)}
-                placeholder="piece"
+                placeholder={t("pipelinesettings.general.piece")}
                 className="h-10 w-full max-w-sm"
               />
               <p className="text-xs text-muted-foreground">
-                Drives copy on this case (e.g. “3 of 5 {breakdownPieceNounPlural} finished”)
-              </p>
+                {t("pipelinesettings.general.carryOverExample", { noun: displayPieceNounPlural })}</p>
             </div>
           </FieldRow>
-          <FieldRow label="Carry over">
+          <FieldRow label={t("pipelinesettings.general.carryover")}>
             <div className="space-y-2">
               <div className="space-y-1 rounded-md border border-dashed border-border bg-muted/30 px-3 py-2 text-xs">
                 <p className="text-muted-foreground">
-                  Values are copied from this item and its ancestors. New eligible fields stay on unless you uncheck them.
-                </p>
+                  {t("pipelinesettings.general.valuesarecopiedfromthisitemand")}</p>
                 {breakdownTargetPipelineId ? (
                   <div className="flex flex-wrap items-center gap-1 text-muted-foreground">
-                    <span>Destination validation:</span>
+                    <span>{t("pipelinesettings.general.destinationvalidation")}</span>
                     <span className="font-medium text-foreground">
-                      {breakdownTargetPipeline?.name ?? "selected pipeline"}
+                      {breakdownTargetPipeline?.name ?? t("pipelinesettings.general.selectedPipeline")}
                     </span>
                     {breakdownIntakeStageName ? (
                       <>
@@ -2413,15 +2462,13 @@ export function PipelineSettings() {
                     to={breakdownIntakeSettingsHref}
                     className="inline-flex items-center gap-1 font-medium text-primary hover:underline"
                   >
-                    Review destination fields
-                    <ArrowUpRight className="h-3 w-3" />
+                    {t("pipelinesettings.general.reviewdestinationfields")}<ArrowUpRight className="h-3 w-3" />
                   </Link>
                 ) : null}
                 {breakdownTargetArchived ? (
                   <p className="flex items-center gap-1 text-amber-700 dark:text-amber-300">
                     <Archive className="h-3 w-3 shrink-0" />
-                    This destination pipeline is archived, so its validation fields can't be edited until it's restored.
-                  </p>
+                    {t("pipelinesettings.general.thisdestinationpipelineisarchivedsoits")}</p>
                 ) : null}
               </div>
               {breakdownCarryOverFieldGroups.length > 0 ? (
@@ -2460,11 +2507,11 @@ export function PipelineSettings() {
                               <span className="flex-1">{field.label}</span>
                               {targetField?.required ? (
                                 <span className="text-xs text-muted-foreground">
-                                  Required by {breakdownTargetPipeline?.name ?? "destination"}
+                                  {t("pipelinesettings.general.requiredByDestination", { name: breakdownTargetPipeline?.name ?? t("pipelinesettings.general.destination") })}
                                 </span>
                               ) : targetField ? (
                                 <span className="text-xs text-muted-foreground">
-                                  Validated by {breakdownTargetPipeline?.name ?? "destination"}
+                                  {t("pipelinesettings.general.validatedByDestination", { name: breakdownTargetPipeline?.name ?? t("pipelinesettings.general.destination") })}
                                 </span>
                               ) : null}
                             </label>
@@ -2477,31 +2524,30 @@ export function PipelineSettings() {
               ) : null}
               {breakdownCarryOverFieldGroups.length === 0 ? (
                 <p className="text-sm text-muted-foreground">
-                  This pipeline and its ancestors do not define any fields that can be carried over yet.
-                </p>
+                  {t("pipelinesettings.general.thispipelineanditsancestorsdonot")}</p>
               ) : null}
               <p className="text-xs text-muted-foreground">
-                Name and title fields are kept unique for each new {breakdownPieceNoun.trim() || "piece"}.
+                {t("pipelinesettings.general.uniqueNameAndTitle", { noun: displayPieceNoun })}
               </p>
             </div>
           </FieldRow>
-          <FieldRow label="Then move this case to">
+          <FieldRow label={t("pipelinesettings.general.thenmovethiscaseto")}>
             <div className="space-y-1">
               <select
-                aria-label="Then move this case to"
+                aria-label={t("pipelinesettings.general.thenmovethiscaseto4")}
                 value={breakdownAdvanceTo}
                 onChange={(event) => setBreakdownAdvanceTo(event.target.value)}
                 className="h-10 w-full max-w-sm rounded-md border border-input bg-background px-3 text-sm"
               >
-                <option value="">Stay on this step</option>
+                <option value="">{t("pipelinesettings.general.stayonthisstep")}</option>
                 {otherStages.map((stage) => (
                   <option key={stage.id} value={stage.key}>{stage.name}</option>
                 ))}
               </select>
-              <p className="text-xs text-muted-foreground">As soon as the pieces are created</p>
+              <p className="text-xs text-muted-foreground">{t("pipelinesettings.general.assoonasthepiecesarecreated")}</p>
             </div>
           </FieldRow>
-          <FieldRow label="Wait">
+          <FieldRow label={t("pipelinesettings.general.wait")}>
             <div className="space-y-2">
               <label className="flex items-start gap-2 text-sm">
                 <input
@@ -2517,24 +2563,23 @@ export function PipelineSettings() {
                   }}
                 />
                 <span className="font-medium text-foreground">
-                  Wait until all {breakdownPieceNounPlural} are finished, then move it to
-                </span>
+                  {t("pipelinesettings.general.waitForPieces", { noun: displayPieceNounPlural })}</span>
               </label>
               <select
-                aria-label="Move this case when all pieces finish"
+                aria-label={t("pipelinesettings.general.movethiscasewhenallpiecesfinish")}
                 value={breakdownWhenFinishedMoveTo}
                 onChange={(event) => setBreakdownWhenFinishedMoveTo(event.target.value)}
                 disabled={!breakdownWaitForPieces}
                 className="h-10 w-full max-w-sm rounded-md border border-input bg-background px-3 text-sm disabled:opacity-50"
               >
-                <option value="">Choose a stage</option>
+                <option value="">{t("pipelinesettings.general.chooseastage5")}</option>
                 {otherStages.map((stage) => (
                   <option key={stage.id} value={stage.key}>{stage.name}</option>
                 ))}
               </select>
               {breakdownAdvanceTo ? (
                 <p className="text-xs text-muted-foreground">
-                  If nothing is worth splitting, this case still moves to {breakdownCopyNames.advanceToName}.
+                  {t("pipelinesettings.general.nothingToSplit", { name: breakdownCopyNames.advanceToName })}
                 </p>
               ) : null}
             </div>
@@ -2562,11 +2607,10 @@ export function PipelineSettings() {
       >
         <div className="mb-3 flex items-start justify-between gap-3">
           <Link to={`/pipelines/${pipeline.id}`} className="text-sm text-muted-foreground hover:text-foreground">
-            Back to board
-          </Link>
+            {t("pipelinesettings.general.backtoboard")}</Link>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button type="button" variant="outline" size="icon" className="h-8 w-8" title="Pipeline actions">
+              <Button type="button" variant="outline" size="icon" className="h-8 w-8" title={t("pipelinesettings.general.pipelineactions")}>
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
@@ -2574,13 +2618,11 @@ export function PipelineSettings() {
               {isArchived ? (
                 <DropdownMenuItem onSelect={() => archivePipeline.mutate(false)}>
                   <Archive className="h-4 w-4" />
-                  Restore pipeline
-                </DropdownMenuItem>
+                  {t("pipelinesettings.general.restorepipeline")}</DropdownMenuItem>
               ) : (
                 <DropdownMenuItem variant="destructive" onSelect={() => setArchiveDialogOpen(true)}>
                   <Archive className="h-4 w-4" />
-                  Archive pipeline
-                </DropdownMenuItem>
+                  {t("pipelinesettings.general.archivepipeline")}</DropdownMenuItem>
               )}
             </DropdownMenuContent>
           </DropdownMenu>
@@ -2588,9 +2630,9 @@ export function PipelineSettings() {
         <div className="grid gap-3 md:grid-cols-(--gtc-13) md:items-end">
           <div className="space-y-3">
             <label className="block space-y-1.5 text-sm font-medium">
-              <span className="sr-only">Pipeline name</span>
+              <span className="sr-only">{t("pipelinesettings.general.pipelinename")}</span>
               <Input
-                aria-label="Pipeline name"
+                aria-label={t("pipelinesettings.general.pipelinename6")}
                 value={pipelineName}
                 onChange={(event) => setPipelineName(event.target.value)}
                 required
@@ -2598,13 +2640,13 @@ export function PipelineSettings() {
               />
             </label>
             <label className="block space-y-1.5 text-sm font-medium">
-              <span className="sr-only">Pipeline description</span>
+              <span className="sr-only">{t("pipelinesettings.general.pipelinedescription")}</span>
               <Textarea
-                aria-label="Pipeline description"
+                aria-label={t("pipelinesettings.general.pipelinedescription7")}
                 value={pipelineDescription}
                 onChange={(event) => setPipelineDescription(event.target.value)}
                 rows={2}
-                placeholder="Add a description"
+                placeholder={t("pipelinesettings.general.addadescription")}
                 className="min-h-0 resize-none border-0 bg-transparent px-0 py-0 text-sm text-muted-foreground shadow-none focus-visible:ring-0"
               />
             </label>
@@ -2612,7 +2654,7 @@ export function PipelineSettings() {
           {detailsDirty || savePipelineDetails.isPending ? (
             <Button type="submit" disabled={savePipelineDetails.isPending || !pipelineName.trim()}>
               <Save className="h-4 w-4" />
-              {savePipelineDetails.isPending ? "Saving..." : "Save details"}
+              {savePipelineDetails.isPending ? t("pipelinesettings.general.saving") : t("pipelinesettings.general.savedetails")}
             </Button>
           ) : null}
         </div>
@@ -2625,8 +2667,8 @@ export function PipelineSettings() {
           {stages.length === 0 ? (
             <EmptyState
               icon={GitBranch}
-              message="No stages configured."
-              action="Add first stage"
+              message={t("pipelinesettings.general.noStages")}
+              action={t("pipelinesettings.general.addFirstStage")}
               onAction={() => addStage.mutate(null)}
             />
           ) : (
@@ -2643,7 +2685,7 @@ export function PipelineSettings() {
                           type="button"
                           aria-label={
                             warningCount > 0
-                              ? `${stage.name}, ${warningCount} ${warningCount === 1 ? "warning" : "warnings"}`
+                              ? t("pipelinesettings.general.stageWarning", { name: stage.name, count: warningCount })
                               : stage.name
                           }
                           className={cn(
@@ -2660,30 +2702,28 @@ export function PipelineSettings() {
                             {warningCount > 0 ? (
                               <span className="inline-flex shrink-0 items-center gap-1 text-xs font-semibold text-amber-700 dark:text-amber-300">
                                 <AlertTriangle className="h-3.5 w-3.5" />
-                                {warningCount} {warningCount === 1 ? "warning" : "warnings"}
+                                {t("pipelinesettings.general.warning", { count: warningCount })}
                               </span>
                             ) : null}
                           </span>
-                          <span className="mt-1 block text-xs text-muted-foreground">Step {index + 1}</span>
+                          <span className="mt-1 block text-xs text-muted-foreground">{t("pipelinesettings.general.stepNumber", { number: index + 1 })}</span>
                           {stageNewEntriesDisabled(stage) ? (
                             <span className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-amber-700 dark:text-amber-300">
                               <AlertTriangle className="h-3 w-3" />
-                              New entries paused
-                            </span>
+                              {t("pipelinesettings.general.newentriespaused")}</span>
                           ) : null}
                         </button>
                         <Link
                           to={`/pipelines/${pipelineId}`}
                           className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-foreground hover:underline"
                         >
-                          View queue
-                          <ArrowUpRight className="h-3 w-3" aria-hidden="true" />
+                          {t("pipelinesettings.general.viewqueue")}<ArrowUpRight className="h-3 w-3" aria-hidden="true" />
                         </Link>
                       </div>
                       {canInsertAfter ? (
                         <button
                           type="button"
-                          aria-label={`Insert stage after ${stage.name}`}
+                          aria-label={t("pipelinesettings.general.insertStageAfter", { name: stage.name })}
                           className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-dashed border-border text-muted-foreground hover:border-foreground hover:text-foreground"
                           onClick={() => addStage.mutate(stage)}
                           disabled={addStage.isPending}
@@ -2718,7 +2758,7 @@ export function PipelineSettings() {
                 <div className="min-w-0 flex-1 md:px-8">
                   <div className="mb-4 flex items-center justify-between gap-3">
                     <h2 className="text-lg font-semibold text-foreground">
-                      {STAGE_SECTION_TITLES[activeStageSection]}
+                      {t(`pipelinesettings.general.${STAGE_SECTION_TITLES[activeStageSection]}`)}
                     </h2>
                     {activeStageSection === "instructions" ? (
                       <div className="flex items-center gap-2">
@@ -2731,8 +2771,8 @@ export function PipelineSettings() {
                             newEntriesDisabled &&
                               "border-amber-500/50 bg-amber-500/10 text-amber-700 hover:bg-amber-500/20 dark:text-amber-300",
                           )}
-                          title={newEntriesDisabled ? "Resume new entries" : "Pause new entries"}
-                          aria-label={newEntriesDisabled ? "Resume new entries" : "Pause new entries"}
+                          title={newEntriesDisabled ? t("pipelinesettings.general.resumeNewEntries") : t("pipelinesettings.general.pauseNewEntries")}
+                          aria-label={newEntriesDisabled ? t("pipelinesettings.general.resumeNewEntries") : t("pipelinesettings.general.pauseNewEntries")}
                           onClick={() => setNewEntriesDisabled((value) => !value)}
                         >
                           {newEntriesDisabled ? <Play className="h-4 w-4" /> : <Pause className="h-4 w-4" />}
@@ -2742,8 +2782,8 @@ export function PipelineSettings() {
                           variant="outline"
                           size="icon"
                           className="h-8 w-8 text-destructive hover:text-destructive"
-                          title={`Delete ${selectedStage.name}`}
-                          aria-label={`Delete ${selectedStage.name}`}
+                          title={t("pipelinesettings.general.deleteNamedStage", { name: selectedStage.name })}
+                          aria-label={t("pipelinesettings.general.deleteNamedStage", { name: selectedStage.name })}
                           onClick={() => setDeleteStageDialogOpen(true)}
                         >
                           <Trash2 className="h-4 w-4" />
@@ -2760,22 +2800,22 @@ export function PipelineSettings() {
                   {activeStageSection === "instructions" ? (
                     <div className="w-full max-w-3xl">
                       <div className="divide-y divide-border border-b border-border">
-                        <FieldRow label="Name">
+                        <FieldRow label={t("pipelinesettings.general.name")}>
                           <Input value={stageName} onChange={(event) => setStageName(event.target.value)} required />
                         </FieldRow>
-                        <FieldRow label="Step type">
+                        <FieldRow label={t("pipelinesettings.general.steptype")}>
                           <div className="max-w-xl space-y-2">
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
                                 <Button
                                   type="button"
                                   variant="outline"
-                                  aria-label="Step type"
+                                  aria-label={t("pipelinesettings.general.steptype8")}
                                   className="h-auto min-h-10 w-full justify-between whitespace-normal px-3 py-2 text-left"
                                 >
                                   <span className="flex min-w-0 items-center gap-2">
                                     <SelectedStageKindIcon className="h-4 w-4 shrink-0 text-muted-foreground" />
-                                    <span className="truncate">{selectedStageKindOption.label}</span>
+                                    <span className="truncate">{t(`pipelinesettings.general.${selectedStageKindOption.label}`)}</span>
                                   </span>
                                   <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground" />
                                 </Button>
@@ -2792,9 +2832,9 @@ export function PipelineSettings() {
                                       >
                                         <Icon className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
                                         <span className="min-w-0">
-                                          <span className="block font-medium text-foreground">{option.label}</span>
+                                          <span className="block font-medium text-foreground">{t(`pipelinesettings.general.${option.label}`)}</span>
                                           <span className="mt-0.5 block text-xs leading-5 text-muted-foreground">
-                                            {option.description}
+                                            {t(`pipelinesettings.general.${option.description}`)}
                                           </span>
                                         </span>
                                       </DropdownMenuRadioItem>
@@ -2804,24 +2844,24 @@ export function PipelineSettings() {
                               </DropdownMenuContent>
                             </DropdownMenu>
                             <p className="text-sm leading-6 text-muted-foreground">
-                              {selectedStageKindOption.description}
+                              {t(`pipelinesettings.general.${selectedStageKindOption.description}`)}
                             </p>
                           </div>
                         </FieldRow>
 
                         {stageKind === "review" ? (
-                          <FieldRow label="Approver">
+                          <FieldRow label={t("pipelinesettings.general.approver")}>
                             <InlineEntitySelector
                               value={selectedApproval === "any_human" ? "" : selectedApproval}
                               options={approvalOptions}
                               recentOptionIds={recentAssigneeOptionIds}
-                              placeholder="Approver"
-                              noneLabel="Any human"
-                              searchPlaceholder="Search approvers..."
-                              emptyMessage="No approvers found."
+                              placeholder={t("pipelinesettings.general.approver9")}
+                              noneLabel={t("pipelinesettings.general.anyHuman")}
+                              searchPlaceholder={t("pipelinesettings.general.searchApprovers")}
+                              emptyMessage={t("pipelinesettings.general.noApprovers")}
                               onChange={(value) => setSelectedApproval(approverValueFromOption(value))}
                               renderTriggerValue={(option) => {
-                                if (!option) return <span className="text-muted-foreground">Any human</span>;
+                                if (!option) return <span className="text-muted-foreground">{t("pipelinesettings.general.anyhuman")}</span>;
                                 const agent = option.id.startsWith("agent:") ? agentById.get(option.id.slice("agent:".length)) : null;
                                 return (
                                   <>
@@ -2845,12 +2885,12 @@ export function PipelineSettings() {
                         ) : null}
 
                         {stageKind === "review" ? (
-                          <FieldRow label="Review outcomes">
+                          <FieldRow label={t("pipelinesettings.general.reviewoutcomes")}>
                             <div className="space-y-2">
                               {([
-                                ["Approved items move to", approveTarget, setApproveTarget, "Choose a stage"],
-                                ["Declined items move to", rejectTarget, setRejectTarget, "Choose a stage"],
-                                ["Items needing changes move to", requestChangesTarget, setRequestChangesTarget, "Stay in review"],
+                                [t("pipelinesettings.general.approvedItemsMoveTo"), approveTarget, setApproveTarget, t("pipelinesettings.general.chooseStage")],
+                                [t("pipelinesettings.general.declinedItemsMoveTo"), rejectTarget, setRejectTarget, t("pipelinesettings.general.chooseStage")],
+                                [t("pipelinesettings.general.changesItemsMoveTo"), requestChangesTarget, setRequestChangesTarget, t("pipelinesettings.general.stayInReview")],
                               ] as const).map(([label, value, setValue, emptyLabel]) => (
                                 <div
                                   key={label}
@@ -2871,13 +2911,13 @@ export function PipelineSettings() {
                                 </div>
                               ))}
                               <div className="grid grid-cols-1 items-center gap-2 sm:grid-cols-(--gtc-42)">
-                                <span className="text-sm font-medium">Ask for a note when requesting changes</span>
+                                <span className="text-sm font-medium">{t("pipelinesettings.general.askforanotewhenrequestingchanges")}</span>
                                 <div className="sm:justify-self-start">
                                   <ToggleSwitch checked={requireRequestChangesReason} onCheckedChange={setRequireRequestChangesReason} />
                                 </div>
                               </div>
                               <div className="grid grid-cols-1 items-center gap-2 sm:grid-cols-(--gtc-42)">
-                                <span className="text-sm font-medium">Ask for a note when declining</span>
+                                <span className="text-sm font-medium">{t("pipelinesettings.general.askforanotewhendeclining")}</span>
                                 <div className="sm:justify-self-start">
                                   <ToggleSwitch checked={requireRejectReason} onCheckedChange={setRequireRejectReason} />
                                 </div>
@@ -2885,8 +2925,7 @@ export function PipelineSettings() {
                             </div>
                             {reviewTargetsMissing ? (
                               <p className="mt-2 text-sm text-muted-foreground">
-                                Pick where approved and declined items should go before saving.
-                              </p>
+                                {t("pipelinesettings.general.pickwhereapprovedanddeclineditemsshould")}</p>
                             ) : null}
                           </FieldRow>
                         ) : null}
@@ -2899,18 +2938,18 @@ export function PipelineSettings() {
                     <div className="mt-8 w-full max-w-3xl space-y-6">
                       <div className="overflow-x-auto overscroll-x-contain">
                         <div className="inline-flex min-w-full flex-wrap items-center gap-2 text-sm text-muted-foreground sm:min-w-max sm:flex-nowrap">
-                          <span>When an item enters this step</span>
+                          <span>{t("pipelinesettings.general.whenanitementersthisstep")}</span>
                           <InlineEntitySelector
                             value={stageAssigneeOptionId(stageAssigneeAgentId)}
                             options={stageAssigneeOptions}
                             recentOptionIds={recentAssigneeOptionIds}
-                            placeholder="Pick agent"
-                            noneLabel="No automation"
-                            searchPlaceholder="Search agents..."
-                            emptyMessage="No agents found."
+                            placeholder={t("pipelinesettings.general.pickagent")}
+                            noneLabel={t("pipelinesettings.general.noAutomation")}
+                            searchPlaceholder={t("pipelinesettings.general.searchAgents")}
+                            emptyMessage={t("pipelinesettings.general.noAgents")}
                             onChange={(value) => setStageAssigneeAgentId(stageAssigneeIdFromOption(value))}
                             renderTriggerValue={(option) => {
-                              if (!option) return <span className="text-muted-foreground">Pick agent</span>;
+                              if (!option) return <span className="text-muted-foreground">{t("pipelinesettings.general.pickagent10")}</span>;
                               const agent = stageAssigneeIdFromOption(option.id)
                                 ? agentById.get(stageAssigneeIdFromOption(option.id))
                                 : null;
@@ -2933,23 +2972,23 @@ export function PipelineSettings() {
                               );
                             }}
                           />
-                          <span>runs these instructions, then moves the item to the next step.</span>
+                          <span>{t("pipelinesettings.general.runstheseinstructionsthenmovestheitem")}</span>
                         </div>
                       </div>
 
                       {selectedAutomationAgent ? (
                         <>
                           <div className="divide-y divide-border border-y border-border">
-                            <FieldRow label="Project context">
+                            <FieldRow label={t("pipelinesettings.general.projectcontext")}>
                               <div className="grid gap-2 sm:grid-cols-(--gtc-43)">
                                 <InlineEntitySelector
                                   value={stageProjectId}
                                   options={projectOptions}
                                   recentOptionIds={recentProjectIds}
-                                  placeholder="Project"
-                                  noneLabel="No project"
-                                  searchPlaceholder="Search projects..."
-                                  emptyMessage="No projects found."
+                                  placeholder={t("pipelinesettings.general.project")}
+                                  noneLabel={t("pipelinesettings.general.noProject")}
+                                  searchPlaceholder={t("pipelinesettings.general.searchProjects")}
+                                  emptyMessage={t("pipelinesettings.general.noProjects")}
                                   onChange={handleAutomationProjectChange}
                                   renderTriggerValue={(option) =>
                                     option && selectedAutomationProject ? (
@@ -2961,7 +3000,7 @@ export function PipelineSettings() {
                                         <span className="truncate">{option.label}</span>
                                       </>
                                     ) : (
-                                      <span className="text-muted-foreground">Project</span>
+                                      <span className="text-muted-foreground">{t("pipelinesettings.general.project11")}</span>
                                     )
                                   }
                                   renderOption={(option) => {
@@ -2980,12 +3019,12 @@ export function PipelineSettings() {
                                 />
                                 {selectedAutomationProject ? (
                                   <select
-                                    aria-label="Project workspace"
+                                    aria-label={t("pipelinesettings.general.projectworkspace")}
                                     value={stageProjectWorkspaceId}
                                     onChange={(event) => handleAutomationProjectWorkspaceChange(event.target.value)}
                                     className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
                                   >
-                                    <option value="">Project fallback</option>
+                                    <option value="">{t("pipelinesettings.general.projectfallback")}</option>
                                     {(selectedAutomationProject.workspaces ?? []).map((workspace) => (
                                       <option key={workspace.id} value={workspace.id}>
                                         {workspace.name}{workspace.isPrimary ? " · primary" : ""}
@@ -2994,40 +3033,38 @@ export function PipelineSettings() {
                                   </select>
                                 ) : (
                                   <div className="flex h-10 items-center rounded-md border border-dashed border-border px-3 text-sm text-muted-foreground">
-                                    Project workspace
-                                  </div>
+                                    {t("pipelinesettings.general.projectworkspace12")}</div>
                                 )}
                               </div>
                               {selectedAutomationProject && !selectedAutomationProjectWorkspace ? (
                                 <p className="mt-2 text-xs text-muted-foreground">
-                                  This project has no saved workspace default. Paperclip will use the project fallback when automation runs.
-                                </p>
+                                  {t("pipelinesettings.general.thisprojecthasnosavedworkspacedefault")}</p>
                               ) : null}
                             </FieldRow>
 
                             {selectedAutomationProject && selectedProjectSupportsExecutionWorkspace ? (
-                              <FieldRow label="Execution workspace">
+                              <FieldRow label={t("pipelinesettings.general.executionworkspace")}>
                                 <div className="grid gap-2 sm:grid-cols-(--gtc-43)">
                                   <select
-                                    aria-label="Execution workspace mode"
+                                    aria-label={t("pipelinesettings.general.executionworkspacemode")}
                                     value={stageExecutionWorkspacePreference || "shared_workspace"}
                                     onChange={(event) => handleAutomationExecutionWorkspacePreferenceChange(event.target.value)}
                                     className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
                                   >
                                     {STAGE_EXECUTION_WORKSPACE_OPTIONS.map((option) => (
                                       <option key={option.value} value={option.value}>
-                                        {option.label}
+                                        {t(`pipelinesettings.general.${option.label}`)}
                                       </option>
                                     ))}
                                   </select>
                                   {stageExecutionWorkspacePreference === "reuse_existing" ? (
                                     <select
-                                      aria-label="Existing execution workspace"
+                                      aria-label={t("pipelinesettings.general.existingexecutionworkspace")}
                                       value={stageExecutionWorkspaceId}
                                       onChange={(event) => handleAutomationExecutionWorkspaceIdChange(event.target.value)}
                                       className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
                                     >
-                                      <option value="">Choose an existing workspace</option>
+                                      <option value="">{t("pipelinesettings.general.chooseanexistingworkspace")}</option>
                                       {deduplicatedReusableWorkspaces.map((workspace) => (
                                         <option key={workspace.id} value={workspace.id}>
                                           {workspace.name} · {workspace.status} · {workspace.branchName ?? workspace.cwd ?? workspace.id.slice(0, 8)}
@@ -3037,32 +3074,31 @@ export function PipelineSettings() {
                                   ) : (
                                     <div className="flex h-10 items-center rounded-md border border-dashed border-border px-3 text-sm text-muted-foreground">
                                       {stageExecutionWorkspacePreference === "isolated_workspace"
-                                        ? "A new workspace will be created"
-                                        : "Project default workspace"}
+                                        ? t("pipelinesettings.general.anewworkspacewillbecreated")
+                                        : t("pipelinesettings.general.projectdefaultworkspace")}
                                     </div>
                                   )}
                                 </div>
                                 {stageExecutionWorkspacePreference === "reuse_existing" && selectedReusableExecutionWorkspace ? (
                                   <p className="mt-2 text-xs text-muted-foreground">
-                                    Reusing {selectedReusableExecutionWorkspace.name} from {selectedReusableExecutionWorkspace.branchName ?? selectedReusableExecutionWorkspace.cwd ?? "existing workspace"}.
+                                    {t("pipelinesettings.general.reusingWorkspace", { name: selectedReusableExecutionWorkspace.name, source: selectedReusableExecutionWorkspace.branchName ?? selectedReusableExecutionWorkspace.cwd ?? t("pipelinesettings.general.existingworkspace") })}
                                   </p>
                                 ) : null}
                                 {!canSaveAutomationWorkspace ? (
                                   <p className="mt-2 text-xs text-amber-700 dark:text-amber-300">
-                                    Choose an existing workspace before saving reuse mode.
-                                  </p>
+                                    {t("pipelinesettings.general.chooseanexistingworkspacebeforesavingreuse")}</p>
                                 ) : null}
                               </FieldRow>
                             ) : null}
                           </div>
                           <div className="flex items-center gap-2 text-sm text-muted-foreground">
                             <AgentAvatar agent={selectedAutomationAgent} size={16} className="h-4 w-4 shrink-0"/>
-                            <span>{selectedAutomationAgent.name} runs this step automatically.</span>
+                            <span>{t("pipelinesettings.general.agentRunsStep", { name: selectedAutomationAgent.name })}</span>
                           </div>
-                          <FieldRow label="Issue title">
+                          <FieldRow label={t("pipelinesettings.general.issuetitle")}>
                             <Input
                               ref={issueTitleTemplateInputRef}
-                              aria-label="Issue title template"
+                              aria-label={t("pipelinesettings.general.issuetitletemplate")}
                               value={issueTitleTemplate}
                               onChange={(event) => setIssueTitleTemplate(event.target.value)}
                               placeholder={PIPELINE_AUTOMATION_DEFAULT_TITLE_TEMPLATE}
@@ -3072,14 +3108,13 @@ export function PipelineSettings() {
                           <AutomationVariableTokenHelper
                             groups={automationVariableGroups}
                             onInsert={insertIssueTitleVariableToken}
-                            label="Issue title variables"
+                            label={t("pipelinesettings.general.issuetitlevariables")}
                           />
                           {breakdownEnabled ? (
                             <div className="space-y-1">
-                              <h3 className="text-sm font-semibold text-foreground">What should the agent decide?</h3>
+                              <h3 className="text-sm font-semibold text-foreground">{t("pipelinesettings.general.whatshouldtheagentdecide")}</h3>
                               <p className="text-sm text-muted-foreground">
-                                The mechanics are handled below. Write only the judgment.
-                              </p>
+                                {t("pipelinesettings.general.themechanicsarehandledbelowwriteonly")}</p>
                             </div>
                           ) : null}
                           <div data-testid="stage-instructions-editor">
@@ -3089,8 +3124,8 @@ export function PipelineSettings() {
                               onChange={setInstructionsBody}
                               placeholder={
                                 breakdownEnabled
-                                  ? "Describe the judgment the agent should make — what counts as a piece worth splitting out?"
-                                  : "Tell the agent exactly what to do when an item enters this step..."
+                                  ? t("pipelinesettings.general.describeBreakdownJudgment")
+                                  : t("pipelinesettings.general.tellAgentWhatToDo")
                               }
                               bordered={false}
                               contentClassName="min-h-(--sz-120px) text-sm leading-7"
@@ -3114,7 +3149,7 @@ export function PipelineSettings() {
                       ) : (
                         <EmptyState
                           icon={Pause}
-                          message="Nothing runs here automatically. Items wait until a person moves them, or you can pick an agent to run this step."
+                          message={t("pipelinesettings.general.noAutomationMessage")}
                         />
                       )}
                       <div className="space-y-3">
@@ -3163,13 +3198,13 @@ export function PipelineSettings() {
                     <div className="w-full max-w-3xl space-y-8">
                       <div className="divide-y divide-border border-b border-border">
                         <div className="py-3">
-                          <h3 className="text-sm font-semibold text-foreground">Transitions</h3>
+                          <h3 className="text-sm font-semibold text-foreground">{t("pipelinesettings.general.transitions")}</h3>
                         </div>
-                        <FieldRow label="Strict mode">
+                        <FieldRow label={t("pipelinesettings.general.strictmode")}>
                           <div className="space-y-1.5">
                             <div className="flex items-center gap-3">
                               <ToggleSwitch
-                                aria-label="Strictly enforce transitions"
+                                aria-label={t("pipelinesettings.general.strictlyenforcetransitions")}
                                 checked={strictTransitionsEnabled}
                                 disabled={saveStrictTransitions.isPending}
                                 onCheckedChange={(checked) => {
@@ -3178,13 +3213,12 @@ export function PipelineSettings() {
                                 }}
                               />
                               <span className="text-sm font-medium text-foreground">
-                                Strictly enforce transitions
-                              </span>
+                                {t("pipelinesettings.general.strictlyenforcetransitions13")}</span>
                             </div>
                             <p className="max-w-2xl text-sm text-muted-foreground">
                               {strictTransitionsEnabled
-                                ? "Items can only move to configured next steps. Operators can force an off-path move by giving a reason."
-                                : "Items can move to any step. Saved allowed-next-step choices are kept, but they are not enforced."}
+                                ? t("pipelinesettings.general.itemscanonlymovetoconfigurednext")
+                                : t("pipelinesettings.general.itemscanmovetoanystepsaved")}
                             </p>
                           </div>
                         </FieldRow>
@@ -3193,14 +3227,14 @@ export function PipelineSettings() {
                       {isPipelineTerminalStageKind(stageKind) ? null : breakdownEnabled ? (
                         <EmptyState
                           icon={SlidersHorizontal}
-                          message="Advanced child settings are hidden while Break into smaller pieces is enabled. Configure that workflow in Automation."
+                          message={t("pipelinesettings.general.advancedHidden")}
                         />
                       ) : (
                         <div className="divide-y divide-border border-b border-border">
                           <div className="py-3">
-                            <h3 className="text-sm font-semibold text-foreground">Children</h3>
+                            <h3 className="text-sm font-semibold text-foreground">{t("pipelinesettings.general.children")}</h3>
                           </div>
-                          <FieldRow label="Block children">
+                          <FieldRow label={t("pipelinesettings.general.blockchildren")}>
                             <div className="space-y-1.5">
                               <div className="flex items-center gap-3">
                                 <ToggleSwitch
@@ -3208,15 +3242,13 @@ export function PipelineSettings() {
                                   onCheckedChange={setRequireChildrenTerminal}
                                 />
                                 <span className="text-sm font-medium text-foreground">
-                                  Block until all child items are done or cancelled
-                                </span>
+                                  {t("pipelinesettings.general.blockuntilallchilditemsaredone")}</span>
                               </div>
                               <p className="max-w-2xl text-sm text-muted-foreground">
-                                When on, this step can't move forward while any child item is still open. When off, items can move through even with open children.
-                              </p>
+                                {t("pipelinesettings.general.whenonthisstepcantmove")}</p>
                             </div>
                           </FieldRow>
-                          <FieldRow label="Advance children">
+                          <FieldRow label={t("pipelinesettings.general.advancechildren")}>
                             <div className="space-y-3">
                               <div className="flex items-center gap-3">
                                 <ToggleSwitch
@@ -3226,27 +3258,25 @@ export function PipelineSettings() {
                                   }}
                                 />
                                 <span className="text-sm font-medium text-foreground">
-                                  Advance when the last child is done
-                                </span>
+                                  {t("pipelinesettings.general.advancewhenthelastchildisdone")}</span>
                               </div>
                               <div className="grid grid-cols-1 items-center gap-2 sm:grid-cols-(--gtc-44)">
-                                <span className="text-sm font-medium text-muted-foreground">Move to</span>
+                                <span className="text-sm font-medium text-muted-foreground">{t("pipelinesettings.general.moveto")}</span>
                                 <select
-                                  aria-label="Move to stage when children finish"
+                                  aria-label={t("pipelinesettings.general.movetostagewhenchildrenfinish")}
                                   value={autoAdvanceOnChildrenTerminal}
                                   onChange={(event) => setAutoAdvanceOnChildrenTerminal(event.target.value)}
                                   disabled={!autoAdvanceOnChildrenTerminal}
                                   className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm disabled:opacity-50"
                                 >
-                                  <option value="">Choose a stage</option>
+                                  <option value="">{t("pipelinesettings.general.chooseastage14")}</option>
                                   {otherStages.map((stage) => (
                                     <option key={stage.id} value={stage.key}>{stage.name}</option>
                                   ))}
                                 </select>
                               </div>
                               <p className="max-w-2xl text-sm text-muted-foreground">
-                                When on and every child is done, this step moves the item forward automatically. When off, someone has to move it.
-                              </p>
+                                {t("pipelinesettings.general.whenonandeverychildisdone")}</p>
                             </div>
                           </FieldRow>
                         </div>
@@ -3262,7 +3292,7 @@ export function PipelineSettings() {
                         <StageEventsList
                           events={stageEvents}
                           stages={stages}
-                          emptyMessage="No stage activity yet."
+                          emptyMessage={t("pipelinesettings.general.noStageActivity")}
                         />
                       )}
                     </div>
@@ -3292,14 +3322,14 @@ export function PipelineSettings() {
               {stageDirty || saveStage.isPending ? (
                 <div className="sticky bottom-0 z-10 -mx-6 mt-6 flex items-center justify-between gap-3 border-t border-border bg-background/95 px-6 py-3 backdrop-blur motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-2">
                   <span className="text-sm text-muted-foreground">
-                    {saveStage.isPending ? "Saving changes…" : "You have unsaved changes."}
+                    {saveStage.isPending ? t("pipelinesettings.general.savingchanges") : t("pipelinesettings.general.youhaveunsavedchanges")}
                   </span>
                   <Button
                     type="submit"
                     disabled={saveStage.isPending || !stageName.trim() || reviewTargetsMissing || !canSaveAutomationWorkspace}
                   >
                     {saveStage.isPending ? <Check className="h-4 w-4" /> : <Save className="h-4 w-4" />}
-                    {saveStage.isPending ? "Saving..." : "Save stage"}
+                    {saveStage.isPending ? t("pipelinesettings.general.saving15") : t("pipelinesettings.general.savestage")}
                   </Button>
                 </div>
               ) : null}
@@ -3312,17 +3342,16 @@ export function PipelineSettings() {
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete stage</DialogTitle>
+            <DialogTitle>{t("pipelinesettings.general.deletestage")}</DialogTitle>
             <DialogDescription>
-              Delete {selectedStage?.name ?? "this stage"} from this pipeline. Connected stage transitions are removed.
-            </DialogDescription>
+              {t("pipelinesettings.general.deleteStageConfirmation", { name: selectedStage?.name ?? t("pipelinesettings.general.thisstage") })}</DialogDescription>
           </DialogHeader>
           <div className="space-y-3">
             {stages.length > 1 ? (
               <label className="block space-y-1.5 text-sm font-medium">
-                <span>Move existing items to</span>
+                <span>{t("pipelinesettings.general.moveexistingitemsto")}</span>
                 <select
-                  aria-label="Move existing items to"
+                  aria-label={t("pipelinesettings.general.moveexistingitemsto16")}
                   value={deleteMoveTargetStageId}
                   onChange={(event) => setDeleteMoveTargetStageId(event.target.value)}
                   className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
@@ -3336,8 +3365,7 @@ export function PipelineSettings() {
               </label>
             ) : (
               <p className="text-sm text-muted-foreground">
-                This is the only stage. Deletion succeeds only if it has no items.
-              </p>
+                {t("pipelinesettings.general.thisistheonlystagedeletionsucceeds")}</p>
             )}
             {deleteStage.error ? (
               <p className="text-sm text-destructive">{deleteStage.error.message}</p>
@@ -3350,8 +3378,7 @@ export function PipelineSettings() {
               onClick={() => setDeleteStageDialogOpen(false)}
               disabled={deleteStage.isPending}
             >
-              Cancel
-            </Button>
+              {t("pipelinesettings.general.cancel")}</Button>
             <Button
               type="button"
               variant="destructive"
@@ -3359,7 +3386,7 @@ export function PipelineSettings() {
               onClick={() => deleteStage.mutate()}
             >
               <Trash2 className="h-4 w-4" />
-              {deleteStage.isPending ? "Deleting..." : "Delete stage"}
+              {deleteStage.isPending ? t("pipelinesettings.general.deleting") : t("pipelinesettings.general.deletestage17")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -3374,16 +3401,15 @@ export function PipelineSettings() {
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Archive pipeline</DialogTitle>
+            <DialogTitle>{t("pipelinesettings.general.archivepipeline18")}</DialogTitle>
             <DialogDescription>
-              Archiving hides this pipeline from everyday views. Its stages and items are kept and can be restored later.
-            </DialogDescription>
+              {t("pipelinesettings.general.archivinghidesthispipelinefromeverydayviews")}</DialogDescription>
           </DialogHeader>
           <div className="space-y-3">
             <label className="block space-y-1.5 text-sm font-medium">
-              <span>Type {pipeline.name} to confirm</span>
+              <span>{t("pipelinesettings.general.typeToConfirm", { name: pipeline.name })}</span>
               <Input
-                aria-label="Archive confirmation"
+                aria-label={t("pipelinesettings.general.archiveconfirmation")}
                 value={archiveConfirmation}
                 onChange={(event) => setArchiveConfirmation(event.target.value)}
                 autoComplete="off"
@@ -3400,8 +3426,7 @@ export function PipelineSettings() {
               onClick={() => setArchiveDialogOpen(false)}
               disabled={archivePipeline.isPending}
             >
-              Cancel
-            </Button>
+              {t("pipelinesettings.general.cancel19")}</Button>
             <Button
               type="button"
               variant="destructive"
@@ -3409,7 +3434,7 @@ export function PipelineSettings() {
               onClick={() => archivePipeline.mutate(true)}
             >
               <Archive className="h-4 w-4" />
-              {archivePipeline.isPending ? "Archiving..." : "Archive pipeline"}
+              {archivePipeline.isPending ? t("pipelinesettings.general.archiving") : t("pipelinesettings.general.archivepipeline20")}
             </Button>
           </DialogFooter>
         </DialogContent>

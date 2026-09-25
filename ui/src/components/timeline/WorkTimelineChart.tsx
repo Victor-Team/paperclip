@@ -27,6 +27,7 @@ import {
   type LayoutOptions,
   type PositionedBar,
 } from "@/lib/timeline/layout";
+import { t as translate, useTranslation } from "@/i18n";
 
 export type ZoomLevel = "hour" | "day" | "week";
 
@@ -110,7 +111,7 @@ interface TooltipState {
   x: number;
   y: number;
   bar: PositionedBar;
-  connectorHint: string | null;
+  connectorHint: "dashed" | "solid" | null;
 }
 
 interface DragSelectionState {
@@ -118,46 +119,56 @@ interface DragSelectionState {
   currentX: number;
 }
 
-function fmtClock(ms: number): string {
+function fmtClock(ms: number, locale: string): string {
   const d = new Date(ms);
   const hasMinutes = d.getMinutes() !== 0;
-  return d.toLocaleTimeString("en-US", {
+  return d.toLocaleTimeString(locale, {
     hour: "numeric",
     minute: hasMinutes ? "2-digit" : undefined,
-    hour12: true,
+    hour12: locale === "en-US",
   });
 }
 
-function fmtTick(ms: number, stepMs: number): string {
+function fmtTick(ms: number, stepMs: number, locale: string): string {
   const d = new Date(ms);
-  const date = d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  const date = d.toLocaleDateString(locale, { month: "short", day: "numeric" });
   if (stepMs >= 24 * 60 * 60 * 1000) {
     return date;
   }
-  return `${date}, ${fmtClock(ms)}`;
+  return `${date}, ${fmtClock(ms, locale)}`;
 }
 
 export function formatVisibleDurationMinutes(minutes: number): string {
   const rounded = Math.max(1, Math.round(minutes));
   if (rounded >= 7 * 24 * 60 && rounded % (7 * 24 * 60) === 0) {
     const weeks = rounded / (7 * 24 * 60);
-    return `${weeks} week${weeks === 1 ? "" : "s"} visible`;
+    return translate(weeks === 1 ? "worktimelinechart.general.weekvisible" : "worktimelinechart.general.weeksvisible", { count: weeks });
   }
   if (rounded >= 24 * 60 && rounded % (24 * 60) === 0) {
     const days = rounded / (24 * 60);
-    return `${days} day${days === 1 ? "" : "s"} visible`;
+    return translate(days === 1 ? "worktimelinechart.general.dayvisible" : "worktimelinechart.general.daysvisible", { count: days });
   }
   if (rounded >= 24 * 60) {
     const days = Math.floor(rounded / (24 * 60));
     const hours = Math.round((rounded % (24 * 60)) / 60);
-    return `${days}d${hours > 0 ? ` ${hours}h` : ""} visible`;
+    return hours > 0
+      ? translate("worktimelinechart.general.dayhourvisible", { days, hours })
+      : translate("worktimelinechart.general.dayvisible", { count: days });
   }
   if (rounded >= 60 && rounded % 60 === 0) {
     const hours = rounded / 60;
-    return `${hours} hour${hours === 1 ? "" : "s"} visible`;
+    return translate(hours === 1 ? "worktimelinechart.general.hourvisible" : "worktimelinechart.general.hoursvisible", { count: hours });
   }
-  if (rounded >= 60) return `${Math.floor(rounded / 60)}h ${rounded % 60}m visible`;
-  return `${rounded} minutes visible`;
+  if (rounded >= 60) return translate("worktimelinechart.general.hourminutevisible", { hours: Math.floor(rounded / 60), minutes: rounded % 60 });
+  return translate("worktimelinechart.general.minutesvisible", { count: rounded });
+}
+
+function formatElapsedDuration(startMs: number, endMs: number, language: string): string {
+  if (language !== "zh-CN") return formatDuration(startMs, endMs);
+  const minutes = Math.max(0, Math.round((endMs - startMs) / 60000));
+  if (minutes >= 1440) return translate("worktimelinechart.general.dayhourelapsed", { days: Math.floor(minutes / 1440), hours: Math.floor((minutes % 1440) / 60) });
+  if (minutes >= 60) return translate("worktimelinechart.general.hourminuteelapsed", { hours: Math.floor(minutes / 60), minutes: minutes % 60 });
+  return translate("worktimelinechart.general.minuteelapsed", { minutes });
 }
 
 function truncate(text: string, n = 42): string {
@@ -258,6 +269,7 @@ export function WorkTimelineChart({
   onVisibleWindowChange,
   nowMs,
 }: WorkTimelineChartProps) {
+  const { i18n: timelineI18n } = useTranslation();
   const location = useLocation();
   const scrollRef = useRef<HTMLDivElement>(null);
   const initialWindowKeyRef = useRef<string | null>(null);
@@ -364,7 +376,7 @@ export function WorkTimelineChart({
     const effectiveViewportW = viewportW || DEFAULT_VIEWPORT_W;
     const minutes = plotViewportWidth(effectiveViewportW) / layout.pxPerMinute;
     onVisibleRangeLabelChange(formatVisibleDurationMinutes(minutes));
-  }, [layout.pxPerMinute, onVisibleRangeLabelChange, viewportW]);
+  }, [layout.pxPerMinute, onVisibleRangeLabelChange, viewportW, timelineI18n.resolvedLanguage]);
 
   useEffect(() => {
     if (!onVisibleWindowChange || viewportW <= 0) return;
@@ -440,12 +452,10 @@ export function WorkTimelineChart({
     setDocumentDrag(move, up);
   };
 
-  const connectorHintForBar = (bar: PositionedBar): string | null => {
+  const connectorHintForBar = (bar: PositionedBar): TooltipState["connectorHint"] => {
     const related = layout.connectors.filter((c) => c.sourceRunId === bar.span.runId || c.targetRunId === bar.span.runId);
     if (related.length === 0) return null;
-    return related.some((c) => c.dashed)
-      ? "dashed handoff: retry or changes requested"
-      : "solid handoff: delegation or assignment";
+    return related.some((c) => c.dashed) ? "dashed" : "solid";
   };
 
   const showTooltip = (evt: React.MouseEvent, bar: PositionedBar) => {
@@ -736,6 +746,8 @@ function TimeAxisOverlay({
   stepMs: number;
   scrollLeft: number;
 }) {
+  const { i18n: axisI18n } = useTranslation();
+  const locale = axisI18n.resolvedLanguage === "zh-CN" ? "zh-CN" : "en-US";
   return (
     <div
       aria-hidden="true"
@@ -757,7 +769,7 @@ function TimeAxisOverlay({
             <g key={`axis-tick-${ms}`}>
               <line x1={gx} y1={AXIS_H - 7} x2={gx} y2={AXIS_H} stroke="var(--color-border)" strokeWidth={1} />
               <text x={gx + 3} y={19} fontSize={11} fill="var(--color-muted-foreground)">
-                {fmtTick(ms, stepMs)}
+                {fmtTick(ms, stepMs, locale)}
               </text>
             </g>
           );
@@ -779,10 +791,12 @@ function TimeAxisOverlay({
 }
 
 function Tooltip({ tooltip, now }: { tooltip: TooltipState; now: number }) {
+  const { t, i18n: tooltipI18n } = useTranslation();
+  const locale = tooltipI18n.resolvedLanguage === "zh-CN" ? "zh-CN" : "en-US";
   const { bar } = tooltip;
   const startMs = new Date(bar.span.start).getTime();
   const endMs = bar.span.end ? new Date(bar.span.end).getTime() : now;
-  const title = bar.span.issueTitle ?? bar.span.issueIdentifier ?? "run";
+  const title = bar.span.issueTitle ?? bar.span.issueIdentifier ?? t("worktimelinechart.general.run");
   const left = Math.min(tooltip.x + 14, (typeof window !== "undefined" ? window.innerWidth : 1200) - 300);
   return (
     <div
@@ -792,17 +806,17 @@ function Tooltip({ tooltip, now }: { tooltip: TooltipState; now: number }) {
     >
       <div className="text-(length:--text-compact) font-medium text-foreground">{truncate(title)}</div>
       <div className="mt-0.5 text-muted-foreground">
-        {fmtClock(startMs)}–{bar.span.end ? fmtClock(endMs) : "now"} · {formatDuration(startMs, endMs)} ·{" "}
-        <span className="font-medium text-foreground">{bar.span.status}</span>
+        {fmtClock(startMs, locale)}–{bar.span.end ? fmtClock(endMs, locale) : t("worktimelinechart.general.now")} · {formatElapsedDuration(startMs, endMs, tooltipI18n.resolvedLanguage ?? "en")} ·{" "}
+        <span className="font-medium text-foreground">{t(`worktimelinechart.status.${bar.span.status}`, { defaultValue: bar.span.status })}</span>
       </div>
       {bar.kickoff && (
         <div className="text-muted-foreground">
-          kicked off by: {(bar.kickoff as WorkTimelineActor).name}
-          {bar.span.retryOfRunId ? " · retry" : ""}
+          {t("worktimelinechart.general.kickedoffby")} {(bar.kickoff as WorkTimelineActor).name}
+          {bar.span.retryOfRunId ? t("worktimelinechart.general.retry") : ""}
         </div>
       )}
       {tooltip.connectorHint && (
-        <div className="text-muted-foreground">{tooltip.connectorHint}</div>
+        <div className="text-muted-foreground">{t(tooltip.connectorHint === "dashed" ? "worktimelinechart.general.dashedhandoff" : "worktimelinechart.general.solidhandoff")}</div>
       )}
     </div>
   );
@@ -821,6 +835,7 @@ function MiniMap({
   scrollLeft: number;
   onVisibleRangeChange: (fromMs: number, toMs: number) => void;
 }) {
+  const { t } = useTranslation();
   const documentDragCleanupRef = useRef<(() => void) | null>(null);
   const W = Math.max(320, viewportW || 900);
   const H = 54;
@@ -946,7 +961,7 @@ function MiniMap({
           height={H - 2}
           width={handleW}
           testId="timeline-minimap-left-handle"
-          label="Drag left edge to resize visible range"
+          label={t("worktimelinechart.general.dragleftedgetoresizevisiblerange")}
           onMouseDown={(e) => startRangeDrag("left", e)}
         />
         <MiniMapHandle
@@ -955,7 +970,7 @@ function MiniMap({
           height={H - 2}
           width={handleW}
           testId="timeline-minimap-right-handle"
-          label="Drag right edge to resize visible range"
+          label={t("worktimelinechart.general.dragrightedgetoresizevisiblerange")}
           onMouseDown={(e) => startRangeDrag("right", e)}
         />
       </svg>

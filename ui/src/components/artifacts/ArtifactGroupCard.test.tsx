@@ -4,6 +4,7 @@ import { flushSync } from "react-dom";
 import { createRoot } from "react-dom/client";
 import { MemoryRouter } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { i18n } from "@/i18n";
 import { ArtifactGroupCard } from "./ArtifactGroupCard";
 import type { CompanyArtifact, CompanyArtifactGroup } from "@/api/artifacts";
 
@@ -63,16 +64,18 @@ function render(group: CompanyArtifactGroup, to = "?groupBy=task&groupIssueId=is
 describe("ArtifactGroupCard", () => {
   let mounted: { container: HTMLElement; root: ReturnType<typeof createRoot> } | null = null;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     mounted = null;
+    await i18n.changeLanguage("en");
   });
 
-  afterEach(() => {
+  afterEach(async () => {
     if (mounted) {
       flushSync(() => mounted!.root.unmount());
       mounted.container.remove();
       mounted = null;
     }
+    await i18n.changeLanguage("en");
   });
 
   it("shows a stack effect and plural count when count > 1", () => {
@@ -117,5 +120,36 @@ describe("ArtifactGroupCard", () => {
     expect(mounted.container.querySelector("img")).toBeNull();
     const card = mounted.container.querySelector('[data-testid="artifact-group-card"]') as HTMLElement;
     expect(card).not.toBeNull();
+  });
+
+  it("retranslates count pluralization and updated date on a live Chinese switch", async () => {
+    const updatedAt = new Date(2026, 5, 1, 12, 0, 0, 0).toISOString();
+    mounted = render(sampleGroup({ count: 3, updatedAt, title: "Ship launch" }));
+
+    expect(mounted.container.textContent).toContain("3 artifacts");
+    expect(mounted.container.textContent).toContain("Updated Jun 1, 2026");
+    expect(mounted.container.textContent).toContain("PAP-42");
+    expect(mounted.container.textContent).toContain("Ship launch");
+
+    await i18n.changeLanguage("zh-CN");
+
+    const zhDate = new Date(updatedAt).toLocaleDateString("zh-CN", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+    expect(mounted.container.textContent).toContain("3 个产物");
+    expect(mounted.container.textContent).not.toContain("3 artifacts");
+    expect(mounted.container.textContent).toContain(`已更新 ${zhDate}`);
+    expect(mounted.container.textContent).not.toContain("Updated ");
+    expect(mounted.container.textContent).toContain("PAP-42");
+    expect(mounted.container.textContent).toContain("Ship launch");
+
+    flushSync(() => mounted!.root.unmount());
+    mounted.container.remove();
+    mounted = render(sampleGroup({ count: 1, updatedAt, title: "Ship launch" }));
+    expect(mounted.container.textContent).toContain("1 个产物");
+    expect(mounted.container.textContent).not.toContain("1 artifact");
+    expect(mounted.container.textContent).toContain("PAP-42");
   });
 });

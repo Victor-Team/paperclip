@@ -5,6 +5,7 @@ import { projectsApi } from "@/api/projects";
 import { routinesApi } from "@/api/routines";
 import { toolsApi } from "@/api/tools";
 import { queryKeys } from "@/lib/queryKeys";
+import { useTranslation } from "@/i18n";
 import { groupCatalogByApp } from "./profile-model";
 
 /**
@@ -13,6 +14,7 @@ import { groupCatalogByApp } from "./profile-model";
  * connection) and the lookup maps both surfaces need.
  */
 export function useProfilesData(companyId: string) {
+  const { i18n } = useTranslation();
   const profiles = useQuery({
     queryKey: queryKeys.tools.profiles(companyId),
     queryFn: () => toolsApi.listProfiles(companyId),
@@ -65,7 +67,7 @@ export function useProfilesData(companyId: string) {
 
   const appGroups = useMemo(
     () => groupCatalogByApp(catalog, maps.applicationsById, maps.connectionsById),
-    [catalog, maps.applicationsById, maps.connectionsById],
+    [catalog, maps.applicationsById, maps.connectionsById, i18n.language],
   );
 
   return {

@@ -1,0 +1,52 @@
+[
+  {
+    "page": "CompanyImport",
+    "viewport": "1366x768",
+    "defaultChinese": true,
+    "expandedChinese": true,
+    "horizontalOverflow": false,
+    "errors": []
+  },
+  {
+    "page": "TeamCatalog via DesignGuide",
+    "viewport": "1366x768",
+    "defaultChinese": true,
+    "expandedChinese": true,
+    "horizontalOverflow": false,
+    "errors": [
+      "404 http://127.0.0.1:3200/api/attachments/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/content",
+      "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "500 http://127.0.0.1:3200/api/connection-intents/interaction-connection-intent-retry/setup-options",
+      "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+      "500 http://127.0.0.1:3200/api/connection-intents/interaction-connection-intent-default/setup-options",
+      "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+      "404 http://127.0.0.1:3200/api/assets/2b9bc29c-97ce-4ba6-b2eb-8619cc453517/content",
+      "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    ]
+  },
+  {
+    "page": "CompanyImport",
+    "viewport": "390x844",
+    "defaultChinese": true,
+    "expandedChinese": true,
+    "horizontalOverflow": false,
+    "errors": []
+  },
+  {
+    "page": "TeamCatalog via DesignGuide",
+    "viewport": "390x844",
+    "defaultChinese": true,
+    "expandedChinese": true,
+    "horizontalOverflow": false,
+    "errors": [
+      "404 http://127.0.0.1:3200/api/attachments/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/content",
+      "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "500 http://127.0.0.1:3200/api/connection-intents/interaction-connection-intent-default/setup-options",
+      "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+      "500 http://127.0.0.1:3200/api/connection-intents/interaction-connection-intent-retry/setup-options",
+      "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+      "404 http://127.0.0.1:3200/api/assets/2b9bc29c-97ce-4ba6-b2eb-8619cc453517/content",
+      "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    ]
+  }
+]

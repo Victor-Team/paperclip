@@ -4,6 +4,7 @@ import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { Agent } from "@paperclipai/shared";
 import { AgentChatPicker, type AgentChatPickerProps } from "./AgentChatPicker";
+import { i18n } from "@/i18n";
 
 const agents = [
   { id: "first", name: "Alex", title: "Engineering Lead", role: "engineer", icon: "code", status: "idle" },
@@ -27,6 +28,7 @@ async function search(value: string) {
 const options = () => [...document.querySelectorAll<HTMLElement>("[role=option]")];
 
 beforeEach(() => {
+  void i18n.changeLanguage("en");
   vi.stubGlobal("IS_REACT_ACT_ENVIRONMENT", true);
   vi.stubGlobal("ResizeObserver", class { observe() {} unobserve() {} disconnect() {} });
   container = document.createElement("div");
@@ -67,6 +69,13 @@ describe("AgentChatPicker", () => {
     await render({ open: true });
     expect(document.querySelector<HTMLInputElement>("[role=combobox]")!.value).toBe("");
     expect(options()).toHaveLength(2);
+  });
+
+  it("translates the no-match result with the search term", async () => {
+    await act(async () => { await i18n.changeLanguage("zh-CN"); });
+    await render();
+    await search("accountant");
+    expect(document.body.textContent).toContain("没有与“accountant”匹配的智能体");
   });
 
   it("shows loading, a retryable error, and an empty roster without stale choices", async () => {

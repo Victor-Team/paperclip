@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ApiError } from "@/api/client";
 import { CompanyProvider, useCompany } from "@/context/CompanyContext";
+import { i18n } from "@/i18n";
 import { InstanceAccess } from "./InstanceAccess";
 
 const mocks = vi.hoisted(() => ({
@@ -21,10 +22,21 @@ vi.mock("@/context/ToastContext", () => ({ useToast: () => mocks }));
 
 const companyA = { id: "company-a", name: "Company A", issuePrefix: "CPA", status: "active" };
 const companyB = { id: "company-b", name: "Company B", issuePrefix: "CPB", status: "active" };
-const user = { id: "admin", name: "Admin", email: "admin@example.com", isInstanceAdmin: true };
+const user = {
+  id: "admin", name: "Admin", email: "admin@example.com", isInstanceAdmin: true,
+  activeCompanyMembershipCount: 1,
+};
 const membershipA = {
   id: "membership-a", companyId: companyA.id, companyName: companyA.name,
   status: "active", membershipRole: "owner", updatedAt: "2020-01-01T00:00:00Z",
+};
+const membershipUnknown = {
+  id: "membership-unknown", companyId: "company-x", companyName: "Company X",
+  status: "mystery", membershipRole: "custom-role", updatedAt: "2020-01-01T00:00:00Z",
+};
+const membershipUnset = {
+  id: "membership-unset", companyId: "company-y", companyName: "Company Y",
+  status: "active", membershipRole: null, updatedAt: "2020-01-01T00:00:00Z",
 };
 
 let container: HTMLDivElement;
@@ -57,10 +69,11 @@ function button(text: string) {
   return [...container.querySelectorAll("button")].find((element) => element.textContent === text);
 }
 
-beforeEach(() => {
+beforeEach(async () => {
   vi.resetAllMocks();
   Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
   localStorage.clear();
+  await i18n.changeLanguage("en");
   mocks.getSession.mockResolvedValue({ session: { id: "session-admin", userId: user.id }, user });
   mocks.list.mockResolvedValue([companyA]);
   mocks.directory.mockResolvedValue([companyA, companyB]);
@@ -123,5 +136,69 @@ describe("InstanceAccess company directory", () => {
     await renderPage();
     await eventually(() => expect(container.textContent).toContain("Instance admin access is required"));
     expect(mocks.directory).not.toHaveBeenCalled();
+  });
+
+  it("retranslates page chrome, enum labels, and dates live instead of a frozen snapshot", async () => {
+    mocks.getUserCompanyAccess.mockResolvedValue({
+      user,
+      companyAccess: [membershipA, membershipUnknown, membershipUnset],
+    });
+    await renderPage();
+    const enDate = new Date(membershipA.updatedAt).toLocaleDateString("en");
+    await eventually(() => {
+      expect(container.textContent).toContain("Instance Access");
+      expect(container.textContent).toContain("Search users");
+      expect(container.textContent).toContain("Organization access");
+      expect(container.textContent).toContain("Current memberships");
+      expect(container.textContent).toContain("1 active organization membership");
+      expect(container.textContent).toContain("owner");
+      expect(container.textContent).toContain("active");
+      expect(container.textContent).toContain("unset");
+      expect(container.textContent).toContain("custom-role");
+      expect(container.textContent).toContain("mystery");
+      expect(container.textContent).toContain(enDate);
+      expect(container.textContent).toContain("Admin");
+      expect(container.textContent).toContain("admin@example.com");
+      expect(container.textContent).toContain("Company A");
+      expect(container.textContent).toContain("CPA");
+      expect(container.textContent).not.toContain("实例访问权限");
+    });
+    expect(mocks.setBreadcrumbs).toHaveBeenCalledWith([
+      { label: "Settings", href: "/company/settings" },
+      { label: "Instance settings", href: "/company/settings/instance/general" },
+      { label: "Access" },
+    ]);
+
+    await act(async () => {
+      await i18n.changeLanguage("zh-CN");
+    });
+    const zhDate = new Date(membershipA.updatedAt).toLocaleDateString("zh-CN");
+    await eventually(() => {
+      expect(container.textContent).toContain("实例访问权限");
+      expect(container.textContent).toContain("搜索用户");
+      expect(container.textContent).toContain("公司访问权限");
+      expect(container.textContent).toContain("当前成员关系");
+      expect(container.textContent).toContain("1 个活跃公司成员关系");
+      expect(container.textContent).toContain("所有者");
+      expect(container.textContent).toContain("活跃");
+      expect(container.textContent).toContain("未设置");
+      expect(container.textContent).toContain("custom-role");
+      expect(container.textContent).toContain("mystery");
+      expect(container.textContent).toContain(zhDate);
+      expect(container.textContent).toContain("Admin");
+      expect(container.textContent).toContain("admin@example.com");
+      expect(container.textContent).toContain("Company A");
+      expect(container.textContent).toContain("CPA");
+      expect(container.textContent).not.toContain("Instance Access");
+      expect(container.textContent).not.toContain("Search users");
+      expect(container.textContent).not.toContain("Organization access");
+      expect(container.textContent).not.toContain("Current memberships");
+    });
+    expect(zhDate).not.toBe(enDate);
+    expect(mocks.setBreadcrumbs).toHaveBeenCalledWith([
+      { label: "设置", href: "/company/settings" },
+      { label: "实例设置", href: "/company/settings/instance/general" },
+      { label: "访问权限" },
+    ]);
   });
 });

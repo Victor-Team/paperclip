@@ -4,6 +4,7 @@ import { createRoot, type Root } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { ConnectionGrantsResponse, ToolConnection } from "@paperclipai/shared";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { i18n } from "@/i18n";
 import { RailwayAccessPanel } from "./RailwayAccessPanel";
 const { configure } = vi.hoisted(() => ({ configure: vi.fn(async () => null) }));
 vi.mock("@/api/tools", () => ({ toolsApi: { configureRailwaySsh: configure } }));
@@ -33,5 +34,13 @@ describe("Railway container setup", () => {
   it("requires connection configuration access for key changes", async () => {
     await render("revoked", false);
     expect(container.querySelectorAll("button")).toHaveLength(0);
+  });
+  it("renders fixed Railway access guidance in Simplified Chinese", async () => {
+    await i18n.changeLanguage("zh-CN");
+    await render("active");
+    expect(container.textContent).toContain("Railway 操作");
+    expect(container.textContent).toContain("容器访问");
+    expect(container.textContent).toContain("已验证的 Railway 主机密钥");
+    await i18n.changeLanguage("en");
   });
 });

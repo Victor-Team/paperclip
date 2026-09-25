@@ -1,3 +1,4 @@
+import { useWorkspaceIsolationControls } from "@/hooks/useWorkspaceIsolationControls";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "@/lib/router";
 import type { Issue, ExecutionWorkspace } from "@paperclipai/shared";
@@ -21,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { Check, Copy, FileSearch, FolderOpen, FolderSearch, GitBranch, Pencil, X } from "lucide-react";
 import { ReusableExecutionWorkspaceSelect } from "./ReusableExecutionWorkspaceSelect";
 import { Badge } from "@/components/ui/badge";
+import { useTranslation } from "@/i18n";
 
 /* -------------------------------------------------------------------------- */
 /*  Utility helpers (mirrored from IssueProperties for self-containment)      */
@@ -193,6 +195,8 @@ export function IssueWorkspaceCard({
   onBrowseFiles,
   onOpenFileByPath,
 }: IssueWorkspaceCardProps) {
+  const { t } = useTranslation();
+  const { visible: workspaceIsolationControlsVisible } = useWorkspaceIsolationControls();
   const { selectedCompanyId } = useCompany();
   const companyId = issue.companyId ?? selectedCompanyId;
   const [editing, setEditing] = useState(initialEditing);
@@ -236,7 +240,7 @@ export function IssueWorkspaceCard({
         projectWorkspaceId: issue.projectWorkspaceId ?? undefined,
         reuseEligible: true,
       }),
-    enabled: Boolean(companyId) && Boolean(issue.projectId) && editing,
+    enabled: Boolean(companyId) && Boolean(issue.projectId) && editing && workspaceIsolationControlsVisible,
   });
 
   const selectableReusableWorkspaces = reusableExecutionWorkspaces ?? [];
@@ -306,15 +310,15 @@ export function IssueWorkspaceCard({
   ]);
 
   useEffect(() => {
-    if (!onDraftChange) return;
+    if (!onDraftChange || !workspaceIsolationControlsVisible) return;
     onDraftChange(buildWorkspaceDraftUpdate(), {
       canSave: canSaveWorkspaceConfig,
       workspaceBranchName: draftWorkspaceBranchName,
     });
-  }, [buildWorkspaceDraftUpdate, canSaveWorkspaceConfig, draftWorkspaceBranchName, onDraftChange]);
+  }, [buildWorkspaceDraftUpdate, canSaveWorkspaceConfig, draftWorkspaceBranchName, onDraftChange, workspaceIsolationControlsVisible]);
 
   const handleSave = useCallback(() => {
-    if (!canSaveWorkspaceConfig) return;
+    if (!canSaveWorkspaceConfig || !workspaceIsolationControlsVisible) return;
     const update = buildWorkspaceDraftUpdate();
     if (!update) return;
     onUpdate(update);
@@ -322,6 +326,7 @@ export function IssueWorkspaceCard({
   }, [
     buildWorkspaceDraftUpdate,
     canSaveWorkspaceConfig,
+    workspaceIsolationControlsVisible,
     onUpdate,
   ]);
 
@@ -333,7 +338,7 @@ export function IssueWorkspaceCard({
 
   if (!policyEnabled || !project) return null;
 
-  const showEditingControls = livePreview || editing;
+  const showEditingControls = workspaceIsolationControlsVisible && (livePreview || editing);
 
   return (
     <div className="rounded-lg border border-border p-3 space-y-2">
@@ -346,37 +351,36 @@ export function IssueWorkspaceCard({
             : configuredWorkspaceLabel(currentSelection, selectedReusableExecutionWorkspace)}
           {workspace ? statusBadge(workspace.status) : statusBadge("idle")}
         </div>
-        <div className="flex items-center gap-1">
-          {showEditingControls ? (
-            <>
+        {workspaceIsolationControlsVisible && (
+          <div className="flex items-center gap-1">
+            {showEditingControls ? (
+              <>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-6 px-2 text-xs text-muted-foreground"
+                  onClick={handleCancel}
+                >
+                  <X className="h-3 w-3 mr-1" />{t("issueworkspacecard.general.cancel")}</Button>
+                <Button
+                  size="sm"
+                  className="h-6 px-2 text-xs"
+                  onClick={handleSave}
+                  disabled={!canSaveWorkspaceConfig}
+                >
+                  {t("issueworkspacecard.general.save")}</Button>
+              </>
+            ) : (
               <Button
                 variant="ghost"
                 size="sm"
                 className="h-6 px-2 text-xs text-muted-foreground"
-                onClick={handleCancel}
+                onClick={() => setEditing(true)}
               >
-                <X className="h-3 w-3 mr-1" />Cancel
-              </Button>
-              <Button
-                size="sm"
-                className="h-6 px-2 text-xs"
-                onClick={handleSave}
-                disabled={!canSaveWorkspaceConfig}
-              >
-                Save
-              </Button>
-            </>
-          ) : (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-6 px-2 text-xs text-muted-foreground"
-              onClick={() => setEditing(true)}
-            >
-              <Pencil className="h-3 w-3 mr-1" />Edit
-            </Button>
-          )}
-        </div>
+                <Pencil className="h-3 w-3 mr-1" />{t("issueworkspacecard.general.edit")}</Button>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Read-only info */}
@@ -396,32 +400,32 @@ export function IssueWorkspaceCard({
           )}
           {workspace?.repoUrl && (
             <div className="flex items-center gap-1.5 text-muted-foreground">
-              <span className="text-(length:--text-micro)">Repo:</span>
+              <span className="text-(length:--text-micro)">{t("issueworkspacecard.general.repo")}</span>
               <CopyableInline value={workspace.repoUrl} mono />
             </div>
           )}
           {environmentsEnabled && currentEnvironmentId && (
             <div className="text-muted-foreground" style={{ overflowWrap: "anywhere" }}>
-              Environment: <span className="text-foreground">{currentEnvironment?.name ?? currentEnvironmentId}</span>
+              {t("issueworkspacecard.general.environment")}<span className="text-foreground">{currentEnvironment?.name ?? currentEnvironmentId}</span>
               {currentSelection === "reuse_existing" && currentReusableEnvironmentId === currentEnvironmentId
-                ? " · reused workspace"
+                ? t("issueworkspacecard.general.reusedworkspace")
                 : !issue.executionWorkspaceSettings?.environmentId && projectEnvironmentId === currentEnvironmentId
-                ? " · project default"
+                ? t("issueworkspacecard.general.projectdefault")
                 : null}
             </div>
           )}
           {!workspace && (
             <div className="text-muted-foreground">
               {currentSelection === "isolated_workspace"
-                ? "A fresh isolated workspace will be created when this task runs."
+                ? t("issueworkspacecard.general.afreshisolatedworkspacewillbecreated")
                 : currentSelection === "reuse_existing"
-                  ? "This task will reuse an existing workspace when it runs."
-                  : "This task will use the project default workspace configuration when it runs."}
+                  ? t("issueworkspacecard.general.thistaskwillreuseanexistingworkspace")
+                  : t("issueworkspacecard.general.thistaskwillusetheprojectdefault")}
             </div>
           )}
           {currentSelection === "reuse_existing" && selectedReusableExecutionWorkspace && (
             <div className="text-muted-foreground" style={{ overflowWrap: "anywhere" }}>
-              Reusing:{" "}
+              {t("issueworkspacecard.general.reusing")}{" "}
               {selectedReusableWorkspaceLink ? (
                 <Link
                   to={selectedReusableWorkspaceLink}
@@ -440,15 +444,14 @@ export function IssueWorkspaceCard({
                 to={currentWorkspaceLink}
                 className="text-(length:--text-micro) text-muted-foreground hover:text-foreground hover:underline"
               >
-                View workspace details →
-              </Link>
+                {t("issueworkspacecard.general.viewworkspacedetails")}</Link>
             </div>
           )}
         </div>
       )}
 
       {/* Editing controls */}
-      {editing && (
+      {editing && workspaceIsolationControlsVisible && (
         <div className="space-y-2 pt-1">
           <select
             className="w-full rounded border border-border bg-transparent px-2 py-1.5 text-xs outline-none"
@@ -486,7 +489,7 @@ export function IssueWorkspaceCard({
           {workspace && (
             <div className="text-(length:--text-micro) text-muted-foreground space-y-0.5 pt-1 border-t border-border/50">
               <div style={{ overflowWrap: "anywhere" }}>
-                Current:{" "}
+                {t("issueworkspacecard.general.current")}{" "}
                 {currentWorkspaceLink ? (
                   <Link
                     to={currentWorkspaceLink}
@@ -514,16 +517,14 @@ export function IssueWorkspaceCard({
             className="inline-flex items-center gap-1.5 text-muted-foreground transition-colors hover:text-foreground"
           >
             <FolderSearch className="h-3.5 w-3.5 shrink-0" />
-            Browse files…
-          </button>
+            {t("issueworkspacecard.general.browsefiles")}</button>
           <button
             type="button"
             onClick={onOpenFileByPath ?? onBrowseFiles}
             className="inline-flex items-center gap-1.5 text-muted-foreground transition-colors hover:text-foreground"
           >
             <FileSearch className="h-3.5 w-3.5 shrink-0" />
-            Open file by path…
-          </button>
+            {t("issueworkspacecard.general.openfilebypath")}</button>
         </div>
       )}
     </div>

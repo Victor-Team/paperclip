@@ -9,6 +9,7 @@ import type {
 } from "./task-chat-model";
 import { TaskChatStatusPill } from "./TaskChatStatusPill";
 import { TaskChatAgentIdentity } from "./TaskChatBubble";
+import { useTranslation } from "@/i18n";
 
 interface TaskChatTurnProps {
   item: TaskChatTurnItem;
@@ -75,6 +76,7 @@ export function TaskChatTurn({
   timestampPrefix,
   leading,
 }: TaskChatTurnProps) {
+  const { t } = useTranslation();
   const streamlined = useStreamlinedTaskChatPresentation();
   const parentRow = !item.settled && item.liveStatus != null;
   // The new Paperclip Runner task surface owns one durable chronological
@@ -100,12 +102,12 @@ export function TaskChatTurn({
             />
           ) : null}
           <span className="min-w-0 truncate">
-            {item.continuedAfterSteering ? "Continued after steering · " : ""}
+            {item.continuedAfterSteering ? t("taskchatturn.general.continuedaftersteering") : ""}
             {item.summary.durationLabel
-              ? `${item.summary.failed ? "Stopped" : "Worked"} for ${item.summary.durationLabel}`
+              ? `${item.summary.failed ? t("taskchatturn.general.stopped") : t("taskchatturn.general.worked")} for ${item.summary.durationLabel}`
               : item.summary.failed
-                ? "Stopped"
-                : "Worked"}
+                ? t("taskchatturn.general.stopped1")
+                : t("taskchatturn.general.worked2")}
           </span>
         </div>
         {item.items.length > 0 ? (

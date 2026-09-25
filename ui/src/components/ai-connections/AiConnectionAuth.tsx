@@ -12,6 +12,7 @@ import {
   type AiAuthMethod,
   type AiProvider,
 } from "./model";
+import { useTranslation } from "@/i18n";
 
 /** Redacted view of the existing login lifecycle, supplied by the host. */
 export type AiAuthState =
@@ -49,6 +50,7 @@ function AuthAttempt({
   onCancel,
   onDone,
 }: AiConnectionAuthProps) {
+  const { t } = useTranslation();
   const [value, setValue] = useState("");
   const info = AI_PROVIDERS[provider];
   const busy = state.phase === "starting" || state.phase === "submitting";
@@ -63,21 +65,22 @@ function AuthAttempt({
   };
   return (
     <section
-      aria-label={`Connect ${info.name}`}
+      aria-label={t("aiconnectionauth.general.connectprovider", {
+        provider: info.name,
+      })}
       className="flex flex-col gap-4"
     >
       <div className="flex flex-col gap-1">
-        <h3 className="text-sm font-semibold">Connect {info.name}</h3>
+        <h3 className="text-sm font-semibold">{t("aiconnectionauth.general.connect")} {info.name}</h3>
         <p className="text-xs text-muted-foreground">
-          {aiMethodLabel(provider, method)}
+          {aiMethodLabel(provider, method, t)}
         </p>
       </div>
       {state.phase === "connected" ? (
         <>
           <p role="status" className="text-sm">
-            Connected. This account is saved in Connections and can be reused.
-          </p>
-          <Button onClick={onDone}>Use connection</Button>
+            {t("aiconnectionauth.general.connectedthisaccountissavedinconnections")}</p>
+          <Button onClick={onDone}>{t("aiconnectionauth.general.useconnection")}</Button>
         </>
       ) : (
         <>
@@ -85,7 +88,7 @@ function AuthAttempt({
             <p role="status" className="text-sm text-muted-foreground">
               {state.phase === "unsupported"
                 ? state.message
-                : "This provider does not offer a subscription connection."}
+                : t("aiconnectionauth.general.thisproviderdoesnotofferasubscription")}
             </p>
           ) : (
             <>
@@ -96,8 +99,7 @@ function AuthAttempt({
               )}
               {state.phase === "cancelled" && (
                 <p role="status" className="text-sm text-muted-foreground">
-                  Sign-in cancelled. No connection was created.
-                </p>
+                  {t("aiconnectionauth.general.signincancellednoconnectionwascreated")}</p>
               )}
               {method === "api_key" ? (
                 <ProviderApiKeyCard
@@ -105,7 +107,7 @@ function AuthAttempt({
                   value={value}
                   onChange={setValue}
                   onSubmit={submit}
-                  placeholder="Enter API key here"
+                  placeholder={t("aiconnectionauth.general.enterapikeyhere")}
                   disabled={busy}
                   autoFocus
                 />
@@ -143,7 +145,7 @@ function AuthAttempt({
                 </ProviderSubscriptionCard>
               ) : (
                 <p className="text-sm text-muted-foreground">
-                  Sign in with your {info.subscriptionName}.
+                  {t("aiconnectionauth.general.signinwithyour")} {info.subscriptionName}.
                 </p>
               )}
             </>
@@ -156,30 +158,27 @@ function AuthAttempt({
                 onCancel();
               }}
             >
-              Cancel
-            </Button>
+              {t("aiconnectionauth.general.cancel")}</Button>
             {!unsupported &&
               (method === "api_key" ? (
                 <Button disabled={busy || !value.trim()} onClick={submit}>
-                  {busy ? "Connecting…" : "Connect"}
+                  {busy ? t("aiconnectionauth.general.connecting") : t("aiconnectionauth.general.connect1")}
                 </Button>
               ) : state.phase === "waiting" ? (
                 provider === "anthropic" ? (
                   <Button disabled={!value.trim()} onClick={submit}>
-                    Submit code
-                  </Button>
+                    {t("aiconnectionauth.general.submitcode")}</Button>
                 ) : (
                   <span role="status" className="text-sm text-muted-foreground">
-                    Waiting for sign-in…
-                  </span>
+                    {t("aiconnectionauth.general.waitingforsignin")}</span>
                 )
               ) : (
                 <Button disabled={busy} onClick={onStart}>
                   {busy
-                    ? "Preparing sign-in…"
+                    ? t("aiconnectionauth.general.preparingsignin")
                     : state.phase === "idle"
-                      ? "Sign in"
-                      : "Try again"}
+                      ? t("aiconnectionauth.general.signin")
+                      : t("aiconnectionauth.general.tryagain")}
                 </Button>
               ))}
           </div>

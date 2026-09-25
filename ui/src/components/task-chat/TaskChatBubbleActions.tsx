@@ -5,6 +5,7 @@ import type {
 import { useCopyAction } from "@/lib/use-copy-action";
 import { IssueChatFeedbackButtons } from "@/components/AgentBubbleActionRow";
 import { Check, Copy, X } from "lucide-react";
+import { useTranslation } from "@/i18n";
 
 /** Feedback-vote wiring for an agent bubble, resolved per comment by the host. */
 export interface TaskChatBubbleFeedback {
@@ -32,8 +33,9 @@ export function TaskChatBubbleActions({
   copyText: string;
   feedback?: TaskChatBubbleFeedback | null;
 }) {
+  const { t } = useTranslation();
   const { copied, failed, copy } = useCopyAction(2000);
-  const label = failed ? "Couldn’t copy message" : "Copy message";
+  const label = failed ? t("taskchatbubbleactions.general.couldntcopymessage") : t("taskchatbubbleactions.general.copymessage");
 
   return (
     <div className="flex items-center gap-0.5" data-testid="task-chat-bubble-actions">

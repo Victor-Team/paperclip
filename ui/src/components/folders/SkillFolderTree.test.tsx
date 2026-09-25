@@ -5,6 +5,7 @@ import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { FolderListResult } from "@paperclipai/shared";
 import { SkillFolderRail } from "./SkillFolderTree";
+import { i18n } from "@/i18n";
 
 function pointerEvent(type: string, clientX: number) {
   const event = new MouseEvent(type, { bubbles: true, clientX });
@@ -127,5 +128,19 @@ describe("SkillFolderRail", () => {
     expect(onSelect).toHaveBeenCalledWith("my-root");
     expect(container.textContent).toContain("Ada");
     expect(container.querySelector('[aria-label="Collapse folder"]')).not.toBeNull();
+  });
+
+  it("renders reserved folders and disclosure labels in Simplified Chinese", async () => {
+    await i18n.changeLanguage("zh-CN");
+    try {
+      expect(container.textContent).toContain("我的技能");
+      const myLabel = Array.from(container.querySelectorAll("button"))
+        .find((button) => button.textContent?.includes("我的技能"));
+
+      flushSync(() => myLabel?.click());
+      expect(container.querySelector('[aria-label="折叠文件夹"]')).not.toBeNull();
+    } finally {
+      await i18n.changeLanguage("en");
+    }
   });
 });

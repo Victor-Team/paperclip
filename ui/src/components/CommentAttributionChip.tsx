@@ -2,6 +2,7 @@ import { UserCheck } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "../lib/utils";
+import { useTranslation } from "@/i18n";
 
 /**
  * "for {user}" chip on an agent comment posted to a task the agent does not own
@@ -39,6 +40,7 @@ export function CommentAttributionChip({
   userName?: string | null;
   className?: string;
 }) {
+  const { t } = useTranslation();
   const user = userName?.trim();
   if (!user) return null;
   const agent = agentName?.trim() || "This agent";
@@ -61,7 +63,7 @@ export function CommentAttributionChip({
           )}
         >
           <UserCheck className="h-3 w-3 shrink-0" aria-hidden="true" />
-          <span className="truncate">for {user}</span>
+          <span className="truncate">{t("commentattributionchip.general.for")} {user}</span>
         </Badge>
       </TooltipTrigger>
       <TooltipContent className="max-w-xs text-xs">

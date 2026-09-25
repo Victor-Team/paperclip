@@ -1,0 +1,66 @@
+[
+  {
+    "name": "desktop-zh",
+    "httpStatus": 200,
+    "labels": {
+      "选择连接方式": true,
+      "创建 Slack 应用": true,
+      "添加凭据": true,
+      "验证 Slack 连接": true,
+      "添加头像": true,
+      "连接您的 Slack 账号": true
+    },
+    "scrollWidth": 1366,
+    "innerWidth": 1366,
+    "bodyWidth": 1366,
+    "lang": "zh-CN",
+    "pageErrors": [],
+    "failedResponses": [
+      {
+        "status": 404,
+        "url": "http://127.0.0.1:3200/api/assets/2b9bc29c-97ce-4ba6-b2eb-8619cc453517/content"
+      }
+    ]
+  },
+  {
+    "name": "narrow-zh",
+    "httpStatus": 200,
+    "labels": {
+      "选择连接方式": true,
+      "创建 Slack 应用": true,
+      "添加凭据": true,
+      "验证 Slack 连接": true,
+      "添加头像": true,
+      "连接您的 Slack 账号": true
+    },
+    "scrollWidth": 390,
+    "innerWidth": 390,
+    "bodyWidth": 390,
+    "lang": "zh-CN",
+    "pageErrors": [],
+    "failedResponses": []
+  },
+  {
+    "name": "desktop-en",
+    "httpStatus": 200,
+    "labels": {
+      "Choose connection": true,
+      "Create Slack app": true,
+      "Add credentials": true,
+      "Verify Slack connection": true,
+      "Add avatar": true,
+      "Connect your Slack account": true
+    },
+    "scrollWidth": 1366,
+    "innerWidth": 1366,
+    "bodyWidth": 1366,
+    "lang": "en",
+    "pageErrors": [],
+    "failedResponses": [
+      {
+        "status": 404,
+        "url": "http://127.0.0.1:3200/api/assets/2b9bc29c-97ce-4ba6-b2eb-8619cc453517/content"
+      }
+    ]
+  }
+]

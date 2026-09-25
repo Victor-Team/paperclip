@@ -8,6 +8,7 @@ import type { Issue, IssueAttachment, IssueDocument, IssueWorkProduct } from "@p
 import { artifactReviewDocumentKey } from "@paperclipai/shared";
 import { IssuePropertiesArtifactsTab } from "./IssuePropertiesArtifactsTab";
 import { ApiError } from "@/api/client";
+import { i18n } from "@/i18n";
 
 const mockIssuesApi = vi.hoisted(() => ({
   listAttachments: vi.fn(async (): Promise<unknown[]> => []),
@@ -178,6 +179,7 @@ describe("markdown work product review row", () => {
       await act(async () => currentRoot.unmount());
       root = null;
     }
+    await i18n.changeLanguage("en");
     container.remove();
   });
 
@@ -215,6 +217,13 @@ describe("markdown work product review row", () => {
     expect(raw?.getAttribute("href")).toBe(`/api/attachments/${ATTACHMENT_ID}/content`);
     expect(raw?.getAttribute("target")).toBe("_blank");
     expect(download?.getAttribute("href")).toBe(`/api/attachments/${ATTACHMENT_ID}/content?download=1`);
+  });
+
+  it("translates the work-product status chip", async () => {
+    await i18n.changeLanguage("zh-CN");
+    await renderTab();
+
+    expect(expandButton().textContent).toContain("待审查");
   });
 
   it("expands into the existing document surface without a server call when the document exists", async () => {
@@ -352,6 +361,26 @@ describe("markdown work product review row", () => {
       expect(link?.getAttribute("href")).toBe(`${contentPath}?download=1`);
     });
     expect(container.querySelector("button[aria-expanded]")).toBeNull();
+  });
+
+  it.each(["image/png", "application/octet-stream"])("renders %s media tiles without duplicates or user uploads", async (contentType) => {
+    const image = { ...makeMarkdownAttachment(), contentType, originalFilename: "cover.png" };
+    const looseImage = { ...image, id: "loose-image", contentPath: "/api/attachments/loose-image/content" };
+    const video = { ...makeMarkdownAttachment(), id: "loose-video", contentType: "application/octet-stream", originalFilename: "clip.mp4", contentPath: "/api/attachments/loose-video/content" };
+    mockIssuesApi.listAttachments.mockResolvedValue([image, video, looseImage, { ...video, id: "user-video", createdByAgentId: null, createdByUserId: "user-1" }]);
+    mockIssuesApi.listWorkProducts.mockResolvedValue([makeMarkdownWorkProduct({
+      title: "Cover artwork",
+      metadata: { attachmentId: ATTACHMENT_ID, contentType, originalFilename: "cover.png", contentPath: image.contentPath, openPath: image.contentPath, downloadPath: `${image.contentPath}?download=1`, byteSize: 64 },
+    })]);
+    await renderTab({}, "Cover artwork");
+    await waitForAssertion(() => {
+      const buttons = container.querySelectorAll('button[aria-label^="Open gallery:"]');
+      expect(buttons).toHaveLength(3);
+      expect(container.querySelectorAll("img")).toHaveLength(2);
+      expect(buttons[0].querySelector("img")).not.toBeNull();
+      expect(buttons[1].querySelector("video")?.getAttribute("src")).toBe(video.contentPath);
+      expect(container.querySelectorAll("video")).toHaveLength(1);
+    });
   });
 
   it("groups compact rows by producing run", async () => {

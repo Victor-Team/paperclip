@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AiConnectionAuth, type AiAuthState } from "@/components/ai-connections/AiConnectionAuth";
 import { CredentialModeLink } from "@/components/onboarding/CredentialModeLink";
+import { t } from "@/i18n";
 import { AI_PROVIDERS, aiMethodLabel, type AiConnectionSummary, type AiProvider, type AiAuthMethod } from "@/components/ai-connections/model";
 import { AI_REVIEW_CONNECTIONS } from "../fixtures/aiConnections";
 import { storybookAgents } from "../fixtures/paperclipData";
@@ -135,7 +136,7 @@ export function AiConnectorPages({ initialConnections = AI_REVIEW_CONNECTIONS, d
       <Routes>
         <Route path="/:companyPrefix/apps" element={<Browse renderAccountDetails={(connection) => {
           const row = store.accounts.find((account) => account.id === connection.id);
-          return row ? <p className="text-xs text-muted-foreground">{aiMethodLabel(row.provider, row.method)} · {row.ownership === "shared" ? "Company shared" : "Personal"}{row.isDefault ? " · Personal default" : ""}{row.accountLabel ? ` · ${row.accountLabel}` : ""}</p> : null;
+          return row ? <p className="text-xs text-muted-foreground">{aiMethodLabel(row.provider, row.method, t)} · {row.ownership === "shared" ? t("aiconnectionidentity.general.companyshared") : t("aiconnectionconnectorpages.general.personal")}{row.isDefault ? ` · ${t("aiconnectionconnectorpages.general.personaldefault")}` : ""}{row.accountLabel ? ` · ${row.accountLabel}` : ""}</p> : null;
         }} />} />
         <Route path="/:companyPrefix/apps/connect" element={<Setup accounts={store.accounts} onSave={update} />} />
         <Route path="/:companyPrefix/apps/:connectionId/:tab" element={<AppDetail onReconnect={(connection) => navigate(`/apps/connect?source=${connection.config?.sourceTemplateKey}&stage=setup&reconnect=${connection.id}`)} renderActions={(connection) => {

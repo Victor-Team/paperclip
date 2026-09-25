@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { useTranslation } from "@/i18n";
 
 /* ------------------------------------------------------------------ */
 /*  Canonical verb table — one verb per action, used on every card.    */
@@ -46,6 +47,7 @@ function formatVerb(
       return "opened";
     case "issue.updated": {
       const status = details?.status;
+      if (status === "in_review" && details?.externalConversationState === "waiting") return "moved to idle";
       if (typeof status === "string") return `moved to ${humanize(status)}`;
       const priority = details?.priority;
       if (typeof priority === "string") return `set priority to ${humanize(priority)} on`;
@@ -141,6 +143,7 @@ function deriveTaskStatus(
       return "todo";
     case "issue.updated": {
       const status = details?.status;
+      if (status === "in_review" && details?.externalConversationState === "waiting") return "idle";
       return typeof status === "string" ? status : null;
     }
     case "issue.document_created":
@@ -423,6 +426,7 @@ export function FeedCard({
   isPinned = false,
   className,
 }: FeedCardProps) {
+  const { t } = useTranslation();
   const details = event.details as Record<string, unknown> | null;
   const content = resolveContent(event, agentMap, entityNameMap, entityTitleMap);
   const verb = formatVerb(event.action, details, isPinned ? "pinned" : "chronological");
@@ -466,7 +470,7 @@ export function FeedCard({
         )}
       </span>
       {isPinned && (
-        <span className="shrink-0 text-xs text-muted-foreground">Review →</span>
+        <span className="shrink-0 text-xs text-muted-foreground">{t("feedcard.general.review")}</span>
       )}
       <span data-fc="time" className="shrink-0 text-muted-foreground">
         {timeAgo(event.createdAt)}

@@ -4,6 +4,7 @@ import { flushSync } from "react-dom";
 import { createRoot } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { i18n } from "@/i18n";
 import { AppDetailSidebar } from "./AppConnectionSidebar";
 
 const sidebarNavItemMock = vi.hoisted(() => vi.fn());
@@ -130,7 +131,8 @@ describe("AppConnectionSidebar", () => {
   let container: HTMLDivElement;
   let root: ReturnType<typeof createRoot>;
 
-  beforeEach(() => {
+  beforeEach(async () => {
+    await i18n.changeLanguage("en");
     container = document.createElement("div");
     document.body.appendChild(container);
     currentPath.value = "/apps/conn-1/permissions";
@@ -281,6 +283,23 @@ describe("AppConnectionSidebar", () => {
     // Testing is part of Permissions and Activity lives in the company Audit feed.
     expect(container.querySelector('[data-to="/apps/app/app-1/test"]')).toBeNull();
     expect(container.querySelectorAll("[data-to]").length).toBe(2);
+  });
+
+  it("renders the sidebar tab labels in Simplified Chinese", async () => {
+    await i18n.changeLanguage("zh-CN");
+
+    await renderSidebar();
+
+    expect(container.querySelector('a[href="/apps"]')?.textContent).toContain("所有连接器");
+    expect(sidebarNavItemMock).toHaveBeenCalledWith(expect.objectContaining({
+      to: "/apps/conn-1/review",
+      label: "审查",
+      badgeLabel: "需要审查",
+    }));
+    expect(sidebarNavItemMock).toHaveBeenCalledWith(expect.objectContaining({
+      to: "/apps/conn-1/permissions",
+      label: "权限",
+    }));
   });
 
   it("keeps rendering a connection sidebar when its connection is unavailable", async () => {

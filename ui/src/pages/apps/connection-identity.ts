@@ -15,17 +15,21 @@ import type {
  * card cannot drift into three different names for the same thing.
  */
 
-export type ConnectionTypeLabel = "Personal" | "Dedicated agent" | "Organization";
+export type ConnectionIdentityTranslator = (
+  key: string,
+  options?: Record<string, unknown>,
+) => string;
 
 /** The two connection types shown throughout the product. */
 export function connectionTypeLabel(
   credentialPolicy: ToolConnectionCredentialPolicy,
-): ConnectionTypeLabel {
+  t: ConnectionIdentityTranslator,
+): string {
   return credentialPolicy === "per_user"
-    ? "Personal"
+    ? t("connectionidentity.general.personal")
     : credentialPolicy === "per_agent"
-      ? "Dedicated agent"
-      : "Organization";
+      ? t("connectionidentity.general.dedicatedagent")
+      : t("connectionidentity.general.organization");
 }
 
 const ORGANIZATION_NAME_SUFFIX = " for the organization";
@@ -61,7 +65,7 @@ export function connectionNameForCredentialPolicy(
 ): string {
   return connectionNameForGrantKind(
     name,
-    connectionTypeLabel(credentialPolicy) === "Organization" ? "organization" : "user",
+    credentialPolicy === "per_user" || credentialPolicy === "per_agent" ? "user" : "organization",
   );
 }
 
@@ -70,18 +74,21 @@ export function connectionNameForCredentialPolicy(
  * high-contrast rendering. "Not connected" is the explicit missing state — a
  * `per_user` connection with no personal grant must never read as connected.
  */
-export function grantStatusLabel(status: ConnectionGrantStatus | null): string {
+export function grantStatusLabel(
+  status: ConnectionGrantStatus | null,
+  t: ConnectionIdentityTranslator,
+): string {
   switch (status) {
     case "active":
-      return "Connected";
+      return t("connectionidentity.general.connected");
     case "needs_reauthorization":
-      return "Needs attention";
+      return t("connectionidentity.general.needsattention");
     case "expired":
-      return "Expired";
+      return t("connectionidentity.general.expired");
     case "revoked":
-      return "Revoked";
+      return t("connectionidentity.general.revoked");
     default:
-      return "Not connected";
+      return t("connectionidentity.general.notconnected");
   }
 }
 
@@ -108,13 +115,14 @@ export function grantStatusTone(status: ConnectionGrantStatus | null): GrantStat
  */
 export function grantAccountLabel(
   grant: Pick<ConnectionGrant, "kind" | "providerTenant"> | null,
+  t: ConnectionIdentityTranslator,
   options: { subjectLabel?: string | null } = {},
 ): string {
   const tenantName = grant?.providerTenant?.name?.trim();
   if (tenantName) return tenantName;
-  if (grant?.kind === "user") return options.subjectLabel?.trim() || "Connected account";
-  if (grant?.kind === "agent") return options.subjectLabel?.trim() || "Dedicated account";
-  return "Shared credential";
+  if (grant?.kind === "user") return options.subjectLabel?.trim() || t("connectionidentity.general.connectedaccount");
+  if (grant?.kind === "agent") return options.subjectLabel?.trim() || t("connectionidentity.general.dedicatedaccount");
+  return t("connectionidentity.general.sharedcredential");
 }
 
 /**
@@ -122,10 +130,13 @@ export function grantAccountLabel(
  * members" — the product never says "empty list", because that is a storage
  * detail and not how anyone thinks about who may use an identity.
  */
-export function audienceSummary(grant: Pick<ConnectionGrant, "members"> | null): string {
+export function audienceSummary(
+  grant: Pick<ConnectionGrant, "members"> | null,
+  t: ConnectionIdentityTranslator,
+): string {
   const count = grant?.members?.length ?? 0;
-  if (count === 0) return "All organization members";
-  return `${count} selected ${count === 1 ? "member" : "members"}`;
+  if (count === 0) return t("connectionidentity.general.allorganizationmembers");
+  return t("connectionidentity.general.selectedmembers", { count });
 }
 
 export function audienceUserIds(grant: Pick<ConnectionGrant, "members"> | null): Set<string> {

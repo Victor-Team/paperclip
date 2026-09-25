@@ -5,6 +5,7 @@ import { Link } from "@/lib/router";
 import { accessApi } from "@/api/access";
 import { queryKeys } from "@/lib/queryKeys";
 import { useCompany } from "@/context/CompanyContext";
+import { useTranslation } from "@/i18n";
 
 /**
  * Best-effort admin gate for the access-profiles surface, mirroring
@@ -13,6 +14,7 @@ import { useCompany } from "@/context/CompanyContext";
  * index and the create wizard guard identically.
  */
 export function ToolsAdminGate({ children }: { children: ReactNode }) {
+  const { t } = useTranslation();
   const { selectedCompanyId } = useCompany();
   const boardAccess = useQuery({
     queryKey: queryKeys.access.currentBoardAccess,
@@ -21,7 +23,7 @@ export function ToolsAdminGate({ children }: { children: ReactNode }) {
   });
 
   if (boardAccess.isLoading) {
-    return <div className="mx-auto max-w-xl py-10 text-sm text-muted-foreground">Loading…</div>;
+    return <div className="mx-auto max-w-xl py-10 text-sm text-muted-foreground">{t("toolsadmingate.general.loading")}</div>;
   }
 
   const data = boardAccess.data;
@@ -37,14 +39,12 @@ export function ToolsAdminGate({ children }: { children: ReactNode }) {
         <div className="flex flex-col gap-3 rounded-lg border border-border bg-card p-6">
           <div className="flex items-center gap-2 text-foreground">
             <ShieldAlert className="h-5 w-5 text-muted-foreground" />
-            <h1 className="text-lg font-semibold">Access profiles are for administrators</h1>
+            <h1 className="text-lg font-semibold">{t("toolsadmingate.general.accessprofilesareforadministrators")}</h1>
           </div>
           <p className="text-sm text-muted-foreground">
-            Access profiles decide which tools your agents can use. Ask an administrator to set these up, or
-            head back to{" "}
+            {t("toolsadmingate.general.accessprofilesdecidewhichtoolsyouragents")}{" "}
             <Link to="/apps" className="font-medium text-primary hover:underline">
-              your apps
-            </Link>
+              {t("toolsadmingate.general.yourapps")}</Link>
             .
           </p>
         </div>

@@ -13,6 +13,7 @@ import {
   type DerivedMonitorState,
   type MonitorDisplayState,
 } from "@/lib/issue-monitor";
+import { useTranslation } from "@/i18n";
 
 /** Matches the `Date | string` inputs accepted by the issue-monitor helpers. */
 type MonitorDate = Date | string;
@@ -140,6 +141,7 @@ function CheckNowButton({
   onCheckNow: () => void;
   checkingNow: boolean;
 }) {
+  const { t } = useTranslation();
   return (
     <Button
       type="button"
@@ -149,7 +151,7 @@ function CheckNowButton({
       onClick={onCheckNow}
       disabled={checkingNow}
     >
-      {checkingNow ? "Checking…" : "Check now"}
+      {checkingNow ? t("issuemonitorbanner.general.checking") : t("issuemonitorbanner.general.checknow")}
     </Button>
   );
 }
@@ -197,6 +199,7 @@ export function IssueMonitorComposerStrip({
   checkingNow = false,
   className,
 }: IssueMonitorSurfaceProps & { className?: string }) {
+  const { t } = useTranslation();
   const copy = useMonitorSurfaceCopy(issue);
   if (!copy) return null;
 
@@ -218,8 +221,8 @@ export function IssueMonitorComposerStrip({
       </div>
       <p className="mt-1.5 text-xs text-muted-foreground">
         {copy.workspaceWait
-          ? "You can keep sending instructions while the agent waits."
-          : "Sending a reply wakes the agent now — before the scheduled check."}
+          ? t("issuemonitorbanner.general.youcankeepsendinginstructionswhilethe")
+          : t("issuemonitorbanner.general.sendingareplywakestheagentnow")}
       </p>
     </div>
   );

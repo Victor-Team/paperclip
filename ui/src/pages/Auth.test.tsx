@@ -37,6 +37,18 @@ vi.mock("../context/ThemeContext", () => ({
   }),
 }));
 
+// Same reasoning for the LanguageToggle: LocaleProvider lives in main.tsx.
+vi.mock("../context/LocaleContext", () => ({
+  useLocale: () => ({
+    locale: "en",
+    setLocale: vi.fn(),
+    locales: [
+      { code: "en", label: "English" },
+      { code: "zh-CN", label: "简体中文" },
+    ],
+  }),
+}));
+
 // The router's navigate wrapper reads the active company prefix from context.
 vi.mock("@/context/CompanyContext", () => ({
   useCompany: () => ({

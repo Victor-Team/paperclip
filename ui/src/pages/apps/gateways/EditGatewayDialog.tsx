@@ -15,6 +15,7 @@ import {
 import { useToast } from "@/context/ToastContext";
 import { allowedToolsLabel } from "./gateway-helpers";
 import { gatewaysQueryKey } from "./NewGatewayDialog";
+import { useTranslation } from "@/i18n";
 
 export function EditGatewayDialog({
   companyId,
@@ -29,6 +30,7 @@ export function EditGatewayDialog({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const { pushToast } = useToast();
   const [name, setName] = useState(gateway.name);
@@ -51,13 +53,13 @@ export function EditGatewayDialog({
         profileId,
       }),
     onSuccess: async (updated) => {
-      pushToast({ title: "Gateway updated", body: updated.name, tone: "success" });
+      pushToast({ title: t("editgatewaydialog.general.gatewayupdated"), body: updated.name, tone: "success" });
       await queryClient.invalidateQueries({ queryKey: gatewaysQueryKey(companyId) });
       onOpenChange(false);
     },
     onError: (error) => {
       pushToast({
-        title: "Gateway was not updated",
+        title: t("editgatewaydialog.general.gatewaywasnotupdated"),
         body: error instanceof Error ? error.message : String(error),
         tone: "error",
       });
@@ -74,18 +76,17 @@ export function EditGatewayDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Edit gateway</DialogTitle>
+          <DialogTitle>{t("editgatewaydialog.general.editgateway")}</DialogTitle>
           <DialogDescription>
-            Change the label or the access profile that controls which tools this endpoint exposes.
-          </DialogDescription>
+            {t("editgatewaydialog.general.changethelabelortheaccessprofile")}</DialogDescription>
         </DialogHeader>
         <form className="space-y-4" onSubmit={submit}>
           <label className="block space-y-1.5">
-            <span className="text-xs font-medium text-muted-foreground">Name</span>
+            <span className="text-xs font-medium text-muted-foreground">{t("editgatewaydialog.general.name")}</span>
             <Input value={name} onChange={(event) => setName(event.target.value)} required autoFocus />
           </label>
           <label className="block space-y-1.5">
-            <span className="text-xs font-medium text-muted-foreground">Access profile</span>
+            <span className="text-xs font-medium text-muted-foreground">{t("editgatewaydialog.general.accessprofile")}</span>
             <select
               className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
               value={profileId}
@@ -94,26 +95,34 @@ export function EditGatewayDialog({
             >
               {activeProfiles.map((profile) => (
                 <option key={profile.id} value={profile.id}>
-                  {profile.name} — {allowedToolsLabel(profile)}
+                  {profile.name} — {allowedToolsLabel(profile, {
+                    profileUnavailable: t("editgatewaydialog.general.profileunavailable"),
+                    noToolsAllowed: t("editgatewaydialog.general.notoolsallowed"),
+                    toolCount: (count) => t(
+                      count === 1
+                        ? "editgatewaydialog.general.toolcountsingular"
+                        : "editgatewaydialog.general.toolcountplural",
+                      { count },
+                    ),
+                  })}
                 </option>
               ))}
             </select>
           </label>
           <label className="block space-y-1.5">
-            <span className="text-xs font-medium text-muted-foreground">Description (optional)</span>
+            <span className="text-xs font-medium text-muted-foreground">{t("editgatewaydialog.general.descriptionoptional")}</span>
             <textarea
               className="min-h-16 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
               value={description}
               onChange={(event) => setDescription(event.target.value)}
-              placeholder="Who this endpoint is for."
+              placeholder={t("editgatewaydialog.general.whothisendpointisfor")}
             />
           </label>
           <DialogFooter>
             <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>
-              Cancel
-            </Button>
+              {t("editgatewaydialog.general.cancel")}</Button>
             <Button type="submit" disabled={updateMutation.isPending || !name.trim() || !profileId}>
-              {updateMutation.isPending ? "Saving…" : "Save changes"}
+              {updateMutation.isPending ? t("editgatewaydialog.general.saving") : t("editgatewaydialog.general.savechanges")}
             </Button>
           </DialogFooter>
         </form>

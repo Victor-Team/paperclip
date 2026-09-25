@@ -1,0 +1,198 @@
+[
+  {
+    "name": "访问配置",
+    "viewport": "1366x768",
+    "file": "桌面-profiles.png",
+    "url": "http://127.0.0.1:3200/TOK/apps/advanced/profiles",
+    "lang": "zh-CN",
+    "text": "跳转到主要内容\nWORKTREE\nFEAT/ANC-ZH-CN\n词\n词元共振 Token Resonance\n新建任务\n搜索\n仪表盘\n收件箱\n2\n决策\n状态\n公测\n工作\n任务\n项目\n例程\n产物\n案例\n公测\n工作区\n公司\n智能体\n技能\n连接器\n审计\nCHATS\n战略部·技术竞争席\nBO\nBoard\n词元共振 TOKEN RESONANCE\n应用\n高级设置\n访问配置\nBrowse\nReview\nDEVELOPER\n\nAdvanced setup for developers.\n\nSmoke Lab\n访问配置文件\n\n选择智能体可以使用的工具。创建访问配置后，将其指派给需要的智能体。\n\n检查智能体访问权限\n新建访问配置\n启用\n已归档\n创建第一个访问配置\n\n选择一个起点。下一步可以细调允许使用的工具。\n\n只读\n可查看和获取内容，但不能进行更改。\n日常工作\n可读取并进行常规更改，不包含破坏性工具。\n全部权限\n可使用每个已连接应用提供的所有工具。\n从零开始\n创建空白访问配置，再逐个添加工具。\n复制现有访问配置\n以已有访问配置为起点。\nCommand Palette\n\nSearch for a command to run...",
+    "buttons": [
+      "feat/anc-zh-cn",
+      "词词元共振 Token Resonance",
+      "新建任务",
+      "BOBoard",
+      "检查智能体访问权限",
+      "新建访问配置",
+      "启用",
+      "已归档",
+      "只读可查看和获取内容，但不能进行更改。",
+      "日常工作可读取并进行常规更改，不包含破坏性工具。",
+      "全部权限可使用每个已连接应用提供的所有工具。",
+      "从零开始创建空白访问配置，再逐个添加工具。",
+      "复制现有访问配置以已有访问配置为起点。"
+    ],
+    "faults": [
+      "HTTP 404 /api/assets/2b9bc29c-97ce-4ba6-b2eb-8619cc453517/content"
+    ],
+    "layout": {
+      "documentOverflow": false,
+      "viewportWidth": 1366,
+      "scrollWidth": 1366
+    }
+  },
+  {
+    "name": "网关",
+    "viewport": "1366x768",
+    "file": "桌面-gateways.png",
+    "url": "http://127.0.0.1:3200/TOK/apps/advanced/gateways",
+    "lang": "zh-CN",
+    "text": "跳转到主要内容\nWORKTREE\nFEAT/ANC-ZH-CN\n词\n词元共振 Token Resonance\n新建任务\n搜索\n仪表盘\n收件箱\n2\n决策\n状态\n公测\n工作\n任务\n项目\n例程\n产物\n案例\n公测\n工作区\n公司\n智能体\n技能\n连接器\n审计\nCHATS\n战略部·技术竞争席\nBO\nBoard\n连接器\n网关\nBrowse\nReview\nDEVELOPER\n\nAdvanced setup for developers.\n\nSmoke Lab\n应用\n\n网关是一个安全的 MCP 端点，只会公开你分配的应用。你可以将它交给 Cursor 或 Claude Desktop 等客户端。\n\n暂无网关\n\n将已连接的应用组合成一个安全端点交给客户端，并可一次性撤销。\n\n新建网关\nCommand Palette\n\nSearch for a command to run...",
+    "buttons": [
+      "feat/anc-zh-cn",
+      "词词元共振 Token Resonance",
+      "新建任务",
+      "BOBoard",
+      "新建网关"
+    ],
+    "faults": [
+      "HTTP 404 /api/assets/2b9bc29c-97ce-4ba6-b2eb-8619cc453517/content"
+    ],
+    "layout": {
+      "documentOverflow": false,
+      "viewportWidth": 1366,
+      "scrollWidth": 1366
+    }
+  },
+  {
+    "name": "粘贴配置",
+    "viewport": "1366x768",
+    "file": "桌面-paste-config.png",
+    "url": "http://127.0.0.1:3200/TOK/apps/advanced/paste-config",
+    "lang": "zh-CN",
+    "text": "跳转到主要内容\nWORKTREE\nFEAT/ANC-ZH-CN\n词\n词元共振 Token Resonance\n新建任务\n搜索\n仪表盘\n收件箱\n2\n决策\n状态\n公测\n工作\n任务\n项目\n例程\n产物\n案例\n公测\n工作区\n公司\n智能体\n技能\n连接器\n审计\nCHATS\n战略部·技术竞争席\nBO\nBoard\n词元共振 TOKEN RESONANCE\n应用\n高级设置\nBrowse\nReview\nDEVELOPER\n\nAdvanced setup for developers.\n\nSmoke Lab\n高级设置\n高级\n\n用于连接应用库中没有的工具。你需要查阅工具文档获取配置。大多数人无需使用此功能；如果所需应用已在应用库中，请 直接在那里连接。.\n\n粘贴配置\n\n粘贴工具 README 中的 MCP 配置片段，我们会将其转换为易用的设置流程。\n\n只有 URL？ 浏览计划中的应用连接 改为。\n\n粘贴 MCP 配置，即 README 中让你复制的片段。\n\n检查配置\n保存前，我们会解析配置并展示结果。\n\n想找开发者功能？\n打开开发者工具\n\nCommand Palette\n\nSearch for a command to run...",
+    "buttons": [
+      "feat/anc-zh-cn",
+      "词词元共振 Token Resonance",
+      "新建任务",
+      "BOBoard",
+      "检查配置"
+    ],
+    "faults": [
+      "HTTP 404 /api/assets/2b9bc29c-97ce-4ba6-b2eb-8619cc453517/content"
+    ],
+    "layout": {
+      "documentOverflow": false,
+      "viewportWidth": 1366,
+      "scrollWidth": 1366
+    }
+  },
+  {
+    "name": "Smoke Lab",
+    "viewport": "1366x768",
+    "file": "桌面-smoke-lab.png",
+    "url": "http://127.0.0.1:3200/TOK/apps/advanced/smoke-lab",
+    "lang": "zh-CN",
+    "text": "\nFEAT/ANC-ZH-CN\n词\n词元共振 Token Resonance\n新建任务\n搜索\n仪表盘\n收件箱\n2\n决策\n状态\n公测\n工作\n任务\n项目\n例程\n产物\n案例\n公测\n工作区\n公司\n智能体\n技能\n连接器\n审计\nCHATS\n战略部·技术竞争席\nBO\nBoard\n词元共振 TOKEN RESONANCE\n应用\n高级设置\nSmoke Lab\nBrowse\nReview\nDEVELOPER\n\nAdvanced setup for developers.\n\nSmoke Lab\nSmoke Lab\n实验性功能\n操作教程\n\n使用固定的本地测试环境，端到端验证每条集成路径（P1–P7），包括模拟 OAuth 提供方和本机 MCP 服务器。此处不会接触真实服务商或真实凭据。先启动服务并安装测试应用，再从浏览器运行受控冒烟测试。首次使用？请参阅 操作教程.\n\n测试服务\n启动服务\n停止\n安装测试应用\n重置\n\nFake OAuth 2.0 provider\n\nIn-process deterministic OAuth provider with fixed smoke credentials.\n\n运行中\n网址\nhttp://127.0.0.1:3200/api/companies/6f94c8ef-aced-48f0-8ec3-e5a14fe0aa9e/smoke-lab/oauth/authorize\n\nHTTP MCP fixture\n\nhttp-mcp-fixture\n\n已停止\n网址\n未运行\n\n模拟 OAuth 演示凭据\n\n在 P1（OAuth）冒烟测试中，将以下值输入模拟提供方的授权页面。这些是固定的测试值，可以显示。\n\n邮箱： smoke@paperclip.test\n密码： smoke-password\n集成矩阵\n通过\n失败\n已跳过\n未运行\n路径\t连接\t发现目录\t允许读取\t写入前征求批准\t已拒绝的调用\t结构变更隔离\t撤销\t审计证据\nP1远程 HTTP · OAuth\n模拟 OAuth 提供方背后的 HTTP MCP 测试服务\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\nP2远程 HTTP · API 密钥\n使用固定 Bearer 密钥的 HTTP MCP 测试服务\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\nP3本地 stdio（模板）\n通过运行时监管器启动的 stdio 测试服务\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\nP4插件集成\n插件提供的目录条目与安装流程\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\nP5粘贴配置导入\n通过高级设置导入配置\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\nP6令牌代理／网关\n运行范围连接令牌、有效期与权限范围检查\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\nP7治理界面\n访问配置、事前审批规则与隔离\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\n所选运行尚无步骤记录。请运行浏览器冒烟测试以填充矩阵。\n\n运行\n尚无运行记录\n立即运行浏览器冒烟测试\n\n尚无运行记录。\n\n选择一条运行记录以查看步骤。\n\nCommand Palette\n\nSearch for a command to run...",
+    "buttons": [
+      "feat/anc-zh-cn",
+      "词词元共振 Token Resonance",
+      "新建任务",
+      "BOBoard",
+      " 启动服务",
+      "停止",
+      "安装测试应用",
+      " 重置",
+      "立即运行浏览器冒烟测试"
+    ],
+    "faults": [
+      "HTTP 404 /api/assets/2b9bc29c-97ce-4ba6-b2eb-8619cc453517/content"
+    ],
+    "layout": {
+      "documentOverflow": false,
+      "viewportWidth": 1366,
+      "scrollWidth": 1366
+    }
+  },
+  {
+    "name": "访问配置",
+    "viewport": "390x844",
+    "file": "窄屏-profiles.png",
+    "url": "http://127.0.0.1:3200/TOK/apps/advanced/profiles",
+    "lang": "zh-CN",
+    "text": "跳转到主要内容\nWORKTREE\nFEAT/ANC-ZH-CN\nBrowse\nReview\nDEVELOPER\n\nAdvanced setup for developers.\n\nSmoke Lab\nBO\nBoard\n词元共振 TOKEN RESONANCE\n应用\n高级设置\n访问配置\n访问配置文件\n\n选择智能体可以使用的工具。创建访问配置后，将其指派给需要的智能体。\n\n检查智能体访问权限\n新建访问配置\n启用\n已归档\n创建第一个访问配置\n\n选择一个起点。下一步可以细调允许使用的工具。\n\n只读\n可查看和获取内容，但不能进行更改。\n日常工作\n可读取并进行常规更改，不包含破坏性工具。\n全部权限\n可使用每个已连接应用提供的所有工具。\n从零开始\n创建空白访问配置，再逐个添加工具。\n复制现有访问配置\n以已有访问配置为起点。\n首页\n任务\n新建任务\n智能体\n2\n收件箱\nCommand Palette\n\nSearch for a command to run...",
+    "buttons": [
+      "feat/anc-zh-cn",
+      "BOBoard",
+      "检查智能体访问权限",
+      "新建访问配置",
+      "启用",
+      "已归档",
+      "只读可查看和获取内容，但不能进行更改。",
+      "日常工作可读取并进行常规更改，不包含破坏性工具。",
+      "全部权限可使用每个已连接应用提供的所有工具。",
+      "从零开始创建空白访问配置，再逐个添加工具。",
+      "复制现有访问配置以已有访问配置为起点。",
+      "新建任务"
+    ],
+    "faults": [],
+    "layout": {
+      "documentOverflow": false,
+      "viewportWidth": 390,
+      "scrollWidth": 390
+    }
+  },
+  {
+    "name": "网关",
+    "viewport": "390x844",
+    "file": "窄屏-gateways.png",
+    "url": "http://127.0.0.1:3200/TOK/apps/advanced/gateways",
+    "lang": "zh-CN",
+    "text": "跳转到主要内容\nWORKTREE\nFEAT/ANC-ZH-CN\nBrowse\nReview\nDEVELOPER\n\nAdvanced setup for developers.\n\nSmoke Lab\nBO\nBoard\n连接器\n网关\n应用\n\n网关是一个安全的 MCP 端点，只会公开你分配的应用。你可以将它交给 Cursor 或 Claude Desktop 等客户端。\n\n暂无网关\n\n将已连接的应用组合成一个安全端点交给客户端，并可一次性撤销。\n\n新建网关\n首页\n任务\n新建任务\n智能体\n2\n收件箱\nCommand Palette\n\nSearch for a command to run...",
+    "buttons": [
+      "feat/anc-zh-cn",
+      "BOBoard",
+      "新建网关",
+      "新建任务"
+    ],
+    "faults": [],
+    "layout": {
+      "documentOverflow": false,
+      "viewportWidth": 390,
+      "scrollWidth": 390
+    }
+  },
+  {
+    "name": "粘贴配置",
+    "viewport": "390x844",
+    "file": "窄屏-paste-config.png",
+    "url": "http://127.0.0.1:3200/TOK/apps/advanced/paste-config",
+    "lang": "zh-CN",
+    "text": "跳转到主要内容\nWORKTREE\nFEAT/ANC-ZH-CN\nBrowse\nReview\nDEVELOPER\n\nAdvanced setup for developers.\n\nSmoke Lab\nBO\nBoard\n词元共振 TOKEN RESONANCE\n应用\n高级设置\n高级设置\n高级\n\n用于连接应用库中没有的工具。你需要查阅工具文档获取配置。大多数人无需使用此功能；如果所需应用已在应用库中，请 直接在那里连接。.\n\n粘贴配置\n\n粘贴工具 README 中的 MCP 配置片段，我们会将其转换为易用的设置流程。\n\n只有 URL？ 浏览计划中的应用连接 改为。\n\n粘贴 MCP 配置，即 README 中让你复制的片段。\n\n检查配置\n保存前，我们会解析配置并展示结果。\n\n想找开发者功能？\n打开开发者工具\n\n首页\n任务\n新建任务\n智能体\n2\n收件箱\nCommand Palette\n\nSearch for a command to run...",
+    "buttons": [
+      "feat/anc-zh-cn",
+      "BOBoard",
+      "检查配置",
+      "新建任务"
+    ],
+    "faults": [],
+    "layout": {
+      "documentOverflow": false,
+      "viewportWidth": 390,
+      "scrollWidth": 390
+    }
+  },
+  {
+    "name": "Smoke Lab",
+    "viewport": "390x844",
+    "file": "窄屏-smoke-lab.png",
+    "url": "http://127.0.0.1:3200/TOK/apps/advanced/smoke-lab",
+    "lang": "zh-CN",
+    "text": "跳转到主要内容\nWORKTREE\nFEAT/ANC-ZH-CN\nBrowse\nReview\nDEVELOPER\n\nAdvanced setup for developers.\n\nSmoke Lab\nBO\nBoard\n词元共振 TOKEN RESONANCE\n应用\n高级设置\nSmoke Lab\nSmoke Lab\n实验性功能\n操作教程\n\n使用固定的本地测试环境，端到端验证每条集成路径（P1–P7），包括模拟 OAuth 提供方和本机 MCP 服务器。此处不会接触真实服务商或真实凭据。先启动服务并安装测试应用，再从浏览器运行受控冒烟测试。首次使用？请参阅 操作教程.\n\n测试服务\n启动服务\n停止\n安装测试应用\n重置\n\nFake OAuth 2.0 provider\n\nIn-process deterministic OAuth provider with fixed smoke credentials.\n\n运行中\n网址\nhttp://127.0.0.1:3200/api/companies/6f94c8ef-aced-48f0-8ec3-e5a14fe0aa9e/smoke-lab/oauth/authorize\n\nHTTP MCP fixture\n\nhttp-mcp-fixture\n\n已停止\n网址\n未运行\n\n模拟 OAuth 演示凭据\n\n在 P1（OAuth）冒烟测试中，将以下值输入模拟提供方的授权页面。这些是固定的测试值，可以显示。\n\n邮箱： smoke@paperclip.test\n密码： smoke-password\n集成矩阵\n通过\n失败\n已跳过\n未运行\n路径\t连接\t发现目录\t允许读取\t写入前征求批准\t已拒绝的调用\t结构变更隔离\t撤销\t审计证据\nP1远程 HTTP · OAuth\n模拟 OAuth 提供方背后的 HTTP MCP 测试服务\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\nP2远程 HTTP · API 密钥\n使用固定 Bearer 密钥的 HTTP MCP 测试服务\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\nP3本地 stdio（模板）\n通过运行时监管器启动的 stdio 测试服务\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\nP4插件集成\n插件提供的目录条目与安装流程\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\nP5粘贴配置导入\n通过高级设置导入配置\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\nP6令牌代理／网关\n运行范围连接令牌、有效期与权限范围检查\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\nP7治理界面\n访问配置、事前审批规则与隔离\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\n所选运行尚无步骤记录。请运行浏览器冒烟测试以填充矩阵。\n\n运行\n尚无运行记录\n立即运行浏览器冒烟测试\n\n尚无运行记录。\n\n选择一条运行记录以查看步骤。\n\n首页\n任务\n新建任务\n智能体\n2\n收件箱\nCommand Palette\n\nSearch for a command to run...",
+    "buttons": [
+      "feat/anc-zh-cn",
+      "BOBoard",
+      " 启动服务",
+      "停止",
+      "安装测试应用",
+      " 重置",
+      "立即运行浏览器冒烟测试",
+      "新建任务"
+    ],
+    "faults": [],
+    "layout": {
+      "documentOverflow": false,
+      "viewportWidth": 390,
+      "scrollWidth": 390
+    }
+  }
+]

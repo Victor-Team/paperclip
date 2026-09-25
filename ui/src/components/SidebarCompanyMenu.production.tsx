@@ -44,6 +44,9 @@ import { queryKeys } from "@/lib/queryKeys";
 import { cn, SIDEBAR_RAIL_HIDDEN_LABEL } from "@/lib/utils";
 import { useSidebar } from "../context/SidebarContext";
 import { CompanyPatternIcon } from "./CompanyPatternIcon";
+import { useTranslation } from "@/i18n";
+
+import { PluginOrganizationSwitcher } from "./PluginOrganizationSwitcher";
 
 interface SidebarCompanyMenuProps {
   open?: boolean;
@@ -155,6 +158,7 @@ function SortableCompanyItem({
     transition,
     isDragging,
   } = useSortable({ id: company.id, disabled: !isEditing });
+  const { t } = useTranslation();
 
   return (
     <DropdownMenuItem
@@ -192,7 +196,7 @@ function SortableCompanyItem({
         <button
           type="button"
           ref={setActivatorNodeRef}
-          aria-label={`Reorder ${company.name}`}
+          aria-label={t("sidebarcompanymenu.general.reorder", { name: company.name })}
           className="inline-flex size-8 shrink-0 items-center justify-center rounded text-muted-foreground hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-(length:--rad-2) focus-visible:ring-ring"
           onClick={(event) => {
             event.preventDefault();
@@ -212,13 +216,22 @@ function SortableCompanyItem({
   );
 }
 
-export function SidebarCompanyMenu({ open: controlledOpen, onOpenChange }: SidebarCompanyMenuProps = {}) {
+export function SidebarCompanyMenu(props: SidebarCompanyMenuProps = {}) {
+  return (
+    <PluginOrganizationSwitcher {...props}>
+      <BuiltinCompanyMenu {...props} />
+    </PluginOrganizationSwitcher>
+  );
+}
+
+function BuiltinCompanyMenu({ open: controlledOpen, onOpenChange }: SidebarCompanyMenuProps) {
   const [internalOpen, setInternalOpen] = useState(false);
   const [isEditingOrder, setIsEditingOrder] = useState(false);
   const { companies, selectedCompany, setSelectedCompanyId, companyListUnavailable, retryCompanies } =
     useCompany();
   const { openOnboarding } = useDialogActions();
   const { isMobile, setSidebarOpen, collapsed, peeking } = useSidebar();
+  const { t } = useTranslation();
   const rail = collapsed && !peeking;
   const location = useLocation();
   const navigate = useNavigate();
@@ -279,7 +292,7 @@ export function SidebarCompanyMenu({ open: controlledOpen, onOpenChange }: Sideb
       ?? null
     : null;
   const createStackUrl = isCloud ? cloudStackCreateUrl(cloudBaseUrl) : null;
-  const switcherNoun = isCloud ? "organization" : "company";
+  const switcherNoun = isCloud ? t("sidebarcompanymenu.general.nounOrganization") : t("sidebarcompanymenu.general.nounCompany");
   // The one name the chrome shows for "where am I": the stack in cloud, the
   // company when self-hosted.
   const currentName = isCloud
@@ -376,8 +389,8 @@ export function SidebarCompanyMenu({ open: controlledOpen, onOpenChange }: Sideb
           className="h-9 min-w-0 flex-1 justify-start gap-2 px-4 text-left hover:bg-accent/50 hover:text-foreground has-[>svg]:px-4 dark:hover:bg-accent/50"
           aria-label={
             currentName
-              ? `Open ${currentName} ${switcherNoun} switcher`
-              : `Open ${switcherNoun} switcher`
+              ? t("sidebarcompanymenu.general.openSwitcherNamed", { name: currentName, noun: switcherNoun })
+              : t("sidebarcompanymenu.general.openSwitcher", { noun: switcherNoun })
           }
         >
           <span className="flex min-w-0 flex-1 items-center gap-2">
@@ -395,7 +408,7 @@ export function SidebarCompanyMenu({ open: controlledOpen, onOpenChange }: Sideb
               )}
               title={currentName ?? undefined}
             >
-              {currentName ?? (isCloud ? "Select organization" : "Select company")}
+              {currentName ?? t("sidebarcompanymenu.general.selectNoun", { noun: switcherNoun })}
             </span>
           </span>
           {!rail && <ChevronsUpDown className="size-3.5 shrink-0 text-muted-foreground" />}
@@ -408,7 +421,7 @@ export function SidebarCompanyMenu({ open: controlledOpen, onOpenChange }: Sideb
       >
         <div className="flex h-(--organization-popover-header-height) items-center justify-between gap-2 px-3.5">
           <DropdownMenuLabel className="p-0 text-(length:--text-compact) font-semibold text-foreground">
-            Organizations
+            {t("sidebarcompanymenu.general.organizations")}
           </DropdownMenuLabel>
           {/* Stack order is owned by cloud's own portfolio in v1, so the
               drag-to-reorder affordance stays self-hosted-only. */}
@@ -422,7 +435,7 @@ export function SidebarCompanyMenu({ open: controlledOpen, onOpenChange }: Sideb
               }}
               className="rounded px-1.5 py-0.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
             >
-              {isEditingOrder ? "Done" : "Edit"}
+              {isEditingOrder ? t("sidebarcompanymenu.general.done") : t("sidebarcompanymenu.general.edit")}
             </button>
           )}
         </div>
@@ -440,10 +453,10 @@ export function SidebarCompanyMenu({ open: controlledOpen, onOpenChange }: Sideb
               {stacks.length === 0 ? (
                 <DropdownMenuItem disabled>
                   {stacksQuery.isLoading
-                    ? "Loading organizations..."
+                    ? t("sidebarcompanymenu.general.loadingOrganizations")
                     : stacksQuery.isError
-                      ? "Could not load organizations"
-                      : "No organizations"}
+                      ? t("sidebarcompanymenu.general.couldNotLoadOrganizations")
+                      : t("sidebarcompanymenu.general.noOrganizations")}
                 </DropdownMenuItem>
               ) : null}
             </>
@@ -476,7 +489,7 @@ export function SidebarCompanyMenu({ open: controlledOpen, onOpenChange }: Sideb
                 // offer the way back.
                 companyListUnavailable ? (
                   <>
-                    <DropdownMenuItem disabled>Couldn&apos;t load companies</DropdownMenuItem>
+                    <DropdownMenuItem disabled>{t("sidebarcompanymenu.general.couldnTLoadCompanies")}</DropdownMenuItem>
                     <DropdownMenuItem
                       onSelect={(event) => {
                         // Keep the menu open so the result of the retry is visible.
@@ -485,11 +498,11 @@ export function SidebarCompanyMenu({ open: controlledOpen, onOpenChange }: Sideb
                       }}
                     >
                       <RefreshCw className="h-4 w-4 mr-2" />
-                      Try again
+                      {t("sidebarcompanymenu.general.tryAgain")}
                     </DropdownMenuItem>
                   </>
                 ) : (
-                  <DropdownMenuItem disabled>No companies</DropdownMenuItem>
+                  <DropdownMenuItem disabled>{t("sidebarcompanymenu.general.noCompanies")}</DropdownMenuItem>
                 )
               ) : null}
             </>
@@ -507,7 +520,7 @@ export function SidebarCompanyMenu({ open: controlledOpen, onOpenChange }: Sideb
               <span className="flex size-5 shrink-0 items-center justify-center text-muted-foreground">
                 <Plus className="size-4" />
               </span>
-              <span className="min-w-0 flex-1 truncate">Create organization</span>
+              <span className="min-w-0 flex-1 truncate">{t("sidebarcompanymenu.general.createOrganization")}</span>
             </DropdownMenuItem>
           )}
           {showInvitePeople ? (
@@ -531,8 +544,8 @@ export function SidebarCompanyMenu({ open: controlledOpen, onOpenChange }: Sideb
                 </span>
                 <span className="min-w-0 flex-1 truncate">
                   {currentName
-                    ? `Invite people to ${currentName}`
-                    : "Invite people"}
+                    ? t("sidebarcompanymenu.general.invitePeopleTo", { name: currentName })
+                    : t("sidebarcompanymenu.general.invitePeople")}
                 </span>
               </Link>
             </DropdownMenuItem>
@@ -547,7 +560,7 @@ export function SidebarCompanyMenu({ open: controlledOpen, onOpenChange }: Sideb
                 <LogOut className="size-4" />
               </span>
               <span className="min-w-0 flex-1 truncate">
-                {signOutMutation.isPending ? "Signing out..." : "Sign out"}
+                {signOutMutation.isPending ? t("sidebarcompanymenu.general.signingOut") : t("sidebarcompanymenu.general.signOut")}
               </span>
             </DropdownMenuItem>
           ) : null}

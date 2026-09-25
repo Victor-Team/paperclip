@@ -2,6 +2,7 @@
 
 import { flushSync } from "react-dom";
 import { createRoot } from "react-dom/client";
+import { renderToStaticMarkup } from "react-dom/server";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type {
   CatalogTeam,
@@ -10,12 +11,14 @@ import type {
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   TeamCatalog,
+  TeamRow,
   listTeamInstallAdapterTypes,
   parseTeamRoute,
   resolveTeamInstallAdapterType,
   teamRoute,
 } from "./TeamCatalog";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { i18n } from "../i18n";
 
 const mockTeamCatalogApi = vi.hoisted(() => ({
   catalogList: vi.fn(),
@@ -100,6 +103,25 @@ if (typeof Element !== "undefined" && !Element.prototype.scrollIntoView) {
 }
 
 describe("TeamCatalog routes", () => {
+  it("renders team skill counts and trust tooltip in Chinese without English suffixes", async () => {
+    await i18n.changeLanguage("zh-CN");
+    try {
+      const team = makeTeam({
+        counts: { ...makeTeam().counts, localSkills: 3 },
+      });
+      const html = renderToStaticMarkup(
+        <TooltipProvider>
+          <TeamRow team={team} selected={false} onSelect={() => {}} />
+        </TooltipProvider>,
+      );
+      expect(html).toContain("3 项技能");
+      expect(html).not.toContain("3秒");
+      expect(i18n.t("teamcatalog.general.trustMarkdownOnlyTip")).toContain("没有可执行内容");
+    } finally {
+      await i18n.changeLanguage("en");
+    }
+  });
+
   it("round-trips file paths containing literal tildes", () => {
     const route = teamRoute("paperclipai/bundled/test/team", "agents/a~b/AGENTS.md");
 
@@ -291,6 +313,27 @@ describe("TeamCatalog install preview path", () => {
     // summary grid counts
     expect(document.body.textContent).toContain("Agents");
     expect(document.body.textContent).toContain("Projects");
+  });
+
+  it("renders Chinese compatibility, installer button, and opened preview labels", async () => {
+    await i18n.changeLanguage("zh-CN");
+    try {
+      await renderPage();
+      expect(document.body.textContent).toContain("兼容");
+      expect(document.body.textContent).toContain("安装团队");
+      expect(document.body.textContent).not.toContain("Compatible");
+
+      const install = findButton("安装团队");
+      expect(install).toBeTruthy();
+      await act(async () => { install!.click(); });
+      await flushReact();
+      expect(document.body.textContent).toContain("预览");
+      expect(document.body.textContent).toContain("智能体 ·");
+      expect(document.body.textContent).toContain("项目 ·");
+      expect(document.body.textContent).not.toContain("Agents ·");
+    } finally {
+      await i18n.changeLanguage("en");
+    }
   });
 
   it("opens the installer, fetches the preview, and submits the install", async () => {

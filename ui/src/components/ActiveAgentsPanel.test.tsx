@@ -254,10 +254,23 @@ describe("ActiveAgentsPanel", () => {
     ]);
     expect(headers.every((header) => header.querySelector("svg") === null)).toBe(true);
     expect(container.querySelector(".status-chip")).toBeNull();
-    expect(container.querySelectorAll('[aria-label="Task in review"]')).toHaveLength(7);
+    expect(container.querySelectorAll('[aria-label="Task In Review"]')).toHaveLength(7);
     expect(container.querySelectorAll(".motion-safe\\:animate-spin")).toHaveLength(0);
     expect(container.querySelector('a[aria-label="Agent 0 — Running. View run"]')?.getAttribute("href"))
       .toBe("/agents/agent-0/runs/run-0");
+    await act(async () => root.unmount());
+  });
+
+  it("shows an answered Slack task as idle without changing the run outcome", async () => {
+    const root = createRoot(container);
+    await act(async () => {
+      root.render(<AgentRunCard companyId="company-1"
+        run={{ ...createIssueRun(0, "issue-1"), status: "succeeded" }}
+        issue={{ title: "Slack conversation", identifier: "PAP-559", status: "in_review", externalConversationState: "waiting" }} />);
+    });
+    expect(container.querySelector('[aria-label="Agent 0 — Succeeded. View run"]')).not.toBeNull();
+    expect(container.querySelector('[aria-label="Task idle"]')).not.toBeNull();
+    expect(container.querySelector('[aria-label="Task in review"]')).toBeNull();
     await act(async () => root.unmount());
   });
 

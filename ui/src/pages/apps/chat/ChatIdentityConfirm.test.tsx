@@ -3,6 +3,7 @@ import { flushSync } from "react-dom";
 import { createRoot, type Root } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { i18n } from "@/i18n";
 import { ChatIdentityConfirm } from "./ChatIdentityConfirm";
 
 const mocks = vi.hoisted(() => ({
@@ -22,7 +23,8 @@ describe("self-service Slack identity confirmation", () => {
   let root: Root;
   let client: QueryClient;
   const identity = { provider: "slack", externalLabel: "Dotta", companyName: "Acme", botLabel: "CEO", selfService: true, canConfirm: true };
-  beforeEach(() => {
+  beforeEach(async () => {
+    await i18n.changeLanguage("en");
     vi.resetAllMocks();
     mocks.getSession.mockResolvedValue({ user: { id: "user-a", name: "Dotta" } });
     mocks.previewIdentityLink.mockResolvedValue(identity);
@@ -32,7 +34,7 @@ describe("self-service Slack identity confirmation", () => {
     root = createRoot(container);
     client = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
   });
-  afterEach(() => { flushSync(() => root.unmount()); client.clear(); container.remove(); });
+  afterEach(async () => { flushSync(() => root.unmount()); client.clear(); container.remove(); await i18n.changeLanguage("en"); });
   const render = () => flushSync(() => root.render(<QueryClientProvider client={client}><ChatIdentityConfirm /></QueryClientProvider>));
   const button = (text: string) => Array.from(container.querySelectorAll("button")).find((node) => node.textContent === text)!;
 
@@ -48,6 +50,15 @@ describe("self-service Slack identity confirmation", () => {
     await vi.waitFor(() => expect(container.textContent).toContain("Identity linked"));
     expect(container.textContent).toContain("current Paperclip permissions");
     expect(container.querySelector('a')?.textContent).toBe("Return to Slack");
+  });
+  it("renders complete Chinese identity warnings and permission outcome with names in place", async () => {
+    await i18n.changeLanguage("zh-CN");
+    render();
+    await vi.waitFor(() => expect(button("确认身份")).toBeTruthy());
+    expect(container.textContent).toContain("请仅在这是您的 Slack 身份时确认。Paperclip 会在每次操作时检查您当前的公司成员资格。");
+    button("确认身份").click();
+    await vi.waitFor(() => expect(container.textContent).toContain("身份已关联"));
+    expect(container.textContent).toContain("来自 Dotta 的后续消息将使用您当前在 Acme 的 Paperclip 权限。");
   });
   it("keeps other providers out of the Slack return flow", async () => {
     mocks.previewIdentityLink.mockResolvedValue({ ...identity, provider: "github", selfService: false });

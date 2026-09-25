@@ -32,12 +32,15 @@ import {
   selectAgentArtifactAttachments,
   workProductHref,
 } from "@/lib/issue-artifacts";
-import { attachmentOpenPath } from "@/lib/issue-attachments";
+import { MediaArtifactCard } from "@/components/artifacts/MediaArtifactCard";
+import { isImageLikeOutput, isVideoLikeOutput } from "@/lib/issue-output";
+import { attachmentDownloadPath, attachmentOpenPath } from "@/lib/issue-attachments";
 import { MarkdownBody } from "@/components/MarkdownBody";
 import { RichWorkProductCard } from "@/components/task-chat/RichWorkProductCard";
 import { DocumentAnnotationsCountChip, IssueDocumentAnnotations } from "@/components/IssueDocumentAnnotations";
 import { cn, formatDateTime } from "@/lib/utils";
 import { useLocation } from "@/lib/router";
+import { useTranslation } from "@/i18n";
 
 interface IssuePropertiesArtifactsTabProps {
   issue: Issue;
@@ -54,28 +57,28 @@ function formatBytes(n: number): string {
   return `${(n / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-/** Work-product status → label + `--status-task-*` base-hue var for `.status-chip`. */
-function workProductStatusBadge(status: string): { label: string; cssVar: string } | null {
+/** Work-product status → translation key + `--status-task-*` base-hue var for `.status-chip`. */
+function workProductStatusBadge(status: string): { labelKey: string; cssVar: string } | null {
   switch (status) {
     case "active":
     case "draft":
-      return { label: "In progress", cssVar: "--status-task-in_progress" };
+      return { labelKey: "issuepropertiesartifactstab.general.inprogress", cssVar: "--status-task-in_progress" };
     case "ready_for_review":
-      return { label: "For review", cssVar: "--status-task-in_review" };
+      return { labelKey: "issuepropertiesartifactstab.general.forreview", cssVar: "--status-task-in_review" };
     case "approved":
     case "merged":
-      return { label: "Done", cssVar: "--status-task-done" };
+      return { labelKey: "issuepropertiesartifactstab.general.done", cssVar: "--status-task-done" };
     case "changes_requested":
-      return { label: "Changes requested", cssVar: "--status-task-todo" };
+      return { labelKey: "issuepropertiesartifactstab.general.changesrequested", cssVar: "--status-task-todo" };
     case "failed":
-      return { label: "Failed", cssVar: "--status-task-blocked" };
+      return { labelKey: "issuepropertiesartifactstab.general.failed", cssVar: "--status-task-blocked" };
     default:
       return null;
   }
 }
 
 const ROW_CLASS =
-  "flex items-center gap-2 rounded-md border border-border bg-card/50 px-2.5 py-1.5 text-sm";
+  "flex items-center gap-2 rounded-md border border-border bg-card/50 px-2.5 py-1.5 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
 
 /**
  * Work-product row for an eligible Markdown artifact (LOOA-1533 gap): expands
@@ -97,6 +100,7 @@ function MarkdownWorkProductRow({
   reviewDoc: IssueDocument | undefined;
   openRequestId?: number;
 }) {
+  const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
   const [annotationPanelOpen, setAnnotationPanelOpen] = useState(false);
   const headerRef = useRef<HTMLDivElement | null>(null);
@@ -149,8 +153,7 @@ function MarkdownWorkProductRow({
   if (tooLarge) {
     expandedBody = (
       <p className="text-sm text-muted-foreground">
-        This Markdown file is too large to preview. Use Raw or Download instead.
-      </p>
+        {t("issuepropertiesartifactstab.general.thismarkdownfileistoolargeto")}</p>
     );
   } else if (reviewDoc) {
     expandedBody = reviewDoc.body.trim().length > 0 ? (
@@ -169,15 +172,15 @@ function MarkdownWorkProductRow({
         <MarkdownBody>{reviewDoc.body}</MarkdownBody>
       </IssueDocumentAnnotations>
     ) : (
-      <p className="text-sm text-muted-foreground">Document is empty.</p>
+      <p className="text-sm text-muted-foreground">{t("issuepropertiesartifactstab.general.documentisempty")}</p>
     );
   } else if (ensure.isError) {
     expandedBody = (
       <div className="flex flex-col items-start gap-1.5">
         <p className="text-sm text-muted-foreground">
           {unsupportedError
-            ? "This file can't be previewed as Markdown. Use Raw or Download instead."
-            : "Preview failed to load."}
+            ? t("issuepropertiesartifactstab.general.thisfilecantbepreviewedas")
+            : t("issuepropertiesartifactstab.general.previewfailedtoload")}
         </p>
         {!unsupportedError ? (
           <button
@@ -188,13 +191,12 @@ function MarkdownWorkProductRow({
               ensure.mutate();
             }}
           >
-            Retry
-          </button>
+            {t("issuepropertiesartifactstab.general.retry")}</button>
         ) : null}
       </div>
     );
   } else {
-    expandedBody = <p className="text-sm text-muted-foreground">Preparing preview…</p>;
+    expandedBody = <p className="text-sm text-muted-foreground">{t("issuepropertiesartifactstab.general.preparingpreview")}</p>;
   }
 
   return (
@@ -213,7 +215,7 @@ function MarkdownWorkProductRow({
               className="status-chip inline-flex shrink-0 items-center rounded-full border px-1.5 py-0.5 text-(length:--text-nano) leading-none whitespace-nowrap"
               style={{ "--sc": `var(${badge.cssVar})` } as CSSProperties}
             >
-              {badge.label}
+              {t(badge.labelKey)}
             </span>
           ) : null}
           {reviewDoc ? (
@@ -236,7 +238,7 @@ function MarkdownWorkProductRow({
           target="_blank"
           rel="noreferrer"
           aria-label={`Open raw ${workProduct.title}`}
-          title="Open raw"
+          title={t("issuepropertiesartifactstab.general.openraw")}
           className="shrink-0 px-1.5 py-1.5 text-muted-foreground hover:text-foreground"
         >
           <ExternalLink className="h-3 w-3" />
@@ -244,7 +246,7 @@ function MarkdownWorkProductRow({
         <a
           href={metadata.downloadPath}
           aria-label={`Download ${workProduct.title}`}
-          title="Download"
+          title={t("issuepropertiesartifactstab.general.download")}
           className="shrink-0 py-1.5 pr-2 pl-0.5 text-muted-foreground hover:text-foreground"
         >
           <Download className="h-3 w-3" />
@@ -268,6 +270,7 @@ function DocumentRow({
   openRequestId?: number;
   onOpen?: () => void;
 }) {
+  const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
   const [annotationPanelOpen, setAnnotationPanelOpen] = useState(false);
   const headerRef = useRef<HTMLDivElement | null>(null);
@@ -338,7 +341,7 @@ function DocumentRow({
               <MarkdownBody>{doc.body}</MarkdownBody>
             </IssueDocumentAnnotations>
           ) : (
-            <p className="text-sm text-muted-foreground">Document is empty.</p>
+            <p className="text-sm text-muted-foreground">{t("issuepropertiesartifactstab.general.documentisempty1")}</p>
           )}
         </div>
       ) : null}
@@ -357,6 +360,7 @@ function DocumentRow({
  * thread.
  */
 export function IssuePropertiesArtifactsTab({ issue, documentDeepLink, onOpenDocument }: IssuePropertiesArtifactsTabProps) {
+  const { t } = useTranslation();
   const { data: attachments } = useQuery({
     queryKey: queryKeys.issues.attachments(issue.id),
     queryFn: () => issuesApi.listAttachments(issue.id),
@@ -432,13 +436,12 @@ export function IssuePropertiesArtifactsTab({ issue, documentDeepLink, onOpenDoc
   if (workProductRows.length === 0 && documentRows.length === 0 && fileRows.length === 0) {
     return (
       <div className="px-1 py-6 text-sm text-muted-foreground">
-        No artifacts yet. Work products, documents, and agent-produced files will appear here.
-      </div>
+        {t("issuepropertiesartifactstab.general.noartifactsyetworkproductsdocumentsand")}</div>
     );
   }
 
   return (
-    <div className="flex flex-col gap-3 py-2">
+    <div className="@container flex flex-col gap-3 py-2">
       {groupedRows.map((group) => {
         const run = group.runId === "other" ? null : runsById.get(group.runId);
         const agent = run ? agentsById.get(run.agentId) : null;
@@ -454,7 +457,7 @@ export function IssuePropertiesArtifactsTab({ issue, documentDeepLink, onOpenDoc
                 </time>
               </header>
             ) : null}
-            <ul className="flex flex-col gap-1">
+            <ul className="grid grid-cols-1 gap-2 @xs:grid-cols-2 @2xl:grid-cols-3">
               {group.rows.map((row) => {
                 if (row.kind === "work_product") {
                   const wp = row.value;
@@ -462,7 +465,7 @@ export function IssuePropertiesArtifactsTab({ issue, documentDeepLink, onOpenDoc
                   if (markdownMetadata) {
                     const reviewKey = artifactReviewDocumentKey(wp.id);
                     return (
-                      <li key={row.id}>
+                      <li key={row.id} className="col-span-full min-w-0">
                         <MarkdownWorkProductRow
                           issueId={issue.id}
                           workProduct={wp}
@@ -473,16 +476,20 @@ export function IssuePropertiesArtifactsTab({ issue, documentDeepLink, onOpenDoc
                       </li>
                     );
                   }
+                  const contentType = typeof wp.metadata?.contentType === "string" ? wp.metadata.contentType : "";
+                  const filename = typeof wp.metadata?.originalFilename === "string" ? wp.metadata.originalFilename : wp.title;
+                  const hasMediaPath = Boolean(wp.metadata?.contentPath || wp.metadata?.openPath || workProductHref(wp));
+                  const media = hasMediaPath && wp.type === "artifact" && (isImageLikeOutput(contentType, filename) || isVideoLikeOutput(contentType, filename));
                   return (
-                    <li key={row.id}>
-                      <RichWorkProductCard workProduct={wp} href={workProductHref(wp)} variant="compact" />
+                    <li key={row.id} className={cn("min-w-0", !media && "col-span-full")}>
+                      <RichWorkProductCard workProduct={wp} href={workProductHref(wp)} variant={media ? "gallery" : "compact"} />
                     </li>
                   );
                 }
                 if (row.kind === "document") {
                   const doc = row.value;
                   return (
-                    <li key={row.id}>
+                    <li key={row.id} className="col-span-full min-w-0">
                       <DocumentRow
                         issueId={issue.id}
                         doc={doc}
@@ -493,8 +500,24 @@ export function IssuePropertiesArtifactsTab({ issue, documentDeepLink, onOpenDoc
                   );
                 }
                 const attachment = row.value;
+                const filename = attachment.originalFilename ?? attachment.objectKey;
+                if (isImageLikeOutput(attachment.contentType, filename) || isVideoLikeOutput(attachment.contentType, filename)) {
+                  return (
+                    <li key={row.id} className="min-w-0">
+                      <MediaArtifactCard
+                        id={attachment.id}
+                        title={filename}
+                        contentPath={attachment.contentPath}
+                        contentType={attachment.contentType}
+                        originalFilename={filename}
+                        downloadPath={attachmentDownloadPath(attachment)}
+                        detail={formatBytes(attachment.byteSize)}
+                      />
+                    </li>
+                  );
+                }
                 return (
-                  <li key={row.id}>
+                  <li key={row.id} className="col-span-full min-w-0">
                     <a href={attachmentOpenPath(attachment)} target="_blank" rel="noreferrer" className={cn(ROW_CLASS, "hover:bg-accent/50")}>
                       <Paperclip className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                       <span className="min-w-0 flex-1 truncate">{attachment.originalFilename ?? attachment.objectKey}</span>

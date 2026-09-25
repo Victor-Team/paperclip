@@ -7,7 +7,30 @@ import {
   type AiConnectionSummary,
   type AiConnectionRequirement,
   type AiConnectionBinding,
+  type AiConnectionTranslator,
 } from "./model";
+
+const t: AiConnectionTranslator = (key, options = {}) => {
+  const messages: Record<string, string> = {
+    "aiconnectionmodel.general.connected": "Connected",
+    "aiconnectionmodel.general.needsattention": "Needs attention",
+    "aiconnectionmodel.general.expired": "Expired",
+    "aiconnectionmodel.general.revoked": "Revoked",
+    "aiconnectionmodel.general.noconnectionselected":
+      "No connection selected. Connect an account to continue.",
+    "aiconnectionmodel.general.choosecompatibleconnection":
+      "Choose a connection compatible with this provider and sign-in method.",
+    "aiconnectionmodel.general.connectionnolongeravailable":
+      "This connection is no longer available for this agent. Choose another connection.",
+    "aiconnectionmodel.general.choosecompanysharedconnection":
+      "Choose a company-shared connection.",
+    "aiconnectionmodel.general.credentialnotshared":
+      "This credential is not shared with you. Choose a connection you can use.",
+  };
+  return key === "aiconnectionmodel.general.statusrequiresreconnection"
+    ? `${options.status}. Reconnect this account to continue.`
+    : messages[key] ?? key;
+};
 
 const requirement: AiConnectionRequirement = {
   companyId: "company",
@@ -46,7 +69,9 @@ describe("AI connection selection presentation", () => {
     expect(personalAiDefault([account], requirement, "alice")).toBe(account);
     const apiDefault = { ...account, method: "api_key" as const };
     expect(personalAiDefault([apiDefault], requirement, "alice")).toBe(apiDefault);
-    expect(bindingProblem(binding, requirement, [apiDefault], "alice", "agent")).toBeNull();
+    expect(
+      bindingProblem(binding, requirement, [apiDefault], "alice", "agent", t),
+    ).toBeNull();
   });
   it("retains a revoked default instead of falling back to a healthy account", () => {
     const revoked = { ...account, status: "revoked" as const };
@@ -61,12 +86,13 @@ describe("AI connection selection presentation", () => {
         [alternate, revoked],
         "alice",
         "agent",
+        t,
       ),
     ).toContain("Revoked");
   });
   it("does not select another user’s account", () => {
     expect(
-      bindingProblem(binding, requirement, [account], "bob", "agent"),
+      bindingProblem(binding, requirement, [account], "bob", "agent", t),
     ).toContain("No connection");
   });
   it("does not infer a default from the first compatible connection", () => {
@@ -87,6 +113,7 @@ describe("AI connection selection presentation", () => {
         [account],
         "alice",
         "agent",
+        t,
       ),
     ).toContain("compatible");
     expect(requirement).toEqual(original);
@@ -103,7 +130,7 @@ describe("AI connection selection presentation", () => {
       grantId: account.grantId,
     } as const;
     expect(
-      bindingProblem(delegated, requirement, [account], "bob", "agent"),
+      bindingProblem(delegated, requirement, [account], "bob", "agent", t),
     ).toContain("not shared with you");
     expect(
       bindingProblem(
@@ -112,6 +139,7 @@ describe("AI connection selection presentation", () => {
         [account],
         "alice",
         "agent",
+        t,
       ),
     ).toBeNull();
     expect(
@@ -121,6 +149,7 @@ describe("AI connection selection presentation", () => {
         [account],
         "alice",
         "agent",
+        t,
       ),
     ).toContain("no longer available");
   });
@@ -138,6 +167,7 @@ describe("AI connection selection presentation", () => {
         [account],
         "alice",
         "agent",
+        t,
       ),
     ).toContain("company-shared");
   });
@@ -146,7 +176,7 @@ describe("AI connection selection presentation", () => {
       aiConnectionProblem({
         ...account,
         unavailableReason: "Not in the shared audience",
-      }),
+      }, t),
     ).toBe("Not in the shared audience");
   });
 });

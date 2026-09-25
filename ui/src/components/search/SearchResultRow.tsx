@@ -8,42 +8,48 @@ import { cn } from "@/lib/utils";
 import { StatusIcon } from "../StatusIcon";
 import { Identity } from "../Identity";
 import { HighlightedText, type HighlightedTextProps } from "./HighlightedText";
+import { useTranslation } from "@/i18n";
+import { statusLabel } from "@/lib/search-filters";
 
 type SnippetStyle = {
   Icon: ComponentType<SVGProps<SVGSVGElement>>;
-  label: string;
+  key: string;
 };
 
 const SNIPPET_STYLES: Record<string, SnippetStyle> = {
-  comment: { Icon: MessageSquare, label: "Comment" },
-  document: { Icon: FileText, label: "Doc" },
-  artifact: { Icon: Paperclip, label: "Artifact" },
-  description: { Icon: Quote, label: "Description" },
+  comment: { Icon: MessageSquare, key: "comment" },
+  document: { Icon: FileText, key: "document" },
+  artifact: { Icon: Paperclip, key: "artifact" },
+  description: { Icon: Quote, key: "description" },
+  agent: { Icon: Bot, key: "agent" },
+  project: { Icon: Hexagon, key: "project" },
+  identifier: { Icon: Quote, key: "identifier" },
+  title: { Icon: Quote, key: "title" },
 };
 
-function snippetStyle(field: string, fallbackLabel: string): SnippetStyle {
-  return SNIPPET_STYLES[field] ?? { Icon: Quote, label: fallbackLabel };
+function snippetStyle(field: string): SnippetStyle | undefined {
+  return SNIPPET_STYLES[field.toLowerCase()];
 }
 
-function formatRelativeTime(input: string | null): string {
+export function formatSearchRelativeTime(input: string | null, locale: string, now = Date.now()): string {
   if (!input) return "";
   const value = new Date(input);
   if (Number.isNaN(value.getTime())) return "";
-  const diffMs = Date.now() - value.getTime();
+  const diffMs = Math.max(0, now - value.getTime());
   const seconds = Math.round(diffMs / 1000);
-  if (seconds < 60) return "just now";
+  if (seconds < 60) return locale === "en" ? "just now" : new Intl.RelativeTimeFormat(locale, { numeric: "auto", style: "short" }).format(0, "second");
   const minutes = Math.round(seconds / 60);
-  if (minutes < 60) return `${minutes}m`;
+  if (minutes < 60) return locale === "en" ? `${minutes}m` : new Intl.RelativeTimeFormat(locale, { numeric: "auto", style: "short" }).format(-minutes, "minute");
   const hours = Math.round(minutes / 60);
-  if (hours < 24) return `${hours}h`;
+  if (hours < 24) return locale === "en" ? `${hours}h` : new Intl.RelativeTimeFormat(locale, { numeric: "auto", style: "short" }).format(-hours, "hour");
   const days = Math.round(hours / 24);
-  if (days < 7) return `${days}d`;
+  if (days < 7) return locale === "en" ? `${days}d` : new Intl.RelativeTimeFormat(locale, { numeric: "auto", style: "short" }).format(-days, "day");
   const weeks = Math.round(days / 7);
-  if (weeks < 5) return `${weeks}w`;
+  if (weeks < 5) return locale === "en" ? `${weeks}w` : new Intl.RelativeTimeFormat(locale, { numeric: "auto", style: "short" }).format(-weeks, "week");
   const months = Math.round(days / 30);
-  if (months < 12) return `${months}mo`;
+  if (months < 12) return locale === "en" ? `${months}mo` : new Intl.RelativeTimeFormat(locale, { numeric: "auto", style: "short" }).format(-months, "month");
   const years = Math.round(days / 365);
-  return `${years}y`;
+  return locale === "en" ? `${years}y` : new Intl.RelativeTimeFormat(locale, { numeric: "auto", style: "short" }).format(-years, "year");
 }
 
 export interface SearchResultRowProps {
@@ -62,6 +68,7 @@ function SearchResultRowImpl({
   isActive,
   className,
 }: SearchResultRowProps) {
+  const { i18n } = useTranslation();
   if (result.type === "agent") {
     return (
       <Link
@@ -113,7 +120,7 @@ function SearchResultRowImpl({
   if (result.type === "artifact") {
     const artifact = result.artifact;
     if (!artifact) return null;
-    const updated = formatRelativeTime(result.updatedAt ?? artifact.updatedAt);
+    const updated = formatSearchRelativeTime(result.updatedAt ?? artifact.updatedAt, i18n.resolvedLanguage ?? i18n.language);
     return (
       <Link
         to={result.href}
@@ -164,7 +171,7 @@ function SearchResultRowImpl({
   const assigneeName = issue.assigneeAgentId
     ? agentsById?.get(issue.assigneeAgentId)?.name ?? null
     : null;
-  const updated = formatRelativeTime(result.updatedAt ?? issue.updatedAt);
+  const updated = formatSearchRelativeTime(result.updatedAt ?? issue.updatedAt, i18n.resolvedLanguage ?? i18n.language);
   const titleHighlights = result.snippets.find((snippet) => snippet.field === "title")?.highlights;
   const bodySnippets = result.snippets.filter((snippet) => snippet.field !== "title").slice(0, 2);
   const previewImageUrl = result.previewImageUrl;
@@ -178,7 +185,7 @@ function SearchResultRowImpl({
       data-result-type="issue"
     >
       <div className="mt-1 shrink-0">
-        <StatusIcon status={issue.status} />
+        <StatusIcon status={issue.status} externalConversationState={issue.externalConversationState} labelOverride={statusLabel(issue.status, issue.externalConversationState)} />
       </div>
       <div className="min-w-0 flex-1">
         <div className="flex min-w-0 flex-wrap items-baseline gap-x-2.5 gap-y-1">
@@ -244,7 +251,12 @@ interface SnippetLineProps {
 }
 
 function SnippetLine({ text, highlights, field, fallbackLabel, multiline = false }: SnippetLineProps) {
-  const { Icon, label } = snippetStyle(field, fallbackLabel);
+  const { t } = useTranslation();
+  const style = (fallbackLabel === "Project" || fallbackLabel === "Agent"
+    ? snippetStyle(fallbackLabel)
+    : snippetStyle(field) ?? snippetStyle(fallbackLabel));
+  const Icon = style?.Icon ?? Quote;
+  const label = style ? t(`searchresultrow.general.${style.key}`) : fallbackLabel;
   return (
     <div
       className={cn(

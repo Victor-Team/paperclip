@@ -4,22 +4,37 @@ import { useCloudInstance } from "@/hooks/useCloudInstance";
 import { useHiddenSettings } from "@/hooks/useHiddenSettings";
 import { INSTANCE_SETTINGS_PATH_PREFIX } from "@/lib/instance-settings";
 import { useLocation, useNavigate } from "@/lib/router";
+import { useTranslation } from "@/i18n";
 
 const items = [
-  { value: "general", label: "General", href: "/company/settings" },
-  { value: "export", label: "Export", href: "/company/export" },
-  { value: "import", label: "Import", href: "/company/import" },
-  { value: "members", label: "Members", href: "/company/settings/members" },
-  { value: "secrets", label: "Secrets", href: "/company/settings/secrets" },
-  { value: "instance-profile", label: "Profile", href: `${INSTANCE_SETTINGS_PATH_PREFIX}/profile` },
-  { value: "instance-environments", label: "Environments", href: `${INSTANCE_SETTINGS_PATH_PREFIX}/environments` },
-  { value: "instance-access", label: "Access", href: `${INSTANCE_SETTINGS_PATH_PREFIX}/access` },
-  { value: "instance-experimental", label: "Experimental", href: `${INSTANCE_SETTINGS_PATH_PREFIX}/experimental` },
-  { value: "instance-plugins", label: "Plugins", href: `${INSTANCE_SETTINGS_PATH_PREFIX}/plugins` },
-  { value: "instance-adapters", label: "Adapters", href: `${INSTANCE_SETTINGS_PATH_PREFIX}/adapters` },
+  { value: "general", href: "/company/settings" },
+  { value: "export", href: "/company/export" },
+  { value: "import", href: "/company/import" },
+  { value: "members", href: "/company/settings/members" },
+  { value: "secrets", href: "/company/settings/secrets" },
+  { value: "instance-profile", href: `${INSTANCE_SETTINGS_PATH_PREFIX}/profile` },
+  { value: "instance-environments", href: `${INSTANCE_SETTINGS_PATH_PREFIX}/environments` },
+  { value: "instance-access", href: `${INSTANCE_SETTINGS_PATH_PREFIX}/access` },
+  { value: "instance-experimental", href: `${INSTANCE_SETTINGS_PATH_PREFIX}/experimental` },
+  { value: "instance-plugins", href: `${INSTANCE_SETTINGS_PATH_PREFIX}/plugins` },
+  { value: "instance-adapters", href: `${INSTANCE_SETTINGS_PATH_PREFIX}/adapters` },
 ] as const;
 
 type CompanySettingsTab = (typeof items)[number]["value"];
+
+const tabLabelKeys: Record<CompanySettingsTab, string> = {
+  general: "companysettingsnav.general.general",
+  export: "companysettingsnav.general.export",
+  import: "companysettingsnav.general.import",
+  members: "companysettingsnav.general.members",
+  secrets: "companysettingsnav.general.secrets",
+  "instance-profile": "companysettingsnav.general.profile",
+  "instance-environments": "companysettingsnav.general.environments",
+  "instance-access": "companysettingsnav.general.access",
+  "instance-experimental": "companysettingsnav.general.experimental",
+  "instance-plugins": "companysettingsnav.general.plugins",
+  "instance-adapters": "companysettingsnav.general.adapters",
+};
 
 /** Tab values suppressed when their page is operator-hidden. */
 const hiddenSettingKeyByTab: Partial<Record<CompanySettingsTab, string>> = {
@@ -95,6 +110,7 @@ export function getCompanySettingsTab(pathname: string): CompanySettingsTab {
 export function CompanySettingsNav() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { hidden: hiddenSettings } = useHiddenSettings();
   // Import is floored server-side on cloud-managed instances (403 cloud_managed), so the
   // tab is suppressed there rather than dead-ending.
@@ -115,7 +131,7 @@ export function CompanySettingsNav() {
   return (
     <Tabs value={activeTab} onValueChange={handleTabChange}>
       <PageTabBar
-        items={visibleItems.map(({ value, label }) => ({ value, label }))}
+        items={visibleItems.map(({ value }) => ({ value, label: t(tabLabelKeys[value]) }))}
         value={activeTab}
         onValueChange={handleTabChange}
         align="start"

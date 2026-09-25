@@ -3,8 +3,17 @@ import type { To } from "react-router-dom";
 import type { CompanyArtifactGroup } from "@/api/artifacts";
 import { Link } from "@/lib/router";
 import { ArtifactPreview } from "@/components/artifacts/ArtifactCard";
-import { formatDate } from "@/lib/utils";
+import { useTranslation } from "@/i18n";
 import { Badge } from "@/components/ui/badge";
+
+function formatGroupDate(value: Date | string, language: string): string {
+  const locale = language.toLowerCase().startsWith("zh") ? "zh-CN" : "en-US";
+  return new Date(value).toLocaleDateString(locale, {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+}
 
 interface ArtifactGroupCardProps {
   group: CompanyArtifactGroup;
@@ -19,9 +28,13 @@ interface ArtifactGroupCardProps {
  * than one artifact.
  */
 export function ArtifactGroupCard({ group, to }: ArtifactGroupCardProps) {
+  const { t, i18n } = useTranslation();
   const stacked = group.count > 1;
   const preview = group.previewArtifacts[0];
-  const countLabel = `${group.count} artifact${group.count === 1 ? "" : "s"}`;
+  const countLabel = t("artifacts.artifactgroupcard.count", { count: group.count });
+  const updatedLabel = t("artifacts.artifactgroupcard.updated", {
+    date: formatGroupDate(group.updatedAt, i18n.language),
+  });
 
   return (
     <div className="relative">
@@ -80,7 +93,7 @@ export function ArtifactGroupCard({ group, to }: ArtifactGroupCardProps) {
           <div className="mt-0.5 flex items-center gap-1.5 text-(length:--text-micro) text-muted-foreground/65">
             <span>{countLabel}</span>
             <span className="text-muted-foreground/50">·</span>
-            <span>Updated {formatDate(group.updatedAt)}</span>
+            <span>{updatedLabel}</span>
           </div>
         </div>
       </Link>

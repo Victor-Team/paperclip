@@ -16,6 +16,8 @@ import {
   skillDetailBreadcrumbs,
 } from "./CompanySkills";
 import { skillStudioNewRoute } from "../lib/company-skill-routes";
+import { DiscoveryGrid as ProductionDiscoveryGrid } from "./CompanySkills.production";
+import { i18n } from "../i18n";
 
 vi.mock("@/lib/router", () => ({
   Link: ({ children, to, ...props }: { children: ReactNode; to: string }) => (
@@ -108,11 +110,12 @@ async function act(callback: () => void | Promise<void>) {
   });
 }
 
-afterEach(() => {
+afterEach(async () => {
   root?.unmount();
   root = null;
   container?.remove();
   container = null;
+  await i18n.changeLanguage("en");
 });
 
 function makeVersion(revisionNumber: number, content: string): CompanySkillVersion {
@@ -525,6 +528,47 @@ describe("DiscoveryGrid IA presentation", () => {
 
     expect(onScan).toHaveBeenCalledOnce();
     expect(onScan).toHaveBeenCalledWith("project-1");
+  });
+
+  it("localizes production refresh accessibility labels", async () => {
+    await i18n.changeLanguage("zh-CN");
+    container = document.createElement("div");
+    document.body.appendChild(container);
+    root = createRoot(container);
+    await act(async () => {
+      root?.render(
+        <ProductionDiscoveryGrid
+          tab="installed"
+          tabCounts={{ all: 0, installed: 0, catalog: 0, bundled: 0 }}
+          onTabChange={vi.fn()}
+          categories={[]}
+          categoryTotal={0}
+          activeCategory={null}
+          onCategoryChange={vi.fn()}
+          search=""
+          onSearchChange={vi.fn()}
+          sort="agents"
+          onSortChange={vi.fn()}
+          cards={[]}
+          onOpenCard={vi.fn()}
+          loading={false}
+          error={null}
+          totalCount={0}
+          onCreate={vi.fn()}
+          onImport={vi.fn()}
+          onImportFromProject={vi.fn()}
+          onBrowseCatalog={vi.fn()}
+          onScan={vi.fn()}
+          scanPending={false}
+          scanStatus={null}
+          {...projectFolderGridProps()}
+          folderSelection="project-folder"
+        />,
+      );
+    });
+    expect(container.querySelector('button[aria-label="刷新 Acme 项目的技能"]')).not.toBeNull();
+    expect(container.querySelector('button[title="从 Acme 刷新技能"]')).not.toBeNull();
+    expect(container.textContent).toContain("还没有技能。创建技能或从目录安装。");
   });
 
   it("does not open a skill when keyboard-activating its actions button", async () => {

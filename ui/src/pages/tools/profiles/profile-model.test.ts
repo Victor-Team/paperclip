@@ -2,6 +2,7 @@
 
 import { describe, expect, it } from "vitest";
 import type { ToolCatalogEntry, ToolProfileEntry } from "@paperclipai/shared";
+import { i18n } from "@/i18n";
 import {
   appCheckState,
   appSelectionLabel,
@@ -88,6 +89,14 @@ describe("groupCatalogByApp", () => {
     expect(groups[0].name).toBe("Gmail");
     expect(groups[0].tools.map((t) => t.id)).toEqual(["g-delete", "g-list", "g-read", "g-send"]);
   });
+
+  it("localizes the fallback group name", async () => {
+    const unassigned = tool({ id: "orphan", toolName: "unknown.read", applicationId: null, connectionId: "missing" });
+    expect(groupCatalogByApp([unassigned], new Map(), new Map())[0].name).toBe("Tools");
+    await i18n.changeLanguage("zh-CN");
+    expect(groupCatalogByApp([unassigned], new Map(), new Map())[0].name).toBe("工具");
+    await i18n.changeLanguage("en");
+  });
 });
 
 describe("toggleApp / toggleTool", () => {
@@ -133,6 +142,18 @@ describe("toggleApp / toggleTool", () => {
     for (const id of ["g-list", "g-read", "g-send", "g-delete"]) sel = toggleTool(g, sel, id);
     expect(sel).toEqual({ kind: "none" });
   });
+});
+
+it("updates the app selection summary when the language changes", async () => {
+  const group = gmail();
+  try {
+    await i18n.changeLanguage("zh-CN");
+    expect(appSelectionLabel(group, { kind: "all_except", excluded: ["g-delete"] }))
+      .toBe("Gmail 的全部工具，排除 1 个");
+    expect(appSelectionLabel(group, { kind: "none" })).toBe("未选择工具");
+  } finally {
+    await i18n.changeLanguage("en");
+  }
 });
 
 describe("buildEntries", () => {

@@ -7,12 +7,14 @@ import { useNavigate } from "@/lib/router";
 import { AiConnectionAccountControls } from "./AiConnectionAccountControls";
 import type { ToolConnection } from "@paperclipai/shared";
 import { aiMethodLabel } from "./model";
+import { useTranslation } from "@/i18n";
 
 export function ManagedAiConnectionRow({
   connection,
 }: {
   connection: ToolConnection;
 }) {
+  const { t } = useTranslation();
   const metadata = connection.config?.ai as
     | {
         provider: "anthropic" | "openai" | "openrouter" | "xai";
@@ -22,10 +24,10 @@ export function ManagedAiConnectionRow({
   if (!metadata) return null;
   return (
     <p className="text-xs text-muted-foreground">
-      {aiMethodLabel(metadata.provider, metadata.method)} ·{" "}
+      {aiMethodLabel(metadata.provider, metadata.method, t)} ·{" "}
       {connection.credentialPolicy === "per_user"
-        ? "Personal"
-        : "Company shared"}
+        ? t("managedaiconnectiondetails.general.personal")
+        : t("managedaiconnectiondetails.general.companyshared")}
     </p>
   );
 }
@@ -34,6 +36,7 @@ export function ManagedAiConnectionDetails({
 }: {
   connection: ToolConnection;
 }) {
+  const { t } = useTranslation();
   const client = useQueryClient();
   const navigate = useNavigate();
   const runs = useQuery({
@@ -83,8 +86,8 @@ export function ManagedAiConnectionDetails({
     return (
       <p role="status" className="text-sm text-muted-foreground">
         {accounts.isPending || grants.isPending
-          ? "Loading AI account…"
-          : "This account is not available to you."}
+          ? t("managedaiconnectiondetails.general.loadingaiaccount")
+          : t("managedaiconnectiondetails.general.thisaccountisnotavailabletoyou")}
       </p>
     );
   return (
@@ -99,8 +102,7 @@ export function ManagedAiConnectionDetails({
           <div className="space-y-2">
             {runs.error && (
               <p role="alert">
-                Could not load active runs. Retry before revoking.
-              </p>
+                {t("managedaiconnectiondetails.general.couldnotloadactiverunsretrybefore")}</p>
             )}
             {runs.data?.map((run) => (
               <div
@@ -116,8 +118,7 @@ export function ManagedAiConnectionDetails({
                   disabled={stop.isPending}
                   onClick={() => stop.mutate(run.id)}
                 >
-                  Stop run
-                </Button>
+                  {t("managedaiconnectiondetails.general.stoprun")}</Button>
               </div>
             ))}
           </div>

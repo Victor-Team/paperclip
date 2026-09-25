@@ -12,6 +12,7 @@ import type {
 } from "@paperclipai/shared";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ForkSkillDialog } from "./ForkSkillDialog";
+import { i18n } from "@/i18n";
 
 const mockNavigate = vi.hoisted(() => vi.fn());
 const mockCompanySkillsApi = vi.hoisted(() => ({
@@ -300,5 +301,19 @@ describe("ForkSkillDialog", () => {
     expect(
       document.body.querySelector('button[aria-label="Switch these agents to the copy"]'),
     ).toBeNull();
+  });
+
+  it("renders usage and the create action in Simplified Chinese", async () => {
+    await i18n.changeLanguage("zh-CN");
+    try {
+      await renderNode(
+        <ForkSkillDialog companyId="company-1" skill={makeSkill()} open onOpenChange={() => {}} />,
+      );
+
+      expect(document.body.textContent).toContain("当前没有智能体使用此技能");
+      expect(document.body.textContent).toContain("创建副本");
+    } finally {
+      await i18n.changeLanguage("en");
+    }
   });
 });

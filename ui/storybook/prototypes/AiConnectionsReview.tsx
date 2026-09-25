@@ -3,6 +3,7 @@ import { AiConnectorPages } from "./AiConnectorPages";
 import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ModelSourceTiles } from "@/components/onboarding/ModelSourceTiles";
+import { t } from "@/i18n";
 import {
   AiConnectionAuth,
   type AiAuthState,
@@ -74,7 +75,15 @@ function AgentConnectionReview({
   );
   const [auth, setAuth] = useState<AiAuthState>(initialAuthState);
   const [name] = useState(
-    `My ${aiMethodLabel(requirement.provider, method) === "API key" ? `${AI_PROVIDERS[requirement.provider].name} API` : aiMethodLabel(requirement.provider, method)}`,
+    method === "api_key"
+      ? t("aiconnectionfield.general.myproviderconnection", {
+          provider: AI_PROVIDERS[requirement.provider].name,
+          type: "API",
+        })
+      : t("aiconnectionfield.general.myproviderconnection", {
+          provider: AI_PROVIDERS[requirement.provider].name,
+          type: aiMethodLabel(requirement.provider, method, t),
+        }),
   );
   const [tested, setTested] = useState(false);
   const [adopting, setAdopting] = useState(false);
@@ -90,6 +99,7 @@ function AgentConnectionReview({
     connections,
     currentUserId,
     "nova",
+    t,
   );
   const titles = {
     onboarding: "Connect your model provider",

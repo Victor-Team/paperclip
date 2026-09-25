@@ -9,6 +9,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ApiError } from "../api/client";
 import type { CompanyImportJobAccepted } from "../api/companies";
 import { CompanyImport } from "./CompanyImport";
+import { i18n } from "../i18n";
 
 // jsdom's crypto has no SubtleCrypto; the chunked transfer path hashes parts
 // with WebCrypto, so back the global with Node's implementation.
@@ -301,6 +302,7 @@ describe("CompanyImport", () => {
     document.body.innerHTML = "";
     sessionStorage.clear();
     vi.clearAllMocks();
+    await i18n.changeLanguage("en");
   });
 
   function findButton(matches: (text: string) => boolean) {
@@ -372,6 +374,98 @@ describe("CompanyImport", () => {
     await clickButton((text) => text.startsWith("Import 3 file"));
     await settle();
   }
+
+  it("renders the Chinese source chooser and local ZIP help in the default and expanded states", async () => {
+    await i18n.changeLanguage("zh-CN");
+    await renderPage();
+
+    expect(container.textContent).toContain("GitHub 仓库");
+    expect(container.textContent).toContain("本地 ZIP 包");
+    expect(container.textContent).not.toContain("GitHub repo");
+    await clickButton((text) => text === "本地 ZIP 包");
+    expect(container.textContent).toContain("请上传从 Paperclip 直接导出的 ZIP 包");
+    expect(container.textContent).not.toContain("Re-zipped archives");
+  });
+
+  it("renders Chinese preview counts, import action, and skill result header", async () => {
+    await i18n.changeLanguage("zh-CN");
+    mockCompaniesApi.getImportJob.mockResolvedValue({
+      job: {
+        id: "job-1",
+        status: "succeeded",
+        importResult: {
+          ...buildImportResult(),
+          skills: [{ originalKey: "review", originalSlug: "review", key: "review", slug: "review", id: "skill-1", action: "created", reason: null }],
+        },
+      },
+    });
+    await renderPage();
+    await enterGithubUrl();
+    await clickButton((text) => text === "预览导入");
+
+    expect(container.textContent).toContain("已选择 3 个文件中的 3 个");
+    expect(container.textContent).not.toContain("文件秒");
+    await clickButton((text) => text === "导入 3 个文件");
+    await settle();
+
+    expect(container.textContent).toContain("技能导入结果");
+    expect(container.textContent).not.toContain("技能 导入 results");
+  });
+
+  it("renders each imported skill's actual action in Chinese", async () => {
+    await i18n.changeLanguage("zh-CN");
+    const skillActions = ["created", "renamed", "replaced", "skipped"] as const;
+    mockCompaniesApi.getImportJob.mockResolvedValue({
+      job: {
+        id: "job-1",
+        status: "succeeded",
+        importResult: {
+          ...buildImportResult(),
+          skills: skillActions.map((action) => ({
+            originalKey: `review-${action}`,
+            originalSlug: `review-${action}`,
+            key: `review-${action}`,
+            slug: action === "renamed" ? "review-renamed-2" : `review-${action}`,
+            id: `skill-${action}`,
+            action,
+            reason: null,
+          })),
+        },
+      },
+    });
+    await renderPage();
+    await enterGithubUrl();
+    await clickButton((text) => text === "预览导入");
+    await clickButton((text) => text === "导入 3 个文件");
+    await settle();
+
+    const expectedActions = {
+      created: "已创建",
+      renamed: "已重命名",
+      replaced: "已替换",
+      skipped: "已跳过",
+    };
+    for (const [action, translatedAction] of Object.entries(expectedActions)) {
+      const slug = `review-${action}`;
+      const row = Array.from(container.querySelectorAll("div"))
+        .find((element) => element.firstElementChild?.textContent === slug && element.children.length >= 2);
+      expect(row?.children[1]?.textContent).toBe(translatedAction);
+      if (action === "renamed") {
+        expect(row?.children[2]?.textContent).toBe("为 review-renamed-2");
+      }
+    }
+  });
+
+  it("renders Chinese preview error counts without a suffix fragment", async () => {
+    await i18n.changeLanguage("zh-CN");
+    mockCompaniesApi.importPreview.mockResolvedValue({ ...buildPreviewResult(), errors: ["Invalid package"] });
+    await renderPage();
+    await enterGithubUrl();
+    await clickButton((text) => text === "预览导入");
+
+    expect(container.textContent).toContain("1 项错误");
+    expect(container.textContent).not.toContain("错误秒");
+  });
 
   it("submits the import as an async job, then activates selected agents and routines", async () => {
     await renderPageAndImport();
@@ -673,6 +767,44 @@ describe("CompanyImport", () => {
     await enterGithubUrl("https://github.com/acme/other-starter/tree/main/company");
 
     expect(container.textContent).not.toContain("Preview failed:");
+  });
+
+  it("localizes the pending preview and its fallback failure toast", async () => {
+    await i18n.changeLanguage("zh-CN");
+    let rejectPreview!: (reason: unknown) => void;
+    mockCompaniesApi.importPreview.mockImplementation(() => new Promise((_resolve, reject) => {
+      rejectPreview = reject;
+    }));
+    await renderPage();
+    await enterGithubUrl();
+    await clickButton((text) => text === "预览导入");
+
+    expect(container.textContent).toContain("正在上传并分析导入包");
+    expect(container.textContent).toContain("请保持此页面打开");
+    expect(container.textContent).not.toContain("Uploading and analyzing");
+
+    await act(async () => rejectPreview({}));
+    await flushReact();
+    expect(mockPushToast).toHaveBeenCalledWith(expect.objectContaining({
+      tone: "error",
+      title: "预览失败",
+      body: "无法预览导入内容。",
+    }));
+  });
+
+  it("localizes the import failure toast when the server supplies no error message", async () => {
+    await i18n.changeLanguage("zh-CN");
+    mockCompaniesApi.importBundleAsync.mockRejectedValue({});
+    await renderPage();
+    await enterGithubUrl();
+    await clickButton((text) => text === "预览导入");
+    await clickButton((text) => text.startsWith("导入 3 个文件"));
+    await settle();
+    expect(mockPushToast).toHaveBeenCalledWith(expect.objectContaining({
+      tone: "error",
+      title: "导入失败",
+      body: "无法完成导入。",
+    }));
   });
 
   it("shows a progress panel while the import runs and a durable error panel when it fails", async () => {

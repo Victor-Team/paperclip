@@ -1,10 +1,20 @@
+import { t } from "../i18n";
+
 export type TaskDateGroup = "today" | "yesterday" | "earlier";
 
-export const taskDateGroupLabels: Record<TaskDateGroup, string> = {
-  today: "Today",
-  yesterday: "Yesterday",
-  earlier: "Earlier",
-};
+// Uses the module-level `t` (not the `useTranslation` hook) because this is
+// called from list-row render loops outside component bodies; see
+// `ui/src/lib/timeAgo.ts` for the same pattern.
+function taskDateGroupLabel(group: TaskDateGroup): string {
+  switch (group) {
+    case "today":
+      return t("taskdategroups.general.today");
+    case "yesterday":
+      return t("taskdategroups.general.yesterday");
+    case "earlier":
+      return t("taskdategroups.general.earlier");
+  }
+}
 
 function localCalendarOrdinal(date: Date): number {
   return Date.UTC(date.getFullYear(), date.getMonth(), date.getDate());
@@ -33,5 +43,5 @@ export function taskDateGroupSeparator(
 ): string | null {
   if (previous === current) return null;
   if (previous === null && current === "earlier") return null;
-  return taskDateGroupLabels[current];
+  return taskDateGroupLabel(current);
 }

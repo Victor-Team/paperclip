@@ -3,11 +3,13 @@ import { memo, useMemo } from "react";
 import { Link } from "@/lib/router";
 import { useQueries, useQuery } from "@tanstack/react-query";
 import type { Issue } from "@paperclipai/shared";
+import { useTranslation } from "@/i18n";
 import { heartbeatsApi, type LiveRunForIssue } from "../api/heartbeats";
 import type { TranscriptEntry } from "../adapters";
 import { issuesApi } from "../api/issues";
 import { queryKeys } from "../lib/queryKeys";
-import { cn, relativeTime } from "../lib/utils";
+import { cn } from "../lib/utils";
+import { timeAgo } from "../lib/timeAgo";
 import { Clock3 } from "lucide-react";
 import { StatusGlyph } from "./StatusGlyph";
 import { RunChatSurface } from "./RunChatSurface";
@@ -21,16 +23,6 @@ const DASHBOARD_LOG_READ_LIMIT_BYTES = 64_000;
 const DASHBOARD_MAX_CHUNKS_PER_RUN = 40;
 const EMPTY_TRANSCRIPT: TranscriptEntry[] = [];
 const EMPTY_RUNS: LiveRunForIssue[] = [];
-
-const runStatusLabels: Record<string, string> = {
-  running: "Running",
-  queued: "Queued",
-  succeeded: "Succeeded",
-  failed: "Failed",
-  timed_out: "Timed out",
-  cancelled: "Cancelled",
-  interrupted: "Interrupted",
-};
 
 interface ActiveAgentsPanelProps {
   companyId: string;
@@ -48,17 +40,20 @@ interface ActiveAgentsPanelProps {
 
 export function ActiveAgentsPanel({
   companyId,
-  title = "Agents",
+  title,
   minRunCount = MIN_DASHBOARD_RUNS,
   fetchLimit,
   cardLimit = DASHBOARD_RUN_CARD_LIMIT,
   gridClassName,
   cardClassName,
-  emptyMessage = "No recent agent runs.",
+  emptyMessage,
   queryScope = "dashboard",
   showMoreLink = true,
   showTranscripts = false,
 }: ActiveAgentsPanelProps) {
+  const { t } = useTranslation();
+  const resolvedTitle = title ?? t("activeagentspanel.general.titleAgents");
+  const resolvedEmptyMessage = emptyMessage ?? t("activeagentspanel.general.noRecentRuns");
   const liveRunsQueryKey = [...queryKeys.liveRuns(companyId), queryScope, { minRunCount, fetchLimit }] as const;
   const sharedLiveRuns = useSharedPollingQuery({
     companyId,
@@ -112,11 +107,11 @@ export function ActiveAgentsPanel({
   return (
     <div>
       <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-        {title}
+        {resolvedTitle}
       </h3>
       {runs.length === 0 ? (
         <div className="rounded-xl border border-border p-4">
-          <p className="text-sm text-muted-foreground">{emptyMessage}</p>
+          <p className="text-sm text-muted-foreground">{resolvedEmptyMessage}</p>
         </div>
       ) : (
         <div className={cn("grid grid-cols-1 items-start gap-2 sm:grid-cols-2 sm:gap-4 xl:grid-cols-4", gridClassName)}>
@@ -139,8 +134,10 @@ export function ActiveAgentsPanel({
         <div className="mt-3 flex justify-end text-xs text-muted-foreground">
           <Link to="/dashboard/live" className="hover:text-foreground hover:underline">
             {hiddenRunCount > 0
-              ? `${hiddenRunCount} more active/recent run${hiddenRunCount === 1 ? "" : "s"}`
-              : "View all runs"}
+              ? (hiddenRunCount === 1
+                ? t("activeagentspanel.general.moreRunsSingular", { count: hiddenRunCount })
+                : t("activeagentspanel.general.moreRunsPlural", { count: hiddenRunCount }))
+              : t("activeagentspanel.general.viewAllRuns")}
           </Link>
         </div>
       )}
@@ -160,19 +157,42 @@ export const AgentRunCard = memo(function AgentRunCard({
 }: {
   companyId: string;
   run: LiveRunForIssue;
-  issue?: Pick<Issue, "identifier" | "title" | "status">;
+  issue?: Pick<Issue, "identifier" | "title" | "status" | "externalConversationState">;
   transcript?: TranscriptEntry[];
   hasOutput?: boolean;
   showTranscript?: boolean;
   issueLoadFailed?: boolean;
   className?: string;
 }) {
+  const { t } = useTranslation();
+  const runStatusLabels: Record<string, string> = {
+    running: t("activeagentspanel.status.running"),
+    queued: t("activeagentspanel.status.queued"),
+    succeeded: t("activeagentspanel.status.succeeded"),
+    failed: t("common.status.failed"),
+    timed_out: t("activeagentspanel.status.timedOut"),
+    cancelled: t("activeagentspanel.status.cancelled"),
+    interrupted: t("activeagentspanel.status.interrupted"),
+  };
+  const taskStatusLabels: Record<string, string> = {
+    todo: t("activeagentspanel.status.todo"),
+    in_progress: t("common.status.inProgress"),
+    in_review: t("activeagentspanel.status.inReview"),
+    done: t("common.status.done"),
+    blocked: t("common.status.blocked"),
+    cancelled: t("activeagentspanel.status.cancelled"),
+    backlog: t("activeagentspanel.status.backlog"),
+    idle: t("activeagentspanel.status.idle"),
+  };
   const statusLabel = runStatusLabels[run.status] ?? run.status.replace(/[_-]/g, " ");
   const runUrl = `/agents/${run.agentId}/runs/${run.id}`;
   const timestamp = run.finishedAt
-    ? `Finished ${relativeTime(run.finishedAt)}`
-    : run.startedAt ? `Started ${relativeTime(run.startedAt)}` : `Queued ${relativeTime(run.createdAt)}`;
-  const taskTitle = issue?.title ?? (issueLoadFailed ? "Task unavailable" : "Loading task…");
+    ? t("activeagentspanel.general.timestampFinished", { time: timeAgo(run.finishedAt) })
+    : run.startedAt
+      ? t("activeagentspanel.general.timestampStarted", { time: timeAgo(run.startedAt) })
+      : t("activeagentspanel.general.timestampQueued", { time: timeAgo(run.createdAt) });
+  const taskStatus = issue?.status === "in_review" && issue.externalConversationState === "waiting" ? "idle" : issue?.status ?? "backlog";
+  const taskTitle = issue?.title ?? (issueLoadFailed ? t("activeagentspanel.general.taskUnavailable") : t("activeagentspanel.general.loadingTask"));
 
   return (
     <div className={cn(
@@ -187,7 +207,7 @@ export const AgentRunCard = memo(function AgentRunCard({
         <Link
           to={runUrl}
           title={`${run.agentName} — ${statusLabel} · ${timestamp}`}
-          aria-label={`${run.agentName} — ${statusLabel}. View run`}
+          aria-label={t("activeagentspanel.general.ariaViewRun", { agentName: run.agentName, statusLabel })}
           className="flex min-w-0 items-center gap-2 rounded-md text-foreground hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           <AgentIdentity agent={{ id: run.agentId, name: run.agentName, appearance: run.agentAppearance }} size="sm" className="gap-2 font-medium" />
@@ -202,10 +222,10 @@ export const AgentRunCard = memo(function AgentRunCard({
             <span className="flex min-w-0 items-baseline gap-2">
               <span className="flex min-w-0 flex-1 items-baseline gap-1.5">
                 <StatusGlyph
-                  status={issue?.status ?? "backlog"}
+                  status={taskStatus}
                   size="md"
                   className="self-center"
-                  title={issue ? `Task ${issue.status.replace(/_/g, " ")}` : undefined}
+                  title={issue ? t("activeagentspanel.general.taskStatusTitle", { status: taskStatusLabels[taskStatus] ?? taskStatus.replace(/_/g, " ") }) : undefined}
                 />
                 <span className="truncate">{taskTitle}</span>
               </span>
@@ -215,7 +235,7 @@ export const AgentRunCard = memo(function AgentRunCard({
         ) : (
           <Link to={runUrl} className="flex items-center gap-1.5 rounded-lg border border-border/60 bg-background/60 px-2.5 py-2 text-sm text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
             <Clock3 className="size-4 shrink-0" aria-hidden />
-            <span className="truncate">{run.invocationSource === "timer" ? "Scheduled heartbeat" : "No linked task"}</span>
+            <span className="truncate">{run.invocationSource === "timer" ? t("activeagentspanel.general.scheduledHeartbeat") : t("activeagentspanel.general.noLinkedTask")}</span>
           </Link>
         )}
         <time

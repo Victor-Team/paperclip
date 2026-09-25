@@ -5,6 +5,7 @@ import { EmptyState } from "@/components/EmptyState";
 import { RoutineActivityRow } from "@/components/RoutineActivityRow";
 import { Button } from "@/components/ui/button";
 import { queryKeys } from "@/lib/queryKeys";
+import { useTranslation } from "@/i18n";
 
 export function RoutineAuditActivity({
   companyId,
@@ -13,6 +14,7 @@ export function RoutineAuditActivity({
   companyId: string;
   routineId: string;
 }) {
+  const { t } = useTranslation();
   const activity = useQuery({
     queryKey: [...queryKeys.routines.activity(companyId, routineId), "audit"],
     queryFn: async () => {
@@ -30,8 +32,7 @@ export function RoutineAuditActivity({
   if (activity.isLoading) {
     return (
       <div className="border-y border-border py-14 text-center text-sm text-muted-foreground">
-        Loading routine activity…
-      </div>
+        {t("routineauditactivity.general.loadingroutineactivity")}</div>
     );
   }
 
@@ -39,22 +40,21 @@ export function RoutineAuditActivity({
     return (
       <div className="flex flex-col items-center gap-3 border-y border-border py-14 text-center">
         <p className="text-sm text-muted-foreground">
-          {activity.error instanceof Error ? activity.error.message : "Failed to load routine activity."}
+          {activity.error instanceof Error ? activity.error.message : t("routineauditactivity.general.failedtoloadroutineactivity")}
         </p>
         <Button variant="outline" size="sm" onClick={() => activity.refetch()}>
-          Try again
-        </Button>
+          {t("routineauditactivity.general.tryagain")}</Button>
       </div>
     );
   }
 
   const events = activity.data ?? [];
   if (events.length === 0) {
-    return <EmptyState icon={Activity} message="No routine activity yet." />;
+    return <EmptyState icon={Activity} message={t("routineauditactivity.general.noroutineactivityyet")} />;
   }
 
   return (
-    <div className="border-y border-border" aria-label="Routine activity">
+    <div className="border-y border-border" aria-label={t("routineauditactivity.general.routineactivity")}>
       {events.map((event) => (
         <RoutineActivityRow key={event.id} event={event} />
       ))}

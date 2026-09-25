@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { PIPELINE_AUTOMATION_DEFAULT_TITLE_TEMPLATE } from "@paperclipai/shared";
+import { i18n } from "@/i18n";
 import {
   buildStageAutomationForSave,
+  fieldOriginLabel,
   isPipelineSettingsStageSectionAvailable,
   pipelineAutomationTitleTemplate,
   resolvePipelineSettingsFallbackStageId,
@@ -9,6 +11,19 @@ import {
 } from "./PipelineSettings";
 
 const stages = [{ id: "first-stage" }, { id: "break-assets" }];
+
+describe("pipeline settings locale updates", () => {
+  it("uses the selected language for an ancestor label after switching languages", async () => {
+    try {
+      await i18n.changeLanguage("en");
+      expect(fieldOriginLabel(2, "Intake")).toBe("Grandparent: Intake");
+      await i18n.changeLanguage("zh-CN");
+      expect(fieldOriginLabel(2, "Intake")).toBe("祖父级：Intake");
+    } finally {
+      await i18n.changeLanguage("en");
+    }
+  });
+});
 
 describe("resolvePipelineSettingsFallbackStageId", () => {
   it("does not default to the first stage when the URL requested a valid stage", () => {

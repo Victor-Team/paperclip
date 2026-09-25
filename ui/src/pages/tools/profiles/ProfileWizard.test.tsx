@@ -23,7 +23,8 @@ vi.mock("@/context/ToastContext", () => ({ useToast: () => ({ pushToast: vi.fn()
 vi.mock("@/api/tools", () => ({ toolsApi: api }));
 vi.mock("./useProfilesData", () => ({ useProfilesData: () => profilesData.current }));
 
-import { ProfileWizard } from "./ProfileWizard";
+import { ProfileWizard, StepAssign } from "./ProfileWizard";
+import { i18n } from "@/i18n";
 
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -154,5 +155,46 @@ describe("ProfileWizard", () => {
     // lastCompletedStep 1 -> resume on step 2 (Choose tools), not step 1.
     expect(container.textContent).toContain("New tools that appear later");
     expect(container.querySelector("#profile-name")).toBeNull();
+  });
+
+  it("updates the wizard step labels after switching to Chinese", async () => {
+    setData([]);
+    await render({ initialTemplate: "everyday" });
+    try {
+      await act(async () => { await i18n.changeLanguage("zh-CN"); });
+      expect(container.querySelector("ol")?.textContent).toContain("选择工具");
+      expect(container.querySelector("ol")?.textContent).toContain("分配");
+    } finally {
+      await act(async () => { await i18n.changeLanguage("en"); });
+    }
+  });
+
+  it("updates assignment context when the language changes", async () => {
+    const profiles = [
+      { name: "Shared", summary: { isCompanyDefault: true }, bindings: [] },
+      { name: "Writer", summary: { isCompanyDefault: false }, bindings: [{ targetType: "agent", targetId: "a1" }] },
+    ] as ToolProfileWithDetails[];
+    const renderAssign = () => root.render(
+      <StepAssign
+        agents={[{ id: "a1", name: "Sage" }]}
+        profiles={profiles}
+        selectedAgentIds={new Set()}
+        onToggleAgent={() => {}}
+        companyDefault={false}
+        onCompanyDefault={() => {}}
+      />,
+    );
+    await act(async () => { renderAssign(); });
+    expect(container.textContent).toContain("Replaces “Shared”.");
+    const selectAgents = [...container.querySelectorAll("button")].find((button) => button.textContent?.includes("Select agents"));
+    await act(async () => { selectAgents?.dispatchEvent(new MouseEvent("click", { bubbles: true })); });
+    expect(document.body.textContent).toContain("already has: Writer · company default");
+    try {
+      await act(async () => { await i18n.changeLanguage("zh-CN"); });
+      expect(container.textContent).toContain("替换“Shared”");
+      expect(document.body.textContent).toContain("已有配置：Writer · 公司默认配置");
+    } finally {
+      await act(async () => { await i18n.changeLanguage("en"); });
+    }
   });
 });

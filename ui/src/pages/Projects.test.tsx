@@ -6,6 +6,7 @@ import { createRoot } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { Project } from "@paperclipai/shared";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { i18n } from "@/i18n";
 import { ToastProvider } from "../context/ToastContext";
 import { Projects } from "./Projects";
 
@@ -114,24 +115,27 @@ describe("Projects", () => {
   let root: ReturnType<typeof createRoot> | null;
   let queryClient: QueryClient;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     container = document.createElement("div");
     document.body.appendChild(container);
     root = null;
     queryClient = new QueryClient({
       defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
     });
+    await i18n.changeLanguage("en");
     mockProjectsApi.list.mockResolvedValue([
       makeProject({
         id: "project-c",
         urlKey: "charlie",
         name: "Charlie",
+        taskCount: 2,
         updatedAt: new Date("2026-01-10T00:00:00Z"),
       }),
       makeProject({
         id: "project-b",
         urlKey: "bravo",
         name: "Bravo",
+        taskCount: 0,
         updatedAt: new Date("2026-01-05T00:00:00Z"),
       }),
       makeProject({
@@ -139,6 +143,7 @@ describe("Projects", () => {
         urlKey: "alpha",
         name: "Alpha",
         description: "First project",
+        taskCount: 1,
         updatedAt: new Date("2026-01-01T00:00:00Z"),
       }),
     ]);
@@ -165,6 +170,7 @@ describe("Projects", () => {
     queryClient.clear();
     container.remove();
     document.body.innerHTML = "";
+    await i18n.changeLanguage("en");
     vi.clearAllMocks();
   });
 
@@ -240,5 +246,63 @@ describe("Projects", () => {
 
     expect(hiddenDescriptionLine).not.toBeNull();
     expect(hiddenDescriptionLine?.className).toContain("min-h-4");
+  });
+
+  it("retranslates breadcrumbs, sort menu, section titles, and counts on a live Chinese switch", async () => {
+    await renderProjects();
+
+    expect(mockSetBreadcrumbs).toHaveBeenCalledWith([{ label: "Projects" }]);
+    expect(container.querySelector('button[title="Sort"]')?.textContent).toContain("Sort: Name");
+    expect(container.textContent).toContain("My Projects");
+    expect(container.textContent).toContain("Other Projects");
+    expect(container.textContent).toContain("2 projects");
+    expect(container.textContent).toContain("1 project");
+    expect(container.textContent).toContain("Add Project");
+    expect(container.textContent).toContain("1 task");
+    expect(container.textContent).toContain("2 tasks");
+    expect(container.textContent).toContain("0 tasks");
+    expect(container.textContent).toContain("Alpha");
+    expect(container.textContent).toContain("Charlie");
+    expect(container.textContent).toContain("Bravo");
+    expect(container.textContent).toContain("First project");
+
+    await openSortMenu();
+    expect(document.body.textContent).toContain("Updated");
+    expect(document.body.textContent).toContain("Created");
+    expect(document.body.textContent).toContain("Target date");
+    expect(document.body.textContent).toContain("Asc");
+
+    await act(async () => {
+      await i18n.changeLanguage("zh-CN");
+    });
+    await flushReact();
+
+    expect(mockSetBreadcrumbs).toHaveBeenCalledWith([{ label: "项目" }]);
+    expect(container.querySelector('button[title="排序"]')?.textContent).toContain("排序：名称");
+    expect(container.textContent).toContain("我的项目");
+    expect(container.textContent).toContain("其他项目");
+    expect(container.textContent).toContain("2 个项目");
+    expect(container.textContent).toContain("1 个项目");
+    expect(container.textContent).toContain("添加项目");
+    expect(container.textContent).toContain("1 个任务");
+    expect(container.textContent).toContain("2 个任务");
+    expect(container.textContent).toContain("0 个任务");
+    expect(container.textContent).toContain("Alpha");
+    expect(container.textContent).toContain("Charlie");
+    expect(container.textContent).toContain("Bravo");
+    expect(container.textContent).toContain("First project");
+    expect(container.textContent).not.toContain("My Projects");
+    expect(container.textContent).not.toContain("Other Projects");
+    expect(container.textContent).not.toContain("Add Project");
+    expect(container.textContent).not.toContain("Sort: Name");
+
+    const openMenu = document.body.textContent ?? "";
+    expect(openMenu).toContain("名称");
+    expect(openMenu).toContain("已更新");
+    expect(openMenu).toContain("创建时间");
+    expect(openMenu).toContain("目标日期");
+    expect(openMenu).toContain("升序");
+    expect(openMenu).not.toContain("Target date");
+    expect(openMenu).not.toContain("Updated");
   });
 });

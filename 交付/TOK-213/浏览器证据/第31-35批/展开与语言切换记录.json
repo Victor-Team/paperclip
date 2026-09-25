@@ -1,0 +1,50 @@
+[
+  {
+    "file": "桌面-profiles-检查权限展开.png",
+    "url": "http://127.0.0.1:3200/TOK/apps/advanced/profiles",
+    "dialogText": [
+      "检查智能体访问权限\n\n查看智能体目前可使用的工具，以及允许使用这些工具的访问配置。\n\n智能体\n选择智能体…\n选择智能体，查看其目前可使用的工具。\n关闭"
+    ],
+    "bodyTail": "跳转到主要内容\nWORKTREE\nFEAT/ANC-ZH-CN\n词\n词元共振 Token Resonance\n新建任务\n搜索\n仪表盘\n收件箱\n2\n决策\n状态\n公测\n工作\n任务\n项目\n例程\n产物\n案例\n公测\n工作区\n公司\n智能体\n技能\n连接器\n审计\nCHATS\n战略部·技术竞争席\nBO\nBoard\n词元共振 TOKEN RESONANCE\n应用\n高级设置\n访问配置\nBrowse\nReview\nDEVELOPER\n\nAdvanced setup for developers.\n\nSmoke Lab\n访问配置文件\n\n选择智能体可以使用的工具。创建访问配置后，将其指派给需要的智能体。\n\n检查智能体访问权限\n新建访问配置\n启用\n已归档\n创建第一个访问配置\n\n选择一个起点。下一步可以细调允许使用的工具。\n\n只读\n可查看和获取内容，但不能进行更改。\n日常工作\n可读取并进行常规更改，不包含破坏性工具。\n全部权限\n可使用每个已连接应用提供的所有工具。\n从零开始\n创建空白访问配置，再逐个添加工具。\n复制现有访问配置\n以已有访问配置为起点。\nCommand Palette\n\nSearch for a command to run...\n\n检查智能体访问权限\n\n查看智能体目前可使用的工具，以及允许使用这些工具的访问配置。\n\n智能体\n选择智能体…\n选择智能体，查看其目前可使用的工具。\n关闭"
+  },
+  {
+    "file": "桌面-gateways-新建展开.png",
+    "url": "http://127.0.0.1:3200/TOK/apps/advanced/gateways",
+    "dialogText": [
+      "新建网关\n\n网关是一个安全的 MCP 端点，只会公开其访问配置中的应用。你可以将它交给 Cursor 或 Claude Desktop 等客户端。\n\n名称\n访问配置\n选择配置\n配置决定此网关允许哪些工具；你可以稍后更改它。\n说明（可选）\n\n请先在“高级”下创建访问配置，再添加网关。\n\n取消\n创建网关\n关闭"
+    ],
+    "bodyTail": "跳转到主要内容\nWORKTREE\nFEAT/ANC-ZH-CN\n词\n词元共振 Token Resonance\n新建任务\n搜索\n仪表盘\n收件箱\n2\n决策\n状态\n公测\n工作\n任务\n项目\n例程\n产物\n案例\n公测\n工作区\n公司\n智能体\n技能\n连接器\n审计\nCHATS\n战略部·技术竞争席\nBO\nBoard\n连接器\n网关\nBrowse\nReview\nDEVELOPER\n\nAdvanced setup for developers.\n\nSmoke Lab\n应用\n\n网关是一个安全的 MCP 端点，只会公开你分配的应用。你可以将它交给 Cursor 或 Claude Desktop 等客户端。\n\n暂无网关\n\n将已连接的应用组合成一个安全端点交给客户端，并可一次性撤销。\n\n新建网关\nCommand Palette\n\nSearch for a command to run...\n\n新建网关\n\n网关是一个安全的 MCP 端点，只会公开其访问配置中的应用。你可以将它交给 Cursor 或 Claude Desktop 等客户端。\n\n名称\n访问配置\n选择配置\n配置决定此网关允许哪些工具；你可以稍后更改它。\n说明（可选）\n\n请先在“高级”下创建访问配置，再添加网关。\n\n取消\n创建网关\n关闭"
+  },
+  {
+    "file": "桌面-paste-config-帮助展开.png",
+    "url": "http://127.0.0.1:3200/TOK/apps/advanced/paste-config",
+    "dialogText": [
+      "请智能体协助创建 MCP 配置\n\n不知道工具需要的 URL 或请求头？请让智能体查找配置，并将结果粘贴回来。\n\nCopy this prompt and send it to an agent or assistant that can look up the server's documentation.\nPaste only the JSON block it replies with back into the box on this page.\nPaperclip reads the header names from that JSON and asks you for the values, then stores them as Paperclip secrets — so the config you paste should contain placeholders, not live credentials.\n要发送的提示词\n复制提示词\n关闭"
+    ],
+    "bodyTail": "ance\n新建任务\n搜索\n仪表盘\n收件箱\n2\n决策\n状态\n公测\n工作\n任务\n项目\n例程\n产物\n案例\n公测\n工作区\n公司\n智能体\n技能\n连接器\n审计\nCHATS\n战略部·技术竞争席\nBO\nBoard\n词元共振 TOKEN RESONANCE\n应用\n高级设置\nBrowse\nReview\nDEVELOPER\n\nAdvanced setup for developers.\n\nSmoke Lab\n高级设置\n高级\n\n用于连接应用库中没有的工具。你需要查阅工具文档获取配置。大多数人无需使用此功能；如果所需应用已在应用库中，请 直接在那里连接。.\n\n粘贴配置\n\n粘贴工具 README 中的 MCP 配置片段，我们会将其转换为易用的设置流程。\n\n只有 URL？ 浏览计划中的应用连接 改为。\n\n粘贴 MCP 配置，即 README 中让你复制的片段。\n\n检查配置\n保存前，我们会解析配置并展示结果。\n\n想找开发者功能？\n打开开发者工具\n\nCommand Palette\n\nSearch for a command to run...\n\n请智能体协助创建 MCP 配置\n\n不知道工具需要的 URL 或请求头？请让智能体查找配置，并将结果粘贴回来。\n\nCopy this prompt and send it to an agent or assistant that can look up the server's documentation.\nPaste only the JSON block it replies with back into the box on this page.\nPaperclip reads the header names from that JSON and asks you for the values, then stores them as Paperclip secrets — so the config you paste should contain placeholders, not live credentials.\n要发送的提示词\n复制提示词\n关闭"
+  },
+  {
+    "file": "桌面-profiles-向导展开.png",
+    "url": "http://127.0.0.1:3200/TOK/apps/advanced/profiles/new?template=read_only",
+    "dialogText": [],
+    "bodyTail": "跳转到主要内容\nWORKTREE\nFEAT/ANC-ZH-CN\n词\n词元共振 Token Resonance\n新建任务\n搜索\n仪表盘\n收件箱\n2\n决策\n状态\n公测\n工作\n任务\n项目\n例程\n产物\n案例\n公测\n工作区\n公司\n智能体\n技能\n连接器\n审计\nCHATS\n战略部·技术竞争席\nBO\nBoard\n词元共振 TOKEN RESONANCE\n应用\n访问配置\n新建访问配置\nBrowse\nReview\nDEVELOPER\n\nAdvanced setup for developers.\n\nSmoke Lab\n新建访问配置\n\n选择此配置允许使用的工具，再将它指派给需要的智能体。\n\n1\n名称\n→\n2\n选择工具\n→\n3\n分配\n以此为起点\n只读\n可查看和获取内容，但不能进行更改。\n日常工作\n可读取并进行常规更改，不包含破坏性工具。\n全部权限\n可使用每个已连接应用提供的所有工具。\n从零开始\n创建空白访问配置，再逐个添加工具。\n复制现有访问配置\n以已有访问配置为起点。\n名称\n说明（可选）\n高级\n取消\n继续\nCommand Palette\n\nSearch for a command to run..."
+  },
+  {
+    "file": "桌面-语言切换菜单.png",
+    "selects": [
+      {
+        "aria": "Language",
+        "value": "en",
+        "options": [
+          "en",
+          "zh-CN"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "桌面-语言切换刷新后.png",
+    "lang": "zh-CN",
+    "stored": "zh-CN"
+  }
+]

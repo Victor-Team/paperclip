@@ -1,0 +1,156 @@
+{
+  "sourceSha": "2960b07f0d5d86c5bb86f1d0f607a05142ad1996",
+  "entry": "pnpm dev:once",
+  "service": "http://127.0.0.1:3200",
+  "fixture": "Chrome route interception of GET /api/companies/import/jobs/browser-proof; no import mutation",
+  "states": [
+    {
+      "name": "desktop-team-real-route",
+      "requestedUrl": "/TOK/teams-catalog?lng=zh-CN",
+      "finalUrl": "http://127.0.0.1:3200/TOK/teams-catalog/paperclipai%3Aoptional%3Acontent%3Acontent-machine?lng=zh-CN",
+      "viewport": {
+        "width": 1366,
+        "height": 768
+      },
+      "overflowPx": 0,
+      "rows": [],
+      "importMutations": [],
+      "errors": [
+        "404 http://127.0.0.1:3200/api/assets/2b9bc29c-97ce-4ba6-b2eb-8619cc453517/content"
+      ],
+      "visibleChecks": [
+        "Core Exec Team",
+        "3 个智能体",
+        "团队"
+      ]
+    },
+    {
+      "name": "narrow-team-real-route",
+      "requestedUrl": "/TOK/teams-catalog?lng=zh-CN",
+      "finalUrl": "http://127.0.0.1:3200/TOK/teams-catalog?lng=zh-CN",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "overflowPx": 0,
+      "rows": [],
+      "importMutations": [],
+      "errors": [
+        "404 http://127.0.0.1:3200/api/assets/2b9bc29c-97ce-4ba6-b2eb-8619cc453517/content"
+      ],
+      "visibleChecks": [
+        "Core Exec Team",
+        "3 个智能体",
+        "团队"
+      ]
+    },
+    {
+      "name": "narrow-team-detail",
+      "requestedUrl": "/TOK/teams-catalog/paperclipai%3Aoptional%3Acontent%3Acontent-machine?lng=zh-CN",
+      "finalUrl": "http://127.0.0.1:3200/TOK/teams-catalog/paperclipai%3Aoptional%3Acontent%3Acontent-machine?lng=zh-CN",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "overflowPx": 0,
+      "rows": [],
+      "importMutations": [],
+      "errors": [
+        "404 http://127.0.0.1:3200/api/assets/2b9bc29c-97ce-4ba6-b2eb-8619cc453517/content"
+      ],
+      "visibleChecks": [
+        "Core Exec Team",
+        "3 个智能体",
+        "团队"
+      ]
+    },
+    {
+      "name": "narrow-team-detail-bottom",
+      "requestedUrl": "/TOK/teams-catalog/paperclipai%3Aoptional%3Acontent%3Acontent-machine?lng=zh-CN",
+      "finalUrl": "http://127.0.0.1:3200/TOK/teams-catalog/paperclipai%3Aoptional%3Acontent%3Acontent-machine?lng=zh-CN",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "scrollY": 337,
+      "visibleChecks": [
+        "TEAM.md",
+        "必填技能"
+      ]
+    },
+    {
+      "name": "desktop-import-four-actions",
+      "requestedUrl": "/TOK/company/import?lng=zh-CN",
+      "finalUrl": "http://127.0.0.1:3200/TOK/company/import?lng=zh-CN",
+      "viewport": {
+        "width": 1366,
+        "height": 768
+      },
+      "overflowPx": 0,
+      "rows": [
+        {
+          "slug": "proof-created",
+          "action": "已创建"
+        },
+        {
+          "slug": "proof-renamed",
+          "action": "已重命名"
+        },
+        {
+          "slug": "proof-replaced",
+          "action": "已替换"
+        },
+        {
+          "slug": "proof-skipped",
+          "action": "已跳过"
+        }
+      ],
+      "importMutations": [],
+      "errors": [],
+      "visibleChecks": [
+        "技能导入结果",
+        "已创建",
+        "已重命名",
+        "已替换",
+        "已跳过"
+      ]
+    },
+    {
+      "name": "narrow-import-four-actions",
+      "requestedUrl": "/TOK/company/import?lng=zh-CN",
+      "finalUrl": "http://127.0.0.1:3200/TOK/company/import?lng=zh-CN",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "overflowPx": 0,
+      "rows": [
+        {
+          "slug": "proof-created",
+          "action": "已创建"
+        },
+        {
+          "slug": "proof-renamed",
+          "action": "已重命名"
+        },
+        {
+          "slug": "proof-replaced",
+          "action": "已替换"
+        },
+        {
+          "slug": "proof-skipped",
+          "action": "已跳过"
+        }
+      ],
+      "importMutations": [],
+      "errors": [],
+      "visibleChecks": [
+        "技能导入结果",
+        "已创建",
+        "已重命名",
+        "已替换",
+        "已跳过"
+      ]
+    }
+  ]
+}

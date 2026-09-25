@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import type { AiConnectionLoginIntent, LocalAiLoginAttempt, LocalAiLoginStatus } from "@paperclipai/shared";
 import { aiConnectionsApi } from "@/api/ai-connections";
+import { useTranslation } from "@/i18n";
 
 /** Every authentication host uses the same local credential check and login lifecycle. */
 export function useLocalAiLogin(companyId: string | null, intent: AiConnectionLoginIntent, enabled: boolean, options: { allowHostClaude?: boolean } = {}) {
+  const { t } = useTranslation();
   const isolated = intent.provider !== "anthropic" || !options.allowHostClaude;
   const active = Boolean(companyId && enabled);
   const [attempt, setAttempt] = useState<LocalAiLoginAttempt | null>(null);
@@ -54,12 +56,21 @@ export function useLocalAiLogin(companyId: string | null, intent: AiConnectionLo
         });
         if (cancelled) return;
         setStatus(next.status);
-        setError(next.status === "expired" ? "This sign-in attempt expired. Start sign-in again." : null);
+        setError(
+          next.status === "expired"
+            ? t("localailogin.general.signinattemptexpired")
+            : null,
+        );
         // Stop polling a verified account. Focus still rechecks after a terminal
         // visit; awaiting terminal login never requires repeated Connect clicks.
         if (next.status === "sign_in_required") timer = setTimeout(() => void check(), 5000);
       } catch (cause) {
-        if (!cancelled) setError(cause instanceof Error ? cause.message : "Could not check local sign-in.");
+        if (!cancelled)
+          setError(
+            cause instanceof Error
+              ? cause.message
+              : t("localailogin.general.couldnotchecklocalsignin"),
+          );
       } finally { checking = false; }
     }
     const onFocus = () => { if (!document.hidden) void check(); };
@@ -84,8 +95,10 @@ export function useLocalAiLogin(companyId: string | null, intent: AiConnectionLo
     error,
     retry: () => { restartRequested.current = true; cancelCurrent(); setGeneration((value) => value + 1); },
     connect: (input = intent) => {
-      if (!companyId) throw new Error("Choose a company before connecting.");
-      if (isolated && !attempt) throw new Error("Prepare local sign-in before connecting.");
+      if (!companyId)
+        throw new Error(t("localailogin.general.choosecompanybeforeconnecting"));
+      if (isolated && !attempt)
+        throw new Error(t("localailogin.general.preparelocalsigninbeforeconnecting"));
       return aiConnectionsApi.connectLocal(companyId, { ...input, ...(attempt ? { localSessionId: attempt.sessionId } : {}) });
     },
   };

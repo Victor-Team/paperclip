@@ -5,6 +5,7 @@ import type { TaskChatStatusItem } from "./task-chat-model";
 import { statusLabelIcon, toolTaxonomy } from "./tool-taxonomy";
 import { isGenericStatusLabel, whimsyWord } from "./status-whimsy";
 import { parseCssTimeMs } from "./motion-tokens";
+import { useTranslation } from "@/i18n";
 
 function elapsedLabel(ms?: number): string | null {
   if (ms == null) return null;
@@ -289,6 +290,7 @@ export function TaskChatStatusPill({
   chevronOpen,
   onToggle,
 }: TaskChatStatusPillProps) {
+  const { t } = useTranslation();
   const { Icon, spin, tone } = CONFIG[item.status];
   const awaiting = item.status === "awaiting_approval";
   const live = item.status === "running" || item.status === "working";
@@ -356,8 +358,7 @@ export function TaskChatStatusPill({
           ) : null}
           {item.tokens ? (
             <span className="ml-auto shrink-0 font-mono text-(length:--text-micro)">
-              {item.tokens.used.toLocaleString()}/{item.tokens.size.toLocaleString()} ctx
-            </span>
+              {item.tokens.used.toLocaleString()}/{item.tokens.size.toLocaleString()} {t("taskchatstatuspill.general.ctx")}</span>
           ) : null}
         </span>
       </div>
@@ -422,8 +423,7 @@ export function TaskChatStatusPill({
           {elapsed ? <span>{elapsed}</span> : null}
           {item.tokens ? (
             <span>
-              {item.tokens.used.toLocaleString()}/{item.tokens.size.toLocaleString()} ctx
-            </span>
+              {item.tokens.used.toLocaleString()}/{item.tokens.size.toLocaleString()} {t("taskchatstatuspill.general.ctx1")}</span>
           ) : null}
         </span>
       </div>

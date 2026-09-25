@@ -59,6 +59,18 @@ vi.mock("../context/ThemeContext", () => ({
   }),
 }));
 
+// LanguageToggle reads LocaleContext, whose provider lives in main.tsx.
+vi.mock("../context/LocaleContext", () => ({
+  useLocale: () => ({
+    locale: "en",
+    setLocale: vi.fn(),
+    locales: [
+      { code: "en", label: "English" },
+      { code: "zh-CN", label: "简体中文" },
+    ],
+  }),
+}));
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
 

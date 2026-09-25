@@ -5,6 +5,7 @@ import { createRoot } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { CompanyAccess, CompanyAccessLegacyRoute } from "./CompanyAccess";
+import { i18n } from "@/i18n";
 
 const listMembersMock = vi.hoisted(() => vi.fn());
 const listJoinRequestsMock = vi.hoisted(() => vi.fn());
@@ -215,6 +216,28 @@ describe("CompanyAccess", () => {
     container.remove();
     document.body.innerHTML = "";
     vi.clearAllMocks();
+  });
+
+  it("localizes member labels and join request metadata in Chinese", async () => {
+    await i18n.changeLanguage("zh-CN");
+    const root = createRoot(container);
+    const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    try {
+      await act(async () => {
+        root.render(<QueryClientProvider client={queryClient}><CompanyAccess /></QueryClientProvider>);
+      });
+      await flushReact();
+      await flushReact();
+
+      expect(container.textContent).toContain("待处理的用户加入请求");
+      expect(container.textContent).toContain("用户加入邀请 · 默认角色：操作员");
+      expect(container.textContent).toContain("提交时间：");
+      expect(container.textContent).toContain("所有者");
+      expect(container.textContent).not.toContain("default role");
+    } finally {
+      await act(async () => root.unmount());
+      await i18n.changeLanguage("en");
+    }
   });
 
   it("renders a compact member table without redundant explanatory copy", async () => {

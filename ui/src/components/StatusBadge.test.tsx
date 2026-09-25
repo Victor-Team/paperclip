@@ -1,9 +1,16 @@
-// @vitest-environment node
+// @vitest-environment jsdom
 
+import { act } from "react";
+import { flushSync } from "react-dom";
+import { createRoot } from "react-dom/client";
 import { renderToStaticMarkup } from "react-dom/server";
-import { describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { i18n } from "@/i18n";
 import { AgentStatusBadge, IssueStatusBadge, StatusBadge } from "./StatusBadge";
-import { agentStatusVar, taskStatusVar } from "../lib/status-colors";
+import { agentStatusVar, statusBadge, taskStatusVar } from "../lib/status-colors";
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+(globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
 
 /**
  * Issue/task status chips carry the unified glyph and are recolored from the
@@ -68,5 +75,84 @@ describe("StatusBadge", () => {
   it("uses the graduated brand hues", () => {
     expect(renderToStaticMarkup(<StatusBadge status="todo" />)).toContain("bg-amber-100");
     expect(renderToStaticMarkup(<StatusBadge status="in_progress" />)).toContain("bg-blue-100");
+  });
+});
+
+describe("status badge live language switch", () => {
+  let container: HTMLDivElement;
+  let root: ReturnType<typeof createRoot> | null;
+
+  beforeEach(async () => {
+    await i18n.changeLanguage("en");
+    container = document.createElement("div");
+    document.body.appendChild(container);
+    root = createRoot(container);
+  });
+
+  afterEach(async () => {
+    if (root) {
+      flushSync(() => {
+        root?.unmount();
+      });
+    }
+    container.remove();
+    await i18n.changeLanguage("en");
+  });
+
+  it("retranslates known badges, keeps explicit labels, and leaves unknown statuses raw", async () => {
+    flushSync(() => {
+      root?.render(
+        <>
+          {Object.keys(statusBadge).map((status) => (
+            <StatusBadge key={status} status={status} />
+          ))}
+          <StatusBadge status="todo" label="Board note" />
+          <StatusBadge status="mystery_state" />
+          <AgentStatusBadge status="active" />
+          <AgentStatusBadge status="not_a_status" />
+          <IssueStatusBadge status="in_review" />
+          <IssueStatusBadge status="todo" />
+          <IssueStatusBadge status="cancelled" />
+          <IssueStatusBadge status="mystery" />
+        </>,
+      );
+    });
+
+    expect(container.textContent).toContain("in progress");
+    expect(container.textContent).toContain("Board note");
+    expect(container.textContent).toContain("mystery state");
+    expect(container.textContent).toContain("idle");
+    expect(container.textContent).toContain("not a status");
+    expect(container.textContent).toContain("In review");
+    expect(container.textContent).toContain("Todo");
+    expect(container.textContent).toContain("Mystery");
+    expect(container.textContent).not.toContain("待办");
+
+    await act(async () => {
+      await i18n.changeLanguage("zh-CN");
+    });
+
+    expect(container.textContent).toContain("进行中");
+    expect(container.textContent).toContain("待办列表");
+    expect(container.textContent).toContain("审查中");
+    expect(container.textContent).toContain("已阻塞");
+    expect(container.textContent).toContain("已完成");
+    expect(container.textContent).toContain("已取消");
+    expect(container.textContent).toContain("空闲");
+    expect(container.textContent).toContain("运行中");
+    expect(container.textContent).toContain("已暂停");
+    expect(container.textContent).toContain("错误");
+    expect(container.textContent).toContain("Board note");
+    expect(container.textContent).toContain("mystery state");
+    expect(container.textContent).toContain("not a status");
+    expect(container.textContent).toContain("Mystery");
+    expect(container.textContent).not.toContain("In review");
+    expect(container.textContent).not.toContain("in progress");
+    expect(container.textContent).not.toContain("statusbadge.general");
+    const html = container.innerHTML;
+    expect(html).toContain("bg-amber-100");
+    expect(html).toContain("line-through");
+    expect(html).toContain("var(--status-task-in_review)");
+    expect(html).toContain("var(--status-agent-idle)");
   });
 });

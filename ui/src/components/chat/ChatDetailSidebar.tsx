@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { SidebarNavItem } from "../SidebarNavItem";
 import { contextualSidebarStyles } from "../contextual-sidebar-styles";
+import { useTranslation } from "@/i18n";
 
 export function ChatDetailSidebar({
   endpointId,
@@ -18,6 +19,7 @@ export function ChatDetailSidebar({
   endpointId: string;
   NavItem?: typeof SidebarNavItem;
 }) {
+  const { t } = useTranslation();
   const endpoint = useQuery({
     queryKey: queryKeys.chatEndpoints.detail(endpointId),
     queryFn: () => chatEndpointsApi.get(endpointId),
@@ -26,7 +28,7 @@ export function ChatDetailSidebar({
   return (
     <aside className="flex h-full min-h-0 w-full flex-col border-r border-border bg-background">
       <nav
-        aria-label="Chat connection"
+        aria-label={t("chatdetailsidebar.general.chatconnection")}
         data-slot="contextual-sidebar-nav"
         className={contextualSidebarStyles.nav}
       >
@@ -36,33 +38,33 @@ export function ChatDetailSidebar({
         >
           <NavItem
             to={`/apps/chat/${endpointId}/settings`}
-            label="Settings"
+            label={t("chatdetailsidebar.general.settings")}
             icon={Settings}
             end
           />
           <NavItem
             to={`/apps/chat/${endpointId}/access`}
-            label="Access"
+            label={t("chatdetailsidebar.general.access")}
             icon={Users}
             end
           />
           {endpoint.data?.provider === "github" && (
             <NavItem
               to={`/apps/chat/${endpointId}/reviews`}
-              label="Reviews"
+              label={t("chatdetailsidebar.general.reviews")}
               icon={GitPullRequest}
               end
             />
           )}
           <NavItem
             to={`/apps/chat/${endpointId}/conversations`}
-            label="Conversations"
+            label={t("chatdetailsidebar.general.conversations")}
             icon={MessageSquare}
             end
           />
           <NavItem
             to={`/apps/chat/${endpointId}/activity`}
-            label="Activity"
+            label={t("chatdetailsidebar.general.activity")}
             icon={Activity}
             end
           />

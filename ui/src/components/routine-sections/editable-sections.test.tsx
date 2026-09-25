@@ -4,6 +4,7 @@ import { createRoot, type Root } from "react-dom/client";
 import { MemoryRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { i18n } from "@/i18n";
 import type { RoutineDetail, RoutineTrigger } from "@paperclipai/shared";
 import { BreadcrumbProvider } from "@/context/BreadcrumbContext";
 import { queryKeys } from "@/lib/queryKeys";
@@ -64,6 +65,7 @@ afterEach(async () => {
   await act(async () => root.unmount());
   client.clear();
   container.remove();
+  await i18n.changeLanguage("en");
 });
 
 describe("TriggersSection", () => {
@@ -82,8 +84,9 @@ describe("TriggersSection", () => {
     await click("Add trigger");
     await choose("When another app sends a webhook");
     await click("Continue");
-    expect(api.createTrigger).toHaveBeenCalledWith("routine-1", { kind: "webhook", signingMode: "bearer", setupPending: true });
-    expect(container.textContent).toContain("Bearer one-time-secret");
+    expect(api.createTrigger).toHaveBeenCalledWith("routine-1", { kind: "webhook", signingMode: "app_webhook", setupPending: true });
+    expect(container.textContent).toContain("one-time-secret");
+    expect(container.textContent).toContain("signing secret field");
     expect(button("Copy for your agent")).toBeTruthy();
     expect(JSON.stringify(Object.values(sessionStorage))).not.toContain("one-time-secret");
     await click("Check connection");

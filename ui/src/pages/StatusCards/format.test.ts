@@ -1,8 +1,11 @@
 import { describe, expect, it } from "vitest";
 import type { StatusCardUpdate } from "@paperclipai/shared";
+import { i18n } from "@/i18n";
 
 import {
   estimateStatusCardCost,
+  formatTokens,
+  statusCardPolicyLabel,
   rollupUpdates,
   rollupUpdatesToday,
 } from "./format";
@@ -137,5 +140,19 @@ describe("estimateStatusCardCost", () => {
     // 12h window / 60min = 12 updates/day
     expect(est.primary).toContain("Up to ~12 updates/day");
     expect(est.primary).toContain("during active hours");
+  });
+});
+
+
+describe("Status Card Chinese formatting", () => {
+  it("keeps counts, token units, and policy labels in the chosen language", () => {
+    const t = i18n.getFixedT("zh-CN");
+    const policy = { mode: "interval" as const, intervalMinutes: 60, dailyTokenCap: 10_000, triggers: {} as never };
+    const estimate = estimateStatusCardCost(policy, t, "zh-CN");
+    expect(formatTokens(1200, "zh-CN")).toBe("1.2k 词元");
+    expect(statusCardPolicyLabel(policy, t)).toBe("每 60 分钟检查，有变更时更新");
+    expect(estimate.primary).toContain("每天最多约 5 次更新");
+    expect(estimate.cost).toContain("词元");
+    expect(estimate.note).toContain("每日 10.0k 词元上限");
   });
 });

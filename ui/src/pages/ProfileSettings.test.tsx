@@ -5,6 +5,7 @@ import { createRoot } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { sanitizeAssetNamespace } from "@paperclipai/shared";
+import { i18n } from "@/i18n";
 import { ProfileSettings } from "./ProfileSettings";
 
 const mockAuthApi = vi.hoisted(() => ({
@@ -82,7 +83,8 @@ describe("ProfileSettings", () => {
     }));
   });
 
-  afterEach(() => {
+  afterEach(async () => {
+    await i18n.changeLanguage("en");
     container.remove();
     document.body.innerHTML = "";
     vi.clearAllMocks();
@@ -183,6 +185,50 @@ describe("ProfileSettings", () => {
       name: "Jane Example",
       image: "/api/assets/asset-1/content",
     });
+
+    await act(async () => {
+      root.unmount();
+    });
+  });
+
+  it("retranslates profile chrome live instead of a frozen import-time snapshot", async () => {
+    const root = createRoot(container);
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
+
+    await i18n.changeLanguage("en");
+    await act(async () => {
+      root.render(
+        <QueryClientProvider client={queryClient}>
+          <ProfileSettings />
+        </QueryClientProvider>,
+      );
+    });
+    await flushReact();
+    await flushReact();
+
+    expect(container.textContent).toContain("Profile");
+    expect(container.textContent).toContain("Display name");
+    expect(container.textContent).toContain("Save profile");
+    expect(container.textContent).toContain("Jane Example");
+    expect(container.textContent).toContain("jane@example.com");
+    expect(container.textContent).toContain("Paperclip");
+    expect(container.textContent).not.toContain("个人资料");
+
+    await act(async () => {
+      await i18n.changeLanguage("zh-CN");
+    });
+    await flushReact();
+
+    expect(container.textContent).toContain("个人资料");
+    expect(container.textContent).toContain("显示名称");
+    expect(container.textContent).toContain("保存个人资料");
+    expect(container.textContent).toContain("Jane Example");
+    expect(container.textContent).toContain("jane@example.com");
+    expect(container.textContent).toContain("Paperclip");
+    expect(container.textContent).not.toContain("Display name");
+    expect(container.textContent).not.toContain("Save profile");
 
     await act(async () => {
       root.unmount();

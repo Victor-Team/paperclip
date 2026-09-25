@@ -5,6 +5,9 @@ import { createRoot, type Root } from "react-dom/client";
 import { MemoryRouter, Route, Routes, useLocation } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ChatEndpointSetup } from "./ChatEndpointSetup";
+import { i18n } from "@/i18n";
+
+const breadcrumbs = vi.hoisted(() => ({ setBreadcrumbs: vi.fn() }));
 
 vi.mock("@/lib/router", async () => import("react-router-dom"));
 vi.mock("./GitHubChatSetup", () => ({
@@ -14,7 +17,7 @@ vi.mock("@/components/chat/ChatSetupNavigation", () => ({
   ChatSetupNavigation: () => null,
 }));
 vi.mock("@/context/BreadcrumbContext", () => ({
-  useBreadcrumbs: () => ({ setBreadcrumbs: vi.fn() }),
+  useBreadcrumbs: () => breadcrumbs,
 }));
 
 function Location() {
@@ -31,13 +34,15 @@ describe("GitHub connection purpose routing", () => {
   let root: Root;
   let container: HTMLDivElement;
   beforeEach(() => {
+    breadcrumbs.setBreadcrumbs.mockClear();
     container = document.createElement("div");
     document.body.append(container);
     root = createRoot(container);
   });
-  afterEach(() => {
+  afterEach(async () => {
     flushSync(() => root.unmount());
     container.remove();
+    await i18n.changeLanguage("en");
   });
   function render(search: string) {
     flushSync(() =>
@@ -69,6 +74,18 @@ describe("GitHub connection purpose routing", () => {
     expect(container.querySelector("output")?.textContent).toBe(
       "/apps/connect?source=github",
     );
+  });
+  it("updates the connection breadcrumbs when the language changes", async () => {
+    render("provider=github");
+    expect(breadcrumbs.setBreadcrumbs).toHaveBeenCalledWith([
+      { label: "Connectors", href: "/apps" },
+      { label: "Choose connection" },
+    ]);
+    await act(async () => { await i18n.changeLanguage("zh-CN"); });
+    expect(breadcrumbs.setBreadcrumbs).toHaveBeenCalledWith([
+      { label: "连接器", href: "/apps" },
+      { label: "选择连接方式" },
+    ]);
   });
   it("opens the bot wizard when chat is chosen and preserves the agent preselection", async () => {
     render("provider=github&agentId=agent-a");

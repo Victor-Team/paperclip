@@ -1,6 +1,7 @@
 import { useId, type ReactNode } from "react";
 import { Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "@/i18n";
 
 export function RoutineTriggerCard({
   kind,
@@ -23,6 +24,7 @@ export function RoutineTriggerCard({
   onRemove: () => void;
   children: ReactNode;
 }) {
+  const { t } = useTranslation();
   const editorId = useId();
   return (
     <section
@@ -43,7 +45,7 @@ export function RoutineTriggerCard({
             aria-controls={editorId}
             onClick={onEdit}
           >
-            {editLabel ?? (expanded ? "Close" : `Edit ${kind}`)}
+            {editLabel ?? (expanded ? t("triggercard.general.close") : `Edit ${kind}`)}
           </Button>
           <Button
             variant="ghost"

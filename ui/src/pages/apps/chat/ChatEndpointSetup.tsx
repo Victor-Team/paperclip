@@ -1,3 +1,4 @@
+import { SLACK_BOT_TOOL_SCOPES } from "@paperclipai/shared";
 import { defaultSlackAppName, slackBotNameForAgent } from "./slack-app-name";
 import { GitHubChatSetup } from "./GitHubChatSetup";
 import { GitHubAgentTrustWarning } from "@/components/GitHubAgentTrustWarning";
@@ -21,6 +22,7 @@ import {
 } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AlertTriangle, CheckCircle2, Copy, CircleHelp, ExternalLink, Eye, EyeOff, Loader2 } from "lucide-react";
+import { Trans } from "react-i18next";
 import { AgentSelect } from "@/components/AgentMultiSelect";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -44,6 +46,7 @@ import { copyTextToClipboard } from "@/lib/clipboard";
 import { useCopyAction } from "@/lib/use-copy-action";
 import { isAgentStatusInvokable, slackAppConfigurationSchema, type SlackAppConfiguration } from "@paperclipai/shared";
 import { sanitizedSetupErrorMessage } from "./chat-setup-error";
+import { useTranslation } from "@/i18n";
 import {
   createGitHubPrivateKeyReadGuard,
   readGitHubPrivateKeyFile,
@@ -108,18 +111,21 @@ function ChatConnectionPurpose({ provider, onChat, onTools }: {
   onChat: () => void;
   onTools: () => void;
 }) {
+  const { t } = useTranslation();
   const { setBreadcrumbs } = useBreadcrumbs();
   useEffect(() => {
-    setBreadcrumbs([{ label: "Connectors", href: "/apps" }, { label: "Choose connection" }]);
+    setBreadcrumbs([{ label: t("chatendpointsetup.general.connectors"), href: "/apps" }, { label: t("chatendpointsetup.general.chooseconnection") }]);
     return () => setBreadcrumbs([]);
-  }, [setBreadcrumbs]);
+  }, [setBreadcrumbs, t]);
   return (
       <div className="max-w-2xl space-y-6">
-        <ChatSetupNavigation labels={provider === "slack" ? ["Choose agent", "Create Slack app", "Add credentials", "Verify Slack connection", "Add avatar", "Connect your Slack account", "Try it"] : undefined} step={0} availableStep={0} onSelect={onChat} />
+        <ChatSetupNavigation labels={provider === "slack" ? [t("chatendpointsetup.general.chooseagent"), t("chatendpointsetup.slack.createslackappbutton"), t("chatendpointsetup.general.addcredentialsstep"), t("chatendpointsetup.slack.verifyslackconnection"), t("chatendpointsetup.general.addavatarstep"), t("chatendpointsetup.general.connectyourslackaccountstep"), t("chatendpointsetup.general.tryit")] : undefined} step={0} availableStep={0} onSelect={onChat} />
         <div>
-          <h1 className="text-xl font-bold">Choose how to connect</h1>
+          <h1 className="text-xl font-bold">{t("chatendpointsetup.general.choosehowtoconnect")}</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            What should this {providerNames[provider]} connection do?
+            {t("chatendpointsetup.general.whatshouldthisconnectiondo", {
+              providerName: providerNames[provider],
+            })}
           </p>
         </div>
         <div className="grid gap-3">
@@ -129,11 +135,12 @@ function ChatConnectionPurpose({ provider, onChat, onTools }: {
             onClick={onChat}
           >
             <span className="block text-sm font-semibold">
-              Chat with an agent
+              {t("chatendpointsetup.general.chatwithanagent")}
             </span>
             <span className="mt-1 block text-sm text-muted-foreground">
-              People in {providerNames[provider]} can start and continue
-              Paperclip tasks.
+              {t("chatendpointsetup.general.peopleincanstartandcontinue", {
+                providerName: providerNames[provider],
+              })}
             </span>
           </button>
           <button
@@ -142,11 +149,12 @@ function ChatConnectionPurpose({ provider, onChat, onTools }: {
             onClick={onTools}
           >
             <span className="block text-sm font-semibold">
-              Use this connection as an agent tool
+              {t("chatendpointsetup.general.usethisconnectionasanagenttool")}
             </span>
             <span className="mt-1 block text-sm text-muted-foreground">
-              Let agents use {providerNames[provider]} actions and data while
-              they work.
+              {t("chatendpointsetup.general.letagentsuseactionsanddata", {
+                providerName: providerNames[provider],
+              })}
             </span>
           </button>
         </div>
@@ -169,6 +177,7 @@ export function ChatEndpointSetup() {
 }
 
 function ChatSdkEndpointSetup() {
+  const { t } = useTranslation();
   const [params, setParams] = useSearchParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -196,11 +205,11 @@ function ChatSdkEndpointSetup() {
 
   useEffect(() => {
     setBreadcrumbs([
-      { label: "Connectors", href: "/apps" },
-      { label: "Connect chat" },
+      { label: t("chatendpointsetup.general.connectors"), href: "/apps" },
+      { label: t("chatendpointsetup.general.connectchat") },
     ]);
     return () => setBreadcrumbs([]);
-  }, [setBreadcrumbs]);
+  }, [setBreadcrumbs, t]);
 
   const agentsQuery = useQuery({
     queryKey: ["chat-endpoint-setup-agents", selectedCompanyId],
@@ -288,8 +297,8 @@ function ChatSdkEndpointSetup() {
     },
     onError: (error) =>
       pushToast({
-        title: "Couldn't start setup",
-        body: error instanceof Error ? error.message : "Try again.",
+        title: t("chatendpointsetup.general.couldntstartsetup"),
+        body: error instanceof Error ? error.message : t("chatendpointsetup.general.tryagain"),
         tone: "error",
       }),
   });
@@ -388,8 +397,8 @@ function ChatSdkEndpointSetup() {
     },
     onError: (error) =>
       pushToast({
-        title: "Couldn't generate webhook secret",
-        body: error instanceof Error ? error.message : "Try again.",
+        title: t("chatendpointsetup.general.couldntgeneratewebhooksecret"),
+        body: error instanceof Error ? error.message : t("chatendpointsetup.general.tryagain"),
         tone: "error",
       }),
   });
@@ -401,11 +410,11 @@ function ChatSdkEndpointSetup() {
     },
     onError: (error) =>
       pushToast({
-        title: "Test not complete",
+        title: t("chatendpointsetup.general.testnotcomplete"),
         body:
           error instanceof Error
             ? error.message
-            : "Send the provider message, then try again.",
+            : t("chatendpointsetup.general.sendtheprovidermessagethentryagain"),
         tone: "error",
       }),
   });
@@ -460,13 +469,13 @@ function ChatSdkEndpointSetup() {
   if (!provider)
     return (
       <p className="text-sm text-destructive">
-        This chat provider is not supported.
+        {t("chatendpointsetup.general.thischatproviderisnotsupported")}
       </p>
     );
   if (!selectedCompanyId)
     return (
       <p className="text-sm text-muted-foreground">
-        Select an organization to connect chat.
+        {t("chatendpointsetup.general.selectanorganizationtoconnectchat")}
       </p>
     );
 
@@ -478,7 +487,7 @@ function ChatSdkEndpointSetup() {
   return (
     <div className="max-w-2xl space-y-6">
       <ChatSetupNavigation
-        labels={isSlack ? ["Choose agent", "Create Slack app", "Add credentials", "Verify Slack connection", "Add avatar", "Connect your Slack account", "Try it"] : undefined}
+        labels={isSlack ? [t("chatendpointsetup.general.chooseagent"), t("chatendpointsetup.slack.createslackappbutton"), t("chatendpointsetup.general.addcredentialsstep"), t("chatendpointsetup.slack.verifyslackconnection"), t("chatendpointsetup.general.addavatarstep"), t("chatendpointsetup.general.connectyourslackaccountstep"), t("chatendpointsetup.general.tryit")] : undefined}
         step={step}
         availableStep={availableStep}
         disabled={createEndpoint.isPending || setupAction.isPending || generateSetupSecret.isPending || testConnection.isPending}
@@ -489,21 +498,20 @@ function ChatSdkEndpointSetup() {
           <>
             <div>
               <h1 className="text-xl font-bold">
-                Which agent do you want to chat with?
+                {t("chatendpointsetup.general.whichagentdoyouwanttochat")}
               </h1>
               <p className="mt-1 text-sm text-muted-foreground">
-                This agent is permanent for the connection. Connect another
-                channel to represent a different agent.
+                {t("chatendpointsetup.general.thisagentispermanentfortheconnection")}
               </p>
             </div>
             {endpoint ? (
-              <Input aria-label="Assigned agent" value={endpoint.assignedAgentName ?? selectedAgent?.name ?? agentId} readOnly />
+              <Input aria-label={t("chatendpointsetup.general.assignedagent")} value={endpoint.assignedAgentName ?? selectedAgent?.name ?? agentId} readOnly />
             ) : <AgentSelect
               agents={activeAgents}
               value={agentId}
               onChange={setAgentId}
-              placeholder="Choose an active agent"
-              emptyMessage="No active agents are available."
+              placeholder={t("chatendpointsetup.general.chooseanactiveagent")}
+              emptyMessage={t("chatendpointsetup.general.noactiveagentsareavailable")}
             />}
             {provider === "github" && <GitHubAgentTrustWarning agent={selectedAgent} />}
             <SetupWizardFooter onSaveExit={() => navigate("/apps")}>
@@ -514,7 +522,7 @@ function ChatSdkEndpointSetup() {
                 {createEndpoint.isPending && (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 )}
-                Continue
+                {t("chatendpointsetup.general.continue")}
               </Button>
             </SetupWizardFooter>
           </>
@@ -526,7 +534,9 @@ function ChatSdkEndpointSetup() {
                 role="alert"
                 className="rounded-lg border border-destructive/30 bg-destructive/10 p-4 text-sm text-destructive"
               >
-                <p className="font-medium">Connection failed</p>
+                <p className="font-medium">
+                  {t("chatendpointsetup.general.connectionfailed")}
+                </p>
                 <p className="mt-1">{setupError}</p>
               </div>
             ) : null}
@@ -563,8 +573,8 @@ function ChatSdkEndpointSetup() {
         )}
         {endpoint && isSlack && step === 4 && (
           <div className="space-y-4">
-            {avatarAgent.isPending ? <p role="status" className="text-sm text-muted-foreground">Loading agent avatar…</p>
-              : avatarAgent.isError ? <p role="alert" className="text-sm text-destructive">Couldn’t load the agent’s avatar. <button className="underline" onClick={() => void avatarAgent.refetch()}>Try again</button></p>
+            {avatarAgent.isPending ? <p role="status" className="text-sm text-muted-foreground">{t("chatendpointsetup.general.loadingagentavatar")}</p>
+              : avatarAgent.isError ? <p role="alert" className="text-sm text-destructive">{t("chatendpointsetup.general.couldntloadtheagentsavatar")} <button className="underline" onClick={() => void avatarAgent.refetch()}>{t("chatendpointsetup.general.tryagain")}</button></p>
               : <SlackAvatarStep
                   agentName={avatarAgent.data?.name ?? endpoint.assignedAgentName}
                   appName={endpoint.setup?.slackApp?.appName ?? defaultSlackAppName(avatarAgent.data?.name ?? endpoint.assignedAgentName)}
@@ -574,7 +584,7 @@ function ChatSdkEndpointSetup() {
                   onSkip={() => { if (!avatarProgress.progress) avatarProgress.save("skipped"); setViewedStep(5); }}
                   onSaveExit={() => navigate("/apps")}
                 />}
-            {(avatarAgent.isPending || avatarAgent.isError) && <SetupWizardFooter onSaveExit={() => navigate("/apps")}><Button onClick={() => { avatarProgress.save("skipped"); setViewedStep(5); }}>Skip for now</Button></SetupWizardFooter>}
+            {(avatarAgent.isPending || avatarAgent.isError) && <SetupWizardFooter onSaveExit={() => navigate("/apps")}><Button onClick={() => { avatarProgress.save("skipped"); setViewedStep(5); }}>{t("chatendpointsetup.general.skipfornow")}</Button></SetupWizardFooter>}
           </div>
         )}
         {endpoint && isSlack && step === 5 && (
@@ -616,7 +626,7 @@ function ChatSdkEndpointSetup() {
         )}
         {step !== 0 && !(isSlack && (step === 1 || step === 2 || step === 3 || step === 4 || step === 5 || step === 6)) && <div className="flex justify-start">
           <Button className="text-muted-foreground" variant="ghost" onClick={() => navigate("/apps")}>
-            Save &amp; exit
+            {t("chatendpointsetup.general.saveampexit")}
           </Button>
         </div>}
       </div>
@@ -664,6 +674,7 @@ function ProviderConnectStep({
     values?: Record<string, string>,
   ) => void;
 }) {
+  const { t } = useTranslation();
   const { pushToast } = useToast();
   const navigate = useNavigate();
   const slackBotToken = (credentials.botToken ?? "").trim();
@@ -676,8 +687,8 @@ function ProviderConnectStep({
     !slackBotToken && !credentials.signingSecret?.trim();
   const reportCopyFailure = () =>
     pushToast({
-      title: "Couldn't copy to clipboard",
-      body: "Select and copy the value manually.",
+      title: t("chatendpointsetup.general.couldntcopytoclipboard"),
+      body: t("chatendpointsetup.general.selectandcopyvalue"),
       tone: "error",
     });
   const field = (key: string, label: string, type = "password") => (
@@ -705,7 +716,7 @@ function ProviderConnectStep({
       <p className="text-sm font-medium">{label}</p>
       <div className="rounded-lg border border-border bg-muted p-3 font-mono text-xs break-all">
         {value ??
-          "This endpoint is unavailable. Check the server's public URL."}
+          t("chatendpointsetup.general.endpointunavailablecheckpublicurl")}
       </div>
     </div>
   );
@@ -759,7 +770,7 @@ function ProviderConnectStep({
       setPrivateKeyFileError(
         error instanceof Error
           ? error.message
-          : "Paperclip couldn't read that file. Choose the .pem file again or paste the private key.",
+          : t("chatendpointsetup.general.couldnotreadprivatekeyfile"),
       );
     } finally {
       if (privateKeyReadGuard.isCurrent(readRevision)) {
@@ -846,6 +857,7 @@ oauth_config:
       - reactions:read
       - reactions:write
       - users:read
+${SLACK_BOT_TOOL_SCOPES.map(scope => `      - ${scope}`).join("\n")}
 settings:
   org_deploy_enabled: false
   socket_mode_enabled: false
@@ -896,15 +908,15 @@ settings:
               commands: [
                 {
                   title: "/status",
-                  description: "Show the active Paperclip task status",
+                  description: t("chatendpointsetup.teams.commandstatus"),
                 },
                 {
                   title: "/new",
-                  description: "Start a new Paperclip task in this chat",
+                  description: t("chatendpointsetup.teams.commandnew"),
                 },
                 {
                   title: "/close",
-                  description: "Close the active chat conversation",
+                  description: t("chatendpointsetup.teams.commandclose"),
                 },
               ],
             },
@@ -937,30 +949,20 @@ settings:
     return (
       <div className="space-y-5">
         <div>
-          <h1 className="text-xl font-bold">Connect {agentName} to Discord</h1>
+          <h1 className="text-xl font-bold">
+            {t("chatendpointsetup.discord.title", { agentName })}
+          </h1>
           <p className="mt-1 text-sm text-muted-foreground">
             {repairing
-              ? "Reconnect verifies this same Discord application and server installation. It does not add or remove the bot from the server. Leave fields blank to reuse saved credentials."
-              : "Create one dedicated Discord application and bot for this Paperclip agent."}
+              ? t("chatendpointsetup.discord.reconnectdescription")
+              : t("chatendpointsetup.discord.createdescription")}
           </p>
         </div>
-      <ol className="list-decimal space-y-2 pl-5 text-sm">
-          <li>
-            In Discord Developer Portal, create an application. Copy its
-            Application ID from General Information.
-          </li>
-          <li>
-            Open Bot, create the bot, enable Message Content Intent, then reset
-            and copy its token.
-          </li>
-          <li>
-            Enable Developer Mode in Discord, right-click the target server, and
-            copy its Server ID.
-          </li>
-          <li>
-            Enter those values below, then use the generated install link to add
-            the bot to that server.
-          </li>
+        <ol className="list-decimal space-y-2 pl-5 text-sm">
+          <li>{t("chatendpointsetup.discord.step1")}</li>
+          <li>{t("chatendpointsetup.discord.step2")}</li>
+          <li>{t("chatendpointsetup.discord.step3")}</li>
+          <li>{t("chatendpointsetup.discord.step4")}</li>
         </ol>
         <Button
           variant="outline"
@@ -968,23 +970,20 @@ settings:
             openProviderSetup("https://discord.com/developers/applications")
           }
         >
-          Open Discord Developer Portal <ExternalLink />
+          {t("chatendpointsetup.discord.opendeveloperportal")} <ExternalLink />
         </Button>
-        {field("applicationId", "Application ID", "text")}
-        {field("guildId", "Server ID", "text")}
-        {field("botToken", "Bot token")}
+        {field("applicationId", t("chatendpointsetup.discord.applicationid"), "text")}
+        {field("guildId", t("chatendpointsetup.discord.serverid"), "text")}
+        {field("botToken", t("chatendpointsetup.discord.bottoken"))}
         {installUrl && (
           <Button asChild variant="outline">
             <a href={installUrl} target="_blank" rel="noreferrer">
-              Install bot in this server <ExternalLink />
+              {t("chatendpointsetup.discord.installbot")} <ExternalLink />
             </a>
           </Button>
         )}
         <p className="text-sm text-muted-foreground">
-          The install link grants only View Channels, Send Messages, Create
-          Public Threads, Send Messages in Threads, Read Message History, Add
-          Reactions, Embed Links, and Attach Files. Paperclip still requires
-          each discovered channel to be enabled in Access.
+          {t("chatendpointsetup.discord.installpermissions")}
         </p>
         <Button
           disabled={
@@ -999,7 +998,9 @@ settings:
           }
         >
           {pending && <Loader2 className="h-4 w-4 animate-spin" />}
-          {repairing ? "Reconnect Discord bot" : "Connect Discord bot"}
+          {repairing
+            ? t("chatendpointsetup.discord.reconnectbot")
+            : t("chatendpointsetup.discord.connectbot")}
         </Button>
       </div>
     );
@@ -1008,40 +1009,47 @@ settings:
     return (
       <div className="space-y-5">
         <div>
-          <h1 className="text-xl font-bold">Create {agentName} in Telegram</h1>
+          <h1 className="text-xl font-bold">
+            {t("chatendpointsetup.telegram.title", { agentName })}
+          </h1>
           <p className="mt-1 text-sm text-muted-foreground">
             {repairing
-              ? "Reconnect verifies this same BotFather bot and automatically refreshes its Paperclip webhook and command menu. It does not recreate the bot or change its chat memberships. Leave the token blank to reuse the saved credential."
-              : "Create a bot with BotFather, then paste the token it gives you."}
+              ? t("chatendpointsetup.telegram.reconnectdescription")
+              : t("chatendpointsetup.telegram.createdescription")}
           </p>
         </div>
         <ol className="list-decimal space-y-2 pl-5 text-sm">
           <li>
-            Open BotFather and send <code>/newbot</code>.
+            <Trans
+              i18nKey="chatendpointsetup.telegram.openbotfatherinstruction"
+              components={{ code: <code /> }}
+            />
           </li>
-          <li>Enter the bot display name.</li>
+          <li>{t("chatendpointsetup.telegram.enterdisplayname")}</li>
           <li>
-            Choose an available username ending in <code>bot</code>.
+            <Trans
+              i18nKey="chatendpointsetup.telegram.chooseusernameinstruction"
+              components={{ code: <code /> }}
+            />
           </li>
         </ol>
         <p className="rounded-md border border-border bg-muted/40 p-3 text-sm text-muted-foreground">
-          Paperclip works with Telegram&apos;s default bot privacy mode and
-          registers its command menu automatically. In a group, ordinary
-          mentions are not delivered to bots: start or continue work with{" "}
-          <code>/task@bot_username &lt;request&gt;</code>, or reply directly to
-          a message from the bot.
+          <Trans
+            i18nKey="chatendpointsetup.telegram.groupnotice"
+            values={{ requestPlaceholder: "<request>" }}
+            components={{ code: <code /> }}
+          />
         </p>
         <Button
           variant="outline"
           onClick={() => openProviderSetup("https://t.me/BotFather")}
         >
-          Open BotFather <ExternalLink />
+          {t("chatendpointsetup.telegram.openbotfatherbutton")} <ExternalLink />
         </Button>
-        {field("botToken", "Bot token")}
+        {field("botToken", t("chatendpointsetup.telegram.bottoken"))}
         {!endpoint.setup?.webhookUrl && (
           <p className="text-sm text-destructive">
-            Configure a public HTTPS URL for this Paperclip instance before
-            connecting Telegram.
+            {t("chatendpointsetup.telegram.publichttpsrequired")}
           </p>
         )}
         <Button
@@ -1055,7 +1063,9 @@ settings:
           }
         >
           {pending && <Loader2 className="h-4 w-4 animate-spin" />}
-          {repairing ? "Reconnect bot" : "Connect bot"}
+          {repairing
+            ? t("chatendpointsetup.telegram.reconnectbot")
+            : t("chatendpointsetup.telegram.connectbot")}
         </Button>
       </div>
     );
@@ -1064,43 +1074,21 @@ settings:
       <div className="space-y-5">
         <div>
           <h1 className="text-xl font-bold">
-            Connect {agentName} to Microsoft Teams
+            {t("chatendpointsetup.teams.title", { agentName })}
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
             {repairing
-              ? "Reconnect verifies this same Microsoft app, tenant, and bot identity. It does not upload or reinstall the Teams app. Leave fields blank to reuse saved credentials."
-              : "Use your own Microsoft app credentials for this bot."}
+              ? t("chatendpointsetup.teams.reconnectdescription")
+              : t("chatendpointsetup.teams.createdescription")}
           </p>
         </div>
         <p className="rounded-md border border-border bg-muted/40 p-3 text-sm text-muted-foreground">
-          This setup requires a Microsoft 365 work or school organization where
-          you can register an Entra app, create an Azure Bot, and upload or
-          install a Teams app. Personal or free Teams accounts at teams.live.com
-          cannot complete this setup. This release supports Microsoft 365
-          commercial cloud tenants only; GCC, GCC High, DoD, and Microsoft 365
-          operated by 21Vianet are not supported yet.
+          {t("chatendpointsetup.teams.organizationsupport")}
         </p>
         <ol className="list-decimal space-y-2 pl-5 text-sm">
-          <li>
-            In Microsoft Entra, create a single-tenant app registration. Copy
-            its Application (client) ID and Directory (tenant) ID, then create a
-            client secret and copy its value.
-          </li>
-          <li>
-            In Azure, create an Azure Bot. Choose Single Tenant, use that
-            Application ID, set its messaging endpoint to the Paperclip URL
-            below, and add the Microsoft Teams channel.
-          </li>
-          <li>
-            In Teams Developer Portal, create an app, add a bot with the same
-            Application ID, then apply the manifest settings shown below. The
-            block binds the Teams resource-specific consent permissions to that
-            Entra app; these are not Microsoft Graph permissions in Entra. These
-            permissions let the installed app receive every message in a team or
-            group chat without an @mention, so describe that access to
-            installers. Download the package and install it in the target team
-            or group chat.
-          </li>
+          <li>{t("chatendpointsetup.teams.step1")}</li>
+          <li>{t("chatendpointsetup.teams.step2")}</li>
+          <li>{t("chatendpointsetup.teams.step3")}</li>
         </ol>
         <div className="flex flex-wrap gap-2">
           <Button asChild variant="outline">
@@ -1109,7 +1097,7 @@ settings:
               target="_blank"
               rel="noreferrer"
             >
-              Open Microsoft Entra <ExternalLink />
+              {t("chatendpointsetup.teams.openentra")} <ExternalLink />
             </a>
           </Button>
           <Button asChild variant="outline">
@@ -1118,7 +1106,7 @@ settings:
               target="_blank"
               rel="noreferrer"
             >
-              Create Azure Bot <ExternalLink />
+              {t("chatendpointsetup.teams.createazurebot")} <ExternalLink />
             </a>
           </Button>
           <Button asChild variant="outline">
@@ -1127,79 +1115,55 @@ settings:
               target="_blank"
               rel="noreferrer"
             >
-              Open Teams Developer Portal <ExternalLink />
+              {t("chatendpointsetup.teams.opendeveloperportal")} <ExternalLink />
             </a>
           </Button>
         </div>
         {endpointValue(
-          "Paperclip messaging endpoint",
+          t("chatendpointsetup.teams.messagingendpoint"),
           endpoint.setup?.messagingEndpoint,
         )}
-        {field("clientId", "Application / Client ID", "text")}
-        {field("tenantId", "Directory / Tenant ID", "text")}
-        {field("clientSecret", "Client secret value")}
+        {field("clientId", t("chatendpointsetup.teams.applicationclientid"), "text")}
+        {field("tenantId", t("chatendpointsetup.teams.directorytenantid"), "text")}
+        {field("clientSecret", t("chatendpointsetup.teams.clientsecretvalue"))}
         <section className="space-y-3 rounded-lg border border-border p-4">
           <div>
             <h2 className="text-sm font-semibold">
-              Microsoft portal field map
+              {t("chatendpointsetup.teams.portalmaptitle")}
             </h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              Use these exact portal sections and reuse the same Application ID
-              in all three places.
+              {t("chatendpointsetup.teams.portalmapdescription")}
             </p>
           </div>
           <ol className="list-decimal space-y-3 pl-5 text-sm">
             <li>
-              <strong>Microsoft Entra admin center · App registrations</strong>:
-              select <strong>New registration</strong>, choose{" "}
-              <strong>
-                Accounts in this organizational directory only (Single tenant)
-              </strong>
-              , then select <strong>Register</strong>. Copy{" "}
-              <strong>Application (client) ID</strong> and{" "}
-              <strong>Directory (tenant) ID</strong>. Under{" "}
-              <strong>Certificates &amp; secrets · Client secrets</strong>,
-              select <strong>New client secret</strong> and copy its{" "}
-              <strong>Value</strong>, not its Secret ID.
+              <Trans
+                i18nKey="chatendpointsetup.teams.portalstep1"
+                components={{ strong: <strong /> }}
+              />
             </li>
             <li>
-              <strong>Azure · Create Azure Bot</strong>: set{" "}
-              <strong>Microsoft App ID</strong> to{" "}
-              <strong>Single Tenant</strong>, set <strong>Creation type</strong>{" "}
-              to <strong>Use existing app registration</strong>, and enter the
-              Application ID and Tenant ID above. After creation, open{" "}
-              <strong>Settings · Configuration</strong> and paste the Paperclip{" "}
-              <strong>Messaging endpoint</strong>; then open{" "}
-              <strong>Settings · Channels</strong> and enable{" "}
-              <strong>Microsoft Teams</strong>.
+              <Trans
+                i18nKey="chatendpointsetup.teams.portalstep2"
+                components={{ strong: <strong /> }}
+              />
             </li>
             <li>
-              <strong>Teams Developer Portal · Apps</strong>: select{" "}
-              <strong>New app</strong>. Under{" "}
-              <strong>Configure · App features · Bot</strong>, add an existing
-              bot using the same Application ID; enable{" "}
-              <strong>Personal</strong>, <strong>Team</strong>, and{" "}
-              <strong>Group chat</strong> scopes plus file support. Under{" "}
-              <strong>Configure · Permissions</strong>, add the two RSC{" "}
-              <strong>Application</strong> permissions shown below. Complete the
-              required app details and icons, explain that the app can receive
-              every message in an installed team or group chat, then download
-              the app package.
+              <Trans
+                i18nKey="chatendpointsetup.teams.portalstep3"
+                components={{ strong: <strong /> }}
+              />
             </li>
             <li>
-              <strong>Microsoft Teams · Apps · Manage your apps</strong>: select{" "}
-              <strong>Upload an app · Upload a custom app</strong>, choose the
-              downloaded package, and install it in each intended personal chat,
-              group chat, or team. One team install covers its standard
-              channels. Private and shared channels require a separate app
-              installation and are not supported by this release. If upload is
-              unavailable, a Teams administrator must enable or approve custom
-              apps.
+              <Trans
+                i18nKey="chatendpointsetup.teams.portalstep4"
+                components={{ strong: <strong /> }}
+              />
             </li>
           </ol>
         </section>
         <label className="grid gap-2 text-sm font-medium">
-          Required Teams app manifest block
+          {t("chatendpointsetup.teams.manifestlabel")}
           <Textarea
             className="min-h-80 font-mono text-xs"
             readOnly
@@ -1218,43 +1182,31 @@ settings:
             }}
           >
             {manifestCopied
-              ? "Manifest settings copied"
-              : "Copy manifest settings"}
+              ? t("chatendpointsetup.teams.manifestcopied")
+              : t("chatendpointsetup.teams.copymanifest")}
           </Button>
         </div>
         <p className="text-sm text-muted-foreground">
-          Enter the Application / Client ID above before copying so the block
-          contains the real bot identity. This block contains the
-          Paperclip-specific fields to verify in Developer Portal or merge into
-          a complete Teams app manifest. It is not a complete app package;
-          Developer Portal supplies the remaining required metadata and packages
-          the manifest with your app icons.
+          {t("chatendpointsetup.teams.manifestdescription")}
         </p>
         <p className="text-sm text-muted-foreground">
-          Paperclip does not use Teams single sign-on in this release. The
-          copied <code>webApplicationInfo</code> entry only associates the RSC
-          permissions with the same Entra Application ID. Its nonempty resource
-          is an RSC placeholder; you do not need to register an Entra
-          Application ID URI or add delegated Microsoft Graph permissions.
+          <Trans
+            i18nKey="chatendpointsetup.teams.ssodescription"
+            components={{ code: <code /> }}
+          />
         </p>
         <p className="text-sm text-muted-foreground">
-          The two application RSC permissions let the bot receive every message,
-          without an @mention, in each team or group chat where it is installed.
-          Paperclip retains and acts only on messages admitted by your Paperclip
-          reach and access rules. Make this provider access clear in the app
-          description shown to installers.
+          {t("chatendpointsetup.teams.rscdescription")}
         </p>
         <p className="text-sm text-muted-foreground">
-          This release supports personal chats, group chats, and standard team
-          channels—not private channels. <code>supportsFiles: true</code>{" "}
-          enables native file receipt and consent-based sending in personal
-          chats; channel and group-chat files need a separate Microsoft Graph
-          connection and are not ingested here.
+          <Trans
+            i18nKey="chatendpointsetup.teams.filesdescription"
+            components={{ code: <code /> }}
+          />
         </p>
         {!endpoint.setup?.messagingEndpoint && (
           <p className="text-sm text-destructive">
-            Configure a public HTTPS URL for this Paperclip instance before
-            connecting Microsoft Teams.
+            {t("chatendpointsetup.teams.publichttpsrequired")}
           </p>
         )}
         <Button
@@ -1272,8 +1224,8 @@ settings:
         >
           {pending && <Loader2 className="h-4 w-4 animate-spin" />}
           {repairing
-            ? "Reconnect Microsoft app"
-            : "Verify Microsoft credentials"}
+            ? t("chatendpointsetup.teams.reconnectapp")
+            : t("chatendpointsetup.teams.verifycredentials")}
         </Button>
       </div>
     );
@@ -1283,54 +1235,57 @@ settings:
         <div>
           <h1 className="text-xl font-bold">
             {repairing
-              ? "Reconnect GitHub App"
-              : "Create or connect a GitHub App"}
+              ? t("chatendpointsetup.github.reconnectapp")
+              : t("chatendpointsetup.github.createorconnectapp")}
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
             {repairing
-              ? "Reconnect verifies this same App and installation, then updates its webhook URL, secret, and secure delivery settings. It does not reinstall the App or change repository access. Leave App ID and private key blank to reuse saved credentials. Keep Webhooks · Active enabled in GitHub; send a test conversation after reconnecting."
-              : "Configure its webhook and permissions, then verify the App with Paperclip."}
+              ? t("chatendpointsetup.github.reconnectdescription")
+              : t("chatendpointsetup.github.createdescription")}
           </p>
         </div>
         {!repairing && (
           <ol className="list-decimal space-y-2 pl-5 text-sm">
             <li>
-              Under the target user or organization, create a new GitHub App.
-              Give it a globally unique name (34 characters or fewer), use the
-              Paperclip homepage URL below, and leave user authorization off.
+              <Trans
+                i18nKey="chatendpointsetup.github.step1"
+                components={{ strong: <strong /> }}
+              />
             </li>
             <li>
-              Keep <strong>Webhooks · Active</strong> on. Enter the Paperclip
-              webhook URL and the Paperclip-generated webhook secret below, and
-              keep <strong>Enable SSL verification</strong> selected.
+              <Trans
+                i18nKey="chatendpointsetup.github.step2"
+                components={{ strong: <strong /> }}
+              />
             </li>
             <li>
-              Under Repository permissions, set <strong>Issues</strong> and{" "}
-              <strong>Pull requests</strong> to{" "}
-              <strong>Read &amp; write</strong>. Leave every other permission at
-              its default; Metadata remains read-only.
+              <Trans
+                i18nKey="chatendpointsetup.github.step3"
+                components={{ strong: <strong /> }}
+              />
             </li>
             <li>
-              Subscribe to <strong>Issue comment</strong> (
-              <code>issue_comment</code>),{" "}
-              <strong>Pull request review comment</strong> (
-              <code>pull_request_review_comment</code>). GitHub sends{" "}
-              <code>installation</code> and{" "}
-              <code>installation_repositories</code> to every GitHub App
-              automatically; they are not selectable here.
+              <Trans
+                i18nKey="chatendpointsetup.github.step4"
+                components={{ strong: <strong />, code: <code /> }}
+              />
             </li>
             <li>
-              Choose <strong>Only on this account</strong>, create the App, copy
-              its App ID, generate one private key, then install it on the
-              selected repositories.
+              <Trans
+                i18nKey="chatendpointsetup.github.step5"
+                components={{ strong: <strong /> }}
+              />
             </li>
           </ol>
         )}
         {endpointValue(
-          "Paperclip homepage URL",
+          t("chatendpointsetup.github.homepageurl"),
           publicOrigin(endpoint.setup?.webhookUrl),
         )}
-        {endpointValue("Paperclip webhook URL", endpoint.setup?.webhookUrl)}
+        {endpointValue(
+          t("chatendpointsetup.github.webhookurl"),
+          endpoint.setup?.webhookUrl,
+        )}
         <Button
           variant="outline"
           onClick={() =>
@@ -1344,12 +1299,16 @@ settings:
             )
           }
         >
-          {repairing ? "Open GitHub App settings" : "Open new GitHub App form"}{" "}
+          {repairing
+            ? t("chatendpointsetup.github.openappsettings")
+            : t("chatendpointsetup.github.opennewappform")}{" "}
           <ExternalLink />
         </Button>
-        {field("appId", "GitHub App ID", "text")}
+        {field("appId", t("chatendpointsetup.github.appid"), "text")}
         <div className="grid gap-2 text-sm font-medium">
-          <label htmlFor="github-private-key">Private key (PEM)</label>
+          <label htmlFor="github-private-key">
+            {t("chatendpointsetup.github.privatekeypem")}
+          </label>
           <div className="relative">
             {privateKeyVisible ? (
               <Textarea
@@ -1377,7 +1336,9 @@ settings:
               size="icon"
               className="absolute right-1 top-1"
               aria-label={
-                privateKeyVisible ? "Hide private key" : "Show private key"
+                privateKeyVisible
+                  ? t("chatendpointsetup.github.hideprivatekey")
+                  : t("chatendpointsetup.github.showprivatekey")
               }
               onClick={() => setPrivateKeyVisible((visible) => !visible)}
             >
@@ -1389,7 +1350,7 @@ settings:
             type="file"
             accept=".pem,.key,application/x-pem-file,application/pkcs8,text/plain"
             className="hidden"
-            aria-label="Choose GitHub App private key file"
+            aria-label={t("chatendpointsetup.github.chooseprivatekeyfile")}
             onChange={loadPrivateKeyFile}
           />
           <div>
@@ -1398,7 +1359,7 @@ settings:
               variant="outline"
               onClick={() => privateKeyFileInputRef.current?.click()}
             >
-              Choose .pem file
+              {t("chatendpointsetup.github.choosepemfile")}
             </Button>
           </div>
           {privateKeyFileError ? (
@@ -1412,7 +1373,7 @@ settings:
               aria-live="polite"
               className="text-sm text-muted-foreground"
             >
-              Reading private key file…
+              {t("chatendpointsetup.github.readingprivatekey")}
             </p>
           ) : privateKeyFileLoaded ? (
             <p
@@ -1420,16 +1381,18 @@ settings:
               aria-live="polite"
               className="text-sm text-muted-foreground"
             >
-              Private key loaded. It stays in this form until you connect.
+              {t("chatendpointsetup.github.privatekeyloaded")}
             </p>
           ) : null}
         </div>
         <div className="grid gap-2">
-          <p className="text-sm font-medium">Webhook secret</p>
+          <p className="text-sm font-medium">
+            {t("chatendpointsetup.github.webhooksecret")}
+          </p>
           {generatedWebhookSecret ? (
             <>
               <Input
-                aria-label="Generated webhook secret"
+                aria-label={t("chatendpointsetup.github.generatedwebhooksecret")}
                 className="font-mono text-xs"
                 readOnly
                 value={generatedWebhookSecret}
@@ -1453,21 +1416,21 @@ settings:
                   }}
                 >
                   {webhookSecretCopy.copied
-                    ? "Webhook secret copied"
+                    ? t("chatendpointsetup.github.webhooksecretcopied")
                     : webhookSecretCopy.failed
-                      ? "Couldn’t copy — select it manually"
-                      : "Copy webhook secret"}
+                      ? t("chatendpointsetup.github.couldntcopyselectitmanually")
+                      : t("chatendpointsetup.github.copywebhooksecret")}
                 </Button>
               </div>
               <p className="text-sm text-muted-foreground">
-                Copy this value now. Paperclip will not show it again.
+                {t("chatendpointsetup.github.copysecretnow")}
               </p>
             </>
           ) : (
             <p className="text-sm text-muted-foreground">
               {endpoint.setup?.webhookSecretConfigured
-                ? "A webhook secret is configured and cannot be shown again."
-                : "Generate the secret in Paperclip, then paste it into the GitHub App."}
+                ? t("chatendpointsetup.github.secretconfigured")
+                : t("chatendpointsetup.github.generatesecretandpaste")}
             </p>
           )}
           <div>
@@ -1481,15 +1444,15 @@ settings:
                 <Loader2 className="h-4 w-4 animate-spin" />
               )}
               {endpoint.setup?.webhookSecretConfigured
-                ? "Regenerate webhook secret"
-                : "Generate webhook secret"}
+                ? t("chatendpointsetup.github.regeneratewebhooksecret")
+                : t("chatendpointsetup.github.generatewebhooksecret")}
             </Button>
           </div>
           {endpoint.setup?.webhookSecretConfigured && (
             <p className="text-sm text-muted-foreground">
               {endpoint.providerAccountId || endpoint.botExternalId
-                ? "Regenerating immediately invalidates GitHub webhook signatures until you replace the secret in the GitHub App settings."
-                : "Generating another secret replaces the previous value. Paste the newest value into GitHub before continuing."}
+                ? t("chatendpointsetup.github.regeneratingwarning")
+                : t("chatendpointsetup.github.generatingwarning")}
             </p>
           )}
           {endpoint.setup?.webhookSecretConfigured && (
@@ -1497,15 +1460,14 @@ settings:
               className={`text-sm ${endpoint.setup.webhookVerifiedAt ? "text-foreground" : "text-muted-foreground"}`}
             >
               {endpoint.setup.webhookVerifiedAt
-                ? "GitHub has verified this webhook."
-                : "Waiting for GitHub to deliver its signed webhook ping…"}
+                ? t("chatendpointsetup.github.webhookverified")
+                : t("chatendpointsetup.github.waitingforwebhook")}
             </p>
           )}
         </div>
         {!endpoint.setup?.webhookUrl && (
           <p className="text-sm text-destructive">
-            Configure a public HTTPS URL for this Paperclip instance before
-            connecting GitHub.
+            {t("chatendpointsetup.github.publichttpsrequired")}
           </p>
         )}
         <Button
@@ -1523,7 +1485,9 @@ settings:
           }
         >
           {pending && <Loader2 className="h-4 w-4 animate-spin" />}
-          {repairing ? "Reconnect and verify" : "Connect and verify"}
+          {repairing
+            ? t("chatendpointsetup.github.reconnectandverify")
+            : t("chatendpointsetup.github.connectandverify")}
         </Button>
       </div>
     );
@@ -1531,42 +1495,70 @@ settings:
     return (
       <div className="space-y-5">
         <div>
-          <h1 className="text-xl font-bold">Verify Slack connection</h1>
+          <h1 className="text-xl font-bold">{t("chatendpointsetup.slack.verifyslackconnection")}</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Slack needs to confirm that it can reach your Paperclip instance.
+            {t("chatendpointsetup.slack.slackneedstoconfirm")}
           </p>
         </div>
         <ol className="list-decimal space-y-2 pl-5 text-sm">
-          <li><a className="underline underline-offset-4" href="https://api.slack.com/apps" target="_blank" rel="noopener noreferrer">Open Slack app Settings <ExternalLink className="inline size-3" /></a> and choose <strong>{slackApp.appName}</strong>.</li>
-          <li>Choose <strong>Event Subscriptions</strong>.</li>
-          <li>Beside the prefilled <strong>Request URL</strong>, click <strong>Retry</strong> if it isn&apos;t verified. Save changes if Slack asks.</li>
+          <li>
+            <Trans
+              i18nKey="chatendpointsetup.slack.openslackappsettingsandchooseapp"
+              values={{ appName: slackApp.appName }}
+              components={{
+                link: (
+                  <a
+                    className="underline underline-offset-4"
+                    href="https://api.slack.com/apps"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  />
+                ),
+                icon: <ExternalLink className="inline size-3" />,
+                strong: <strong />,
+              }}
+            />
+          </li>
+          <li>
+            <Trans
+              i18nKey="chatendpointsetup.slack.eventsubscriptions"
+              components={{ strong: <strong /> }}
+            />
+          </li>
+          <li>
+            <Trans
+              i18nKey="chatendpointsetup.slack.requesturlretryifnotverified"
+              components={{ strong: <strong /> }}
+            />
+          </li>
         </ol>
         {endpoint.setup?.webhookVerifiedAt ? (
           <p role="status" className="flex items-center gap-2 text-sm">
             <CheckCircle2 className="size-4 text-(--status-task-done)" />
-            Slack verified your connection.{pending ? " Opening the message test…" : ""}
+            {t("chatendpointsetup.slack.slackverifiedyourconnection")}
+            {pending ? ` ${t("chatendpointsetup.slack.openingthemessagetest")}` : ""}
           </p>
         ) : slackVerificationError ? (
-          <p role="alert" className="text-sm text-destructive">Couldn&apos;t check verification. We&apos;ll keep trying; check your connection if this continues.</p>
+          <p role="alert" className="text-sm text-destructive">{t("chatendpointsetup.slack.couldntcheckverification")}</p>
         ) : (
           <p role="status" className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Loader2 className="size-4 animate-spin" /> Waiting for Slack to verify. We&apos;ll continue automatically.
+            <Loader2 className="size-4 animate-spin" /> {t("chatendpointsetup.slack.waitingforslacktoverify")}
           </p>
         )}
         <details className="text-sm">
-          <summary className="cursor-pointer text-muted-foreground">Troubleshooting</summary>
+          <summary className="cursor-pointer text-muted-foreground">{t("chatendpointsetup.slack.troubleshooting")}</summary>
           <div className="mt-3 space-y-3">
-            <p className="text-muted-foreground">If the Request URL is missing or different, paste this URL into Event Subscriptions. If verification fails, check that your public HTTPS server is reachable and your Signing Secret is correct.</p>
-            {endpointValue("Paperclip webhook URL", endpoint.setup?.webhookUrl)}
+            <p className="text-muted-foreground">{t("chatendpointsetup.slack.requesturlmissingtroubleshooting")}</p>
+            {endpointValue(t("chatendpointsetup.slack.webhookurl"), endpoint.setup?.webhookUrl)}
           </div>
         </details>
         <div className="flex items-center justify-between gap-3">
-          <Button variant="ghost" className="text-muted-foreground" onClick={() => navigate("/apps")}>Save &amp; exit</Button>
+          <Button variant="ghost" className="text-muted-foreground" onClick={() => navigate("/apps")}>{t("chatendpointsetup.general.saveampexit")}</Button>
           <Button disabled={pending || !endpoint.setup?.webhookVerifiedAt} onClick={() =>
             endpoint.setup?.step === "provider_setup" ? onAction("verify") : onSlackVerificationContinue()
           }>
             {pending && <Loader2 className="size-4 animate-spin" />}
-            Continue
+            {t("chatendpointsetup.general.continue")}
           </Button>
         </div>
       </div>
@@ -1578,10 +1570,9 @@ settings:
         <div role="alert" className="flex items-start gap-3 rounded-lg border border-destructive/30 bg-destructive/10 p-4">
           <AlertTriangle className="size-5 shrink-0 text-destructive" />
           <div className="space-y-1">
-            <p className="text-sm font-semibold">Public HTTPS URL required</p>
+            <p className="text-sm font-semibold">{t("chatendpointsetup.slack.publichttpsurlrequiredheading")}</p>
             <p className="text-sm">
-              Slack needs a public HTTPS URL to send messages to Paperclip.
-              Configure one for this instance before creating or connecting your Slack app.
+              {t("chatendpointsetup.slack.slackneedsapublichttpsurl")}
             </p>
             <a
               href="https://docs.paperclip.ing/reference/deploy/https/"
@@ -1589,25 +1580,25 @@ settings:
               rel="noopener noreferrer"
               className="text-sm underline underline-offset-4"
             >
-              Learn how to set up HTTPS
+              {t("chatendpointsetup.slack.learnhowtosetuphttps")}
             </a>
           </div>
         </div>
       )}
       <div>
-        <h1 className="text-xl font-bold">{slackStage === "app" ? "Create a Slack app" : "Add Slack credentials"}</h1>
+        <h1 className="text-xl font-bold">{slackStage === "app" ? t("chatendpointsetup.slack.createaslackapp") : t("chatendpointsetup.slack.addslackcredentials")}</h1>
         {repairing && (
           <p className="mt-1 text-sm text-muted-foreground">
-            Reconnect verifies or replaces credentials for this same Slack app. It does not reinstall the app or change its workspace or channel membership. Leave credentials blank to reuse the saved values.
+            {t("chatendpointsetup.slack.reconnectdescription")}
           </p>
         )}
       </div>
       <div hidden={slackStage !== "app"} className="space-y-5">
         <div className="space-y-3 text-sm">
           {([
-            ["appName", "Slack app name", 35, "The name of your app in Slack’s app directory and settings."],
-            ["botName", "Bot display name", 80, "The name people see when your bot sends a message. Use lowercase letters, numbers, periods, hyphens, or underscores."],
-            ["command", "Slash command", 32, "The command people type in Slack to talk to this agent. Start with /, followed by lowercase letters, numbers, hyphens, or underscores."],
+            ["appName", t("chatendpointsetup.slack.appname"), 35, t("chatendpointsetup.slack.slackappnamehelp")],
+            ["botName", t("chatendpointsetup.slack.botdisplayname"), 80, t("chatendpointsetup.slack.botdisplaynamehelp")],
+            ["command", t("chatendpointsetup.slack.slashcommand"), 32, t("chatendpointsetup.slack.slashcommandhelp")],
           ] as const).map(([key, label, maxLength, help]) => (
             <div key={key} className="grid items-center gap-2 sm:grid-cols-2">
               <div className="flex items-center gap-1.5">
@@ -1616,7 +1607,7 @@ settings:
                   <TooltipTrigger asChild>
                     <button
                       type="button"
-                      aria-label={`Help with ${label.toLowerCase()}`}
+                      aria-label={`${t("chatendpointsetup.slack.helpwith")} ${label.toLowerCase()}`}
                       className="rounded-sm text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                     >
                       <CircleHelp className="size-3.5" aria-hidden="true" />
@@ -1642,26 +1633,26 @@ settings:
           )}
           {saveSlackApp.isError && (
             <div role="alert" className="space-y-2 text-sm text-destructive">
-              <p>Couldn&apos;t save the Slack app details. Try again before connecting.</p>
-              <Button variant="outline" size="sm" onClick={persistSlackApp}>Retry saving</Button>
+              <p>{t("chatendpointsetup.slack.couldntsavetheslackappdetails")}</p>
+              <Button variant="outline" size="sm" onClick={persistSlackApp}>{t("chatendpointsetup.slack.retrysaving")}</Button>
             </div>
           )}
           <div className="flex justify-end">
             <Dialog>
               <DialogTrigger asChild>
                 <Button variant="link" className="h-auto p-0 text-xs text-muted-foreground underline underline-offset-4">
-                  View Slack App Manifest
+                  {t("chatendpointsetup.slack.viewslackappmanifest")}
                 </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-2xl">
                 <DialogHeader>
-                  <DialogTitle>Slack app manifest</DialogTitle>
+                  <DialogTitle>{t("chatendpointsetup.slack.appmanifest")}</DialogTitle>
                   <DialogDescription>
-                    Generated from your app name, bot name, and slash command. Edit those fields to update the manifest.
+                    {t("chatendpointsetup.slack.generatedfromyourappnamebotname")}
                   </DialogDescription>
                 </DialogHeader>
                 <Textarea
-                  aria-label="Slack app manifest"
+                  aria-label={t("chatendpointsetup.slack.appmanifest")}
                   className="h-80 font-mono text-xs"
                   readOnly
                   value={slackManifest}
@@ -1677,7 +1668,7 @@ settings:
                       );
                     }}
                   >
-                    {manifestCopied ? "Manifest copied" : "Copy manifest"}
+                    {manifestCopied ? t("chatendpointsetup.slack.manifestcopied") : t("chatendpointsetup.slack.copymanifest")}
                   </Button>
                 </DialogFooter>
               </DialogContent>
@@ -1686,11 +1677,11 @@ settings:
         </div>
         <div className="flex flex-wrap items-center justify-between gap-3 pt-3">
           <Button variant="ghost" className="text-muted-foreground" onClick={() => navigate("/apps")}>
-            Save &amp; exit
+            {t("chatendpointsetup.general.saveampexit")}
           </Button>
           <div className="ml-auto flex flex-wrap items-center justify-end gap-2">
             <Button variant="outline" disabled={openingSlackApp || !endpoint.setup?.webhookUrl || !slackValidation.success || saveSlackApp.isPending || saveSlackApp.isError} onClick={onSlackAppCreated}>
-              I already created the app
+              {t("chatendpointsetup.slack.ialreadycreatedtheapp")}
             </Button>
             {!repairing && (
               <Button
@@ -1706,7 +1697,7 @@ settings:
                   }, 1000);
                 }}
               >
-                Create Slack app <ExternalLink />
+                {t("chatendpointsetup.slack.createslackappbutton")} <ExternalLink />
               </Button>
             )}
           </div>
@@ -1714,26 +1705,49 @@ settings:
       </div>
       <div hidden={slackStage !== "credentials"} className="space-y-5">
         <p className="text-sm">
-          Now you need to find two secrets. They are in two different screens on Slack.
+          {t("chatendpointsetup.slack.nowyouneedtofindtwosecrets")}
         </p>
         {slackCredentialsSaved && !repairing && (
-          <p className="text-sm text-muted-foreground">Your credentials are saved. Leave the fields blank to keep them, or enter replacements.</p>
+          <p className="text-sm text-muted-foreground">{t("chatendpointsetup.slack.yourcredentialsaresavedleaveblank")}</p>
         )}
         <section className="space-y-3">
-          <h2 className="text-sm font-semibold"><label htmlFor="slack-bot-token">Bot User OAuth Token</label></h2>
+          <h2 className="text-sm font-semibold"><label htmlFor="slack-bot-token">{t("chatendpointsetup.slack.botuseroauthtoken")}</label></h2>
           <ul id="slack-bot-token-help" className="list-disc space-y-1 pl-5 text-sm">
             <li>
-              <a href="https://api.slack.com/apps" target="_blank" rel="noopener noreferrer" className="underline underline-offset-4">
-                Open Slack app Settings <ExternalLink className="inline size-3" />
-              </a> and choose <strong>{slackApp.appName}</strong>.
+              <Trans
+                i18nKey="chatendpointsetup.slack.openslackappsettingsandchooseapp"
+                values={{ appName: slackApp.appName }}
+                components={{
+                  link: (
+                    <a
+                      href="https://api.slack.com/apps"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline underline-offset-4"
+                    />
+                  ),
+                  icon: <ExternalLink className="inline size-3" />,
+                  strong: <strong />,
+                }}
+              />
             </li>
-            <li>Choose <strong>OAuth &amp; Permissions</strong></li>
-            <li>Copy and paste your <strong>Bot OAuth Token</strong></li>
+            <li>
+              <Trans
+                i18nKey="chatendpointsetup.slack.chooseoauthamppermissions"
+                components={{ strong: <strong /> }}
+              />
+            </li>
+            <li>
+              <Trans
+                i18nKey="chatendpointsetup.slack.copypasteyourbotoauthtoken"
+                components={{ strong: <strong /> }}
+              />
+            </li>
           </ul>
           <Input
             id="slack-bot-token"
             type="password"
-            placeholder={slackCredentialsSaved ? "Saved — leave blank to keep" : undefined}
+            placeholder={slackCredentialsSaved ? t("chatendpointsetup.slack.savedleaveblanktokeep") : undefined}
             value={credentials.botToken ?? ""}
             aria-invalid={slackBotTokenInvalid || undefined}
             aria-describedby={`slack-bot-token-help${slackBotTokenInvalid ? " slack-bot-token-warning" : ""}`}
@@ -1741,25 +1755,51 @@ settings:
           />
           {slackBotTokenInvalid && (
             <p id="slack-bot-token-warning" role="alert" className="text-sm text-destructive">
-              Your Bot User OAuth Token must start with <code>xoxb-</code>. Copy it from <strong>OAuth &amp; Permissions</strong>.
+              <Trans
+                i18nKey="chatendpointsetup.slack.botoauthtokenmuststartwithxoxb"
+                components={{ code: <code />, strong: <strong /> }}
+              />
             </p>
           )}
         </section>
         <section className="space-y-3">
-          <h2 className="text-sm font-semibold"><label htmlFor="slack-signing-secret">Signing Secret</label></h2>
+          <h2 className="text-sm font-semibold"><label htmlFor="slack-signing-secret">{t("chatendpointsetup.slack.signingsecret")}</label></h2>
           <ul id="slack-signing-secret-help" className="list-disc space-y-1 pl-5 text-sm">
             <li>
-              <a href="https://api.slack.com/apps" target="_blank" rel="noopener noreferrer" className="underline underline-offset-4">
-                Open Slack app Settings <ExternalLink className="inline size-3" />
-              </a> and choose <strong>{slackApp.appName}</strong>.
+              <Trans
+                i18nKey="chatendpointsetup.slack.openslackappsettingsandchooseapp"
+                values={{ appName: slackApp.appName }}
+                components={{
+                  link: (
+                    <a
+                      href="https://api.slack.com/apps"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline underline-offset-4"
+                    />
+                  ),
+                  icon: <ExternalLink className="inline size-3" />,
+                  strong: <strong />,
+                }}
+              />
             </li>
-            <li>Choose <strong>Basic Information</strong></li>
-            <li>Copy and paste your <strong>Signing Secret</strong></li>
+            <li>
+              <Trans
+                i18nKey="chatendpointsetup.slack.choosebasicinformation"
+                components={{ strong: <strong /> }}
+              />
+            </li>
+            <li>
+              <Trans
+                i18nKey="chatendpointsetup.slack.copypasteyoursigningsecret"
+                components={{ strong: <strong /> }}
+              />
+            </li>
           </ul>
           <Input
             id="slack-signing-secret"
             type="password"
-            placeholder={slackCredentialsSaved ? "Saved — leave blank to keep" : undefined}
+            placeholder={slackCredentialsSaved ? t("chatendpointsetup.slack.savedleaveblanktokeep") : undefined}
             value={credentials.signingSecret ?? ""}
             aria-invalid={slackSigningSecretHasTokenPrefix || undefined}
             aria-describedby={`slack-signing-secret-help${slackSigningSecretHasTokenPrefix ? " slack-signing-secret-warning" : ""}`}
@@ -1767,13 +1807,16 @@ settings:
           />
           {slackSigningSecretHasTokenPrefix && (
             <p id="slack-signing-secret-warning" role="alert" className="text-sm text-destructive">
-              Use the <strong>Signing Secret</strong>, NOT an app or bot token. The Signing Secret has no token prefix.
+              <Trans
+                i18nKey="chatendpointsetup.slack.usethesigningsecretnotapporbottoken"
+                components={{ strong: <strong /> }}
+              />
             </p>
           )}
         </section>
         <div className="flex flex-wrap items-center justify-between gap-3">
           <Button variant="ghost" className="text-muted-foreground" onClick={() => navigate("/apps")}>
-            Save &amp; exit
+            {t("chatendpointsetup.general.saveampexit")}
           </Button>
           <Button
             className="ml-auto"
@@ -1787,7 +1830,11 @@ settings:
               : onAction(repairing || slackCredentialsSaved ? "reconnect" : "configure", credentials)}
           >
             {pending && <Loader2 className="h-4 w-4 animate-spin" />}
-            {continueWithSavedSlackCredentials ? "Continue" : repairing || slackCredentialsSaved ? "Reconnect Slack app" : "Connect Slack app"}
+            {continueWithSavedSlackCredentials
+              ? t("chatendpointsetup.general.continue")
+              : repairing || slackCredentialsSaved
+                ? t("chatendpointsetup.slack.reconnectapp")
+                : t("chatendpointsetup.slack.connectslackappbutton")}
           </Button>
         </div>
       </div>
@@ -1822,6 +1869,7 @@ function TryStep({
   onTest: () => void;
   onSaveExit: () => void;
 }) {
+  const { t } = useTranslation();
   const messageStatus = useQuery({
     queryKey: ["chat-endpoint-setup-test-status", endpointId],
     queryFn: () => chatEndpointsApi.setupTestStatus(endpointId),
@@ -1841,52 +1889,73 @@ function TryStep({
     (identity) => identity.status !== "linked",
   );
   const freshConversationInstruction =
-    provider === "imessage-photon" ? "send a fresh message to your Photon number" : provider === "telegram"
-      ? "start a fresh conversation with /new and send the test message again"
+    provider === "imessage-photon"
+      ? t("chatendpointsetup.test.freshphoton")
+      : provider === "telegram"
+      ? t("chatendpointsetup.test.freshtelegram")
       : provider === "github"
-        ? "start a new issue or pull request conversation and mention the agent again"
+        ? t("chatendpointsetup.test.freshgithub")
         : provider === "microsoft-teams"
-          ? "start a new channel post and mention the agent again"
-          : "send a new root mention to the agent";
-  const identityGuidance = provider === "slack" ? null : provider === "imessage-photon" && principalsQuery.isSuccess && (identities.length === 0 || unlinkedIdentities.length > 0)
-    ? { tone: "info" as const, title: "Link your Messages identity", body: "Send one message to discover your phone number or Apple account address, then link that exact identity in Access. Send a fresh request after linking; earlier messages do not start work." }
+          ? t("chatendpointsetup.test.freshteams")
+          : t("chatendpointsetup.test.freshother");
+  const identityGuidance = provider === "slack" ? null : provider === "imessage-photon" &&
+    principalsQuery.isSuccess &&
+    (identities.length === 0 || unlinkedIdentities.length > 0)
+    ? {
+        tone: "info" as const,
+        title: t("chatendpointsetup.test.linkmessagesidentity"),
+        body: t("chatendpointsetup.test.linkmessagesidentitybody"),
+      }
     : principalsQuery.isError
     ? {
         tone: "warning" as const,
-        title: "Identity readiness could not be checked",
-        body: `Review Access before expecting an agent reply. After linking the account you are testing, ${freshConversationInstruction}.`,
+        title: t("chatendpointsetup.test.identityreadinesserror"),
+        body: t("chatendpointsetup.test.identityreadinesserrorbody", {
+          freshConversationInstruction,
+        }),
       }
     : !principalsQuery.isSuccess || guestIsolationState === "loading"
       ? null
       : identities.length === 0
         ? guestIsolationState === "disabled"
-          ? {
-              tone: "warning" as const,
-              title: "Link the account you’re testing",
-              body:
-                provider === "telegram"
-                  ? "Tap Start in Telegram to discover your account; the welcome does not start an agent run. Link the account privately in Access, then return and send the test message."
-                  : `Your first ${providerNames[provider]} message discovers the external account, but isolated guest work is off, so it cannot safely start ${agentName}. Send it once, link that account privately in Access, then ${freshConversationInstruction}.`,
-            }
+            ? {
+                tone: "warning" as const,
+                title: t("chatendpointsetup.test.linktestingaccount"),
+                body:
+                  provider === "telegram"
+                  ? t("chatendpointsetup.test.telegramguestdisabled")
+                  : t("chatendpointsetup.test.guestdisabledfirstmessage", {
+                      providerName: providerNames[provider],
+                      agentName,
+                      freshConversationInstruction,
+                    }),
+              }
           : {
               tone: "info" as const,
-              title: "Your first message identifies your account",
+              title: t("chatendpointsetup.test.firstmessageidentifies"),
               body:
                 provider === "telegram"
-                  ? "Tap Start in Telegram to discover your account. Until linked, it is a restricted guest and still needs a sandbox-backed isolated run; test that path intentionally, or link it in Access and then send the test message."
-                  : `Until linked, the account is a restricted guest and still needs a sandbox-backed isolated run. Test that guest path intentionally, or link the account in Access and then ${freshConversationInstruction}.`,
+                  ? t("chatendpointsetup.test.telegramguestenabled")
+                  : t("chatendpointsetup.test.guestsandboxfirstmessage", {
+                      freshConversationInstruction,
+                    }),
             }
         : unlinkedIdentities.length > 0
           ? guestIsolationState === "disabled"
             ? {
                 tone: "warning" as const,
-                title: "Link the account you’re testing",
-                body: `An observed external account is unlinked, and isolated guest work is off, so it cannot safely start ${agentName}. Link the account in Access, then ${freshConversationInstruction}; Paperclip does not replay the refused request.`,
+                title: t("chatendpointsetup.test.linktestingaccount"),
+                body: t("chatendpointsetup.test.guestdisabledunlinked", {
+                  agentName,
+                  freshConversationInstruction,
+                }),
               }
             : {
                 tone: "info" as const,
-                title: "Unlinked identity detected",
-                body: `An unlinked account is a restricted guest and still needs a sandbox-backed isolated run. Test guest access intentionally, or link the account in Access and then ${freshConversationInstruction}.`,
+                title: t("chatendpointsetup.test.unlinkedidentitydetected"),
+                body: t("chatendpointsetup.test.guestsandboxunlinked", {
+                  freshConversationInstruction,
+                }),
               }
           : null;
   const providerBotUsername = botUsername?.replace(/^@/, "");
@@ -1900,53 +1969,62 @@ function TryStep({
   const slackTestMessage = `${botMention.startsWith("@") ? botMention : `@${botMention}`} you there?`;
   const instructions =
     provider === "imessage-photon" ? [
-      photonAllocation === "shared" ? "In your Photon project, enroll your sender in Users and find its assigned number in Get started. Send a fresh message to that number from Apple Messages." : `Open Apple Messages and send a fresh message to ${botUsername ?? botLabel ?? "the dedicated number"}.`,
-      "Link the discovered sender to a Paperclip person in Access, then send a fresh request.",
-      "Wait for the agent’s actual reply. Setup completes after that reply is delivered.",
-      ...(photonAllocation === "shared" ? ["This Pro-compatible channel supports DMs only. Group messages cannot start work."] : ["For a group: add the number in Messages, send a message, enable the discovered group in Settings, then send a fresh request."]),
+      photonAllocation === "shared"
+        ? t("chatendpointsetup.test.photonsharedstep")
+        : t("chatendpointsetup.test.photondedicatedstep", {
+            number: botUsername ?? botLabel ?? t("chatendpointsetup.test.dedicatednumber"),
+          }),
+      t("chatendpointsetup.test.photonlinksender"),
+      t("chatendpointsetup.test.photonwaitforreply"),
+      ...(photonAllocation === "shared"
+        ? [t("chatendpointsetup.test.photonshareddmonly")]
+        : [t("chatendpointsetup.test.photongroupstep")]),
     ] : provider === "discord"
       ? [
-          "Open a text channel where the bot is installed.",
-          `Mention ${botMention} in a new root message.`,
-          `Reply once inside ${agentName}'s new Discord thread.`,
+          t("chatendpointsetup.test.discordstep1"),
+          t("chatendpointsetup.test.discordstep2", { botMention }),
+          t("chatendpointsetup.test.discordstep3", { agentName }),
         ]
       : provider === "telegram"
         ? [
-            "Open the bot's private chat.",
-            "Tap Start.",
-            "Send “Help me test this”.",
+            t("chatendpointsetup.test.telegramstep1"),
+            t("chatendpointsetup.test.telegramstep2"),
+            t("chatendpointsetup.test.telegramstep3"),
           ]
         : provider === "github"
           ? [
-              "Open an installed issue or pull request.",
-              `Mention ${botMention} in a comment.`,
-              "Add another comment to continue the same task.",
+              t("chatendpointsetup.test.githubstep1"),
+              t("chatendpointsetup.test.githubstep2", { botMention }),
+              t("chatendpointsetup.test.githubstep3"),
             ]
           : provider === "microsoft-teams"
             ? [
-                "Open an installed channel and start a new post.",
-                `Mention ${botMention} in the post.`,
-                "Reply once beneath the post.",
+                t("chatendpointsetup.test.teamsstep1"),
+                t("chatendpointsetup.test.teamsstep2", { botMention }),
+                t("chatendpointsetup.test.teamsstep3"),
               ]
             : [
-                `Open a channel and invite ${botMention} if needed.`,
-                `Mention ${botMention} in a new channel message.`,
-                `Reply once in ${agentName}'s thread.`,
+                t("chatendpointsetup.test.otherstep1", { botMention }),
+                t("chatendpointsetup.test.otherstep2", { botMention }),
+                t("chatendpointsetup.test.otherstep3", { agentName }),
               ];
   return (
     <div className="space-y-5">
       <div>
         <h1 className="text-xl font-bold">
-          Try {agentName} in {providerNames[provider]}
+          {t("chatendpointsetup.test.title", {
+            agentName,
+            providerName: providerNames[provider],
+          })}
         </h1>
         {provider !== "slack" && <p className="mt-1 text-sm text-muted-foreground">
-          Complete this real conversation to finish setup.
+          {t("chatendpointsetup.test.completeconversation")}
         </p>}
       </div>
       {(!principalsQuery.isSuccess || guestIsolationState === "loading") &&
       !principalsQuery.isError ? (
         <p role="status" className="text-sm text-muted-foreground">
-          Checking identity and guest readiness…
+          {t("chatendpointsetup.test.checkingidentityreadiness")}
         </p>
       ) : null}
       {identityGuidance ? (
@@ -1966,34 +2044,61 @@ function TryStep({
             variant="outline"
             onClick={onOpenAccess}
           >
-            Review identity access
+            {t("chatendpointsetup.test.reviewidentityaccess")}
           </Button>
         </div>
       ) : null}
-      {provider === "imessage-photon" && botUsername && <div className="space-y-2"><Button variant="outline" onClick={() => { void copyTextToClipboard(botUsername).then(() => { setNumberCopied(true); setCopyError(null); }, () => setCopyError("Could not copy the number. Select it in the instructions below.")); }}>{numberCopied ? "Number copied" : `Copy ${botUsername}`}</Button>{copyError && <p role="alert" className="text-sm text-destructive">{copyError}</p>}</div>}
+      {provider === "imessage-photon" && botUsername && (
+        <div className="space-y-2">
+          <Button
+            variant="outline"
+            onClick={() => {
+              void copyTextToClipboard(botUsername).then(
+                () => {
+                  setNumberCopied(true);
+                  setCopyError(null);
+                },
+                () =>
+                  setCopyError(
+                    t("chatendpointsetup.test.copynumberfailure"),
+                  ),
+              );
+            }}
+          >
+            {numberCopied
+              ? t("chatendpointsetup.test.numbercopied")
+              : t("chatendpointsetup.test.copynumber", { number: botUsername })}
+          </Button>
+          {copyError && (
+            <p role="alert" className="text-sm text-destructive">
+              {copyError}
+            </p>
+          )}
+        </div>
+      )}
       {provider === "slack" ? (
         <>
           <ol className="list-decimal space-y-4 pl-5 text-sm">
-            <li>Open a channel and invite {botMention} if needed.</li>
+            <li>{t("chatendpointsetup.test.otherstep1", { botMention })}</li>
             <li>
               <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border p-3">
                 <code>{slackTestMessage}</code>
                 <Button size="sm" variant="ghost" onClick={() => {
                   void copyTextToClipboard(slackTestMessage).then(() => { setCommandCopied(true); setCommandCopyError(false); }, () => setCommandCopyError(true));
-                }}><Copy className="size-4" />{commandCopied ? "Copied" : "Copy message"}</Button>
+                }}><Copy className="size-4" />{commandCopied ? t("chatendpointsetup.test.copied") : t("chatendpointsetup.test.copymessage")}</Button>
               </div>
-              <p className="mt-2 text-muted-foreground">Select the bot from Slack’s @mention suggestions.</p>
+              <p className="mt-2 text-muted-foreground">{t("chatendpointsetup.test.selectthebotfromslackmentionsuggestions")}</p>
             </li>
-            <li>Continue the conversation in the thread.</li>
+            <li>{t("chatendpointsetup.test.continuetheconversationinthethread")}</li>
           </ol>
-          {commandCopyError && <p role="alert" className="text-sm text-destructive">Couldn&apos;t copy. Select and copy the command above.</p>}
-          {messageStatus.data?.messageReceivedAt ? <p role="status" className="flex items-center gap-2 text-sm"><CheckCircle2 className="size-4 text-(--status-task-done)" />Received your Slack message.</p>
-            : <p role={messageStatus.isError ? "alert" : "status"} className="text-sm text-muted-foreground">{messageStatus.isError ? "Couldn’t check for your message. You can still finish setup." : "We’ll check for your message automatically. This test is optional."}</p>}
+          {commandCopyError && <p role="alert" className="text-sm text-destructive">{t("chatendpointsetup.test.couldntcopyselectandcopycommand")}</p>}
+          {messageStatus.data?.messageReceivedAt ? <p role="status" className="flex items-center gap-2 text-sm"><CheckCircle2 className="size-4 text-(--status-task-done)" />{t("chatendpointsetup.test.receivedyourslackmessage")}</p>
+            : <p role={messageStatus.isError ? "alert" : "status"} className="text-sm text-muted-foreground">{messageStatus.isError ? t("chatendpointsetup.test.couldntcheckforyourmessage") : t("chatendpointsetup.test.wellcheckforyourmessageautomatically")}</p>}
           <div className="flex items-center justify-between gap-3">
-            <Button variant="ghost" className="text-muted-foreground" onClick={onSaveExit}>Save &amp; exit</Button>
+            <Button variant="ghost" className="text-muted-foreground" onClick={onSaveExit}>{t("chatendpointsetup.general.saveampexit")}</Button>
             <div className="flex flex-wrap items-center justify-end gap-2">
-              <Button variant="ghost" disabled={pending} onClick={onTest}>Skip test and finish</Button>
-              <Button disabled={pending} onClick={onTest}>{pending && <Loader2 className="size-4 animate-spin" />}I&apos;ve sent the test message</Button>
+              <Button variant="ghost" disabled={pending} onClick={onTest}>{t("chatendpointsetup.test.skiptestandfinish")}</Button>
+              <Button disabled={pending} onClick={onTest}>{pending && <Loader2 className="size-4 animate-spin" />}{t("chatendpointsetup.test.senttestmessage")}</Button>
             </div>
           </div>
         </>
@@ -2005,13 +2110,15 @@ function TryStep({
         {providerUrl && (
           <Button asChild variant="outline">
             <a href={providerUrl} target="_blank" rel="noopener noreferrer">
-              Open {providerNames[provider]} <ExternalLink />
+              {t("chatendpointsetup.test.openprovider", {
+                providerName: providerNames[provider],
+              })} <ExternalLink />
             </a>
           </Button>
         )}
         <Button disabled={pending} onClick={onTest}>
           {pending && <Loader2 className="h-4 w-4 animate-spin" />}
-          I've sent the test message
+          {t("chatendpointsetup.test.senttestmessage")}
         </Button>
       </div>
       </>}

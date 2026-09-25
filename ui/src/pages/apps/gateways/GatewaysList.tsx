@@ -27,8 +27,10 @@ import {
   isGatewayOn,
   latestTokenActivity,
 } from "./gateway-helpers";
+import { useTranslation } from "@/i18n";
 
 export function GatewaysList() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { pushToast } = useToast();
@@ -39,11 +41,11 @@ export function GatewaysList() {
 
   useEffect(() => {
     setBreadcrumbs([
-      { label: "Connectors", href: "/apps" },
-      { label: "Gateways" },
+      { label: t("gatewayslist.general.connectors"), href: "/apps" },
+      { label: t("gatewayslist.general.gateways") },
     ]);
     return () => setBreadcrumbs([]);
-  }, [setBreadcrumbs]);
+  }, [setBreadcrumbs, t]);
 
   const gatewaysQuery = useQuery({
     queryKey: gatewaysQueryKey(selectedCompanyId ?? "__none__"),
@@ -88,6 +90,21 @@ export function GatewaysList() {
     () => new Map((projectsQuery.data ?? []).map((project) => [project.id, project.name])),
     [projectsQuery.data],
   );
+  const scopeLabels = {
+    project: t("gatewayslist.general.project"),
+    agent: t("gatewayslist.general.agent"),
+    organization: t("gatewayslist.general.organization"),
+  };
+  const toolLabels = {
+    profileUnavailable: t("gatewayslist.general.profileunavailable"),
+    noToolsAllowed: t("gatewayslist.general.notoolsallowed"),
+    toolCount: (count: number) => t(
+      count === 1
+        ? "gatewayslist.general.toolcountsingular"
+        : "gatewayslist.general.toolcountplural",
+      { count },
+    ),
+  };
 
   const toggleMutation = useMutation({
     mutationFn: ({ gateway }: { gateway: ToolMcpGatewayWithTokens }) =>
@@ -96,32 +113,39 @@ export function GatewaysList() {
       }),
     onSuccess: async (gateway) => {
       pushToast({
-        title: gateway.status === "active" ? "Gateway on" : "Gateway off",
+        title:
+          gateway.status === "active"
+            ? t("gatewayslist.general.gatewayon")
+            : t("gatewayslist.general.gatewayoff"),
         body:
           gateway.status === "active"
-            ? `${gateway.name} is exposing its tools again.`
-            : `${gateway.name} is off — every client goes silent.`,
+            ? t("gatewayslist.general.gatewayonbody", { name: gateway.name })
+            : t("gatewayslist.general.gatewayoffbody", { name: gateway.name }),
         tone: "success",
       });
       await queryClient.invalidateQueries({ queryKey: gatewaysQueryKey(selectedCompanyId!) });
     },
     onError: (error) =>
       pushToast({
-        title: "Couldn't update the gateway",
+        title: t("gatewayslist.general.couldntupdategateway"),
         body: error instanceof Error ? error.message : String(error),
         tone: "error",
       }),
   });
 
   if (!selectedCompanyId) {
-    return <div className="p-6 text-sm text-muted-foreground">Select an organization to manage gateways.</div>;
+    return (
+      <div className="p-6 text-sm text-muted-foreground">
+        {t("gatewayslist.general.selectorganization")}
+      </div>
+    );
   }
 
   const gateways = gatewaysQuery.data?.gateways ?? [];
   const term = search.trim().toLowerCase();
   const filtered = term
     ? gateways.filter((gateway) => {
-        const scope = formatScope(gateway, projectNames, agentNames).toLowerCase();
+        const scope = formatScope(gateway, projectNames, agentNames, scopeLabels).toLowerCase();
         return (
           gateway.name.toLowerCase().includes(term) ||
           gateway.displaySlug.toLowerCase().includes(term) ||
@@ -133,10 +157,9 @@ export function GatewaysList() {
   return (
     <div className="max-w-5xl space-y-5">
       <header className="space-y-1">
-        <h1 className="text-2xl font-bold tracking-tight">Apps</h1>
+        <h1 className="text-2xl font-bold tracking-tight">{t("gatewayslist.general.apps")}</h1>
         <p className="text-sm text-muted-foreground">
-          A gateway is one safe MCP endpoint that exposes only the apps you assign. Hand it to a client
-          like Cursor or Claude Desktop.
+          {t("gatewayslist.general.description")}
         </p>
       </header>
 
@@ -157,14 +180,14 @@ export function GatewaysList() {
               <Input
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
-                placeholder="Search by name, app, or owner"
+                placeholder={t("gatewayslist.general.searchplaceholder")}
                 className="pl-9"
-                aria-label="Search gateways"
+                aria-label={t("gatewayslist.general.searchgateways")}
               />
             </div>
             <Button onClick={() => setCreating(true)}>
               <Plus className="mr-1.5 h-4 w-4" />
-              New gateway
+              {t("gatewayslist.general.newgateway")}
             </Button>
           </div>
 
@@ -175,13 +198,14 @@ export function GatewaysList() {
                 profile,
                 applicationsQuery.data?.applications ?? [],
                 connectionsQuery.data?.connections ?? [],
+                t("gatewayslist.general.signinexpiredreconnect"),
               );
               return {
                 gateway,
                 profile,
-                scope: formatScope(gateway, projectNames, agentNames),
-                appsLabel: `${apps.length} ${apps.length === 1 ? "app" : "apps"}${
-                  profile ? ` · ${allowedToolsLabel(profile)}` : ""
+                scope: formatScope(gateway, projectNames, agentNames, scopeLabels),
+                appsLabel: `${t("gatewayslist.general.appcount", { count: apps.length })}${
+                  profile ? ` · ${allowedToolsLabel(profile, toolLabels)}` : ""
                 }`,
                 active: activeTokenCount(gateway),
                 expiring: expiringTokenCount(gateway),
@@ -195,12 +219,17 @@ export function GatewaysList() {
                 disabled={toggleMutation.isPending}
                 onClick={(event) => event.stopPropagation()}
                 onCheckedChange={() => toggleMutation.mutate({ gateway })}
-                aria-label={`Turn ${gateway.name} ${isGatewayOn(gateway) ? "off" : "on"}`}
+                aria-label={t("gatewayslist.general.turngateway", {
+                  name: gateway.name,
+                  state: isGatewayOn(gateway)
+                    ? t("gatewayslist.general.off")
+                    : t("gatewayslist.general.on"),
+                })}
               />
             );
             const empty = (
               <div className="px-4 py-8 text-center text-sm text-muted-foreground">
-                No gateways match “{search.trim()}”.
+                {t("gatewayslist.general.nogatewaysmatch", { search: search.trim() })}
               </div>
             );
             return (
@@ -210,12 +239,12 @@ export function GatewaysList() {
                   <table className="w-full min-w-(--sz-40rem) text-sm">
                     <thead>
                       <tr className="border-b border-border bg-muted/40 text-left text-(length:--text-micro) font-semibold uppercase tracking-wide text-muted-foreground">
-                        <th className="whitespace-nowrap px-4 py-2.5">Gateway</th>
-                        <th className="whitespace-nowrap px-4 py-2.5">Scope</th>
-                        <th className="whitespace-nowrap px-4 py-2.5">Apps</th>
-                        <th className="whitespace-nowrap px-4 py-2.5">Tokens</th>
-                        <th className="whitespace-nowrap px-4 py-2.5">Last used</th>
-                        <th className="whitespace-nowrap px-4 py-2.5 text-right">On</th>
+                        <th className="whitespace-nowrap px-4 py-2.5">{t("gatewayslist.general.gateway")}</th>
+                        <th className="whitespace-nowrap px-4 py-2.5">{t("gatewayslist.general.scope")}</th>
+                        <th className="whitespace-nowrap px-4 py-2.5">{t("gatewayslist.general.apps")}</th>
+                        <th className="whitespace-nowrap px-4 py-2.5">{t("gatewayslist.general.tokens")}</th>
+                        <th className="whitespace-nowrap px-4 py-2.5">{t("gatewayslist.general.lastused")}</th>
+                        <th className="whitespace-nowrap px-4 py-2.5 text-right">{t("gatewayslist.general.on")}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -232,7 +261,10 @@ export function GatewaysList() {
                           <td className="whitespace-nowrap px-4 py-3 text-muted-foreground">{scope}</td>
                           <td className="whitespace-nowrap px-4 py-3 text-muted-foreground">{appsLabel}</td>
                           <td className="whitespace-nowrap px-4 py-3 text-muted-foreground">
-                            {active} active{expiring > 0 ? ` · ${expiring} expiring` : ""}
+                            {t("gatewayslist.general.activetokens", { count: active })}
+                            {expiring > 0
+                              ? ` · ${t("gatewayslist.general.expiringtokens", { count: expiring })}`
+                              : ""}
                           </td>
                           <td className="whitespace-nowrap px-4 py-3 text-muted-foreground">
                             {lastUsed ? <RelativeTime value={lastUsed} /> : "—"}
@@ -267,14 +299,18 @@ export function GatewaysList() {
                         <div className="shrink-0">{toggle(gateway)}</div>
                       </div>
                       <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-                        <MobileField label="Scope" value={scope} />
-                        <MobileField label="Apps" value={appsLabel} />
+                        <MobileField label={t("gatewayslist.general.scope")} value={scope} />
+                        <MobileField label={t("gatewayslist.general.apps")} value={appsLabel} />
                         <MobileField
-                          label="Tokens"
-                          value={`${active} active${expiring > 0 ? ` · ${expiring} expiring` : ""}`}
+                          label={t("gatewayslist.general.tokens")}
+                          value={`${t("gatewayslist.general.activetokens", { count: active })}${
+                            expiring > 0
+                              ? ` · ${t("gatewayslist.general.expiringtokens", { count: expiring })}`
+                              : ""
+                          }`}
                         />
                         <MobileField
-                          label="Last used"
+                          label={t("gatewayslist.general.lastused")}
                           value={lastUsed ? <RelativeTime value={lastUsed} /> : "—"}
                         />
                       </dl>
@@ -289,10 +325,9 @@ export function GatewaysList() {
           })()}
 
           <div className="rounded-lg border border-border bg-muted/30 px-4 py-3">
-            <div className="text-sm font-semibold text-foreground">Why a gateway?</div>
+            <div className="text-sm font-semibold text-foreground">{t("gatewayslist.general.whyagateway")}</div>
             <p className="mt-1 text-sm text-muted-foreground">
-              You pick which apps go through it, who can use it, and how. Revoke the token, the whole
-              gateway goes silent — no app-by-app cleanup.
+              {t("gatewayslist.general.whyagatewaydescription")}
             </p>
           </div>
         </div>
@@ -319,16 +354,16 @@ function MobileField({ label, value }: { label: string; value: ReactNode }) {
 }
 
 function EmptyGateways({ onCreate }: { onCreate: () => void }) {
+  const { t } = useTranslation();
   return (
     <div className="rounded-2xl border border-dashed border-border p-12 text-center">
-      <h2 className="text-lg font-semibold text-foreground">No gateways yet</h2>
+      <h2 className="text-lg font-semibold text-foreground">{t("gatewayslist.general.nogatewaysyet")}</h2>
       <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
-        Group your connected apps into one safe endpoint you can hand to a client, then revoke it in one
-        move.
+        {t("gatewayslist.general.emptydescription")}
       </p>
       <Button className="mt-5" onClick={onCreate}>
         <Plus className="mr-1.5 h-4 w-4" />
-        New gateway
+        {t("gatewayslist.general.newgateway")}
       </Button>
     </div>
   );

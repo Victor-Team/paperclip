@@ -10,6 +10,7 @@ import type {
   CompanySkillListItem,
 } from "@paperclipai/shared";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { i18n } from "@/i18n";
 import { SkillStudio } from "./SkillStudio";
 
 const routeState = vi.hoisted(() => ({
@@ -319,6 +320,21 @@ afterEach(() => {
 });
 
 describe("SkillStudio create mode", () => {
+  it("updates the create page and breadcrumbs when the language changes", async () => {
+    const node = await renderStudio();
+    try {
+      await act(async () => { await i18n.changeLanguage("zh-CN"); });
+      await waitFor(() => expect(node.textContent).toContain("新建技能"));
+      expect(mockSetBreadcrumbs).toHaveBeenCalledWith([
+        { label: "技能", href: "/skills" },
+        { label: "Studio", href: "/skills/studio" },
+        { label: "新建技能" },
+      ]);
+    } finally {
+      await act(async () => { await i18n.changeLanguage("en"); });
+    }
+  });
+
   it("renders /skills/studio/new as create mode instead of loading skill id new", async () => {
     const node = await renderStudio();
 

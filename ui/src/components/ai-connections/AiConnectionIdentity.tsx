@@ -5,12 +5,14 @@ import {
   aiMethodLabel,
   type AiConnectionSummary,
 } from "./model";
+import { useTranslation } from "@/i18n";
 
 export function AiConnectionIdentity({
   connection,
 }: {
   connection: AiConnectionSummary;
 }) {
+  const { t } = useTranslation();
   const provider = AI_PROVIDERS[connection.provider];
   const Icon = connection.ownership === "shared" ? Building2 : UserRound;
   return (
@@ -22,14 +24,18 @@ export function AiConnectionIdentity({
         </span>
         <span className="text-xs text-muted-foreground">
           {provider.name} ·{" "}
-          {aiMethodLabel(connection.provider, connection.method)}
+          {aiMethodLabel(connection.provider, connection.method, t)}
           {connection.accountLabel ? ` · ${connection.accountLabel}` : ""}
         </span>
         <span className="flex items-center gap-1 text-xs text-muted-foreground">
           <Icon aria-hidden className="size-3" />
           {connection.ownership === "shared"
-            ? "Company shared"
-            : `Personal · ${connection.ownerName ?? "Account owner"}`}
+            ? t("aiconnectionidentity.general.companyshared")
+            : t("aiconnectionidentity.general.personalowner", {
+                owner:
+                  connection.ownerName ??
+                  t("aiconnectionidentity.general.accountowner"),
+              })}
         </span>
       </div>
     </div>

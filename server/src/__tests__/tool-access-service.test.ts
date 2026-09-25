@@ -2410,6 +2410,36 @@ describeEmbeddedPostgres("tool access service", () => {
     );
   });
 
+  it.each(["read", "write"])("requests only reduced Chat scopes for customer-owned %s OAuth, including reconnect", async (capability) => {
+    const company = await createCompany(db);
+    const service = createTestToolAccessService(db);
+    const actor = { actorType: "user" as const, actorId: "board" };
+    const connected = await service.connectGalleryApp(company.id, {
+      galleryKey: "google-chat",
+      connectionMethodKey: `customer-${capability}-oauth`,
+      name: "Chat scope fixture",
+      grantKind: "user",
+      oauthClient: { clientId: "google-chat-client", clientSecret: "google-chat-secret" },
+    }, actor);
+    const scopes = ["chat.spaces.readonly", "chat.messages.readonly", ...(capability === "write" ? ["chat.messages.create"] : [])]
+      .map((scope) => `https://www.googleapis.com/auth/${scope}`);
+    const removed = ["chat.memberships.readonly", "chat.users.readstate.readonly"]
+      .map((scope) => `https://www.googleapis.com/auth/${scope}`);
+    const [connection] = await db.select().from(toolConnections).where(eq(toolConnections.id, connected.connectionId));
+    // A saved broad scope hint must not leak back into the next consent URL.
+    await db.update(toolConnections).set({ config: {
+      ...connection.config,
+      oauth: { ...(connection.config.oauth as Record<string, unknown>), scopes: [...scopes, ...removed] },
+    } }).where(eq(toolConnections.id, connection.id));
+    const input = { redirectUri: "https://paperclip.example.test/api/tools/oauth/callback", actor };
+    const started = await service.startOAuth(company.id, connection.id, input);
+    expect(new URL(started.authorizationUrl).searchParams.get("scope")?.split(" ")).toEqual(scopes);
+    for (const removedScope of removed) {
+      await expect(service.startOAuth(company.id, connection.id, { ...input, scopes: [...scopes, removedScope] }))
+        .rejects.toMatchObject({ status: 400, details: { code: "oauth_scope_widening_rejected", scopes: [removedScope] } });
+    }
+  });
+
   it("keeps tools outside a Google Workspace capability profile disabled", async () => {
     const company = await createCompany(db);
     const service = createTestToolAccessService(db);
@@ -5062,7 +5092,7 @@ describeEmbeddedPostgres("tool access service", () => {
         "youcom",
       ]),
     );
-    expect(res.body.apps).toHaveLength(51);
+    expect(res.body.apps).toHaveLength(52);
     expect(
       res.body.apps.find((app: { slug: string }) => app.slug === "gmail")
         .ownershipAvailability,
@@ -17805,6 +17835,14 @@ describeEmbeddedPostgres("tool access service", () => {
 });
 
 describe("classifyRisk", () => {
+  it("classifies Fireflies reads and mutations without changing action defaults", () => {
+    for (const name of ["fireflies_get_transcripts", "fireflies_get_transcript", "fireflies_get_summary"])
+      expect(classifyRisk({ name }, "fireflies")).toBe("read");
+    for (const name of ["fireflies_share_meeting", "fireflies_revoke_meeting_access", "fireflies_move_meeting", "fireflies_create_soundbite", "fireflies_update_meeting_title"])
+      expect(classifyRisk({ name, annotations: { readOnlyHint: true } }, "fireflies")).toBe("write");
+    expect(classifyRisk({ name: "fireflies_share_meeting", annotations: { destructiveHint: true } }, "fireflies")).toBe("destructive");
+  });
+
   const risk = (name: string, annotations?: Record<string, unknown>) =>
     classifyRisk({ name, annotations });
 

@@ -44,6 +44,24 @@ describe("runRowSubtitle", () => {
     expect(subtitle).toBe("Run failed");
   });
 
+  it("uses the caller's translation function for known fallback copy", () => {
+    const translate = (key: string) => `zh:${key}`;
+    expect(
+      runRowSubtitle(
+        { status: "failed", failureReason: null, triggerPayload: null },
+        variables,
+        translate,
+      ),
+    ).toBe("zh:operatesections.general.runFailed");
+    expect(
+      runRowSubtitle(
+        { status: "skipped", failureReason: "paused", triggerPayload: null },
+        variables,
+        translate,
+      ),
+    ).toBe("zh:operatesections.general.skipPaused");
+  });
+
   it("returns empty when there is no payload", () => {
     expect(
       runRowSubtitle({ status: "succeeded", failureReason: null, triggerPayload: null }, variables),

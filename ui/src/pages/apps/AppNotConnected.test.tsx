@@ -4,6 +4,7 @@ import { flushSync } from "react-dom";
 import { createRoot } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { i18n } from "@/i18n";
 import { AppNotConnected } from "./AppNotConnected";
 
 const listApplicationsMock = vi.hoisted(() => vi.fn());
@@ -149,7 +150,8 @@ describe("AppNotConnected", () => {
   let container: HTMLDivElement;
   let root: ReturnType<typeof createRoot>;
 
-  beforeEach(() => {
+  beforeEach(async () => {
+    await i18n.changeLanguage("en");
     container = document.createElement("div");
     document.body.appendChild(container);
     mockParams.applicationId = "app-1";
@@ -429,5 +431,18 @@ describe("AppNotConnected", () => {
     expect(Array.from(container.querySelectorAll("button")).some(
       (button) => button.textContent?.trim() === "Reconnect",
     )).toBe(false);
+  });
+
+  it("renders disconnected app copy in Simplified Chinese", async () => {
+    await i18n.changeLanguage("zh-CN");
+
+    await renderPage();
+
+    expect(container.textContent).toContain("未连接");
+    expect(container.textContent).toContain("需要关注");
+    expect(container.textContent).toContain("请添加可用的 GitHub 密钥以恢复访问权限。");
+    expect(Array.from(container.querySelectorAll("button")).some(
+      (button) => button.textContent?.trim() === "重新连接",
+    )).toBe(true);
   });
 });

@@ -3,6 +3,8 @@ import { flushSync } from "react-dom";
 import { createRoot } from "react-dom/client";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { SlackAvatarContent } from "./SlackAvatarStep";
+import { SlackSearchView } from "./SlackToolSettings";
+import { i18n } from "@/i18n";
 import { useSlackAvatarProgress } from "./slack-avatar-progress";
 
 const containers: Array<{ root: ReturnType<typeof createRoot>; node: HTMLDivElement }> = [];
@@ -14,11 +16,12 @@ function render(element: React.ReactNode) {
   flushSync(() => root.render(element));
   return { node, root };
 }
-afterEach(() => {
+afterEach(async () => {
   for (const { root, node } of containers.splice(0)) { flushSync(() => root.unmount()); node.remove(); }
   localStorage.clear();
   vi.restoreAllMocks();
   vi.unstubAllGlobals();
+  await i18n.changeLanguage("en");
 });
 async function settle() { await new Promise(resolve => setTimeout(resolve, 0)); flushSync(() => {}); }
 
@@ -77,5 +80,26 @@ describe("optional avatar progress", () => {
     const { node } = render(<Progress company="one" endpoint="a" />);
     flushSync(() => node.querySelector("button")!.click());
     expect(node.textContent).toBe("skipped");
+  });
+});
+
+describe("Slack setup language switching", () => {
+  it("updates the avatar instructions and search state without changing technical values", async () => {
+    await i18n.changeLanguage("en");
+    const avatar = render(<SlackAvatarContent agentName="Maya" appName="Maya App" avatarUrl="/avatar.png" />);
+    const search = render(<SlackSearchView
+      status={{ configured: false, clientId: null, redirectUri: null, connected: false, nativeSearchAvailable: true, limitation: "" }}
+      onConnect={async () => undefined}
+      onDisconnect={async () => undefined}
+      onConfigure={async () => undefined}
+    />);
+    expect(avatar.node.textContent).toContain("Choose Maya App.");
+    expect(search.node.textContent).toContain("Your Slack search access");
+
+    await i18n.changeLanguage("zh-CN");
+    flushSync(() => {});
+    expect(avatar.node.textContent).toContain("选择 Maya App。");
+    expect(avatar.node.querySelector('img')?.alt).toBe("Maya 的 Cliptoon 头像");
+    expect(search.node.textContent).toContain("你的 Slack 搜索权限");
   });
 });

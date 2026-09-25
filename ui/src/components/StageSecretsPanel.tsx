@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { EmptyState } from "./EmptyState";
 import { EnvironmentVariablesEditor } from "./environment-variables-editor";
 import { AgentAvatar, type AvatarAgent } from "./AgentAvatar";
+import { useTranslation } from "@/i18n";
 
 export interface StageSecretsPanelProps {
   /** Whether the stage has a backing automation routine with an assignee. */
@@ -47,6 +48,7 @@ export function StageSecretsPanel({
   saving,
   dirty,
 }: StageSecretsPanelProps) {
+  const { t } = useTranslation();
   // No backing automation/assignee → nothing can receive secrets at runtime.
   // Point the user at Automation instead of creating a hidden routine just
   // because the Secrets tab was opened.
@@ -72,15 +74,12 @@ export function StageSecretsPanel({
           <KeyRound className="h-3.5 w-3.5 mt-0.5 shrink-0" />
         )}
         <p>
-          These env vars are injected when{" "}
-          <span className="font-medium text-foreground">{displayName}</span> runs this step. They override
-          matching project and agent env on collisions. <span className="font-mono">PAPERCLIP_*</span> names
-          are reserved.
-        </p>
+          {t("stagesecretspanel.general.theseenvvarsareinjectedwhen")}{" "}
+          <span className="font-medium text-foreground">{displayName}</span> {t("stagesecretspanel.general.runsthissteptheyoverridematchingproject")}<span className="font-mono">{t("stagesecretspanel.general.paperclip")}</span> {t("stagesecretspanel.general.namesarereserved")}</p>
       </div>
 
       {secretsLoading ? (
-        <p className="text-sm text-muted-foreground">Loading secrets…</p>
+        <p className="text-sm text-muted-foreground">{t("stagesecretspanel.general.loadingsecrets")}</p>
       ) : (
         <EnvironmentVariablesEditor
           value={value}
@@ -93,9 +92,9 @@ export function StageSecretsPanel({
       <div className="flex items-center gap-3">
         <Button type="button" onClick={onSave} disabled={!dirty || saving}>
           <Save className="h-4 w-4 mr-1.5" />
-          {saving ? "Saving…" : "Save secrets"}
+          {saving ? t("stagesecretspanel.general.saving") : t("stagesecretspanel.general.savesecrets")}
         </Button>
-        {dirty && !saving ? <span className="text-xs text-muted-foreground">Unsaved changes</span> : null}
+        {dirty && !saving ? <span className="text-xs text-muted-foreground">{t("stagesecretspanel.general.unsavedchanges")}</span> : null}
       </div>
     </div>
   );

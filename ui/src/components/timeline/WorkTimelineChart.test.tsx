@@ -6,6 +6,7 @@ import { createRoot, type Root } from "react-dom/client";
 import type { WorkTimelineResult } from "@paperclipai/shared";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { WorkTimelineChart } from "./WorkTimelineChart";
+import { i18n } from "@/i18n";
 import { computeLayout } from "@/lib/timeline/layout";
 
 vi.mock("@/lib/router", () => ({
@@ -24,10 +25,11 @@ beforeEach(() => {
   root = createRoot(container);
 });
 
-afterEach(() => {
+afterEach(async () => {
   flushSync(() => root.unmount());
   container.remove();
   vi.restoreAllMocks();
+  await i18n.changeLanguage("en");
 });
 
 function renderChart(
@@ -96,6 +98,21 @@ function timelineSample(): WorkTimelineResult {
 }
 
 describe("WorkTimelineChart", () => {
+  it("updates axis dates and the visible duration when the language changes", async () => {
+    const onVisibleRangeLabelChange = vi.fn();
+    renderChart(timelineSample(), { onVisibleRangeLabelChange });
+    await flushTimelineEffects();
+    expect(container.querySelector("[data-testid='work-timeline-time-axis']")?.textContent).toContain("Jul 2");
+    expect(onVisibleRangeLabelChange).toHaveBeenCalledWith(expect.stringContaining("visible"));
+
+    await i18n.changeLanguage("zh-CN");
+    await flushTimelineEffects();
+    const axis = container.querySelector("[data-testid='work-timeline-time-axis']")?.textContent;
+    expect(axis).toContain("7月2日");
+    expect(axis).not.toContain("AM");
+    expect(onVisibleRangeLabelChange.mock.lastCall?.[0]).toContain("可见范围：");
+  });
+
   it("renders date-aware AM/PM labels on the header axis", () => {
     renderChart(timelineSample());
 

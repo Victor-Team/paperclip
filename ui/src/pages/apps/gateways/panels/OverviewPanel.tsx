@@ -6,9 +6,9 @@ import { ToggleSwitch } from "@/components/ui/toggle-switch";
 import { useToast } from "@/context/ToastContext";
 import { cn } from "@/lib/utils";
 import { copyTextToClipboard } from "@/lib/clipboard";
+import { useTranslation } from "@/i18n";
 import {
   activeTokenCount,
-  allowedToolsLabel,
   expiringTokenCount,
   formatScope,
   type GatewayAppRow,
@@ -33,12 +33,33 @@ export function OverviewPanel({
   toggleDisabled: boolean;
   onToggle: () => void;
 }) {
+  const { t } = useTranslation();
   const { pushToast } = useToast();
   const endpoint = `${typeof window !== "undefined" ? window.location.origin : ""}${gateway.endpointPath}`;
   const active = activeTokenCount(gateway);
   const expiring = expiringTokenCount(gateway);
   const needsAttention = apps.filter((app) => app.needsAttention);
   const on = isGatewayOn(gateway);
+  const allowedToolCount = profile
+    ? profile.summary.accessMode === "all_except"
+      ? Math.max(profile.summary.totalToolCount - profile.summary.excludedToolCount, 0)
+      : profile.summary.allowedToolCount
+    : null;
+  const allowedTools = allowedToolCount === null
+    ? null
+    : allowedToolCount === 0
+      ? t("overviewpanel.general.notoolsallowed")
+      : t(
+        allowedToolCount === 1
+          ? "overviewpanel.general.allowedtoolcountsingular"
+          : "overviewpanel.general.allowedtoolcountplural",
+        { count: allowedToolCount },
+      );
+  const scope = formatScope(gateway, projectNames, agentNames, {
+    project: t("overviewpanel.general.project"),
+    agent: t("overviewpanel.general.agent"),
+    organization: t("overviewpanel.general.organization"),
+  });
 
   const snippet = [
     "{",
@@ -54,9 +75,13 @@ export function OverviewPanel({
   async function copy(value: string, label: string) {
     try {
       await copyTextToClipboard(value);
-      pushToast({ title: "Copied", body: label, tone: "success" });
+      pushToast({ title: t("overviewpanel.general.copied"), body: label, tone: "success" });
     } catch {
-      pushToast({ title: "Copy failed", body: "Clipboard access is unavailable.", tone: "error" });
+      pushToast({
+        title: t("overviewpanel.general.copyfailed"),
+        body: t("overviewpanel.general.clipboardaccessisunavailable"),
+        tone: "error",
+      });
     }
   }
 
@@ -64,45 +89,60 @@ export function OverviewPanel({
     <div className="space-y-5">
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <div className="rounded-lg border border-border p-4">
-          <div className="text-xs font-medium text-muted-foreground">{on ? "On" : "Off"}</div>
-          <div className="mt-2">
-            <ToggleSwitch checked={on} disabled={toggleDisabled} onCheckedChange={onToggle} aria-label="Toggle gateway" />
+          <div className="text-xs font-medium text-muted-foreground">
+            {on ? t("overviewpanel.general.on") : t("overviewpanel.general.off")}
           </div>
-          <p className="mt-2 text-xs text-muted-foreground">Toggle the whole gateway off here.</p>
+          <div className="mt-2">
+            <ToggleSwitch
+              checked={on}
+              disabled={toggleDisabled}
+              onCheckedChange={onToggle}
+              aria-label={t("overviewpanel.general.togglegateway")}
+            />
+          </div>
+          <p className="mt-2 text-xs text-muted-foreground">{t("overviewpanel.general.togglethewholegateway")}</p>
         </div>
-        <StatCard label="Apps">
-          {apps.length} {apps.length === 1 ? "app" : "apps"}
-          {profile ? ` · ${allowedToolsLabel(profile)}` : ""}
+        <StatCard label={t("overviewpanel.general.apps")}>
+          {t(
+            apps.length === 1
+              ? "overviewpanel.general.appcountsingular"
+              : "overviewpanel.general.appcountplural",
+            { count: apps.length },
+          )}
+          {allowedTools ? ` · ${allowedTools}` : ""}
         </StatCard>
-        <StatCard label="Tokens">
-          {active} active{expiring > 0 ? ` · ${expiring} expiring` : ""}
+        <StatCard label={t("overviewpanel.general.tokens")}>
+          {t("overviewpanel.general.activetokencount", { count: active })}
+          {expiring > 0 ? ` · ${t("overviewpanel.general.expiringtokencount", { count: expiring })}` : ""}
         </StatCard>
-        <StatCard label="Health">
-          {needsAttention.length === 0 ? "All green" : `${needsAttention.length} needs attention`}
+        <StatCard label={t("overviewpanel.general.health")}>
+          {needsAttention.length === 0
+            ? t("overviewpanel.general.allgreen")
+            : t("overviewpanel.general.needsattentioncount", { count: needsAttention.length })}
         </StatCard>
       </div>
 
       <section className="rounded-lg border border-border p-4">
         <div className="flex flex-wrap items-start justify-between gap-2">
           <div>
-            <h3 className="text-sm font-semibold text-foreground">Who can use it</h3>
+            <h3 className="text-sm font-semibold text-foreground">{t("overviewpanel.general.whocanuseit")}</h3>
             <p className="mt-1 text-sm text-muted-foreground">
-              Anyone holding an active token below, restricted by the rules in the bound profile.
+              {t("overviewpanel.general.anyoneholdinganactive")}
             </p>
           </div>
         </div>
         <div className="mt-3 flex flex-wrap gap-2">
-          <Chip>Scope · {formatScope(gateway, projectNames, agentNames)}</Chip>
-          <Chip>Profile · {profile?.name ?? "Unavailable"}</Chip>
-          <Chip>{active} active {active === 1 ? "token" : "tokens"}</Chip>
+          <Chip>{t("overviewpanel.general.scope", { value: scope })}</Chip>
+          <Chip>{t("overviewpanel.general.profile", { value: profile?.name ?? t("overviewpanel.general.unavailable") })}</Chip>
+          <Chip>{t("overviewpanel.general.activetokencount", { count: active })}</Chip>
         </div>
       </section>
 
       <section className="rounded-lg border border-border p-4">
-        <h3 className="text-sm font-semibold text-foreground">Apps in this gateway</h3>
+        <h3 className="text-sm font-semibold text-foreground">{t("overviewpanel.general.appsinthisgateway")}</h3>
         {apps.length === 0 ? (
           <p className="mt-2 text-sm text-muted-foreground">
-            This gateway’s profile doesn’t include any apps yet.
+            {t("overviewpanel.general.thisgatewaysprofiledoesntincludeanyappsyet")}
           </p>
         ) : (
           <ul className="mt-3 divide-y divide-border">
@@ -115,10 +155,10 @@ export function OverviewPanel({
 
       <section className="rounded-lg border border-border bg-muted/30 p-4">
         <div className="flex items-center justify-between gap-2">
-          <h3 className="text-sm font-semibold text-foreground">How clients connect</h3>
-          <Button variant="outline" size="sm" onClick={() => void copy(snippet, "Client config")}>
+          <h3 className="text-sm font-semibold text-foreground">{t("overviewpanel.general.howclientsconnect")}</h3>
+          <Button variant="outline" size="sm" onClick={() => void copy(snippet, t("overviewpanel.general.clientconfig"))}>
             <Copy className="mr-1 h-3.5 w-3.5" />
-            Copy
+            {t("overviewpanel.general.copy")}
           </Button>
         </div>
         <pre className="mt-3 overflow-auto whitespace-pre-wrap break-words rounded bg-background p-3 font-mono text-xs text-muted-foreground">
@@ -147,6 +187,7 @@ function Chip({ children }: { children: React.ReactNode }) {
 }
 
 function AppRow({ app }: { app: GatewayAppRow }) {
+  const { t } = useTranslation();
   const href = app.connection
     ? `/apps/${app.connection.id}/permissions`
     : `/apps/app/${app.application.id}/permissions`;
@@ -157,7 +198,12 @@ function AppRow({ app }: { app: GatewayAppRow }) {
           {gatewayAppDisplayName(app)}
         </Link>
         <div className="text-xs text-muted-foreground">
-          {app.toolCount} {app.toolCount === 1 ? "tool" : "tools"}
+          {t(
+            app.toolCount === 1
+              ? "overviewpanel.general.toolcountsingular"
+              : "overviewpanel.general.toolcountplural",
+            { count: app.toolCount },
+          )}
           {app.needsAttention && app.attentionReason ? ` · ${app.attentionReason}` : ""}
         </div>
       </div>
@@ -169,7 +215,7 @@ function AppRow({ app }: { app: GatewayAppRow }) {
             : "border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300",
         )}
       >
-        {app.needsAttention ? "Needs attention" : "Healthy"}
+        {app.needsAttention ? t("overviewpanel.general.needsattention") : t("overviewpanel.general.healthy")}
       </span>
     </li>
   );

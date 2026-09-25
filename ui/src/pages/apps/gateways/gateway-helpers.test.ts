@@ -150,12 +150,14 @@ describe("isGatewayOn", () => {
 
 describe("formatScope", () => {
   it("labels organization, project, and agent scopes", () => {
-    expect(formatScope(gateway(), new Map(), new Map())).toBe("Organization");
+    const labels = { project: "Project", agent: "Agent", organization: "Organization" };
+    expect(formatScope(gateway(), new Map(), new Map(), labels)).toBe("Organization");
     expect(
       formatScope(
         gateway({ contextScopeType: "project", contextScopeId: "p1" }),
         new Map([["p1", "Support"]]),
         new Map(),
+        labels,
       ),
     ).toBe("Project · Support");
   });
@@ -215,7 +217,7 @@ describe("deriveGatewayApps", () => {
   ] as unknown as ToolConnection[];
 
   it("lists included apps with tool counts and surfaces attention health", () => {
-    const rows = deriveGatewayApps(profile, applications, connections);
+    const rows = deriveGatewayApps(profile, applications, connections, "Sign-in expired — reconnect to restore access.");
     expect(rows.map((r) => r.application.id)).toEqual(["app-gh", "app-sheets"]);
     const gh = rows.find((r) => r.application.id === "app-gh")!;
     expect(gh.toolCount).toBe(2);
@@ -230,7 +232,7 @@ describe("deriveGatewayApps", () => {
       { ...connections[0], id: "conn-gh-archived", status: "archived" },
       { ...connections[0], id: "conn-gh-active", status: "active" },
       connections[1],
-    ] as ToolConnection[]);
+    ] as ToolConnection[], "Sign-in expired — reconnect to restore access.");
 
     expect(rows.find((row) => row.application.id === "app-gh")?.connection?.id).toBe(
       "conn-gh-active",
@@ -238,6 +240,6 @@ describe("deriveGatewayApps", () => {
   });
 
   it("returns nothing without a profile", () => {
-    expect(deriveGatewayApps(undefined, applications, connections)).toEqual([]);
+    expect(deriveGatewayApps(undefined, applications, connections, "Sign-in expired — reconnect to restore access.")).toEqual([]);
   });
 });

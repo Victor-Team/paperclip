@@ -4,6 +4,7 @@ import { flushSync } from "react-dom";
 import { createRoot } from "react-dom/client";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { getAppStoreDefinition } from "@paperclipai/shared";
+import { i18n } from "@/i18n";
 import { DangerZone } from "./AdvancedPanel";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -122,4 +123,17 @@ describe("DangerZone", () => {
     expect(text).toContain("requires a new sign-in or key");
   });
 
+  it("renders fixed destructive controls in Simplified Chinese", async () => {
+    await i18n.changeLanguage("zh-CN");
+    const node = renderDangerZone();
+    const trigger = Array.from(node.querySelectorAll("button"))
+      .find((button) => button.textContent?.includes("危险区域"));
+
+    expect(trigger).toBeTruthy();
+    act(() => trigger!.dispatchEvent(new MouseEvent("click", { bubbles: true })));
+    expect(node.textContent).toContain("移除此应用");
+    expect(node.textContent).toContain("将删除 PostHog 的凭据并移除智能体访问权限");
+
+    await i18n.changeLanguage("en");
+  });
 });

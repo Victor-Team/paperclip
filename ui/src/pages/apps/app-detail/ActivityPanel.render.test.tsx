@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { Agent, ToolCallEvent } from "@paperclipai/shared";
+import { i18n } from "@/i18n";
 import { ActivityPanel } from "./ActivityPanel";
 
 vi.mock("@/lib/router", () => ({
@@ -59,9 +60,10 @@ const agents: Agent[] = [{ id: "agent-1", name: "BenchmarkForensics" } as Agent]
 
 let container: HTMLDivElement | null = null;
 
-afterEach(() => {
+afterEach(async () => {
   container?.remove();
   container = null;
+  await i18n.changeLanguage("en");
 });
 
 function renderPanel(props: Parameters<typeof ActivityPanel>[0]) {
@@ -96,5 +98,12 @@ describe("ActivityPanel render", () => {
     const text = renderPanel({ ...base, events: [event({})] });
     expect(text).toContain("BenchmarkForensics used Read Values");
     expect(text).not.toContain("tested as");
+  });
+
+  it("renders timeline labels and event text in Simplified Chinese", async () => {
+    await i18n.changeLanguage("zh-CN");
+    const text = renderPanel({ ...base, events: [event({})] });
+    expect(text).toContain("近期活动");
+    expect(text).toContain("BenchmarkForensics 使用了 Read Values");
   });
 });
