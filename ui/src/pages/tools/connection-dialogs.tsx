@@ -228,7 +228,7 @@ export function AddConnectionDialog({
     },
     onError: (err) =>
       pushToast({
-        title: "Could not create connection",
+        title: t("connectiondialogs.general.createConnectionFailed"),
         body: err instanceof ApiError ? err.message : String(err),
         tone: "error",
       }),
@@ -242,7 +242,7 @@ export function AddConnectionDialog({
     },
     onError: (err) =>
       pushToast({
-        title: "Probe failed",
+        title: t("connectiondialogs.general.probeFailed"),
         body: err instanceof ApiError ? err.message : String(err),
         tone: "error",
       }),
@@ -253,12 +253,12 @@ export function AddConnectionDialog({
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: queryKeys.tools.connections(companyId) });
       qc.invalidateQueries({ queryKey: queryKeys.tools.applications(companyId) });
-      pushToast({ title: "Connection activated", tone: "success" });
+      pushToast({ title: t("connectiondialogs.general.connectionActivated"), tone: "success" });
       onClose();
     },
     onError: (err) =>
       pushToast({
-        title: "Activation failed",
+        title: t("connectiondialogs.general.activationFailed"),
         body: err instanceof ApiError ? err.message : String(err),
         tone: "error",
       }),
@@ -428,7 +428,7 @@ export function AddConnectionDialog({
                             type="button"
                             className="ml-auto text-muted-foreground hover:text-destructive"
                             onClick={() => setCreds((cs) => cs.filter((_, idx) => idx !== i))}
-                            aria-label={`Remove credential reference for ${secretName(c.secretId)}`}
+                            aria-label={t("connectiondialogs.general.removeCredentialReference", { name: secretName(c.secretId) })}
                           >
                             <Trash2 className="h-3.5 w-3.5" />
                           </button>

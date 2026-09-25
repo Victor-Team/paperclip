@@ -6,6 +6,7 @@ import { createRoot } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { AuditTab } from "./AuditTab";
+import { i18n } from "@/i18n";
 
 const listActivityMock = vi.hoisted(() => vi.fn());
 const listApplicationsMock = vi.hoisted(() => vi.fn());
@@ -137,6 +138,19 @@ describe("AuditTab", () => {
     // Vocabulary gate: no raw tool ID or ops terms in the sentence list.
     expect(container.textContent).not.toContain("mail:send_email");
     expect(container.textContent).not.toContain("server-authoritative");
+  });
+
+  it("updates outcome and reason text when the language changes", async () => {
+    await render();
+    try {
+      await act(async () => { await i18n.changeLanguage("zh-CN"); });
+      expect(container.textContent).toContain("已阻止");
+      expect(container.textContent).toContain("所有结果");
+      await clickButton("Fable");
+      expect(container.textContent).toContain("已按规则阻止。");
+    } finally {
+      await act(async () => { await i18n.changeLanguage("en"); });
+    }
   });
 
   it("renders connection lifecycle rows from the per-connection activity source", async () => {

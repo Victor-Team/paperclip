@@ -16,7 +16,7 @@ import { useToast } from "@/context/ToastContext";
 import { queryKeys } from "@/lib/queryKeys";
 import { copyTextToClipboard } from "@/lib/clipboard";
 import { ErrorState, LoadingState, RelativeTime, ToolsPageHeader } from "./shared";
-import { useTranslation } from "@/i18n";
+import { t, useTranslation } from "@/i18n";
 
 type CreateGatewayDraft = {
   name: string;
@@ -49,10 +49,6 @@ function shortId(value: string | null | undefined) {
   return value.length > 12 ? `${value.slice(0, 8)}...` : value;
 }
 
-function pluralize(count: number, singular: string, plural = `${singular}s`) {
-  return `${count} ${count === 1 ? singular : plural}`;
-}
-
 function dateValue(value: Date | string | null | undefined) {
   if (!value) return null;
   const date = value instanceof Date ? value : new Date(value);
@@ -68,12 +64,12 @@ function latestTokenActivity(gateway: ToolMcpGatewayWithTokens) {
 }
 
 function formatOwner(gateway: ToolMcpGatewayWithTokens, agentNames: Map<string, string>) {
-  if (gateway.agentId) return agentNames.get(gateway.agentId) ?? `Agent ${shortId(gateway.agentId)}`;
+  if (gateway.agentId) return agentNames.get(gateway.agentId) ?? t("gatewaystab.general.agentWithId", { id: shortId(gateway.agentId) });
   if (gateway.createdByAgentId) {
-    return agentNames.get(gateway.createdByAgentId) ?? `Agent ${shortId(gateway.createdByAgentId)}`;
+    return agentNames.get(gateway.createdByAgentId) ?? t("gatewaystab.general.agentWithId", { id: shortId(gateway.createdByAgentId) });
   }
-  if (gateway.createdByUserId) return `Board user ${shortId(gateway.createdByUserId)}`;
-  return "Board";
+  if (gateway.createdByUserId) return t("gatewaystab.general.boardUserWithId", { id: shortId(gateway.createdByUserId) });
+  return t("gatewaystab.general.board");
 }
 
 function formatScope(
@@ -83,26 +79,26 @@ function formatScope(
 ) {
   if (gateway.contextScopeType !== "none" && gateway.contextScopeId) {
     if (gateway.contextScopeType === "project") {
-      return `Project ${projectNames.get(gateway.contextScopeId) ?? shortId(gateway.contextScopeId)}`;
+      return t("gatewaystab.general.projectWithName", { name: projectNames.get(gateway.contextScopeId) ?? shortId(gateway.contextScopeId) });
     }
     if (gateway.contextScopeType === "agent") {
-      return `Agent ${agentNames.get(gateway.contextScopeId) ?? shortId(gateway.contextScopeId)}`;
+      return t("gatewaystab.general.agentWithName", { name: agentNames.get(gateway.contextScopeId) ?? shortId(gateway.contextScopeId) });
     }
-    return `${gateway.contextScopeType} ${shortId(gateway.contextScopeId)}`;
+    return t("gatewaystab.general.scopeWithId", { scope: gateway.contextScopeType, id: shortId(gateway.contextScopeId) });
   }
-  if (gateway.projectId) return `Project ${projectNames.get(gateway.projectId) ?? shortId(gateway.projectId)}`;
-  if (gateway.issueId) return `Issue ${shortId(gateway.issueId)}`;
-  if (gateway.agentId) return `Agent ${agentNames.get(gateway.agentId) ?? shortId(gateway.agentId)}`;
-  return "Company";
+  if (gateway.projectId) return t("gatewaystab.general.projectWithName", { name: projectNames.get(gateway.projectId) ?? shortId(gateway.projectId) });
+  if (gateway.issueId) return t("gatewaystab.general.issueWithId", { id: shortId(gateway.issueId) });
+  if (gateway.agentId) return t("gatewaystab.general.agentWithName", { name: agentNames.get(gateway.agentId) ?? shortId(gateway.agentId) });
+  return t("gatewaystab.general.company");
 }
 
 function formatAllowedTools(profile: ToolProfileWithDetails | undefined) {
-  if (!profile) return "Profile unavailable";
+  if (!profile) return t("gatewaystab.general.profileUnavailable");
   const allowed = profile.summary.allowedToolCount;
   if (profile.summary.accessMode === "all_except") {
-    return `${pluralize(Math.max(profile.summary.totalToolCount - profile.summary.excludedToolCount, 0), "tool")} allowed`;
+    return t("gatewaystab.general.toolsAllowedCount", { count: Math.max(profile.summary.totalToolCount - profile.summary.excludedToolCount, 0) });
   }
-  return allowed === 0 ? "No tools allowed" : `${pluralize(allowed, "tool")} allowed`;
+  return allowed === 0 ? t("gatewaystab.general.noToolsAllowed") : t("gatewaystab.general.toolsAllowedCount", { count: allowed });
 }
 
 function formatSnippetConfig(config: Record<string, unknown>) {
@@ -355,14 +351,14 @@ export function GatewaysTab({ companyId }: { companyId: string }) {
                     <div className="flex items-center gap-2">
                       <LinkIcon className="h-4 w-4 text-muted-foreground" />
                       <h3 className="truncate text-sm font-semibold text-foreground">{gateway.name}</h3>
-                      <span className="text-xs text-muted-foreground">{gateway.status}</span>
+                      <span className="text-xs text-muted-foreground">{t(`gatewaystab.general.status.${gateway.status}`, { defaultValue: gateway.status })}</span>
                     </div>
                     {gateway.description ? (
                       <p className="mt-1 text-sm text-muted-foreground">{gateway.description}</p>
                     ) : null}
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    <Button type="button" variant="outline" size="sm" onClick={() => void copyText(endpoint, "Gateway endpoint")}>
+                    <Button type="button" variant="outline" size="sm" onClick={() => void copyText(endpoint, t("gatewaystab.general.gatewayEndpoint"))}>
                       <Copy className="mr-1.5 h-3.5 w-3.5" />
                       {t("gatewaystab.general.copyendpoint")}</Button>
                     <Button type="button" variant="outline" size="sm" onClick={() => startIssuing(gateway.id)}>
@@ -387,13 +383,13 @@ export function GatewaysTab({ companyId }: { companyId: string }) {
                   <div>
                     <dt className="text-xs font-medium text-muted-foreground">{t("gatewaystab.general.allowedtools")}</dt>
                     <dd className="mt-0.5 text-foreground">
-                      {profile ? `${formatAllowedTools(profile)} via ${profile.name}` : `Profile ${shortId(gateway.profileId)}`}
+                      {profile ? t("gatewaystab.general.allowedViaProfile", { countLabel: formatAllowedTools(profile), name: profile.name }) : t("gatewaystab.general.profileWithId", { id: shortId(gateway.profileId) })}
                     </dd>
                   </div>
                   <div>
                     <dt className="text-xs font-medium text-muted-foreground">{t("gatewaystab.general.lastactivity")}</dt>
                     <dd className="mt-0.5 text-foreground">
-                      {lastActivity ? <RelativeTime value={lastActivity} /> : "Never used"}
+                      {lastActivity ? <RelativeTime value={lastActivity} /> : t("gatewaystab.general.neverUsed")}
                     </dd>
                   </div>
                 </dl>
@@ -495,7 +491,7 @@ export function GatewaysTab({ companyId }: { companyId: string }) {
                           !tokenDraft.expiresAt
                         }
                       >
-                        {createTokenMutation.isPending ? "Issuing..." : "Issue token"}
+                        {createTokenMutation.isPending ? t("gatewaystab.general.issuing") : t("gatewaystab.general.issuetoken")}
                       </Button>
                     </div>
                   </form>
@@ -505,7 +501,7 @@ export function GatewaysTab({ companyId }: { companyId: string }) {
                   <div className="space-y-2 rounded-md border border-border bg-muted/40 p-3 text-sm">
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <div className="font-medium text-foreground">{t("gatewaystab.general.newtokenfor")} {createdToken.name}</div>
-                      <Button type="button" variant="outline" size="sm" onClick={() => void copyText(createdToken.token, "Gateway bearer token")}>
+                      <Button type="button" variant="outline" size="sm" onClick={() => void copyText(createdToken.token, t("gatewaystab.general.gatewayBearerToken"))}>
                         <Copy className="mr-1.5 h-3.5 w-3.5" />
                         {t("gatewaystab.general.copytoken")}</Button>
                     </div>
@@ -557,7 +553,7 @@ export function GatewaysTab({ companyId }: { companyId: string }) {
                                       size="sm"
                                       className="h-7 px-2 text-xs text-destructive hover:text-destructive"
                                       onClick={() => setConfirmingRevokeTokenId(token.id)}
-                                      aria-label={`Revoke ${token.name}`}
+                                      aria-label={t("gatewaystab.general.revokeNamedToken", { name: token.name })}
                                     >
                                       <RotateCcw className="mr-1 h-3.5 w-3.5" />
                                       {t("gatewaystab.general.revoke")}</Button>
@@ -615,7 +611,7 @@ export function GatewaysTab({ companyId }: { companyId: string }) {
                                 className="h-7 px-2"
                                 onClick={(event) => {
                                   event.preventDefault();
-                                  void copyText(formatSnippetConfig(snippet.config), `${snippet.label} snippet`);
+                                  void copyText(formatSnippetConfig(snippet.config), t("gatewaystab.general.namedSnippet", { name: snippet.label }));
                                 }}
                               >
                                 <Copy className="mr-1 h-3.5 w-3.5" />

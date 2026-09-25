@@ -60,20 +60,20 @@ import {
 } from "./shared";
 import { useTranslation } from "@/i18n";
 
-const SELECTOR_TYPES: Array<{ value: ToolProfileEntrySelectorType; label: string }> = [
-  { value: "tool_name", label: "Tool name" },
-  { value: "risk_level", label: "Risk level" },
-  { value: "application", label: "Application" },
-  { value: "connection", label: "Connection" },
-  { value: "catalog_entry", label: "Catalog entry ID" },
+const SELECTOR_TYPES: Array<{ value: ToolProfileEntrySelectorType; labelKey: string }> = [
+  { value: "tool_name", labelKey: "selectorToolName" },
+  { value: "risk_level", labelKey: "selectorRiskLevel" },
+  { value: "application", labelKey: "selectorApplication" },
+  { value: "connection", labelKey: "selectorConnection" },
+  { value: "catalog_entry", labelKey: "selectorCatalogEntryId" },
 ];
 
-const TARGET_TYPES: Array<{ value: ToolProfileBindingTargetType; label: string }> = [
-  { value: "company", label: "Company" },
-  { value: "agent", label: "Agent" },
-  { value: "project", label: "Project" },
-  { value: "routine", label: "Routine" },
-  { value: "issue", label: "Issue ID" },
+const TARGET_TYPES: Array<{ value: ToolProfileBindingTargetType; labelKey: string }> = [
+  { value: "company", labelKey: "targetCompany" },
+  { value: "agent", labelKey: "targetAgent" },
+  { value: "project", labelKey: "targetProject" },
+  { value: "routine", labelKey: "targetRoutine" },
+  { value: "issue", labelKey: "targetIssueId" },
 ];
 
 const RISK_LEVELS: ToolRiskLevel[] = ["read", "write", "destructive", "low", "medium", "high", "critical"];
@@ -156,8 +156,9 @@ function bindingLabel(
     projectsById: Map<string, string>;
     routinesById: Map<string, string>;
   },
+  t: ReturnType<typeof useTranslation>["t"],
 ) {
-  if (targetType === "company") return targetId === labels.companyId ? "Company" : targetId;
+  if (targetType === "company") return targetId === labels.companyId ? t("profilestab.general.targetCompany") : targetId;
   if (targetType === "agent") return labels.agentsById.get(targetId) ?? targetId;
   if (targetType === "project") return labels.projectsById.get(targetId) ?? targetId;
   if (targetType === "routine") return labels.routinesById.get(targetId) ?? targetId;
@@ -165,11 +166,11 @@ function bindingLabel(
 }
 
 /** Short, human subtitle for the master rail: prefers the agent count the spec calls for. */
-function bindingsSubtitle(bindings: ToolProfileBinding[]): string {
-  if (bindings.length === 0) return "unbound";
+function bindingsSubtitle(bindings: ToolProfileBinding[], t: ReturnType<typeof useTranslation>["t"]): string {
+  if (bindings.length === 0) return t("profilestab.general.unbound");
   const agents = bindings.filter((b) => b.targetType === "agent").length;
-  if (agents === bindings.length) return `bound to ${agents} agent${agents === 1 ? "" : "s"}`;
-  return `${bindings.length} binding${bindings.length === 1 ? "" : "s"}`;
+  if (agents === bindings.length) return t(agents === 1 ? "profilestab.general.boundToOneAgent" : "profilestab.general.boundToAgents", { count: agents });
+  return t(bindings.length === 1 ? "profilestab.general.oneBinding" : "profilestab.general.bindingCount", { count: bindings.length });
 }
 
 // --- Allow-list resolution ------------------------------------------------
@@ -388,7 +389,7 @@ function EntryFields({
           <SelectContent>
             {SELECTOR_TYPES.map((type) => (
               <SelectItem key={type.value} value={type.value}>
-                {type.label}
+                {t(`profilestab.general.${type.labelKey}`)}
               </SelectItem>
             ))}
           </SelectContent>
@@ -962,7 +963,7 @@ export function ProfilesTab({ companyId }: { companyId: string }) {
                           ) : null}
                         </span>
                         <span className="text-xs text-muted-foreground">
-                          {t("profilestab.general.toolcount", { count: toolCount })} · {bindingsSubtitle(profile.bindings)}
+                          {t("profilestab.general.toolcount", { count: toolCount })} · {bindingsSubtitle(profile.bindings, t)}
                         </span>
                       </button>
                     </li>
@@ -1159,7 +1160,7 @@ export function ProfilesTab({ companyId }: { companyId: string }) {
                 <SelectContent>
                   {TARGET_TYPES.map((target) => (
                     <SelectItem key={target.value} value={target.value}>
-                      {target.label}
+                      {t(`profilestab.general.${target.labelKey}`)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -1297,13 +1298,13 @@ function ProfileDetail({
             ) : profile.bindings.map((binding) => (
               <span key={binding.id} className="inline-flex items-center gap-1.5 rounded-md border border-border px-2 py-1 text-xs">
                 <Badge variant="outline">{binding.targetType}</Badge>
-                <span>{bindingLabel(binding.targetType, binding.targetId, { companyId, ...maps })}</span>
+                <span>{bindingLabel(binding.targetType, binding.targetId, { companyId, ...maps }, t)}</span>
                 <span className="text-muted-foreground">{t("profilestab.general.p")}{binding.priority}</span>
                 <button
                   type="button"
                   className="rounded p-0.5 text-muted-foreground hover:text-destructive"
                   onClick={() => onUnbind(binding)}
-                  aria-label={`Remove ${binding.targetType} binding`}
+                  aria-label={t("profilestab.general.removeBinding", { target: t(`profilestab.general.target.${binding.targetType}`) })}
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                 </button>
@@ -1344,7 +1345,7 @@ function ProfileDetail({
                   type="button"
                   className="rounded p-0.5 text-muted-foreground hover:text-destructive"
                   onClick={() => onDeleteEntry(entry.id)}
-                  aria-label={`Delete ${entry.selectorType} entry`}
+                  aria-label={t("profilestab.general.deleteEntry", { selector: t(`profilestab.general.selector.${entry.selectorType}`) })}
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                 </button>

@@ -38,21 +38,21 @@ export function ToolsAccess() {
   const params = useParams<{ tab?: string }>();
   const activeTab = (TOOL_TABS.find((t) => t.key === params.tab)?.key ?? "paste-config") as ToolTabKey;
   const advanced = isAdvancedSetupTab(activeTab);
-  const tabLabel = TOOL_TABS.find((t) => t.key === activeTab)?.label;
+  const tabLabel = t(`toolsaccess.general.tab.${activeTab}`, { defaultValue: TOOL_TABS.find((tab) => tab.key === activeTab)?.label ?? "Developer tools" });
 
   useEffect(() => {
     setBreadcrumbs([
-      { label: selectedCompany?.name ?? "Company", href: "/dashboard" },
-      { label: "Apps", href: "/apps" },
+      { label: selectedCompany?.name ?? t("toolsaccess.general.company"), href: "/dashboard" },
+      { label: t("toolsaccess.general.apps"), href: "/apps" },
       ...(advanced
-        ? [{ label: "Advanced setup" }]
+        ? [{ label: t("toolsaccess.general.advancedsetup") }]
         : [
-            { label: "Advanced setup", href: advancedTabHref("paste-config") },
-            { label: tabLabel ?? "Developer tools" },
+            { label: t("toolsaccess.general.advancedsetup"), href: advancedTabHref("paste-config") },
+            { label: tabLabel },
           ]),
     ]);
     return () => setBreadcrumbs([]);
-  }, [setBreadcrumbs, selectedCompany?.name, advanced, tabLabel]);
+  }, [setBreadcrumbs, selectedCompany?.name, advanced, tabLabel, t]);
 
   if (!selectedCompanyId) {
     return <div className="p-6 text-sm text-muted-foreground">{t("toolsaccess.general.selectanorganizationtoopenadvancedsetup")}</div>;
@@ -112,7 +112,7 @@ export function ToolsAccess() {
                   : "border-transparent text-muted-foreground hover:text-foreground",
               )}
             >
-              {tab.label}
+              {t(`toolsaccess.general.tab.${tab.key}`, { defaultValue: tab.label })}
             </Link>
           ))}
         </nav>

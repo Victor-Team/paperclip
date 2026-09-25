@@ -24,36 +24,36 @@ import {
 import { agentsApi } from "@/api/agents";
 import { AgentSelect } from "@/components/AgentMultiSelect";
 import { ToolsPageHeader, LoadingState, ErrorState, RelativeTime } from "./shared";
-import { useTranslation } from "@/i18n";
+import { t, useTranslation } from "@/i18n";
 
 const PAGE_SIZE = 50;
 const ALL = "__all";
 
 /** Outcome chip vocabulary (spec §4C / §5): Allowed · Blocked · Asked first · Failed · Waiting. */
-const OUTCOME_META: Record<ToolAuditOutcome, { label: string; status: string }> = {
-  allowed: { label: "Allowed", status: "allowed" },
-  blocked: { label: "Blocked", status: "denied" },
-  asked_first: { label: "Asked first", status: "require-approval" },
-  waiting: { label: "Waiting", status: "deferred" },
-  failed: { label: "Failed", status: "failed" },
-  unknown: { label: "Recorded", status: "unchecked" },
+const OUTCOME_META: Record<ToolAuditOutcome, { labelKey: string; status: string }> = {
+  allowed: { labelKey: "allowed", status: "allowed" },
+  blocked: { labelKey: "blocked", status: "denied" },
+  asked_first: { labelKey: "askedFirst", status: "require-approval" },
+  waiting: { labelKey: "waiting", status: "deferred" },
+  failed: { labelKey: "failed", status: "failed" },
+  unknown: { labelKey: "recorded", status: "unchecked" },
 };
 
-const OUTCOME_FILTERS: { value: string; label: string }[] = [
-  { value: ALL, label: "All outcomes" },
-  { value: "allowed", label: "Allowed" },
-  { value: "blocked", label: "Blocked" },
-  { value: "asked_first", label: "Asked first" },
-  { value: "waiting", label: "Waiting" },
-  { value: "failed", label: "Failed" },
+const OUTCOME_FILTERS: { value: string; labelKey: string }[] = [
+  { value: ALL, labelKey: "allOutcomes" },
+  { value: "allowed", labelKey: "allowed" },
+  { value: "blocked", labelKey: "blocked" },
+  { value: "asked_first", labelKey: "askedFirst" },
+  { value: "waiting", labelKey: "waiting" },
+  { value: "failed", labelKey: "failed" },
 ];
 
-const WINDOW_FILTERS: { value: ToolAuditWindow; label: string }[] = [
-  { value: "all", label: "All time" },
-  { value: "1h", label: "Last 1 hour" },
-  { value: "24h", label: "Last 24 hours" },
-  { value: "7d", label: "Last 7 days" },
-  { value: "30d", label: "Last 30 days" },
+const WINDOW_FILTERS: { value: ToolAuditWindow; labelKey: string }[] = [
+  { value: "all", labelKey: "allTime" },
+  { value: "1h", labelKey: "lastHour" },
+  { value: "24h", labelKey: "lastDay" },
+  { value: "7d", labelKey: "lastWeek" },
+  { value: "30d", labelKey: "lastMonth" },
 ];
 
 function detailString(details: Record<string, unknown> | null, key: string): string | undefined {
@@ -90,55 +90,55 @@ function formattedArguments(details: Record<string, unknown> | null): string | u
 
 function lifecycleSummary(event: ToolGatewayActivityEvent): string | null {
   if (!event.lifecycleType) return null;
-  const who = event.actorDisplayName ?? event.agentDisplayName ?? "Someone";
-  const app = event.appDisplayName ?? event.connectionDisplayName ?? "this app";
+  const who = event.actorDisplayName ?? event.agentDisplayName ?? t("audittab.general.someone");
+  const app = event.appDisplayName ?? event.connectionDisplayName ?? t("audittab.general.thisApp");
   const count = detailNumber(event.details, "count") ?? 0;
   const added = detailNumber(event.details, "added") ?? 0;
   const removed = detailNumber(event.details, "removed") ?? 0;
   switch (event.lifecycleType) {
     case "app_connected":
-      return `${who} connected ${app}`;
+      return t("audittab.general.connectedApp", { who, app });
     case "app_paused":
-      return `${who} paused ${app}`;
+      return t("audittab.general.pausedApp", { who, app });
     case "app_resumed":
-      return `${who} resumed ${app}`;
+      return t("audittab.general.resumedApp", { who, app });
     case "reconnected":
-      return `${who} reconnected ${app}`;
+      return t("audittab.general.reconnectedApp", { who, app });
     case "disconnected":
-      return `${who} disconnected ${app}`;
+      return t("audittab.general.disconnectedApp", { who, app });
     case "allowlist_changed":
-      if (added > 0 && removed === 0) return `${who} added ${added} allowed ${added === 1 ? "item" : "items"} in ${app}`;
-      if (removed > 0 && added === 0) return `${who} removed ${removed} allowed ${removed === 1 ? "item" : "items"} in ${app}`;
-      return `${who} updated the allowlist for ${app}`;
+      if (added > 0 && removed === 0) return t("audittab.general.addedAllowedItems", { who, app, count: added });
+      if (removed > 0 && added === 0) return t("audittab.general.removedAllowedItems", { who, app, count: removed });
+      return t("audittab.general.updatedAllowlist", { who, app });
     case "actions_quarantined":
-      return `${count} new ${count === 1 ? "action needs" : "actions need"} review in ${app}`;
+      return t("audittab.general.actionsNeedReview", { count, app });
     default:
-      return `${who} updated ${app}`;
+      return t("audittab.general.updatedApp", { who, app });
   }
 }
 
 /** Plain-words "why" for the row expander, keyed off the reason code. */
 function plainReason(event: ToolGatewayActivityEvent): string {
-  if (event.lifecycleType) return "This connection change was recorded in the app's activity history.";
+  if (event.lifecycleType) return t("audittab.general.connectionChangeRecorded");
   const code = detailString(event.details, "reasonCode");
   if (code === "permitted_connections_not_installed") {
-    return "Permitted connections were not installed, so their tools were not added to this run.";
+    return t("audittab.general.permittedConnectionsNotInstalled");
   }
   switch (event.normalizedOutcome) {
     case "allowed":
-      return "Allowed by your rules.";
+      return t("audittab.general.allowedByRules");
     case "blocked":
-      if (code === "rate_limited") return "Blocked because it ran too many times in a short window.";
-      if (code?.includes("secret")) return "Blocked to keep a sensitive value from leaving.";
-      return "Blocked by a rule.";
+      if (code === "rate_limited") return t("audittab.general.blockedRateLimited");
+      if (code?.includes("secret")) return t("audittab.general.blockedSensitiveValue");
+      return t("audittab.general.blockedByRule");
     case "asked_first":
-      return "Held for someone to approve before it could run.";
+      return t("audittab.general.heldForApproval");
     case "waiting":
-      return "Waiting — the app it needs wasn't ready yet.";
+      return t("audittab.general.waitingForApp");
     case "failed":
-      return "The app was allowed to run it, but returned an error.";
+      return t("audittab.general.appReturnedError");
     default:
-      return "Recorded by Paperclip.";
+      return t("audittab.general.recordedByPaperclip");
   }
 }
 
@@ -153,8 +153,9 @@ function DetailFact({ label, value, mono }: { label: string; value: string; mono
 }
 
 function OutcomeChip({ outcome }: { outcome: ToolAuditOutcome }) {
+  const { t } = useTranslation();
   const meta = OUTCOME_META[outcome] ?? OUTCOME_META.unknown;
-  return <StatusBadge status={meta.status} label={meta.label} />;
+  return <StatusBadge status={meta.status} label={t(`audittab.general.${meta.labelKey}`)} />;
 }
 
 function ActivityRow({
@@ -168,8 +169,8 @@ function ActivityRow({
   const [open, setOpen] = useState(false);
   const [detailsOpen, setDetailsOpen] = useState(false);
 
-  const who = event.agentDisplayName ?? "An agent";
-  const action = event.toolDisplayName ?? "an action";
+  const who = event.agentDisplayName ?? t("audittab.general.anAgent");
+  const action = event.toolDisplayName ?? t("audittab.general.anAction");
   const app = event.appDisplayName ?? event.connectionDisplayName ?? event.applicationDisplayName ?? null;
   const lifecycle = lifecycleSummary(event);
   const rawTool = detailString(event.details, "tool") ?? detailString(event.details, "toolName");
@@ -282,7 +283,7 @@ function ActivityRow({
                 {requestMethod && endpoint ? <DetailFact label={t("audittab.general.httprequest")} value={`${requestMethod} ${endpoint}`} mono /> : null}
                 {mcpMethod ? <DetailFact label={t("audittab.general.mcpmethod")} value={mcpMethod} mono /> : null}
                 {requestId ? <DetailFact label={t("audittab.general.requestid")} value={requestId} mono /> : null}
-                {request ? <DetailFact label={t("audittab.general.dispatched")} value={request.dispatched === true ? "Yes" : "No"} /> : null}
+                {request ? <DetailFact label={t("audittab.general.dispatched")} value={request.dispatched === true ? t("audittab.general.yes") : t("audittab.general.no")} /> : null}
                 {httpStatus !== undefined ? <DetailFact label={t("audittab.general.httpstatus")} value={String(httpStatus)} mono /> : null}
                 {contentType ? <DetailFact label={t("audittab.general.contenttype")} value={contentType} mono /> : null}
                 {responseBytes !== undefined ? <DetailFact label={t("audittab.general.responsesize")} value={`${responseBytes} bytes`} /> : null}
@@ -292,7 +293,7 @@ function ActivityRow({
                     <DetailFact label={t("audittab.general.deliveredmcpservers")} value="0" mono />
                     {permittedNotInstalledConnections.map((connection) => {
                       const connectionId = detailString(connection, "id");
-                      const connectionName = detailString(connection, "name") ?? "Unnamed connection";
+                      const connectionName = detailString(connection, "name") ?? t("audittab.general.unnamedConnection");
                       return connectionId ? (
                         <div key={connectionId} className="flex gap-2">
                           <span className="shrink-0 text-muted-foreground">{t("audittab.general.notinstalled1")}</span>
@@ -396,7 +397,7 @@ export function AuditTab({ companyId }: { companyId: string }) {
     <div className="space-y-4">
       <ToolsPageHeader
         title={t("audittab.general.activity")}
-        description="What your agents actually did with your apps, newest first. Each line is one decision — allowed, blocked, asked first, waiting, or failed."
+        description={t("audittab.general.activityDescription")}
       />
 
       <div className="flex flex-wrap items-center gap-2">
@@ -414,7 +415,7 @@ export function AuditTab({ companyId }: { companyId: string }) {
           </SelectContent>
         </Select>
         <AgentSelect
-          agents={[{ id: ALL, name: "All agents" }, ...(agents.data ?? [])]}
+          agents={[{ id: ALL, name: t("audittab.general.allAgents") }, ...(agents.data ?? [])]}
           value={agent}
           onChange={setAgent}
           triggerClassName="w-40"
@@ -426,7 +427,7 @@ export function AuditTab({ companyId }: { companyId: string }) {
           <SelectContent>
             {OUTCOME_FILTERS.map((o) => (
               <SelectItem key={o.value} value={o.value}>
-                {o.label}
+                {t(`audittab.general.${o.labelKey}`)}
               </SelectItem>
             ))}
           </SelectContent>
@@ -438,7 +439,7 @@ export function AuditTab({ companyId }: { companyId: string }) {
           <SelectContent>
             {WINDOW_FILTERS.map((o) => (
               <SelectItem key={o.value} value={o.value}>
-                {o.label}
+                {t(`audittab.general.${o.labelKey}`)}
               </SelectItem>
             ))}
           </SelectContent>

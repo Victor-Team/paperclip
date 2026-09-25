@@ -40,11 +40,11 @@ import { useTranslation } from "@/i18n";
 const DEMO_EMAIL = "smoke@paperclip.test";
 const DEMO_PASSWORD = "smoke-password";
 
-function formatTime(value: string | Date | null | undefined): string {
+function formatTime(value: string | Date | null | undefined, locale: string): string {
   if (!value) return "—";
   const date = new Date(value as string | Date);
   if (Number.isNaN(date.getTime())) return "—";
-  return new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeStyle: "short" }).format(date);
+  return new Intl.DateTimeFormat(locale, { dateStyle: "medium", timeStyle: "short" }).format(date);
 }
 
 function serviceTone(status: string): "success" | "warn" | "error" | "muted" {
@@ -69,7 +69,7 @@ const HEALTH_STYLES: Record<string, string> = {
 };
 
 export function SmokeLabTab({ companyId }: { companyId: string }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { enabled, loaded } = useSmokeLabEnabled();
   const qc = useQueryClient();
   const { pushToast } = useToast();
@@ -112,55 +112,55 @@ export function SmokeLabTab({ companyId }: { companyId: string }) {
   const startMutation = useMutation({
     mutationFn: () => smokeLabApi.startServices(companyId),
     onSuccess: () => {
-      pushToast({ title: "Smoke services started", tone: "success" });
+      pushToast({ title: t("smokelabtab.general.servicesStarted"), tone: "success" });
       refresh();
     },
-    onError: (e: Error) => pushToast({ title: "Couldn't start services", body: e.message, tone: "error" }),
+    onError: (e: Error) => pushToast({ title: t("smokelabtab.general.startServicesFailed"), body: e.message, tone: "error" }),
   });
 
   const stopMutation = useMutation({
     mutationFn: () => smokeLabApi.stopServices(companyId),
     onSuccess: () => {
-      pushToast({ title: "Smoke services stopped", tone: "info" });
+      pushToast({ title: t("smokelabtab.general.servicesStopped"), tone: "info" });
       refresh();
     },
-    onError: (e: Error) => pushToast({ title: "Couldn't stop services", body: e.message, tone: "error" }),
+    onError: (e: Error) => pushToast({ title: t("smokelabtab.general.stopServicesFailed"), body: e.message, tone: "error" }),
   });
 
   const installMutation = useMutation({
     mutationFn: () => smokeLabApi.installFixtures(companyId),
     onSuccess: (r) => {
       pushToast({
-        title: r.created ? "Fixture apps installed" : "Fixture apps already present",
+        title: r.created ? t("smokelabtab.general.fixturesInstalled") : t("smokelabtab.general.fixturesAlreadyPresent"),
         tone: "success",
       });
       refresh();
     },
-    onError: (e: Error) => pushToast({ title: "Couldn't install fixtures", body: e.message, tone: "error" }),
+    onError: (e: Error) => pushToast({ title: t("smokelabtab.general.installFixturesFailed"), body: e.message, tone: "error" }),
   });
 
   const resetMutation = useMutation({
     mutationFn: () => smokeLabApi.reset(companyId),
     onSuccess: () => {
-      pushToast({ title: "Smoke Lab reset", tone: "info" });
+      pushToast({ title: t("smokelabtab.general.labReset"), tone: "info" });
       setSelectedRunId(null);
       refresh();
     },
-    onError: (e: Error) => pushToast({ title: "Couldn't reset", body: e.message, tone: "error" }),
+    onError: (e: Error) => pushToast({ title: t("smokelabtab.general.resetFailed"), body: e.message, tone: "error" }),
   });
 
   const runSmokeMutation = useMutation({
     mutationFn: () => smokeLabApi.createRun(companyId, { trigger: "manual", summary: {} }),
     onSuccess: (r) => {
       pushToast({
-        title: "Smoke run started",
-        body: "The browser runner records each step as it completes.",
+        title: t("smokelabtab.general.runStarted"),
+        body: t("smokelabtab.general.runnerRecordsSteps"),
         tone: "success",
       });
       setSelectedRunId(r.run.id);
       refresh();
     },
-    onError: (e: Error) => pushToast({ title: "Couldn't start a run", body: e.message, tone: "error" }),
+    onError: (e: Error) => pushToast({ title: t("smokelabtab.general.startRunFailed"), body: e.message, tone: "error" }),
   });
 
   const anyMutating =
@@ -285,13 +285,13 @@ export function SmokeLabTab({ companyId }: { companyId: string }) {
                       serviceTone(service.status) === "muted" && "text-muted-foreground",
                     )}
                   >
-                    {service.status}
+                    {t(`smokelabtab.general.serviceStatus.${service.status}`, { defaultValue: service.status })}
                   </span>
                 </span>
               </div>
               <dl className="mt-3 space-y-1 text-xs">
                 <div className="flex items-baseline gap-2">
-                  <dt className="w-16 shrink-0 text-muted-foreground">URL</dt>
+                  <dt className="w-16 shrink-0 text-muted-foreground">{t("smokelabtab.general.url")}</dt>
                   <dd className="min-w-0 break-all font-mono text-foreground">
                     {service.url ?? <span className="text-muted-foreground">{t("smokelabtab.general.notrunning")}</span>}
                   </dd>
@@ -334,7 +334,7 @@ export function SmokeLabTab({ companyId }: { companyId: string }) {
                 <th className="sticky left-0 z-10 bg-muted/40 px-3 py-2 text-left font-semibold text-foreground">{t("smokelabtab.general.path")}</th>
                 {LIFECYCLE_STAGES.map((stage) => (
                   <th key={stage.key} className="px-2 py-2 text-center font-medium text-muted-foreground">
-                    {stage.label}
+                    {t(`smokelabtab.general.stage.${stage.key}`, { defaultValue: stage.label })}
                   </th>
                 ))}
               </tr>
@@ -344,9 +344,9 @@ export function SmokeLabTab({ companyId }: { companyId: string }) {
                 <tr key={path} className="border-b border-border last:border-0">
                   <th scope="row" className="sticky left-0 z-10 bg-card px-3 py-2 text-left">
                     <span className="font-mono font-semibold text-foreground">{path}</span>
-                    <span className="ml-2 text-foreground">{SMOKE_PATH_LABELS[path].title}</span>
+                    <span className="ml-2 text-foreground">{t(`smokelabtab.general.pathTitle.${path}`, { defaultValue: SMOKE_PATH_LABELS[path].title })}</span>
                     <span className="block text-(length:--text-micro) font-normal text-muted-foreground">
-                      {SMOKE_PATH_LABELS[path].detail}
+                      {t(`smokelabtab.general.pathDetail.${path}`, { defaultValue: SMOKE_PATH_LABELS[path].detail })}
                     </span>
                   </th>
                   {LIFECYCLE_STAGES.map((stage) => {
@@ -375,8 +375,8 @@ export function SmokeLabTab({ companyId }: { companyId: string }) {
             <h2 className="text-sm font-semibold text-foreground">{t("smokelabtab.general.runs")}</h2>
             <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
               <span className={cn("h-2 w-2 rounded-full", HEALTH_STYLES[health])} />
-              {health === "unknown" ? t("smokelabtab.general.norunsyet") : health}
-              {failing.length > 0 && ` · failing: ${failing.join(", ")}`}
+              {health === "unknown" ? t("smokelabtab.general.norunsyet") : t(`smokelabtab.general.health.${health}`, { defaultValue: health })}
+              {failing.length > 0 && t("smokelabtab.general.failingPaths", { paths: failing.join(", ") })}
             </span>
           </div>
           <Button size="sm" onClick={() => runSmokeMutation.mutate()} disabled={anyMutating}>
@@ -407,8 +407,8 @@ export function SmokeLabTab({ companyId }: { companyId: string }) {
                       )}
                     >
                       <span className="min-w-0">
-                        <span className="block text-xs font-medium text-foreground">{formatTime(run.startedAt)}</span>
-                        <span className="block text-(length:--text-micro) text-muted-foreground">{run.trigger}</span>
+                        <span className="block text-xs font-medium text-foreground">{formatTime(run.startedAt, i18n.language)}</span>
+                        <span className="block text-(length:--text-micro) text-muted-foreground">{t(`smokelabtab.general.trigger.${run.trigger}`, { defaultValue: run.trigger })}</span>
                       </span>
                       <StatusBadge status={run.status} />
                     </button>
@@ -426,7 +426,7 @@ export function SmokeLabTab({ companyId }: { companyId: string }) {
               <div className="flex flex-col">
                 <div className="flex items-center justify-between gap-2 border-b border-border px-4 py-2.5">
                   <span className="text-xs text-muted-foreground">
-                    {t("smokelabtab.general.started")} {formatTime(activeRun.startedAt)} {t("smokelabtab.general.finished")} {formatTime(activeRun.finishedAt)}
+                    {t("smokelabtab.general.started")} {formatTime(activeRun.startedAt, i18n.language)} {t("smokelabtab.general.finished")} {formatTime(activeRun.finishedAt, i18n.language)}
                   </span>
                   <StatusBadge status={activeRun.status} />
                 </div>

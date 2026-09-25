@@ -30,13 +30,13 @@ export function ProfileWizardRoute({ mode }: { mode: "new" | "edit" }) {
 
   useEffect(() => {
     setBreadcrumbs([
-      { label: selectedCompany?.name ?? "Organization", href: "/dashboard" },
-      { label: "Apps", href: "/apps" },
-      { label: "Access profiles", href: advancedTabHref("profiles") },
-      { label: mode === "edit" ? "Resume draft" : "New profile" },
+      { label: selectedCompany?.name ?? t("profilewizardroute.general.organization"), href: "/dashboard" },
+      { label: t("profilewizardroute.general.apps"), href: "/apps" },
+      { label: t("profilewizardroute.general.accessProfiles"), href: advancedTabHref("profiles") },
+      { label: mode === "edit" ? t("profilewizardroute.general.resumeDraft") : t("profilewizardroute.general.newProfile") },
     ]);
     return () => setBreadcrumbs([]);
-  }, [setBreadcrumbs, selectedCompany?.name, mode]);
+  }, [setBreadcrumbs, selectedCompany?.name, mode, t]);
 
   if (!selectedCompanyId) {
     return <div className="p-6 text-sm text-muted-foreground">{t("profilewizardroute.general.selectanorganizationtocreateaprofile")}</div>;

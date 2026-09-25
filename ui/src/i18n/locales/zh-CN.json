@@ -6616,7 +6616,51 @@
       "nothinghereyet": "这里还没有内容",
       "assoonasyouragentsstartusing": "智能体开始使用已连接的应用后，操作记录会显示在这里。",
       "loading": "加载中…",
-      "loadmore": "加载更多"
+      "loadmore": "加载更多",
+      "allowed": "已允许",
+      "blocked": "已阻止",
+      "askedFirst": "先征求批准",
+      "waiting": "等待中",
+      "failed": "失败",
+      "recorded": "已记录",
+      "allOutcomes": "所有结果",
+      "allTime": "全部时间",
+      "lastHour": "最近 1 小时",
+      "lastDay": "最近 24 小时",
+      "lastWeek": "最近 7 天",
+      "lastMonth": "最近 30 天",
+      "someone": "某人",
+      "thisApp": "此应用",
+      "anAgent": "某个智能体",
+      "anAction": "某项操作",
+      "unnamedConnection": "未命名连接",
+      "allAgents": "所有智能体",
+      "yes": "是",
+      "no": "否",
+      "connectedApp": "{{who}} 已连接 {{app}}",
+      "pausedApp": "{{who}} 已暂停 {{app}}",
+      "resumedApp": "{{who}} 已恢复 {{app}}",
+      "reconnectedApp": "{{who}} 已重新连接 {{app}}",
+      "disconnectedApp": "{{who}} 已断开 {{app}}",
+      "addedAllowedItems_one": "{{who}} 在 {{app}} 中新增了 {{count}} 个允许项",
+      "addedAllowedItems_other": "{{who}} 在 {{app}} 中新增了 {{count}} 个允许项",
+      "removedAllowedItems_one": "{{who}} 从 {{app}} 中移除了 {{count}} 个允许项",
+      "removedAllowedItems_other": "{{who}} 从 {{app}} 中移除了 {{count}} 个允许项",
+      "updatedAllowlist": "{{who}} 更新了 {{app}} 的允许列表",
+      "actionsNeedReview_one": "{{app}} 中有 {{count}} 项新操作需要复核",
+      "actionsNeedReview_other": "{{app}} 中有 {{count}} 项新操作需要复核",
+      "updatedApp": "{{who}} 更新了 {{app}}",
+      "connectionChangeRecorded": "此连接变更已记录在应用的活动历史中。",
+      "permittedConnectionsNotInstalled": "允许的连接尚未安装，因此其工具未加入本次运行。",
+      "allowedByRules": "已按规则允许。",
+      "blockedRateLimited": "短时间内运行次数过多，已阻止。",
+      "blockedSensitiveValue": "为防止敏感值外传，已阻止。",
+      "blockedByRule": "已按规则阻止。",
+      "heldForApproval": "操作已暂缓，等待批准后运行。",
+      "waitingForApp": "正在等待所需应用就绪。",
+      "appReturnedError": "应用获准执行此操作，但返回了错误。",
+      "recordedByPaperclip": "已由 Paperclip 记录。",
+      "activityDescription": "查看智能体使用应用的操作记录，按时间倒序排列。每行显示一项决策：允许、阻止、先征求批准、等待或失败。"
     }
   },
   "gatewaystab": {
@@ -6833,7 +6877,31 @@
       "profilesDescription": "可复用的应用、连接和工具权限组合，可指派给智能体、项目、例程或工单。",
       "noProfilesYet": "暂无访问配置",
       "createProfileDescription": "创建访问配置以整理工具选择条件，再将其指派给公司或特定智能体。",
-      "newProfileAction": "新建访问配置"
+      "newProfileAction": "新建访问配置",
+      "selectorToolName": "工具名称",
+      "selectorRiskLevel": "风险级别",
+      "selectorApplication": "应用",
+      "selectorConnection": "连接",
+      "selectorCatalogEntryId": "目录条目 ID",
+      "targetCompany": "组织",
+      "targetAgent": "智能体",
+      "targetProject": "项目",
+      "targetRoutine": "例程",
+      "targetIssueId": "工单 ID",
+      "unbound": "未绑定",
+      "boundToOneAgent": "已绑定 {{count}} 个智能体",
+      "boundToAgents": "已绑定 {{count}} 个智能体",
+      "oneBinding": "{{count}} 个绑定",
+      "bindingCount": "{{count}} 个绑定",
+      "removeBinding": "移除{{target}}绑定",
+      "deleteEntry": "删除{{selector}}条目",
+      "target": {
+        "company": "组织",
+        "agent": "智能体",
+        "project": "项目",
+        "routine": "例程",
+        "issue": "工单"
+      }
     }
   },
   "smokelabtab": {
@@ -6879,7 +6947,64 @@
       "finished": "· 已完成",
       "nostepsrecordedforthisrun": "此运行没有步骤记录。",
       "viewscreenshot": "查看截图",
-      "ms": "ms"
+      "ms": "ms",
+      "servicesStarted": "冒烟测试服务已启动",
+      "startServicesFailed": "无法启动服务",
+      "servicesStopped": "冒烟测试服务已停止",
+      "stopServicesFailed": "无法停止服务",
+      "fixturesInstalled": "测试应用已安装",
+      "fixturesAlreadyPresent": "测试应用已存在",
+      "installFixturesFailed": "无法安装测试应用",
+      "labReset": "Smoke Lab 已重置",
+      "resetFailed": "无法重置",
+      "runStarted": "冒烟测试已启动",
+      "runnerRecordsSteps": "浏览器运行器会在每个步骤完成时记录结果。",
+      "startRunFailed": "无法启动运行",
+      "url": "网址",
+      "failingPaths": " · 失败路径：{{paths}}",
+      "serviceStatus": {
+        "running": "运行中",
+        "error": "错误",
+        "stopped": "已停止"
+      },
+      "health": {
+        "green": "正常",
+        "amber": "警告",
+        "red": "异常"
+      },
+      "trigger": {
+        "manual": "手动",
+        "scheduled": "定时",
+        "api": "接口"
+      },
+      "stage": {
+        "connect": "连接",
+        "discover": "发现目录",
+        "read": "允许读取",
+        "write": "写入前征求批准",
+        "deny": "已拒绝的调用",
+        "quarantine": "结构变更隔离",
+        "revoke": "撤销",
+        "audit": "审计证据"
+      },
+      "pathTitle": {
+        "P1": "远程 HTTP · OAuth",
+        "P2": "远程 HTTP · API 密钥",
+        "P3": "本地 stdio（模板）",
+        "P4": "插件集成",
+        "P5": "粘贴配置导入",
+        "P6": "令牌代理／网关",
+        "P7": "治理界面"
+      },
+      "pathDetail": {
+        "P1": "模拟 OAuth 提供方背后的 HTTP MCP 测试服务",
+        "P2": "使用固定 Bearer 密钥的 HTTP MCP 测试服务",
+        "P3": "通过运行时监管器启动的 stdio 测试服务",
+        "P4": "插件提供的目录条目与安装流程",
+        "P5": "通过高级设置导入配置",
+        "P6": "运行范围连接令牌、有效期与权限范围检查",
+        "P7": "访问配置、事前审批规则与隔离"
+      }
     }
   },
   "toolsaccess": {
@@ -6890,7 +7015,15 @@
       "fortoolsthatarentinthe": "用于连接应用库中没有的工具。你需要查阅工具文档获取配置。大多数人无需使用此功能；如果所需应用已在应用库中，请",
       "connectitthereinstead": "直接在那里连接。",
       "lookingforthedevelopersurface": "想找开发者功能？",
-      "opendevelopertools": "打开开发者工具"
+      "opendevelopertools": "打开开发者工具",
+      "company": "公司",
+      "apps": "应用",
+      "tab": {
+        "paste-config": "粘贴配置",
+        "gateways": "网关",
+        "profiles": "访问配置",
+        "smoke-lab": "Smoke Lab"
+      }
     }
   },
   "connectiondialogs": {
@@ -6941,13 +7074,30 @@
       "probing": "正在探测…",
       "reprobe": "重新探测",
       "activating": "正在激活…",
-      "activate": "激活"
+      "activate": "激活",
+      "createConnectionFailed": "无法创建连接",
+      "probeFailed": "探测失败",
+      "connectionActivated": "连接已启用",
+      "activationFailed": "启用失败",
+      "removeCredentialReference": "移除 {{name}} 的凭据引用"
     }
   },
   "profileactiondialog": {
     "general": {
       "chooseanotheraccessprofileandmakeit": "请先选择另一个访问配置，并将其设为公司默认配置。",
-      "cancel": "取消"
+      "cancel": "取消",
+      "archiveTitle": "归档访问配置",
+      "archiveBody_one": "此访问配置将不再适用于 {{count}} 个智能体。之后可以恢复。",
+      "archiveBody_other": "此访问配置将不再适用于 {{count}} 个智能体。之后可以恢复。",
+      "archive": "归档",
+      "restoreTitle": "恢复访问配置",
+      "restoreBody": "此访问配置将重新启用，并可指派给智能体。",
+      "restore": "恢复",
+      "deleteTitle": "删除访问配置",
+      "deleteDefaultBody": "此访问配置是组织默认配置。删除前，请先将另一项访问配置设为组织默认。",
+      "deleteBody_one": "此操作将永久删除访问配置并移除 {{count}} 项指派。",
+      "deleteBody_other": "此操作将永久删除访问配置并移除 {{count}} 项指派。",
+      "delete": "删除"
     }
   },
   "profiledetail": {
@@ -7099,7 +7249,11 @@
   },
   "profiledetailroute": {
     "general": {
-      "selectanorganizationandprofile": "请选择公司和访问配置。"
+      "selectanorganizationandprofile": "请选择公司和访问配置。",
+      "company": "公司",
+      "apps": "应用",
+      "accessProfiles": "访问配置",
+      "profileDetail": "访问配置详情"
     }
   },
   "profilewizard": {
@@ -7132,7 +7286,16 @@
       "assignthisprofiletoawholeproject": "将此访问配置指派给整个项目或计划例程，也可同时指派给单个智能体。",
       "projects": "项目",
       "routines": "例程",
-      "allowedtoolcount": "允许使用 {{total}} 个工具中的 {{allowed}} 个"
+      "allowedtoolcount": "允许使用 {{total}} 个工具中的 {{allowed}} 个",
+      "stepName": "名称",
+      "stepChooseTools": "选择工具",
+      "stepAssign": "分配",
+      "couldNotSave": "无法保存",
+      "noDraftToFinish": "没有可完成的草稿",
+      "profileSaved": "访问配置已保存",
+      "couldNotSaveProfile": "无法保存访问配置",
+      "draftSaved": "草稿已保存",
+      "resumeFromProfilesList": "可在访问配置列表中继续编辑。"
     }
   },
   "profilewizardroute": {
@@ -7140,7 +7303,12 @@
       "selectanorganizationtocreateaprofile": "请选择公司以创建访问配置。",
       "finishyourprofile": "完成访问配置",
       "newaccessprofile": "新建访问配置",
-      "choosewhichtoolsthisprofileallowsthen": "选择此配置允许使用的工具，再将它指派给需要的智能体。"
+      "choosewhichtoolsthisprofileallowsthen": "选择此配置允许使用的工具，再将它指派给需要的智能体。",
+      "organization": "组织",
+      "apps": "应用",
+      "accessProfiles": "访问配置",
+      "resumeDraft": "继续草稿",
+      "newProfile": "新建访问配置"
     }
   },
   "profilesindex": {
@@ -7206,7 +7374,27 @@
       "makeschanges": "会进行更改",
       "destructive": "危险操作",
       "addrule": "添加规则",
-      "grouptoolcount": "{{group}} 工具（{{count}} 个）"
+      "grouptoolcount": "{{group}} 工具（{{count}} 个）",
+      "capability": {
+        "read": "只读",
+        "write": "可修改",
+        "destructive": "破坏性"
+      },
+      "newToolsDenyLabel": "保持禁用，直到有人允许",
+      "newToolsDenyHint": "应用以后新增的工具，在你审核前无法使用。",
+      "newToolsAllowLabel": "自动允许",
+      "newToolsAllowHint": "应用以后新增的工具将立即可用。",
+      "ruleToolNamePattern": "工具名称模式",
+      "ruleRiskLevel": "风险级别",
+      "ruleByToolId": "按工具 ID",
+      "ruleSummary": {
+        "allowMatching": "允许匹配 {{value}} 的工具",
+        "blockMatching": "阻止匹配 {{value}} 的工具",
+        "allowRisk": "允许 {{value}} 级别的工具",
+        "blockRisk": "阻止 {{value}} 级别的工具",
+        "allowTool": "允许工具 {{value}}",
+        "blockTool": "阻止工具 {{value}}"
+      }
     }
   },
   "shared": {
@@ -7218,7 +7406,24 @@
       "never": "从不",
       "couldnotloadthisview": "无法加载此视图",
       "retry": "重试",
-      "trackedin": "记录于"
+      "trackedin": "记录于",
+      "justNow": "刚刚",
+      "loading": "加载中…",
+      "permissionRequired": "你没有权限查看此页面。工具与访问需要董事会或管理员权限。",
+      "serverNotReady": "此服务器尚未提供工具与访问功能。请在下次部署后刷新重试。",
+      "somethingWentWrong": "发生了错误。",
+      "agoMinute_one": "{{count}} 分钟前",
+      "inMinute_one": "{{count}} 分钟后",
+      "agoMinute_other": "{{count}} 分钟前",
+      "inMinute_other": "{{count}} 分钟后",
+      "agoHour_one": "{{count}} 小时前",
+      "inHour_one": "{{count}} 小时后",
+      "agoHour_other": "{{count}} 小时前",
+      "inHour_other": "{{count}} 小时后",
+      "agoDay_one": "{{count}} 天前",
+      "inDay_one": "{{count}} 天后",
+      "agoDay_other": "{{count}} 天前",
+      "inDay_other": "{{count}} 天后"
     }
   },
   "importfromvaultdialog": {

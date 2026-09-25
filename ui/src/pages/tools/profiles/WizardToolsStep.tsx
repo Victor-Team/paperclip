@@ -21,7 +21,6 @@ import {
   toggleApp,
   toggleTool,
   toolCapability,
-  CAPABILITY_LABEL,
   type AdvancedRule,
   type AdvancedRuleKind,
   type AppGroup,
@@ -120,7 +119,7 @@ export function WizardToolsStep(props: WizardToolsStepProps) {
                   : "border-border text-muted-foreground hover:bg-accent",
               )}
             >
-              {CAPABILITY_LABEL[cap]}
+              {t(`wizardtoolsstep.general.capability.${cap}`)}
             </button>
           ))}
         </div>
@@ -232,7 +231,7 @@ function AppRow({
                   <span className="flex flex-wrap items-center gap-2">
                     <code className="font-mono text-xs text-foreground">{tool.toolName}</code>
                     <Badge variant={CAPABILITY_VARIANT[cap]} className="text-(length:--text-nano)">
-                      {CAPABILITY_LABEL[cap]}
+                      {t(`wizardtoolsstep.general.capability.${cap}`)}
                     </Badge>
                   </span>
                   {tool.title || tool.description ? (
@@ -259,14 +258,14 @@ function NewToolsRadio({
   const options: Array<{ value: NewToolsAction; label: string; hint: string; recommended?: boolean }> = [
     {
       value: "deny",
-      label: "Stay blocked until someone allows them",
-      hint: "New tools an app adds later won't be usable until you review them.",
+      label: t("wizardtoolsstep.general.newToolsDenyLabel"),
+      hint: t("wizardtoolsstep.general.newToolsDenyHint"),
       recommended: true,
     },
     {
       value: "allow",
-      label: "Allowed automatically",
-      hint: "Any tool an app adds later becomes usable right away.",
+      label: t("wizardtoolsstep.general.newToolsAllowLabel"),
+      hint: t("wizardtoolsstep.general.newToolsAllowHint"),
     },
   ];
   return (
@@ -301,10 +300,10 @@ function NewToolsRadio({
   );
 }
 
-const RULE_KIND_OPTIONS: Array<{ value: AdvancedRuleKind; label: string }> = [
-  { value: "tool_name", label: "Tool name pattern" },
-  { value: "risk_level", label: "Risk level" },
-  { value: "catalog_entry", label: "By tool ID" },
+const RULE_KIND_OPTIONS: Array<{ value: AdvancedRuleKind; labelKey: string }> = [
+  { value: "tool_name", labelKey: "ruleToolNamePattern" },
+  { value: "risk_level", labelKey: "ruleRiskLevel" },
+  { value: "catalog_entry", labelKey: "ruleByToolId" },
 ];
 
 function createAdvancedRuleId() {
@@ -313,11 +312,11 @@ function createAdvancedRuleId() {
   return `rule-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
 }
 
-function ruleSummary(rule: AdvancedRule): string {
-  const verb = rule.effect === "include" ? "Allow" : "Block";
-  if (rule.kind === "tool_name") return `${verb} tools matching ${rule.value}`;
-  if (rule.kind === "risk_level") return `${verb} ${rule.riskLevel ?? rule.value} tools`;
-  return `${verb} tool ${rule.value}`;
+function ruleSummary(rule: AdvancedRule, t: ReturnType<typeof useTranslation>["t"]): string {
+  const action = rule.effect === "include" ? "allow" : "block";
+  if (rule.kind === "tool_name") return t(`wizardtoolsstep.general.ruleSummary.${action}Matching`, { value: rule.value });
+  if (rule.kind === "risk_level") return t(`wizardtoolsstep.general.ruleSummary.${action}Risk`, { value: rule.riskLevel ?? rule.value });
+  return t(`wizardtoolsstep.general.ruleSummary.${action}Tool`, { value: rule.value });
 }
 
 function AdvancedRules({
@@ -364,7 +363,7 @@ function AdvancedRules({
                 key={rule.id}
                 className="flex items-center justify-between gap-2 rounded-md border border-border bg-muted/30 px-3 py-1.5 text-sm"
               >
-                <span className="text-foreground">{ruleSummary(rule)}</span>
+                <span className="text-foreground">{ruleSummary(rule, t)}</span>
                 <button
                   type="button"
                   aria-label={t("wizardtoolsstep.general.removerule")}
@@ -395,7 +394,7 @@ function AdvancedRules({
             <SelectContent>
               {RULE_KIND_OPTIONS.map((opt) => (
                 <SelectItem key={opt.value} value={opt.value}>
-                  {opt.label}
+                  {t(`wizardtoolsstep.general.${opt.labelKey}`)}
                 </SelectItem>
               ))}
             </SelectContent>

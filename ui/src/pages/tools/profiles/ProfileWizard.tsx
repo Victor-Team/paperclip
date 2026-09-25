@@ -38,10 +38,10 @@ function slugifyProfileKey(name: string): string {
     .slice(0, 160);
 }
 
-const STEP_LABELS: Array<{ step: WizardStep; label: string }> = [
-  { step: 1, label: "Name" },
-  { step: 2, label: "Choose tools" },
-  { step: 3, label: "Assign" },
+const STEP_LABELS: Array<{ step: WizardStep; labelKey: string }> = [
+  { step: 1, labelKey: "stepName" },
+  { step: 2, labelKey: "stepChooseTools" },
+  { step: 3, labelKey: "stepAssign" },
 ];
 
 export function ProfileWizard({
@@ -181,12 +181,12 @@ export function ProfileWizard({
       invalidate();
     },
     onError: (error: unknown) =>
-      pushToast({ title: "Could not save", body: String((error as Error)?.message ?? error), tone: "error" }),
+      pushToast({ title: t("profilewizard.general.couldNotSave"), body: String((error as Error)?.message ?? error), tone: "error" }),
   });
 
   const finish = useMutation({
     mutationFn: async () => {
-      if (!draftId) throw new Error("No draft to finish");
+      if (!draftId) throw new Error(t("profilewizard.general.noDraftToFinish"));
       const entries = buildEntries(appGroups, selections, advancedRules, newToolsAction);
       const profile = await toolsApi.updateProfile(draftId, {
         defaultAction: newToolsAction,
@@ -202,12 +202,12 @@ export function ProfileWizard({
       return toolsApi.updateProfile(draftId, { status: "active" });
     },
     onSuccess: (profile) => {
-      pushToast({ title: "Profile saved", tone: "success" });
+      pushToast({ title: t("profilewizard.general.profileSaved"), tone: "success" });
       invalidate();
       navigate(`/apps/advanced/profiles/${profile.id}${selectedAgentIds.size === 0 && !companyDefault ? "?created=1" : ""}`);
     },
     onError: (error: unknown) =>
-      pushToast({ title: "Could not save profile", body: String((error as Error)?.message ?? error), tone: "error" }),
+      pushToast({ title: t("profilewizard.general.couldNotSaveProfile"), body: String((error as Error)?.message ?? error), tone: "error" }),
   });
 
   const saveAndExit = () => {
@@ -216,7 +216,7 @@ export function ProfileWizard({
       { goToStep: step, completedStep: completed },
       {
         onSuccess: () => {
-          pushToast({ title: "Draft saved", body: "Pick it back up from the profiles list.", tone: "success" });
+          pushToast({ title: t("profilewizard.general.draftSaved"), body: t("profilewizard.general.resumeFromProfilesList"), tone: "success" });
           navigate("/apps/advanced/profiles");
         },
       },
@@ -394,9 +394,10 @@ async function reconcileBindings(
 }
 
 function Stepper({ current }: { current: WizardStep }) {
+  const { t } = useTranslation();
   return (
     <ol className="flex items-center gap-2 text-sm">
-      {STEP_LABELS.map(({ step, label }, idx) => {
+      {STEP_LABELS.map(({ step, labelKey }, idx) => {
         const done = current > step;
         const active = current === step;
         return (
@@ -412,7 +413,7 @@ function Stepper({ current }: { current: WizardStep }) {
               {done ? <Check className="h-3.5 w-3.5" /> : step}
             </span>
             <span className={cn("font-medium", active ? "text-foreground" : "text-muted-foreground")}>
-              {label}
+              {t(`profilewizard.general.${labelKey}`)}
             </span>
             {idx < STEP_LABELS.length - 1 ? <span className="mx-1 text-muted-foreground">→</span> : null}
           </li>

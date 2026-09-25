@@ -36,23 +36,23 @@ export function ProfileActionDialog({
   const defaultDeleteBlocked = kind === "delete" && profile.summary.isCompanyDefault;
   const copy = {
     archive: {
-      title: "Archive profile",
-      body: `This profile stops applying to ${profile.summary.appliesToAgentCount} ${profile.summary.appliesToAgentCount === 1 ? "agent" : "agents"}. You can restore it later.`,
-      confirm: "Archive",
+      title: t("profileactiondialog.general.archiveTitle"),
+      body: t("profileactiondialog.general.archiveBody", { count: profile.summary.appliesToAgentCount }),
+      confirm: t("profileactiondialog.general.archive"),
       action: onArchive,
     },
     restore: {
-      title: "Restore profile",
-      body: "This profile will be active again and can be assigned to agents.",
-      confirm: "Restore",
+      title: t("profileactiondialog.general.restoreTitle"),
+      body: t("profileactiondialog.general.restoreBody"),
+      confirm: t("profileactiondialog.general.restore"),
       action: onRestore,
     },
     delete: {
-      title: "Delete profile",
+      title: t("profileactiondialog.general.deleteTitle"),
       body: defaultDeleteBlocked
-        ? "This profile is the organization default. Reassign the organization default to another profile before deleting it."
-        : `This permanently deletes the profile and removes ${profile.summary.assignmentCount} ${profile.summary.assignmentCount === 1 ? "assignment" : "assignments"}.`,
-      confirm: "Delete",
+        ? t("profileactiondialog.general.deleteDefaultBody")
+        : t("profileactiondialog.general.deleteBody", { count: profile.summary.assignmentCount }),
+      confirm: t("profileactiondialog.general.delete"),
       action: onDelete,
     },
   }[kind];

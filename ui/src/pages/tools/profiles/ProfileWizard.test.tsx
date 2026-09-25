@@ -24,6 +24,7 @@ vi.mock("@/api/tools", () => ({ toolsApi: api }));
 vi.mock("./useProfilesData", () => ({ useProfilesData: () => profilesData.current }));
 
 import { ProfileWizard } from "./ProfileWizard";
+import { i18n } from "@/i18n";
 
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -154,5 +155,17 @@ describe("ProfileWizard", () => {
     // lastCompletedStep 1 -> resume on step 2 (Choose tools), not step 1.
     expect(container.textContent).toContain("New tools that appear later");
     expect(container.querySelector("#profile-name")).toBeNull();
+  });
+
+  it("updates the wizard step labels after switching to Chinese", async () => {
+    setData([]);
+    await render({ initialTemplate: "everyday" });
+    try {
+      await act(async () => { await i18n.changeLanguage("zh-CN"); });
+      expect(container.querySelector("ol")?.textContent).toContain("选择工具");
+      expect(container.querySelector("ol")?.textContent).toContain("分配");
+    } finally {
+      await act(async () => { await i18n.changeLanguage("en"); });
+    }
   });
 });

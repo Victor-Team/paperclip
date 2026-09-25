@@ -6616,7 +6616,51 @@
       "nothinghereyet": "Nothing here yet",
       "assoonasyouragentsstartusing": "As soon as your agents start using connected apps, what they do shows up here.",
       "loading": "Loading…",
-      "loadmore": "Load more"
+      "loadmore": "Load more",
+      "allowed": "Allowed",
+      "blocked": "Blocked",
+      "askedFirst": "Asked first",
+      "waiting": "Waiting",
+      "failed": "Failed",
+      "recorded": "Recorded",
+      "allOutcomes": "All outcomes",
+      "allTime": "All time",
+      "lastHour": "Last 1 hour",
+      "lastDay": "Last 24 hours",
+      "lastWeek": "Last 7 days",
+      "lastMonth": "Last 30 days",
+      "someone": "Someone",
+      "thisApp": "this app",
+      "anAgent": "An agent",
+      "anAction": "an action",
+      "unnamedConnection": "Unnamed connection",
+      "allAgents": "All agents",
+      "yes": "Yes",
+      "no": "No",
+      "connectedApp": "{{who}} connected {{app}}",
+      "pausedApp": "{{who}} paused {{app}}",
+      "resumedApp": "{{who}} resumed {{app}}",
+      "reconnectedApp": "{{who}} reconnected {{app}}",
+      "disconnectedApp": "{{who}} disconnected {{app}}",
+      "addedAllowedItems_one": "{{who}} added {{count}} allowed item in {{app}}",
+      "addedAllowedItems_other": "{{who}} added {{count}} allowed items in {{app}}",
+      "removedAllowedItems_one": "{{who}} removed {{count}} allowed item in {{app}}",
+      "removedAllowedItems_other": "{{who}} removed {{count}} allowed items in {{app}}",
+      "updatedAllowlist": "{{who}} updated the allowlist for {{app}}",
+      "actionsNeedReview_one": "{{count}} new action needs review in {{app}}",
+      "actionsNeedReview_other": "{{count}} new actions need review in {{app}}",
+      "updatedApp": "{{who}} updated {{app}}",
+      "connectionChangeRecorded": "This connection change was recorded in the app's activity history.",
+      "permittedConnectionsNotInstalled": "Permitted connections were not installed, so their tools were not added to this run.",
+      "allowedByRules": "Allowed by your rules.",
+      "blockedRateLimited": "Blocked because it ran too many times in a short window.",
+      "blockedSensitiveValue": "Blocked to keep a sensitive value from leaving.",
+      "blockedByRule": "Blocked by a rule.",
+      "heldForApproval": "Held for someone to approve before it could run.",
+      "waitingForApp": "Waiting — the app it needs wasn't ready yet.",
+      "appReturnedError": "The app was allowed to run it, but returned an error.",
+      "recordedByPaperclip": "Recorded by Paperclip.",
+      "activityDescription": "What your agents actually did with your apps, newest first. Each line is one decision — allowed, blocked, asked first, waiting, or failed."
     }
   },
   "gatewaystab": {
@@ -6833,7 +6877,31 @@
       "profilesDescription": "Reusable bundles of allowed applications, connections, and tools, assignable to agents, projects, routines, or issues.",
       "noProfilesYet": "No access profiles yet",
       "createProfileDescription": "Create a profile to group tool selectors, then bind it to the organization or a specific agent.",
-      "newProfileAction": "New profile"
+      "newProfileAction": "New profile",
+      "selectorToolName": "Tool name",
+      "selectorRiskLevel": "Risk level",
+      "selectorApplication": "Application",
+      "selectorConnection": "Connection",
+      "selectorCatalogEntryId": "Catalog entry ID",
+      "targetCompany": "Company",
+      "targetAgent": "Agent",
+      "targetProject": "Project",
+      "targetRoutine": "Routine",
+      "targetIssueId": "Issue ID",
+      "unbound": "unbound",
+      "boundToOneAgent": "bound to {{count}} agent",
+      "boundToAgents": "bound to {{count}} agents",
+      "oneBinding": "{{count}} binding",
+      "bindingCount": "{{count}} bindings",
+      "removeBinding": "Remove {{target}} binding",
+      "deleteEntry": "Delete {{selector}} entry",
+      "target": {
+        "company": "company",
+        "agent": "agent",
+        "project": "project",
+        "routine": "routine",
+        "issue": "issue"
+      }
     }
   },
   "smokelabtab": {
@@ -6879,7 +6947,64 @@
       "finished": "· finished",
       "nostepsrecordedforthisrun": "No steps recorded for this run.",
       "viewscreenshot": "View screenshot",
-      "ms": "ms"
+      "ms": "ms",
+      "servicesStarted": "Smoke services started",
+      "startServicesFailed": "Couldn't start services",
+      "servicesStopped": "Smoke services stopped",
+      "stopServicesFailed": "Couldn't stop services",
+      "fixturesInstalled": "Fixture apps installed",
+      "fixturesAlreadyPresent": "Fixture apps already present",
+      "installFixturesFailed": "Couldn't install fixtures",
+      "labReset": "Smoke Lab reset",
+      "resetFailed": "Couldn't reset",
+      "runStarted": "Smoke run started",
+      "runnerRecordsSteps": "The browser runner records each step as it completes.",
+      "startRunFailed": "Couldn't start a run",
+      "url": "URL",
+      "failingPaths": " · failing: {{paths}}",
+      "serviceStatus": {
+        "running": "running",
+        "error": "error",
+        "stopped": "stopped"
+      },
+      "health": {
+        "green": "green",
+        "amber": "amber",
+        "red": "red"
+      },
+      "trigger": {
+        "manual": "manual",
+        "scheduled": "scheduled",
+        "api": "api"
+      },
+      "stage": {
+        "connect": "Connect",
+        "discover": "Discover catalog",
+        "read": "Allowed read",
+        "write": "Ask-first write",
+        "deny": "Denied call",
+        "quarantine": "Schema-change quarantine",
+        "revoke": "Revoke",
+        "audit": "Audit evidence"
+      },
+      "pathTitle": {
+        "P1": "Remote HTTP · OAuth",
+        "P2": "Remote HTTP · API key",
+        "P3": "Local stdio (template)",
+        "P4": "Plugin integration",
+        "P5": "Paste-a-config import",
+        "P6": "Token broker / gateway",
+        "P7": "Governance surfaces"
+      },
+      "pathDetail": {
+        "P1": "HTTP MCP fixture behind the fake OAuth provider",
+        "P2": "HTTP MCP fixture with a static bearer key",
+        "P3": "stdio fixture via the runtime supervisor",
+        "P4": "plugin-provided catalog entry + install flow",
+        "P5": "prosumer import via Advanced setup",
+        "P6": "run-scoped connection token, TTL + scope checks",
+        "P7": "profiles, ask-first rules, quarantine"
+      }
     }
   },
   "toolsaccess": {
@@ -6890,7 +7015,15 @@
       "fortoolsthatarentinthe": "For tools that aren't in the gallery. You'll need details from the tool's documentation.\n            Most people never need this — if the app you want is in the gallery,",
       "connectitthereinstead": "connect it there instead",
       "lookingforthedevelopersurface": "Looking for the developer surface?",
-      "opendevelopertools": "Open developer tools"
+      "opendevelopertools": "Open developer tools",
+      "company": "Company",
+      "apps": "Apps",
+      "tab": {
+        "paste-config": "Paste a config",
+        "gateways": "Gateways",
+        "profiles": "Profiles",
+        "smoke-lab": "Smoke Lab"
+      }
     }
   },
   "connectiondialogs": {
@@ -6941,13 +7074,30 @@
       "probing": "Probing…",
       "reprobe": "Re-probe",
       "activating": "Activating…",
-      "activate": "Activate"
+      "activate": "Activate",
+      "createConnectionFailed": "Could not create connection",
+      "probeFailed": "Probe failed",
+      "connectionActivated": "Connection activated",
+      "activationFailed": "Activation failed",
+      "removeCredentialReference": "Remove credential reference for {{name}}"
     }
   },
   "profileactiondialog": {
     "general": {
       "chooseanotheraccessprofileandmakeit": "Choose another access profile and make it the organization default first.",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "archiveTitle": "Archive profile",
+      "archiveBody_one": "This profile stops applying to {{count}} agent. You can restore it later.",
+      "archiveBody_other": "This profile stops applying to {{count}} agents. You can restore it later.",
+      "archive": "Archive",
+      "restoreTitle": "Restore profile",
+      "restoreBody": "This profile will be active again and can be assigned to agents.",
+      "restore": "Restore",
+      "deleteTitle": "Delete profile",
+      "deleteDefaultBody": "This profile is the organization default. Reassign the organization default to another profile before deleting it.",
+      "deleteBody_one": "This permanently deletes the profile and removes {{count}} assignment.",
+      "deleteBody_other": "This permanently deletes the profile and removes {{count}} assignments.",
+      "delete": "Delete"
     }
   },
   "profiledetail": {
@@ -7099,7 +7249,11 @@
   },
   "profiledetailroute": {
     "general": {
-      "selectanorganizationandprofile": "Select an organization and profile."
+      "selectanorganizationandprofile": "Select an organization and profile.",
+      "company": "Company",
+      "apps": "Apps",
+      "accessProfiles": "Access profiles",
+      "profileDetail": "Profile detail"
     }
   },
   "profilewizard": {
@@ -7132,7 +7286,16 @@
       "assignthisprofiletoawholeproject": "Assign this profile to a whole project or a scheduled routine instead of (or as well as)\n              individual agents.",
       "projects": "Projects",
       "routines": "Routines",
-      "allowedtoolcount": "Allows {{allowed}} of {{total}} tools"
+      "allowedtoolcount": "Allows {{allowed}} of {{total}} tools",
+      "stepName": "Name",
+      "stepChooseTools": "Choose tools",
+      "stepAssign": "Assign",
+      "couldNotSave": "Could not save",
+      "noDraftToFinish": "No draft to finish",
+      "profileSaved": "Profile saved",
+      "couldNotSaveProfile": "Could not save profile",
+      "draftSaved": "Draft saved",
+      "resumeFromProfilesList": "Pick it back up from the profiles list."
     }
   },
   "profilewizardroute": {
@@ -7140,7 +7303,12 @@
       "selectanorganizationtocreateaprofile": "Select an organization to create a profile.",
       "finishyourprofile": "Finish your profile",
       "newaccessprofile": "New access profile",
-      "choosewhichtoolsthisprofileallowsthen": "Choose which tools this profile allows, then assign it to the agents that need them."
+      "choosewhichtoolsthisprofileallowsthen": "Choose which tools this profile allows, then assign it to the agents that need them.",
+      "organization": "Organization",
+      "apps": "Apps",
+      "accessProfiles": "Access profiles",
+      "resumeDraft": "Resume draft",
+      "newProfile": "New profile"
     }
   },
   "profilesindex": {
@@ -7206,7 +7374,27 @@
       "makeschanges": "Makes changes",
       "destructive": "Destructive",
       "addrule": "Add rule",
-      "grouptoolcount": "{{group}} tools ({{count}})"
+      "grouptoolcount": "{{group}} tools ({{count}})",
+      "capability": {
+        "read": "Read only",
+        "write": "Makes changes",
+        "destructive": "Destructive"
+      },
+      "newToolsDenyLabel": "Stay blocked until someone allows them",
+      "newToolsDenyHint": "New tools an app adds later won't be usable until you review them.",
+      "newToolsAllowLabel": "Allowed automatically",
+      "newToolsAllowHint": "Any tool an app adds later becomes usable right away.",
+      "ruleToolNamePattern": "Tool name pattern",
+      "ruleRiskLevel": "Risk level",
+      "ruleByToolId": "By tool ID",
+      "ruleSummary": {
+        "allowMatching": "Allow tools matching {{value}}",
+        "blockMatching": "Block tools matching {{value}}",
+        "allowRisk": "Allow {{value}} tools",
+        "blockRisk": "Block {{value}} tools",
+        "allowTool": "Allow tool {{value}}",
+        "blockTool": "Block tool {{value}}"
+      }
     }
   },
   "shared": {
@@ -7218,7 +7406,24 @@
       "never": "never",
       "couldnotloadthisview": "Could not load this view",
       "retry": "Retry",
-      "trackedin": "Tracked in"
+      "trackedin": "Tracked in",
+      "justNow": "just now",
+      "loading": "Loading…",
+      "permissionRequired": "You do not have permission to view this. Tools & Access requires board/admin access.",
+      "serverNotReady": "Tools & Access isn't available on this server yet — try refreshing after the next deployment.",
+      "somethingWentWrong": "Something went wrong.",
+      "agoMinute_one": "{{count}}m ago",
+      "inMinute_one": "in {{count}}m",
+      "agoMinute_other": "{{count}}m ago",
+      "inMinute_other": "in {{count}}m",
+      "agoHour_one": "{{count}}h ago",
+      "inHour_one": "in {{count}}h",
+      "agoHour_other": "{{count}}h ago",
+      "inHour_other": "in {{count}}h",
+      "agoDay_one": "{{count}}d ago",
+      "inDay_one": "in {{count}}d",
+      "agoDay_other": "{{count}}d ago",
+      "inDay_other": "in {{count}}d"
     }
   },
   "importfromvaultdialog": {
