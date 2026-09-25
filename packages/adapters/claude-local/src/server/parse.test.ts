@@ -14,6 +14,36 @@ import {
 } from "./parse.js";
 
 describe("detectClaudeLoginRequired", () => {
+  it("keeps a session-limit failure on the quota lane when a tool result printed Unauthorized", () => {
+    // Grounded on a real run: a tool call earlier in the turn returned a 401
+    // page containing "Unauthorized", then the turn ended on the session limit.
+    const quotaResult = "You've hit your session limit · resets 8:20am (America/Los_Angeles)";
+    const input = {
+      parsed: { is_error: true, subtype: "success", result: quotaResult },
+      stdout: [
+        '{"type":"user","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_1","content":"HTTP/1.1 401 Unauthorized"}]}}',
+        '{"type":"assistant","message":{"content":[{"type":"text","text":"The endpoint said Unauthorized; please log in later."}]}}',
+        JSON.stringify({ type: "result", is_error: true, subtype: "success", result: quotaResult }),
+      ].join("\n"),
+      stderr: "",
+    };
+    expect(detectClaudeLoginRequired(input).requiresLogin).toBe(false);
+    expect(isClaudeProviderQuotaError(input)).toBe(true);
+  });
+
+  it("still classifies the CLI's own plain-text login prompt on stdout", () => {
+    expect(
+      detectClaudeLoginRequired({ parsed: null, stdout: "Not logged in · Please run /login", stderr: "" }).requiresLogin,
+    ).toBe(true);
+  });
+
+  it("still classifies a login prompt carried by the terminal result event", () => {
+    const parsed = { is_error: true, subtype: "success", result: "Not logged in · Please run /login" };
+    expect(
+      detectClaudeLoginRequired({ parsed, stdout: JSON.stringify({ type: "result", ...parsed }), stderr: "" }).requiresLogin,
+    ).toBe(true);
+  });
+
   it("classifies Claude's invalid API key login prompt as auth required", () => {
     expect(
       detectClaudeLoginRequired({

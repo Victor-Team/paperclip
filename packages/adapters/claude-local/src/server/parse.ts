@@ -203,6 +203,22 @@ function claudeResultIndicatesAuthFailure(parsed: Record<string, unknown>): bool
   return extractClaudeErrorMessages(parsed).length > 0;
 }
 
+function stripModelAndToolEvents(stdout: string): string {
+  return stdout
+    .split(/\r?\n/)
+    .filter((line) => {
+      const trimmed = line.trim();
+      if (!trimmed.startsWith("{")) return true;
+      try {
+        const event = JSON.parse(trimmed) as { type?: unknown };
+        return event?.type !== "user" && event?.type !== "assistant";
+      } catch {
+        return true;
+      }
+    })
+    .join("\n");
+}
+
 export function detectClaudeLoginRequired(input: {
   parsed: Record<string, unknown> | null;
   stdout: string;
@@ -212,9 +228,11 @@ export function detectClaudeLoginRequired(input: {
   const resultText = asString(parsed?.result, "").trim();
 
   // The legacy login-prompt markers keep their broad scope. They match against
-  // every output line, which includes the parsed result, the parsed errors, and
-  // the raw stdout and stderr.
-  const promptLines = [resultText, ...extractClaudeErrorMessages(parsed ?? {}), input.stdout, input.stderr]
+  // the parsed result, the parsed errors, stderr and the CLI's own stdout lines.
+  // Stream events that carry model prose or tool results are skipped: a tool
+  // that printed "Unauthorized" during the run must not turn a later quota
+  // failure into a login prompt.
+  const promptLines = [resultText, ...extractClaudeErrorMessages(parsed ?? {}), stripModelAndToolEvents(input.stdout), input.stderr]
     .join("\n")
     .split(/\r?\n/)
     .map((line) => line.trim())
