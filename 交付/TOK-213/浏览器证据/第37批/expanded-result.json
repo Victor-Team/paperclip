@@ -1,0 +1,32 @@
+[
+  {
+    "name": "desktop-expanded",
+    "data": {
+      "scrollWidth": 1366,
+      "expanded": true,
+      "summary": "作者、分支、标签与文件筛选"
+    },
+    "errors": [],
+    "pass": true
+  },
+  {
+    "name": "narrow-expanded",
+    "data": {
+      "scrollWidth": 390,
+      "expanded": true,
+      "summary": "作者、分支、标签与文件筛选"
+    },
+    "errors": [],
+    "pass": true
+  },
+  {
+    "name": "desktop-en",
+    "data": {
+      "scrollWidth": 1366,
+      "expanded": false,
+      "summary": "Author, branch, label, and file filters"
+    },
+    "errors": [],
+    "pass": true
+  }
+]

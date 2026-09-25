@@ -1,0 +1,44 @@
+[
+  {
+    "name": "desktop",
+    "state": {
+      "viewport": 1366,
+      "scrollWidth": 1366,
+      "bodyWidth": 1366,
+      "labels": [
+        "何时让该智能体审查？",
+        "包含的作者",
+        "排除的作者",
+        "目标分支",
+        "排除的目标分支",
+        "必需标签",
+        "排除的标签",
+        "忽略的文件路径"
+      ],
+      "language": null
+    },
+    "errors": [],
+    "pass": true
+  },
+  {
+    "name": "narrow",
+    "state": {
+      "viewport": 390,
+      "scrollWidth": 390,
+      "bodyWidth": 390,
+      "labels": [
+        "何时让该智能体审查？",
+        "包含的作者",
+        "排除的作者",
+        "目标分支",
+        "排除的目标分支",
+        "必需标签",
+        "排除的标签",
+        "忽略的文件路径"
+      ],
+      "language": null
+    },
+    "errors": [],
+    "pass": true
+  }
+]
