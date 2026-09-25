@@ -1,0 +1,87 @@
+{
+  "endpointId": "ea1d2b09-042b-4f24-932c-0e3ce859c5fa",
+  "captures": [
+    {
+      "name": "desktop-zh-step2",
+      "viewport": {
+        "width": 1366,
+        "height": 768
+      },
+      "locale": "zh-CN",
+      "status": 200,
+      "lang": "zh-CN",
+      "codes": [
+        "/newbot",
+        "bot",
+        "/task@bot_username <request>"
+      ],
+      "hasChineseInstruction": true,
+      "hasEnglishInstruction": false,
+      "pageErrors": [],
+      "failed": [
+        {
+          "status": 404,
+          "url": "http://127.0.0.1:3200/api/assets/2b9bc29c-97ce-4ba6-b2eb-8619cc453517/content"
+        }
+      ],
+      "metrics": {
+        "scrollWidth": 1366,
+        "clientWidth": 1366,
+        "bodyWidth": 1366
+      }
+    },
+    {
+      "name": "narrow-zh-step2",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "locale": "zh-CN",
+      "status": 200,
+      "lang": "zh-CN",
+      "codes": [
+        "/newbot",
+        "bot",
+        "/task@bot_username <request>"
+      ],
+      "hasChineseInstruction": true,
+      "hasEnglishInstruction": false,
+      "pageErrors": [],
+      "failed": [],
+      "metrics": {
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "bodyWidth": 390
+      }
+    },
+    {
+      "name": "desktop-en-step2",
+      "viewport": {
+        "width": 1366,
+        "height": 768
+      },
+      "locale": "en",
+      "status": 200,
+      "lang": "en",
+      "codes": [
+        "/newbot",
+        "bot",
+        "/task@bot_username <request>"
+      ],
+      "hasChineseInstruction": false,
+      "hasEnglishInstruction": true,
+      "pageErrors": [],
+      "failed": [
+        {
+          "status": 404,
+          "url": "http://127.0.0.1:3200/api/assets/2b9bc29c-97ce-4ba6-b2eb-8619cc453517/content"
+        }
+      ],
+      "metrics": {
+        "scrollWidth": 1366,
+        "clientWidth": 1366,
+        "bodyWidth": 1366
+      }
+    }
+  ]
+}
