@@ -11959,7 +11959,8 @@
       "noresponsibleperson": "无负责人",
       "failedloadrunlog": "加载运行日志失败",
       "failedloadmorerunlog": "加载更多运行日志失败",
-      "navigationchannels": "频道"
+      "navigationchannels": "频道",
+      "last14days": "最近 14 天"
     }
   },
   "agentdetail": {

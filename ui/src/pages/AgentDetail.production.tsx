@@ -1794,19 +1794,19 @@ function AgentOverview({
 
       {/* Charts */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <ChartCard title={t("agentdetailproduction.general.runactivity")} subtitle="Last 14 days">
+        <ChartCard title={t("agentdetailproduction.general.runactivity")} subtitle={t("agentdetailproduction.general.last14days")}>
           <RunActivityChart runs={runs} />
         </ChartCard>
         {/* PAP-411: "Tasks by Priority" chart hidden behind SHOW_TASK_PRIORITY_UI. */}
         {SHOW_TASK_PRIORITY_UI && (
-          <ChartCard title={t("agentdetailproduction.general.tasksbypriority")} subtitle="Last 14 days">
+          <ChartCard title={t("agentdetailproduction.general.tasksbypriority")} subtitle={t("agentdetailproduction.general.last14days")}>
             <PriorityChart issues={assignedIssues} />
           </ChartCard>
         )}
-        <ChartCard title={t("agentdetailproduction.general.tasksbystatus")} subtitle="Last 14 days">
+        <ChartCard title={t("agentdetailproduction.general.tasksbystatus")} subtitle={t("agentdetailproduction.general.last14days")}>
           <IssueStatusChart issues={assignedIssues} />
         </ChartCard>
-        <ChartCard title={t("agentdetailproduction.general.successrate")} subtitle="Last 14 days">
+        <ChartCard title={t("agentdetailproduction.general.successrate")} subtitle={t("agentdetailproduction.general.last14days")}>
           <SuccessRateChart runs={runs} />
         </ChartCard>
       </div>

@@ -11959,7 +11959,8 @@
       "noresponsibleperson": "No responsible person",
       "failedloadrunlog": "Failed to load run log",
       "failedloadmorerunlog": "Failed to load more run log",
-      "navigationchannels": "Channels"
+      "navigationchannels": "Channels",
+      "last14days": "Last 14 days"
     }
   },
   "agentdetail": {
