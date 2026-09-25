@@ -12628,5 +12628,15 @@
       "managePermissions": "管理操作权限",
       "loadingSearch": "正在加载搜索权限…"
     }
+  },
+  "setupwizard": {
+    "general": {
+      "chooseagent": "选择智能体",
+      "connectprovider": "连接提供商",
+      "tryit": "试用",
+      "connectionsetupprogress": "连接设置进度",
+      "setupprogress": "设置进度",
+      "saveampexit": "保存并退出"
+    }
   }
 }

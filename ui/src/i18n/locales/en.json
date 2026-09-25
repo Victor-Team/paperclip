@@ -12628,5 +12628,15 @@
       "managePermissions": "Manage action permissions",
       "loadingSearch": "Loading search access…"
     }
+  },
+  "setupwizard": {
+    "general": {
+      "chooseagent": "Choose agent",
+      "connectprovider": "Connect provider",
+      "tryit": "Try it",
+      "connectionsetupprogress": "Connection setup progress",
+      "setupprogress": "Setup progress",
+      "saveampexit": "Save & exit"
+    }
   }
 }
