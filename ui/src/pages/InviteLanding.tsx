@@ -184,7 +184,7 @@ function AwaitingJoinApprovalPanel({
             <p className="text-sm text-zinc-200">{t("invitelanding.general.settingsmembers")}</p>
           </div>
           <p className="text-sm text-zinc-400">
-            {t("invitelanding.general.askthemtovisit")}<span className="text-zinc-200">{t("invitelanding.general.settingsmembers1")}</span> {t("invitelanding.general.toapproveyourrequest")}</p>
+            {t("invitelanding.general.askthemtovisit")}{" "}<span className="text-zinc-200">{t("invitelanding.general.settingsmembers1")}</span> {t("invitelanding.general.toapproveyourrequest")}</p>
           <p className="text-xs text-zinc-500">
             {t("invitelanding.general.refreshthispageafteryouvebeen")}</p>
         </div>
@@ -197,7 +197,7 @@ function AwaitingJoinApprovalPanel({
         ) : null}
         {onboardingTextUrl ? (
           <div className="mt-4 text-xs text-zinc-400">
-            {t("invitelanding.general.onboarding")}<span className="font-mono break-all">{onboardingTextUrl}</span>
+            {t("invitelanding.general.onboarding")}{" "}<span className="font-mono break-all">{onboardingTextUrl}</span>
           </div>
         ) : null}
       </div>
@@ -607,7 +607,7 @@ export function InviteLandingPage() {
 
             {sessionQuery.data ? (
               <div className="border border-emerald-500/40 bg-emerald-500/10 p-4 text-sm text-emerald-50">
-                {t("invitelanding.general.signedinas")}<span className="font-medium">{sessionLabel}</span>.
+                {t("invitelanding.general.signedinas")}{" "}<span className="font-medium">{sessionLabel}</span>.
               </div>
             ) : null}
           </section>
