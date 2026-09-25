@@ -1,0 +1,34 @@
+[
+  {
+    "viewport": {
+      "name": "桌面",
+      "width": 1366,
+      "height": 768
+    },
+    "url": "http://127.0.0.1:3200/TOK/apps/advanced/smoke-lab?lng=zh-CN",
+    "lang": "zh-CN",
+    "serviceLabel": true,
+    "serviceDetail": true,
+    "englishServiceDetail": false,
+    "scrollWidth": 1366,
+    "clientWidth": 1366,
+    "errors": [
+      "404 http://127.0.0.1:3200/api/assets/2b9bc29c-97ce-4ba6-b2eb-8619cc453517/content"
+    ]
+  },
+  {
+    "viewport": {
+      "name": "窄屏",
+      "width": 390,
+      "height": 844
+    },
+    "url": "http://127.0.0.1:3200/TOK/apps/advanced/smoke-lab?lng=zh-CN",
+    "lang": "zh-CN",
+    "serviceLabel": true,
+    "serviceDetail": true,
+    "englishServiceDetail": false,
+    "scrollWidth": 390,
+    "clientWidth": 390,
+    "errors": []
+  }
+]
