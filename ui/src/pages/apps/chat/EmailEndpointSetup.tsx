@@ -506,8 +506,12 @@ export function EmailEndpointSetup() {
               {t("emailendpointsetup.general.readytostartreceivingemail")}</h2>
             <p className="text-lg font-semibold">{address}</p>
             <p className="text-sm">
-              {t("emailendpointsetup.general.assignedto")} {chosen?.name} ·{" "}
-              {mode === "websocket" ? t("emailendpointsetup.general.liveconnection") : t("emailendpointsetup.general.signedwebhook")}
+              {t("emailendpointsetup.general.assignedconnectionmode", {
+                agentName: chosen?.name ?? "",
+                connectionMode: mode === "websocket"
+                  ? t("emailendpointsetup.general.liveconnection")
+                  : t("emailendpointsetup.general.signedwebhook"),
+              })}
             </p>
             <p className="text-sm text-muted-foreground">
               {t("emailendpointsetup.general.newconversationscreatetasksrepliesstayin")}</p>
@@ -518,7 +522,9 @@ export function EmailEndpointSetup() {
         <section className="space-y-5 rounded-xl border border-border p-6">
           <p className="flex items-center gap-2 text-sm">
             <Check className="size-4" />
-            {t("emailendpointsetup.general.receivingemailfor")} {chosen?.name}
+            {t("emailendpointsetup.general.receivingemailforagent", {
+              agentName: chosen?.name ?? "",
+            })}
           </p>
           <p className="text-lg font-semibold">{setup.data?.address}</p>
           <EmailSafetyNotice />
@@ -572,7 +578,11 @@ export function EmailEndpointSetup() {
       <Dialog open={trustOpen} onOpenChange={setTrustOpen}>
         <DialogContent className="max-h-screen overflow-y-auto sm:max-w-2xl">
           <DialogHeader>
-            <DialogTitle>{t("emailendpointsetup.general.trustsettings")} {chosen?.name}</DialogTitle>
+            <DialogTitle>
+              {t("emailendpointsetup.general.trustsettingsforagent", {
+                agentName: chosen?.name ?? "",
+              })}
+            </DialogTitle>
             <DialogDescription>
               {t("emailendpointsetup.general.changesapplytoallofthisagent")}</DialogDescription>
           </DialogHeader>
@@ -707,7 +717,7 @@ export function EmailEndpointSettings({
   endpointId: string;
   companyId: string;
 }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const cache = useQueryClient();
   const query = useQuery({
     queryKey: ["email-inboxes", companyId],
@@ -760,7 +770,11 @@ export function EmailEndpointSettings({
         {inbox.receiveMode === "websocket" ? t("emailendpointsetup.general.liveconnection6") : t("emailendpointsetup.general.webhook")}
       </p>
       <p className="text-sm text-muted-foreground">
-        {t("emailendpointsetup.general.lastmailcheck")} {inbox.lastSyncAt ? new Date(inbox.lastSyncAt).toLocaleString() : t("emailendpointsetup.general.notcheckedyet")}
+        {t("emailendpointsetup.general.lastmailcheckvalue", {
+          value: inbox.lastSyncAt
+            ? new Date(inbox.lastSyncAt).toLocaleString(i18n.language)
+            : t("emailendpointsetup.general.notcheckedyet"),
+        })}
       </p>
       <p className="text-sm">
         {t("emailendpointsetup.general.eachemailconversationisatasktask")}</p>

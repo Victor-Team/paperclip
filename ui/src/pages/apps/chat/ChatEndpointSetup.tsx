@@ -1020,17 +1020,25 @@ settings:
         </div>
         <ol className="list-decimal space-y-2 pl-5 text-sm">
           <li>
-            {t("chatendpointsetup.telegram.openbotfather")} <code>/newbot</code>.
+            <Trans
+              i18nKey="chatendpointsetup.telegram.openbotfatherinstruction"
+              components={{ code: <code /> }}
+            />
           </li>
           <li>{t("chatendpointsetup.telegram.enterdisplayname")}</li>
           <li>
-            {t("chatendpointsetup.telegram.chooseusername")} <code>bot</code>.
+            <Trans
+              i18nKey="chatendpointsetup.telegram.chooseusernameinstruction"
+              components={{ code: <code /> }}
+            />
           </li>
         </ol>
         <p className="rounded-md border border-border bg-muted/40 p-3 text-sm text-muted-foreground">
-          {t("chatendpointsetup.telegram.groupnoticebefore")} {" "}
-          <code>/task@bot_username &lt;request&gt;</code>
-          {t("chatendpointsetup.telegram.groupnoticeafter")}
+          <Trans
+            i18nKey="chatendpointsetup.telegram.groupnotice"
+            values={{ requestPlaceholder: "<request>" }}
+            components={{ code: <code /> }}
+          />
         </p>
         <Button
           variant="outline"
