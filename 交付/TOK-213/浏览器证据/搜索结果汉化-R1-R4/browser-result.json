@@ -1,0 +1,102 @@
+[
+  {
+    "name": "desktop-zh",
+    "status": 200,
+    "url": "http://127.0.0.1:3200/ANC/search?lng=zh-CN&q=test&status=todo",
+    "filterBar": [
+      "状态: 待办1负责人项目标签更新时间排序：相关性"
+    ],
+    "chips": [
+      "状态：待办清除全部"
+    ],
+    "results": [
+      "待办ANC-15Localization fixture test描述Search localization fixture description test1分钟前1分钟前"
+    ],
+    "sourceLabels": [
+      "描述"
+    ],
+    "scope": [],
+    "expanded": "排序方式相关性最近更新最新创建优先级",
+    "overflow": false,
+    "errors": [],
+    "passed": true
+  },
+  {
+    "name": "narrow-zh",
+    "status": 200,
+    "url": "http://127.0.0.1:3200/ANC/search?lng=zh-CN&q=test&status=todo",
+    "filterBar": [],
+    "chips": [
+      "状态：待办清除全部"
+    ],
+    "results": [
+      "待办ANC-15Localization fixture test描述Search localization fixture description test2分钟前2分钟前"
+    ],
+    "sourceLabels": [
+      "描述"
+    ],
+    "scope": [
+      "全部 (1)",
+      "任务 (1)",
+      "评论 (0)",
+      "文档 (0)",
+      "产物 (0)",
+      "智能体 —",
+      "项目 —"
+    ],
+    "expanded": "筛选条件清除全部状态待办列表待办1进行中审查中已完成已阻塞已取消负责人我未分配更新时间最近 24 小时1最近 7 天1最近 30 天1最近 90 天1排序方式相关性最近更新最新创建优先级取消显示 1 条结果关闭",
+    "overflow": false,
+    "errors": [],
+    "passed": true
+  },
+  {
+    "name": "desktop-en",
+    "status": 200,
+    "url": "http://127.0.0.1:3200/ANC/search?lng=en&q=test&status=todo",
+    "filterBar": [
+      "Status: Todo1AssigneeProjectLabelUpdatedSort:Relevance"
+    ],
+    "chips": [
+      "Status: TodoClear all"
+    ],
+    "results": [
+      "TodoANC-15Localization fixture testDescriptionSearch localization fixture description test2m2m"
+    ],
+    "sourceLabels": [
+      "Description"
+    ],
+    "scope": [],
+    "expanded": "Sort byRelevanceRecently updatedNewest createdPriority",
+    "overflow": false,
+    "errors": [],
+    "passed": true
+  },
+  {
+    "name": "narrow-en",
+    "status": 200,
+    "url": "http://127.0.0.1:3200/ANC/search?lng=en&q=test&status=todo",
+    "filterBar": [],
+    "chips": [
+      "Status: TodoClear all"
+    ],
+    "results": [
+      "TodoANC-15Localization fixture testDescriptionSearch localization fixture description test2m2m"
+    ],
+    "sourceLabels": [
+      "Description"
+    ],
+    "scope": [
+      "All (1)",
+      "Tasks (1)",
+      "Comments (0)",
+      "Documents (0)",
+      "Artifacts (0)",
+      "Agents —",
+      "Projects —"
+    ],
+    "expanded": "FiltersClear allStatusBacklogTodo1In ProgressIn ReviewDoneBlockedCancelledAssigneeMeUnassignedUpdatedLast 24 hours1Last 7 days1Last 30 days1Last 90 days1Sort byRelevanceRecently updatedNewest createdPriorityCancelShow 1 resultsClose",
+    "overflow": false,
+    "errors": [],
+    "passed": true
+  }
+]
