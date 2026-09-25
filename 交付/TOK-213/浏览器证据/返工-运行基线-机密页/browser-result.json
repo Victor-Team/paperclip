@@ -1,0 +1,55 @@
+{
+  "sourceSha": "52747de38eb47a15cc41630130d2875c6400ae20",
+  "entry": "pnpm paperclipai run --data-dir /home/yuanjian/.paperclip-anc --instance anc",
+  "baseUrl": "http://127.0.0.1:3200",
+  "states": [
+    {
+      "file": "1366-default.png",
+      "url": "http://127.0.0.1:3200/ANC/company/settings/secrets?lng=zh-CN",
+      "viewport": {
+        "width": 1366,
+        "height": 768
+      },
+      "view": "机密默认态",
+      "modeLabels": "文件夹\n平铺",
+      "overflowPx": 0,
+      "errors": []
+    },
+    {
+      "file": "1366-my-secrets.png",
+      "url": "http://127.0.0.1:3200/ANC/company/settings/secrets?lng=zh-CN",
+      "viewport": {
+        "width": 1366,
+        "height": 768
+      },
+      "view": "我的机密空态",
+      "bodyExcerpt": "跳转到主要内容\n返回应用\n常规\n个人资料\n成员\n机密\n环境\n访问权限\n导出\n导入\n实验性功能\n插件\n适配器\nBO\nBoard\n机密\n机密\n机密\n我的机密\n提供商保险库\n提案\n\n这些凭证仅由您提供。每个值仅归您所有——当您是某次运行的负责用户时使用，且绝不会向任何人（包括管理员）重新显示。\n\n此公司尚未定义用户机密。管理员可指定每位成员需要提供的凭据。\n\nCommand Palette\n\nSearch for a command to run...",
+      "overflowPx": 0,
+      "errors": []
+    },
+    {
+      "file": "390-default.png",
+      "url": "http://127.0.0.1:3200/ANC/company/settings/secrets?lng=zh-CN",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "view": "机密默认态",
+      "modeLabels": "文件夹\n平铺",
+      "overflowPx": 0,
+      "errors": []
+    },
+    {
+      "file": "390-my-secrets.png",
+      "url": "http://127.0.0.1:3200/ANC/company/settings/secrets?lng=zh-CN",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "view": "我的机密空态",
+      "bodyExcerpt": "跳转到主要内容\n返回应用\n常规\n个人资料\n成员\n机密\n环境\n访问权限\n导出\n导入\n实验性功能\n插件\n适配器\nBO\nBoard\n机密\n常规\n导出\n导入\n成员\n机密\n个人资料\n环境\n访问权限\n实验性功能\n插件\n适配器\n机密\n机密\n我的机密\n提供商保险库\nproposals\n\n这些凭证仅由您提供。每个值仅归您所有——当您是某次运行的负责用户时使用，且绝不会向任何人（包括管理员）重新显示。\n\n此公司尚未定义用户机密。管理员可指定每位成员需要提供的凭据。\n\n首页\n任务\n新建任务\n智能体\n收件箱\nCommand Palette\n\nSearch for a command to run...",
+      "overflowPx": 0,
+      "errors": []
+    }
+  ]
+}
