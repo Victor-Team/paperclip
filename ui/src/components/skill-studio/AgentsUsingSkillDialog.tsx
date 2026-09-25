@@ -58,7 +58,7 @@ export function AgentsUsingSkillBadge({
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const count = skill.usedByAgents.length;
-  const label = `${count} ${count === 1 ? "agent uses" : "agents use"} this skill`;
+  const label = t(count === 1 ? "agentsusingskilldialog.general.agentUsesSkillOne" : "agentsusingskilldialog.general.agentUsesSkillOther", { count });
 
   return (
     <>
@@ -376,7 +376,7 @@ function AgentRow({
         )}
         {behindLatest > 0 ? (
           <span className="text-(length:--text-nano) text-amber-500">
-            {behindLatest} {t("agentsusingskilldialog.general.version")}{behindLatest === 1 ? "" : t("agentsusingskilldialog.general.s")} {t("agentsusingskilldialog.general.behindlatest")}</span>
+            {t(behindLatest === 1 ? "agentsusingskilldialog.general.versionsBehindOne" : "agentsusingskilldialog.general.versionsBehindOther", { count: behindLatest })}</span>
         ) : null}
       </div>
 

@@ -16,7 +16,7 @@ export function FinanceBillerCard({ row }: FinanceBillerCardProps) {
           <div>
             <CardTitle className="text-base">{providerDisplayName(row.biller)}</CardTitle>
             <CardDescription className="mt-1 text-xs">
-              {row.eventCount} {t("financebillercard.general.event")}{row.eventCount === 1 ? "" : t("financebillercard.general.s")} {t("financebillercard.general.across")} {row.kindCount} {t("financebillercard.general.kind")}{row.kindCount === 1 ? "" : t("financebillercard.general.s1")}
+              {t(`financebillercard.general.eventsAcrossKinds${row.eventCount === 1 ? "OneEvent" : "OtherEvents"}${row.kindCount === 1 ? "OneKind" : "OtherKinds"}`, { eventCount: row.eventCount, kindCount: row.kindCount })}
             </CardDescription>
           </div>
           <div className="text-right">

@@ -486,7 +486,7 @@ export function TriggersSection() {
         <p className="text-sm font-medium text-muted-foreground">
           {routine.triggers.length === 0
             ? t("editablesectionsproduction.general.notriggersyet")
-            : `${routine.triggers.length} trigger${routine.triggers.length === 1 ? "" : t("editablesectionsproduction.general.s")}`}
+            : t(routine.triggers.length === 1 ? "editablesectionsproduction.general.triggerCountOne" : "editablesectionsproduction.general.triggerCountOther", { count: routine.triggers.length })}
         </p>
         <Button
           size="sm"

@@ -342,7 +342,7 @@ function RiskBanner({ team }: { team: CatalogTeam }) {
     >
       <div className="flex items-center gap-2 text-sm font-medium">
         <AlertTriangle className="h-4 w-4" />
-        {t("teamcatalog.general.thisteamreferences")} {unsafe.length} {t("teamcatalog.general.externalsource")}        {unsafe.length === 1 ? "" : t("teamcatalog.general.s")}
+        {t(unsafe.length === 1 ? "teamcatalog.general.externalSourceWarningOne" : "teamcatalog.general.externalSourceWarningOther", { count: unsafe.length })}
       </div>
       <ul className="mt-1.5 space-y-0.5 text-xs">
         {unsafe.map((s) => (
@@ -1559,7 +1559,7 @@ export function StepSourcePolicy({
   return (
     <div className="space-y-4">
       <div role="alert" className="rounded-md border border-amber-500/30 bg-amber-500/10 px-3 py-2.5 text-sm text-amber-700 dark:text-amber-300">
-        {t("teamcatalog.general.thisteamreferences4")} {external.length} {t("teamcatalog.general.externalsource5")}{external.length === 1 ? "" : t("teamcatalog.general.s6")}{t("teamcatalog.general.revieweachoneanddecidewhatto")}</div>
+        {t(external.length === 1 ? "teamcatalog.general.externalSourceReviewOne" : "teamcatalog.general.externalSourceReviewOther", { count: external.length })}</div>
 
       <ul className="divide-y divide-border rounded-md border border-border">
         {external.map((source) => {

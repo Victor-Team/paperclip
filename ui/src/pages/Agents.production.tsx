@@ -527,7 +527,9 @@ export function Agents() {
       </div>
 
       {filtered.length > 0 && (
-        <p className="text-xs text-muted-foreground">{filtered.length} {t("agentsproduction.general.agent")}{filtered.length !== 1 ? t("agentsproduction.general.s") : ""}</p>
+        <p className="text-xs text-muted-foreground">
+          {t(filtered.length === 1 ? "agentsproduction.general.agentCountOne" : "agentsproduction.general.agentCountOther", { count: filtered.length })}
+        </p>
       )}
 
       {error && <p className="text-sm text-destructive">{error.message}</p>}

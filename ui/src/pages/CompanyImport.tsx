@@ -458,7 +458,7 @@ function ConflictResolutionList({
           <h3 className="text-sm font-medium">
             {t("companyimport.general.renames")}</h3>
           <span className="text-xs text-muted-foreground">
-            {conflicts.length} {t("companyimport.general.item")}{conflicts.length === 1 ? "" : t("companyimport.general.s")}
+            {t(conflicts.length === 1 ? "companyimport.general.itemCountOne" : "companyimport.general.itemCountOther", { count: conflicts.length })}
           </span>
         </div>
         <div className="divide-y divide-border">
@@ -606,7 +606,7 @@ function AdapterPickerList({
         <div className="flex items-center gap-2 border-b border-border px-4 py-2.5">
           <h3 className="text-sm font-medium">{t("companyimport.general.adapters")}</h3>
           <span className="text-xs text-muted-foreground">
-            {agents.length} {t("companyimport.general.agent")}{agents.length === 1 ? "" : t("companyimport.general.s1")}
+            {t(agents.length === 1 ? "companyimport.general.agentCountOne" : "companyimport.general.agentCountOther", { count: agents.length })}
           </span>
         </div>
         <div className="divide-y divide-border">
@@ -1706,10 +1706,13 @@ export function CompanyImport() {
         <div>
           <h2 className="text-base font-semibold">{t("companyimport.general.importcomplete")}</h2>
           <p className="text-xs text-muted-foreground mt-1">
-            {result.company.name}: {result.agents.length} {t("companyimport.general.agent3")}{result.agents.length === 1 ? "" : t("companyimport.general.s4")},{" "}
-            {skillResults.length} {t("companyimport.general.skill")}{skillResults.length === 1 ? "" : t("companyimport.general.s5")},{" "}
-            {result.projects.length} {t("companyimport.general.project")}{result.projects.length === 1 ? "" : t("companyimport.general.s6")}{t("companyimport.general.and")}{" "}
-            {result.routines.length} {t("companyimport.general.routine")}{result.routines.length === 1 ? "" : t("companyimport.general.s7")} {t("companyimport.general.processed")}</p>
+            {t("companyimport.general.importSummary", {
+              companyName: result.company.name,
+              agentCount: result.agents.length,
+              skillCount: skillResults.length,
+              projectCount: result.projects.length,
+              routineCount: result.routines.length,
+            })}</p>
         </div>
 
         {skillResults.length > 0 && (
@@ -1893,7 +1896,7 @@ export function CompanyImport() {
               {localPackage && (
                 <span className="text-xs text-muted-foreground">
                   {localPackage.name} {t("companyimport.general.with")}{" "}
-                  {Object.keys(localPackage.files).length} {t("companyimport.general.file")}                  {Object.keys(localPackage.files).length === 1 ? "" : t("companyimport.general.s8")}
+                  {t(Object.keys(localPackage.files).length === 1 ? "companyimport.general.fileCountOne" : "companyimport.general.fileCountOther", { count: Object.keys(localPackage.files).length })}
                   {localCompressedBytes !== null ? ` (${formatMegabytes(localCompressedBytes)} zip)` : ""}
                 </span>
               )}

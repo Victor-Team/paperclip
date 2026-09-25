@@ -4138,7 +4138,9 @@
       "addatrigger": "Add a trigger",
       "newwebhookurl": "New webhook URL",
       "newwebhooksecret": "New webhook secret",
-      "done": "Done"
+      "done": "Done",
+      "triggerCountOne": "{{count}} trigger",
+      "triggerCountOther": "{{count}} triggers"
     }
   },
   "editablesections": {
@@ -4301,7 +4303,11 @@
       "remove": "Remove",
       "cancel": "Cancel",
       "addagent": "Add agent…",
-      "addagent1": "Add agent…"
+      "addagent1": "Add agent…",
+      "agentUsesSkillOne": "{{count}} agent uses this skill",
+      "agentUsesSkillOther": "{{count}} agents use this skill",
+      "versionsBehindOne": "{{count}} version behind latest",
+      "versionsBehindOther": "{{count}} versions behind latest"
     }
   },
   "forkskilldialog": {
@@ -5708,7 +5714,13 @@
       "retrythepreviewyoudonotneed": "Retry the preview. You do not need to reload this page.",
       "retrypreview1": "Retry preview",
       "noexportpreviewisloaded": "No export preview is loaded.",
-      "loadpreview": "Load preview"
+      "loadpreview": "Load preview",
+      "exportingFilesOne": "Exporting {{selectedCount}} of {{totalFiles}} file",
+      "exportingFilesOther": "Exporting {{selectedCount}} of {{totalFiles}} files",
+      "warningCountOne": "{{count}} warning",
+      "warningCountOther": "{{count}} warnings",
+      "exportFilesOne": "Export {{count}} file",
+      "exportFilesOther": "Export {{count}} files"
     }
   },
   "companyimport": {
@@ -5800,7 +5812,14 @@
       "repotreepathorbloburlto": "Repo tree path or blob URL to COMPANY.md (e.g. github.com/owner/repo/tree/main/company).",
       "importintothisorganizationorcreatea": "Import into this organization or create a new one.",
       "optionaloverrideleaveblanktousethe": "Optional override. Leave blank to use the package name.",
-      "boardimportscanrenameskiporreplace": "Board imports can rename, skip, or replace matching organization content."
+      "boardimportscanrenameskiporreplace": "Board imports can rename, skip, or replace matching organization content.",
+      "itemCountOne": "{{count}} item",
+      "itemCountOther": "{{count}} items",
+      "agentCountOne": "{{count}} agent",
+      "agentCountOther": "{{count}} agents",
+      "importSummary": "Processed for {{companyName}}: agents {{agentCount}}, skills {{skillCount}}, projects {{projectCount}}, and routines {{routineCount}}.",
+      "fileCountOne": "{{count}} file",
+      "fileCountOther": "{{count}} files"
     }
   },
   "companysettingspluginpage": {
@@ -6643,7 +6662,11 @@
       "requiredforlocalpathagentpackagesources": "Required for local_path / agent_package sources. Development use only.",
       "selectanorganizationtobrowsetheteam": "Select an organization to browse the team catalog.",
       "noteamcatalogconfigured": "No team catalog configured.",
-      "noteamsmatchthisfilter": "No teams match this filter."
+      "noteamsmatchthisfilter": "No teams match this filter.",
+      "externalSourceWarningOne": "This team references {{count}} external source",
+      "externalSourceWarningOther": "This team references {{count}} external sources",
+      "externalSourceReviewOne": "This team references {{count}} external source. Review each one and decide what to do.",
+      "externalSourceReviewOther": "This team references {{count}} external sources. Review each one and decide what to do."
     }
   },
   "timeline": {
@@ -6670,7 +6693,9 @@
       "selectanorganizationtoviewitswork": "Select an organization to view its work timeline.",
       "couldntloadthetimelinetheaggregation": "Couldn't load the timeline. The aggregation endpoint may be unavailable.",
       "noprojectactivityinthiswindow": "No project activity in this window.",
-      "noactivityinthiswindow": "No activity in this window."
+      "noactivityinthiswindow": "No activity in this window.",
+      "runCountOne": "{{count}} run",
+      "runCountOther": "{{count}} runs"
     }
   },
   "userprofile": {
@@ -8128,6 +8153,15 @@
   },
   "billerspendcard": {
     "general": {
+      "providerCountOne": "{{count}} provider",
+      "providerCountOther": "{{count}} providers",
+      "modelCountOne": "{{count}} model",
+      "modelCountOther": "{{count}} models",
+      "allocationPercent": "{{percent}}% of allocation",
+      "meteredRunCountOne": "{{count}} metered run",
+      "meteredRunCountOther": "{{count}} metered runs",
+      "subscriptionRunCountOne": "{{count}} subscription run",
+      "subscriptionRunCountOther": "{{count}} subscription runs",
       "in": "in",
       "out": "out",
       "provider": "provider",
@@ -8596,7 +8630,9 @@
       "copylink": "Copy link",
       "comment2": "comment",
       "s": "s",
-      "agent": "· agent"
+      "agent": "· agent",
+      "commentCountOne": "{{count}} comment",
+      "commentCountOther": "{{count}} comments"
     }
   },
   "documentannotationpopover": {
@@ -8806,7 +8842,11 @@
       "net": "net",
       "debits": "debits",
       "credits": "credits",
-      "estimated": "estimated"
+      "estimated": "estimated",
+      "eventsAcrossKindsOneEventOneKind": "{{eventCount}} event across {{kindCount}} kind",
+      "eventsAcrossKindsOneEventOtherKinds": "{{eventCount}} event across {{kindCount}} kinds",
+      "eventsAcrossKindsOtherEventsOneKind": "{{eventCount}} events across {{kindCount}} kind",
+      "eventsAcrossKindsOtherEventsOtherKinds": "{{eventCount}} events across {{kindCount}} kinds"
     }
   },
   "financekindcard": {
@@ -9569,7 +9609,9 @@
       "resolvedby": "Resolved by",
       "agent": "Agent",
       "resolvedbyanagentundertheorganization": "Resolved by an agent under the organization's interaction governance policy — audit-distinct from a human board resolution.",
-      "deferred": "deferred"
+      "deferred": "deferred",
+      "draftVerdictsReadyOne": "{{count}} draft verdict ready to apply",
+      "draftVerdictsReadyOther": "{{count}} draft verdicts ready to apply"
     }
   },
   "issueworkspacecard": {
@@ -10681,7 +10723,8 @@
       "tok4": "tok",
       "subscriptionquota": "Subscription quota",
       "used": "% used",
-      "resets": "resets"
+      "resets": "resets",
+      "allocationPercent": "{{percent}}% of allocation"
     }
   },
   "reportstopicker": {
@@ -11041,7 +11084,13 @@
       "frames10": "frames ·",
       "expires": "· expires",
       "downloadexacttrace": "Download exact trace",
-      "deletetrace": "Delete trace"
+      "deletetrace": "Delete trace",
+      "rawFrameCountOne": "{{count}} raw frame",
+      "rawFrameCountOther": "{{count}} raw frames",
+      "mappingStageCountOne": "{{count}} mapping stage",
+      "mappingStageCountOther": "{{count}} mapping stages",
+      "prpEventCountOne": "{{count}} PRP event",
+      "prpEventCountOther": "{{count}} PRP events"
     }
   },
   "runtimetestcard": {
@@ -11333,7 +11382,10 @@
       "eachcommandcanbecontrolledindependently": "Each command can be controlled independently.",
       "services": "Services",
       "jobs": "Jobs",
-      "untrackedservices": "Untracked services"
+      "untrackedservices": "Untracked services",
+      "servicesRunning": "{{count}} services running",
+      "jobsAvailableOne": "{{count}} job available to run on demand.",
+      "jobsAvailableOther": "{{count}} jobs available to run on demand."
     }
   },
   "workspaceservicecontrolbar": {
@@ -12395,6 +12447,8 @@
   },
   "agentsproduction": {
     "general": {
+      "agentCountOne": "{{count}} agent",
+      "agentCountOther": "{{count}} agents",
       "setup": "Set up",
       "invalidreportingchain": "Invalid reporting chain",
       "viewmode": "View mode",
@@ -12495,6 +12549,8 @@
   },
   "companyskillsproduction": {
     "general": {
+      "refreshProjectSkills": "Refresh {{projectName}} project skills",
+      "refreshSkillsFromProject": "Refresh skills from {{projectName}}",
       "source": "Source",
       "type": "Type",
       "all": "All",
@@ -12784,11 +12840,19 @@
       "required": " · required",
       "skillsnotsupported": " · skills not supported",
       "emptyagents": "No agents in this company support skills yet.",
-      "selecttenant": "Select a company to manage skills."
+      "selecttenant": "Select a company to manage skills.",
+      "selectSkill": "Select {{name}}",
+      "fromSource": "From {{source}}",
+      "moreActionsForSkill": "More actions for {{name}}",
+      "useColor": "Use {{color}}",
+      "removeTag": "Remove tag {{tag}}",
+      "installedFromSource": "Installed from {{source}}"
     }
   },
   "companyskills": {
     "general": {
+      "refreshProjectSkills": "Refresh {{projectName}} project skills",
+      "refreshSkillsFromProject": "Refresh skills from {{projectName}}",
       "source": "Source",
       "type": "Type",
       "all": "All",
@@ -13084,7 +13148,13 @@
       "required": " · required",
       "skillsnotsupported": " · skills not supported",
       "emptyagents": "No agents in this organization support skills yet.",
-      "selecttenant": "Select an organization to manage skills."
+      "selecttenant": "Select an organization to manage skills.",
+      "selectSkill": "Select {{name}}",
+      "fromSource": "From {{source}}",
+      "moreActionsForSkill": "More actions for {{name}}",
+      "useColor": "Use {{color}}",
+      "removeTag": "Remove tag {{tag}}",
+      "installedFromSource": "Installed from {{source}}"
     }
   },
   "costsproduction": {
@@ -16507,5 +16577,13 @@
       "selectanorganizationtovieworgchart": "Select an organization to view org chart.",
       "noagentsintheorganizationcreateagents": "No agents in the organization. Create agents to build your org chart."
     }
+  },
+  "billingTypes": {
+    "metered_api": "Metered API",
+    "subscription_included": "Subscription",
+    "subscription_overage": "Subscription overage",
+    "credits": "Credits",
+    "fixed": "Fixed",
+    "unknown": "Unknown"
   }
 }

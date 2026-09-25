@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import type { CostByBiller, CostByProviderModel } from "@paperclipai/shared";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { QuotaBar } from "./QuotaBar";
-import { billingTypeDisplayName, formatCents, formatTokens, providerDisplayName } from "@/lib/utils";
+import { formatCents, formatTokens, providerDisplayName } from "@/lib/utils";
 import { useTranslation } from "@/i18n";
 
 interface BillerSpendCardProps {
@@ -68,9 +68,9 @@ export function BillerSpendCard({
               {" · "}
               <span className="font-mono">{formatTokens(row.outputTokens)}</span> {t("billerspendcard.general.out")}
               {" · "}
-              {row.providerCount} {t("billerspendcard.general.provider")}{row.providerCount === 1 ? "" : t("billerspendcard.general.s")}
+              {t(row.providerCount === 1 ? "billerspendcard.general.providerCountOne" : "billerspendcard.general.providerCountOther", { count: row.providerCount })}
               {" · "}
-              {row.modelCount} {t("billerspendcard.general.model")}{row.modelCount === 1 ? "" : t("billerspendcard.general.s1")}
+              {t(row.modelCount === 1 ? "billerspendcard.general.modelCountOne" : "billerspendcard.general.modelCountOther", { count: row.modelCount })}
             </CardDescription>
           </div>
           <span className="text-xl font-bold tabular-nums shrink-0">
@@ -85,16 +85,14 @@ export function BillerSpendCard({
             label={t("billerspendcard.general.periodspend")}
             percentUsed={budgetPct}
             leftLabel={formatCents(row.costCents)}
-            rightLabel={`${Math.round(budgetPct)}% of allocation`}
+            rightLabel={t("billerspendcard.general.allocationPercent", { percent: Math.round(budgetPct) })}
           />
         )}
 
         <div className="text-xs text-muted-foreground">
-          {row.apiRunCount > 0 ? `${row.apiRunCount} metered run${row.apiRunCount === 1 ? "" : t("billerspendcard.general.s2")}` : t("billerspendcard.general.0meteredruns")}
+          {t(row.apiRunCount === 1 ? "billerspendcard.general.meteredRunCountOne" : "billerspendcard.general.meteredRunCountOther", { count: row.apiRunCount })}
           {" · "}
-          {row.subscriptionRunCount > 0
-            ? `${row.subscriptionRunCount} subscription run${row.subscriptionRunCount === 1 ? "" : t("billerspendcard.general.s3")}`
-            : t("billerspendcard.general.0subscriptionruns")}
+          {t(row.subscriptionRunCount === 1 ? "billerspendcard.general.subscriptionRunCountOne" : "billerspendcard.general.subscriptionRunCountOther", { count: row.subscriptionRunCount })}
           {" · "}
           {formatCents(weekSpendCents)} {t("billerspendcard.general.thisweek")}</div>
 
@@ -107,7 +105,7 @@ export function BillerSpendCard({
               <div className="space-y-1.5">
                 {billingTypeBreakdown.map(([billingType, costCents]) => (
                   <div key={billingType} className="flex items-center justify-between gap-2 text-xs">
-                    <span className="text-muted-foreground">{billingTypeDisplayName(billingType as any)}</span>
+                    <span className="text-muted-foreground">{t(`billingTypes.${billingType}`)}</span>
                     <span className="font-medium tabular-nums">{formatCents(costCents)}</span>
                   </div>
                 ))}

@@ -3445,7 +3445,7 @@ function RequestItemVerdictsCard({
         <div className="flex flex-wrap items-center justify-between gap-2 border-t border-border/60 pt-3">
           <div className="text-xs text-muted-foreground">
             {draftCount > 0
-              ? `${draftCount} draft verdict${draftCount === 1 ? "" : t("issuethreadinteractioncard.general.s")} ready to apply`
+              ? t(draftCount === 1 ? "issuethreadinteractioncard.general.draftVerdictsReadyOne" : "issuethreadinteractioncard.general.draftVerdictsReadyOther", { count: draftCount })
               : t("issuethreadinteractioncard.general.markverdictsthenapplytheminone")}
           </div>
           <div className="flex flex-wrap items-center gap-2">

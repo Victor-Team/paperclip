@@ -527,7 +527,7 @@ export function Timeline({ embedded = false }: { embedded?: boolean } = {}) {
             </Card>
             <div className="flex flex-wrap items-center justify-between gap-3">
               <p className="text-xs text-muted-foreground">
-                {data.spans.length} {t("timeline.general.run")}{data.spans.length === 1 ? "" : t("timeline.general.s")} ·{" "}
+                {t(data.spans.length === 1 ? "timeline.general.runCountOne" : "timeline.general.runCountOther", { count: data.spans.length })} ·{" "}
                 {new Date(data.window.from).toLocaleString()} {t("timeline.general.to4")} {new Date(data.window.to).toLocaleString()}
                 {data.window.capped ? t("timeline.general.windowcapped") : ""}
               </p>

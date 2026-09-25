@@ -580,11 +580,11 @@ export function WorkspaceRuntimeControls({
               )}
             >
               <Activity className="h-3.5 w-3.5" />
-              {runningCount > 0 ? `${runningCount} services running` : t("workspaceruntimecontrols.general.noservicesrunning")}
+              {runningCount > 0 ? t("workspaceruntimecontrols.general.servicesRunning", { count: runningCount }) : t("workspaceruntimecontrols.general.noservicesrunning")}
             </Badge>
             <span className="text-xs text-muted-foreground">
               {resolvedSections.jobs.length > 0
-                ? `${resolvedSections.jobs.length} job${resolvedSections.jobs.length === 1 ? "" : t("workspaceruntimecontrols.general.s")} available to run on demand.`
+                ? t(resolvedSections.jobs.length === 1 ? "workspaceruntimecontrols.general.jobsAvailableOne" : "workspaceruntimecontrols.general.jobsAvailableOther", { count: resolvedSections.jobs.length })
                 : t("workspaceruntimecontrols.general.eachcommandcanbecontrolledindependently")}
             </span>
           </div>

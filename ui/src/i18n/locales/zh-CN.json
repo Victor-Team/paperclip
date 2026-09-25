@@ -4138,7 +4138,9 @@
       "addatrigger": "添加触发器",
       "newwebhookurl": "新的 Webhook URL",
       "newwebhooksecret": "新的 Webhook 密钥",
-      "done": "完成"
+      "done": "完成",
+      "triggerCountOne": "{{count}} 个触发器",
+      "triggerCountOther": "{{count}} 个触发器"
     }
   },
   "editablesections": {
@@ -4301,7 +4303,11 @@
       "remove": "移除",
       "cancel": "取消",
       "addagent": "添加智能体…",
-      "addagent1": "添加智能体…"
+      "addagent1": "添加智能体…",
+      "agentUsesSkillOne": "{{count}} 个智能体使用此技能",
+      "agentUsesSkillOther": "{{count}} 个智能体使用此技能",
+      "versionsBehindOne": "落后最新版本 {{count}} 个版本",
+      "versionsBehindOther": "落后最新版本 {{count}} 个版本"
     }
   },
   "forkskilldialog": {
@@ -5708,7 +5714,13 @@
       "retrythepreviewyoudonotneed": "重试预览，无需重新加载此页面。",
       "retrypreview1": "重试预览",
       "noexportpreviewisloaded": "尚未加载导出预览。",
-      "loadpreview": "加载预览"
+      "loadpreview": "加载预览",
+      "exportingFilesOne": "正在导出 {{totalFiles}} 个文件中的 {{selectedCount}} 个",
+      "exportingFilesOther": "正在导出 {{totalFiles}} 个文件中的 {{selectedCount}} 个",
+      "warningCountOne": "{{count}} 条警告",
+      "warningCountOther": "{{count}} 条警告",
+      "exportFilesOne": "导出 {{count}} 个文件",
+      "exportFilesOther": "导出 {{count}} 个文件"
     }
   },
   "companyimport": {
@@ -5800,7 +5812,14 @@
       "repotreepathorbloburlto": "指向 COMPANY.md 的仓库目录路径或文件 URL（例如 github.com/owner/repo/tree/main/company）。",
       "importintothisorganizationorcreatea": "导入到此公司，或创建新公司。",
       "optionaloverrideleaveblanktousethe": "可选填覆盖名称。留空则使用软件包名称。",
-      "boardimportscanrenameskiporreplace": "董事会导入时可重命名、跳过或替换匹配的公司内容。"
+      "boardimportscanrenameskiporreplace": "董事会导入时可重命名、跳过或替换匹配的公司内容。",
+      "itemCountOne": "{{count}} 项",
+      "itemCountOther": "{{count}} 项",
+      "agentCountOne": "{{count}} 个智能体",
+      "agentCountOther": "{{count}} 个智能体",
+      "importSummary": "{{companyName}}：已处理 {{agentCount}} 个智能体、{{skillCount}} 项技能、{{projectCount}} 个项目和 {{routineCount}} 个例程。",
+      "fileCountOne": "{{count}} 个文件",
+      "fileCountOther": "{{count}} 个文件"
     }
   },
   "companysettingspluginpage": {
@@ -6643,7 +6662,11 @@
       "requiredforlocalpathagentpackagesources": "local_path / agent_package 来源必须启用此项。仅供开发使用。",
       "selectanorganizationtobrowsetheteam": "选择公司以浏览团队目录。",
       "noteamcatalogconfigured": "尚未配置团队目录。",
-      "noteamsmatchthisfilter": "没有符合筛选条件的团队。"
+      "noteamsmatchthisfilter": "没有符合筛选条件的团队。",
+      "externalSourceWarningOne": "此团队引用了 {{count}} 个外部来源",
+      "externalSourceWarningOther": "此团队引用了 {{count}} 个外部来源",
+      "externalSourceReviewOne": "此团队引用了 {{count}} 个外部来源。继续前请逐一检查并决定允许哪些来源。",
+      "externalSourceReviewOther": "此团队引用了 {{count}} 个外部来源。继续前请逐一检查并决定允许哪些来源。"
     }
   },
   "timeline": {
@@ -6670,7 +6693,9 @@
       "selectanorganizationtoviewitswork": "选择公司以查看工作时间线。",
       "couldntloadthetimelinetheaggregation": "无法加载时间线。聚合端点可能不可用。",
       "noprojectactivityinthiswindow": "此时间段内没有项目动态。",
-      "noactivityinthiswindow": "此时间段内没有动态。"
+      "noactivityinthiswindow": "此时间段内没有动态。",
+      "runCountOne": "{{count}} 次运行",
+      "runCountOther": "{{count}} 次运行"
     }
   },
   "userprofile": {
@@ -8128,6 +8153,15 @@
   },
   "billerspendcard": {
     "general": {
+      "providerCountOne": "{{count}} 个供应商",
+      "providerCountOther": "{{count}} 个供应商",
+      "modelCountOne": "{{count}} 个模型",
+      "modelCountOther": "{{count}} 个模型",
+      "allocationPercent": "已用分配额度的 {{percent}}%",
+      "meteredRunCountOne": "{{count}} 次计量运行",
+      "meteredRunCountOther": "{{count}} 次计量运行",
+      "subscriptionRunCountOne": "{{count}} 次订阅运行",
+      "subscriptionRunCountOther": "{{count}} 次订阅运行",
       "in": "输入",
       "out": "输出",
       "provider": "供应商",
@@ -8596,7 +8630,9 @@
       "copylink": "复制链接",
       "comment2": "条评论",
       "s": "s",
-      "agent": "· 智能体"
+      "agent": "· 智能体",
+      "commentCountOne": "{{count}} 条评论",
+      "commentCountOther": "{{count}} 条评论"
     }
   },
   "documentannotationpopover": {
@@ -8806,7 +8842,11 @@
       "net": "净额",
       "debits": "借方",
       "credits": "贷方",
-      "estimated": "估算"
+      "estimated": "估算",
+      "eventsAcrossKindsOneEventOneKind": "{{eventCount}} 条事件，涉及 {{kindCount}} 种类型",
+      "eventsAcrossKindsOneEventOtherKinds": "{{eventCount}} 条事件，涉及 {{kindCount}} 种类型",
+      "eventsAcrossKindsOtherEventsOneKind": "{{eventCount}} 条事件，涉及 {{kindCount}} 种类型",
+      "eventsAcrossKindsOtherEventsOtherKinds": "{{eventCount}} 条事件，涉及 {{kindCount}} 种类型"
     }
   },
   "financekindcard": {
@@ -9569,7 +9609,9 @@
       "resolvedby": "处置人",
       "agent": "智能体",
       "resolvedbyanagentundertheorganization": "由智能体依据组织的互动治理策略处置——在审计上与人类董事会处置有区别。",
-      "deferred": "已延后"
+      "deferred": "已延后",
+      "draftVerdictsReadyOne": "{{count}} 项裁定草稿可应用",
+      "draftVerdictsReadyOther": "{{count}} 项裁定草稿可应用"
     }
   },
   "issueworkspacecard": {
@@ -10681,7 +10723,8 @@
       "tok4": "tok",
       "subscriptionquota": "订阅配额",
       "used": "% 已用",
-      "resets": "重置"
+      "resets": "重置",
+      "allocationPercent": "已用分配额度的 {{percent}}%"
     }
   },
   "reportstopicker": {
@@ -11041,7 +11084,13 @@
       "frames10": "帧 ·",
       "expires": "· 过期",
       "downloadexacttrace": "下载精确轨迹",
-      "deletetrace": "删除轨迹"
+      "deletetrace": "删除轨迹",
+      "rawFrameCountOne": "{{count}} 个原始帧",
+      "rawFrameCountOther": "{{count}} 个原始帧",
+      "mappingStageCountOne": "{{count}} 个映射阶段",
+      "mappingStageCountOther": "{{count}} 个映射阶段",
+      "prpEventCountOne": "{{count}} 个 PRP 事件",
+      "prpEventCountOther": "{{count}} 个 PRP 事件"
     }
   },
   "runtimetestcard": {
@@ -11333,7 +11382,10 @@
       "eachcommandcanbecontrolledindependently": "每个命令都可以独立控制。",
       "services": "服务",
       "jobs": "作业",
-      "untrackedservices": "未纳管的服务"
+      "untrackedservices": "未纳管的服务",
+      "servicesRunning": "{{count}} 项服务正在运行",
+      "jobsAvailableOne": "{{count}} 项任务可按需运行。",
+      "jobsAvailableOther": "{{count}} 项任务可按需运行。"
     }
   },
   "workspaceservicecontrolbar": {
@@ -12395,6 +12447,8 @@
   },
   "agentsproduction": {
     "general": {
+      "agentCountOne": "{{count}} 个智能体",
+      "agentCountOther": "{{count}} 个智能体",
       "setup": "设置",
       "invalidreportingchain": "汇报关系无效",
       "viewmode": "视图模式",
@@ -12495,6 +12549,8 @@
   },
   "companyskillsproduction": {
     "general": {
+      "refreshProjectSkills": "刷新 {{projectName}} 项目的技能",
+      "refreshSkillsFromProject": "从 {{projectName}} 刷新技能",
       "source": "来源",
       "type": "类型",
       "all": "全部",
@@ -12784,11 +12840,19 @@
       "required": " · 必需",
       "skillsnotsupported": " · 不支持技能",
       "emptyagents": "此公司尚无支持技能的智能体。",
-      "selecttenant": "请选择公司以管理技能。"
+      "selecttenant": "请选择公司以管理技能。",
+      "selectSkill": "选择 {{name}}",
+      "fromSource": "来自 {{source}}",
+      "moreActionsForSkill": "{{name}} 的更多操作",
+      "useColor": "使用颜色 {{color}}",
+      "removeTag": "移除标签 {{tag}}",
+      "installedFromSource": "安装来源：{{source}}"
     }
   },
   "companyskills": {
     "general": {
+      "refreshProjectSkills": "刷新 {{projectName}} 项目的技能",
+      "refreshSkillsFromProject": "从 {{projectName}} 刷新技能",
       "source": "来源",
       "type": "类型",
       "all": "全部",
@@ -13084,7 +13148,13 @@
       "required": " · 必需",
       "skillsnotsupported": " · 不支持技能",
       "emptyagents": "此公司尚无支持技能的智能体。",
-      "selecttenant": "请选择公司以管理技能。"
+      "selecttenant": "请选择公司以管理技能。",
+      "selectSkill": "选择 {{name}}",
+      "fromSource": "来自 {{source}}",
+      "moreActionsForSkill": "{{name}} 的更多操作",
+      "useColor": "使用颜色 {{color}}",
+      "removeTag": "移除标签 {{tag}}",
+      "installedFromSource": "安装来源：{{source}}"
     }
   },
   "costsproduction": {
@@ -16507,5 +16577,13 @@
       "selectanorganizationtovieworgchart": "选择公司以查看组织架构图。",
       "noagentsintheorganizationcreateagents": "公司中暂无智能体。创建智能体以建立组织架构图。"
     }
+  },
+  "billingTypes": {
+    "metered_api": "计量 API",
+    "subscription_included": "订阅内额度",
+    "subscription_overage": "订阅超额",
+    "credits": "点数",
+    "fixed": "固定费用",
+    "unknown": "未知"
   }
 }

@@ -6,7 +6,6 @@ import { QuotaBar } from "./QuotaBar";
 import { ClaudeSubscriptionPanel } from "./ClaudeSubscriptionPanel";
 import { CodexSubscriptionPanel } from "./CodexSubscriptionPanel";
 import {
-  billingTypeDisplayName,
   formatCents,
   formatTokens,
   providerDisplayName,
@@ -165,7 +164,7 @@ export function ProviderQuotaCard({
               label={t("providerquotacard.general.periodspend")}
               percentUsed={budgetPct}
               leftLabel={formatCents(totalCostCents)}
-              rightLabel={`${Math.round(budgetPct)}% of allocation`}
+              rightLabel={t("providerquotacard.general.allocationPercent", { percent: Math.round(budgetPct) })}
               showDeficitNotch={showDeficitNotch}
             />
             <QuotaBar
@@ -265,7 +264,7 @@ export function ProviderQuotaCard({
                           {row.model}
                         </span>
                         <span className="text-(length:--text-micro) text-muted-foreground truncate block">
-                          {providerDisplayName(row.biller)} · {billingTypeDisplayName(row.billingType)}
+                          {providerDisplayName(row.biller)} · {t(`billingTypes.${row.billingType}`)}
                         </span>
                       </div>
                       <div className="flex items-center gap-3 shrink-0 tabular-nums text-xs">

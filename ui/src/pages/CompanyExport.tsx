@@ -1088,12 +1088,12 @@ export function CompanyExport() {
             <span className="font-medium">
               {selectedCompany?.name ?? t("companyexport.general.organization")} {t("companyexport.general.export")}</span>
             <span className="text-muted-foreground">
-              {t("companyexport.general.exporting")} {selectedCount.toLocaleString()} {t("companyexport.general.of")} {totalFiles.toLocaleString()} {t("companyexport.general.file")}{totalFiles === 1 ? "" : t("companyexport.general.s")}
+              {t(totalFiles === 1 ? "companyexport.general.exportingFilesOne" : "companyexport.general.exportingFilesOther", { selectedCount: selectedCount.toLocaleString(), totalFiles: totalFiles.toLocaleString() })}
               {selectedCount > 0 && ` (~${formatBytes(estimatedZipBytes)})`}
             </span>
             {warnings.length > 0 && (
               <span className="text-amber-500">
-                {warnings.length} {t("companyexport.general.warning")}{warnings.length === 1 ? "" : t("companyexport.general.s1")}
+                {t(warnings.length === 1 ? "companyexport.general.warningCountOne" : "companyexport.general.warningCountOther", { count: warnings.length })}
               </span>
             )}
           </div>
@@ -1111,7 +1111,7 @@ export function CompanyExport() {
             <Download className="mr-1.5 h-3.5 w-3.5" />
             {downloadMutation.isPending
               ? t("companyexport.general.buildingexport")
-              : `Export ${selectedCount.toLocaleString()} file${selectedCount === 1 ? "" : t("companyexport.general.s2")}`}
+              : t(selectedCount === 1 ? "companyexport.general.exportFilesOne" : "companyexport.general.exportFilesOther", { count: selectedCount.toLocaleString() })}
           </Button>
         </div>
       </div>
