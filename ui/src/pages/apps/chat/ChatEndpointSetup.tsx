@@ -114,12 +114,12 @@ function ChatConnectionPurpose({ provider, onChat, onTools }: {
   const { t } = useTranslation();
   const { setBreadcrumbs } = useBreadcrumbs();
   useEffect(() => {
-    setBreadcrumbs([{ label: "Connectors", href: "/apps" }, { label: "Choose connection" }]);
+    setBreadcrumbs([{ label: t("chatendpointsetup.general.connectors"), href: "/apps" }, { label: t("chatendpointsetup.general.chooseconnection") }]);
     return () => setBreadcrumbs([]);
-  }, [setBreadcrumbs]);
+  }, [setBreadcrumbs, t]);
   return (
       <div className="max-w-2xl space-y-6">
-        <ChatSetupNavigation labels={provider === "slack" ? ["Choose agent", "Create Slack app", "Add credentials", "Verify Slack connection", "Add avatar", "Connect your Slack account", "Try it"] : undefined} step={0} availableStep={0} onSelect={onChat} />
+        <ChatSetupNavigation labels={provider === "slack" ? [t("chatendpointsetup.general.chooseagent"), t("chatendpointsetup.slack.createslackappbutton"), t("chatendpointsetup.general.addcredentialsstep"), t("chatendpointsetup.slack.verifyslackconnection"), t("chatendpointsetup.general.addavatarstep"), t("chatendpointsetup.general.connectyourslackaccountstep"), t("chatendpointsetup.general.tryit")] : undefined} step={0} availableStep={0} onSelect={onChat} />
         <div>
           <h1 className="text-xl font-bold">{t("chatendpointsetup.general.choosehowtoconnect")}</h1>
           <p className="mt-1 text-sm text-muted-foreground">
@@ -205,11 +205,11 @@ function ChatSdkEndpointSetup() {
 
   useEffect(() => {
     setBreadcrumbs([
-      { label: "Connectors", href: "/apps" },
-      { label: "Connect chat" },
+      { label: t("chatendpointsetup.general.connectors"), href: "/apps" },
+      { label: t("chatendpointsetup.general.connectchat") },
     ]);
     return () => setBreadcrumbs([]);
-  }, [setBreadcrumbs]);
+  }, [setBreadcrumbs, t]);
 
   const agentsQuery = useQuery({
     queryKey: ["chat-endpoint-setup-agents", selectedCompanyId],
@@ -487,7 +487,7 @@ function ChatSdkEndpointSetup() {
   return (
     <div className="max-w-2xl space-y-6">
       <ChatSetupNavigation
-        labels={isSlack ? ["Choose agent", "Create Slack app", "Add credentials", "Verify Slack connection", "Add avatar", "Connect your Slack account", "Try it"] : undefined}
+        labels={isSlack ? [t("chatendpointsetup.general.chooseagent"), t("chatendpointsetup.slack.createslackappbutton"), t("chatendpointsetup.general.addcredentialsstep"), t("chatendpointsetup.slack.verifyslackconnection"), t("chatendpointsetup.general.addavatarstep"), t("chatendpointsetup.general.connectyourslackaccountstep"), t("chatendpointsetup.general.tryit")] : undefined}
         step={step}
         availableStep={availableStep}
         disabled={createEndpoint.isPending || setupAction.isPending || generateSetupSecret.isPending || testConnection.isPending}
@@ -716,7 +716,7 @@ function ProviderConnectStep({
       <p className="text-sm font-medium">{label}</p>
       <div className="rounded-lg border border-border bg-muted p-3 font-mono text-xs break-all">
         {value ??
-          "This endpoint is unavailable. Check the server's public URL."}
+          t("chatendpointsetup.general.endpointunavailablecheckpublicurl")}
       </div>
     </div>
   );
@@ -770,7 +770,7 @@ function ProviderConnectStep({
       setPrivateKeyFileError(
         error instanceof Error
           ? error.message
-          : "Paperclip couldn't read that file. Choose the .pem file again or paste the private key.",
+          : t("chatendpointsetup.general.couldnotreadprivatekeyfile"),
       );
     } finally {
       if (privateKeyReadGuard.isCurrent(readRevision)) {

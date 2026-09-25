@@ -647,6 +647,15 @@ export function EmailConnectionInboxes({
     query.data?.filter(
       (i) => i.connectionId === connectionId || children.has(i.connectionId),
     ) ?? [];
+  const statusLabels: Record<string, string> = {
+    active: t("emailendpointsetup.general.receivingemailstatus"),
+    draft: t("emailendpointsetup.general.draftstatus"),
+    verifying: t("emailendpointsetup.general.verifyingstatus"),
+    paused: t("emailendpointsetup.general.pausedstatus"),
+    attention: t("emailendpointsetup.general.attentionstatus"),
+    revoked: t("emailendpointsetup.general.revokedstatus"),
+    archived: t("emailendpointsetup.general.archivedstatus"),
+  };
   return (
     <section className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-border p-6">
@@ -678,7 +687,7 @@ export function EmailConnectionInboxes({
           </Link>
           <span className="text-xs text-muted-foreground">
             {i.lastError ??
-              (i.status === "active" ? "Receiving email" : i.status)}
+              (statusLabels[i.status] ?? i.status)}
           </span>
         </div>
       ))}

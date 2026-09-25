@@ -394,7 +394,8 @@
       "activitypagination": "Activity pagination",
       "page": "Page {{page}}",
       "previous": "Previous",
-      "next": "Next"
+      "next": "Next",
+      "couldnotupdateaccess": "Couldn’t update access"
     }
   },
   "chatidentityconfirm": {
@@ -422,7 +423,8 @@
       "youneedmembershipin": "You need membership in {{companyName}} before linking this account.",
       "accessrequestedanadmincanapproveit": "Access requested. An admin can approve it in Paperclip. After approval, return here to confirm; if this link expires, send the connect command in Slack again.",
       "requestaccess": "Request access",
-      "couldnapostrequestaccessthelink": "Couldn’t request access. The link may have expired. Send the connect command again and retry."
+      "couldnapostrequestaccessthelink": "Couldn’t request access. The link may have expired. Send the connect command again and retry.",
+      "localboard": "Local Board"
     }
   },
   "photonconnectstep": {
@@ -450,7 +452,10 @@
       "connecting": "Connecting…",
       "reconnectphoton": "Reconnect Photon",
       "connectshareddms": "Connect shared DMs",
-      "connectselectednumber": "Connect selected number"
+      "connectselectednumber": "Connect selected number",
+      "reconnectkeepsprojectallocation": "Reconnect keeps this project and {{allocation}}. Leave the secret blank to reuse the saved connection.",
+      "shareddmsinproject": "Shared DMs in {{projectName}}",
+      "dedicatednumbersinproject": "Dedicated numbers in {{projectName}}"
     }
   },
   "emailendpointsetup": {
@@ -540,7 +545,14 @@
       "emailaddresssource": "Email address source",
       "createanewaddress": "Create a new address",
       "useanexistinginbox": "Use an existing inbox",
-      "alreadyassigned": " — already assigned"
+      "alreadyassigned": " — already assigned",
+      "receivingemailstatus": "Receiving email",
+      "draftstatus": "Draft",
+      "verifyingstatus": "Verifying",
+      "pausedstatus": "Paused",
+      "attentionstatus": "Needs attention",
+      "revokedstatus": "Access revoked",
+      "archivedstatus": "Archived"
     }
   },
   "chatendpointsetup": {
@@ -574,7 +586,15 @@
       "assignedagent": "Assigned agent",
       "loadingagentavatar": "Loading agent avatar…",
       "couldntloadtheagentsavatar": "Couldn’t load the agent’s avatar.",
-      "skipfornow": "Skip for now"
+      "skipfornow": "Skip for now",
+      "connectors": "Connectors",
+      "chooseconnection": "Choose connection",
+      "connectchat": "Connect chat",
+      "addcredentialsstep": "Add credentials",
+      "addavatarstep": "Add avatar",
+      "connectyourslackaccountstep": "Connect your Slack account",
+      "endpointunavailablecheckpublicurl": "This endpoint is unavailable. Check the server's public URL.",
+      "couldnotreadprivatekeyfile": "Paperclip couldn't read that file. Choose the .pem file again or paste the private key."
     },
     "discord": {
       "title": "Connect {{agentName}} to Discord",

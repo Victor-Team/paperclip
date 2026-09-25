@@ -615,7 +615,7 @@ function Access({
         queryKeys.chatEndpoints.detail(endpointId),
         next,
       ),
-    onError: (error) => pushToast({ title: "Couldn’t update access", body: error instanceof Error ? error.message : "Try again.", tone: "error" }),
+    onError: (error) => pushToast({ title: t("chatendpointdetail.general.couldnotupdateaccess"), body: error instanceof Error ? error.message : t("chatendpointdetail.general.tryagainwithperiod"), tone: "error" }),
   });
   const createIntent = useMutation({
     mutationFn: (principalId: string) =>

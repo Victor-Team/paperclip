@@ -67,7 +67,7 @@ export function ChatIdentityConfirm() {
     );
   }
   const identity = preview.data;
-  const paperclipAccount = local ? "Local Board" :
+  const paperclipAccount = local ? t("chatidentityconfirm.general.localboard") :
     session.data?.user.name?.trim() ||
     session.data?.user.email?.trim() ||
     session.data?.user.id ||

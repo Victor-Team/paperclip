@@ -394,7 +394,8 @@
       "activitypagination": "活动分页",
       "page": "第 {{page}} 页",
       "previous": "上一页",
-      "next": "下一页"
+      "next": "下一页",
+      "couldnotupdateaccess": "无法更新访问权限"
     }
   },
   "chatidentityconfirm": {
@@ -422,7 +423,8 @@
       "youneedmembershipin": "你需要先成为 {{companyName}} 的成员，才能关联此账号。",
       "accessrequestedanadmincanapproveit": "已请求访问。管理员可以在 Paperclip 中批准该请求。批准后，请返回此处确认；如果此链接已过期，请在 Slack 中再次发送连接命令。",
       "requestaccess": "请求访问",
-      "couldnapostrequestaccessthelink": "无法请求访问。该链接可能已过期。请再次发送连接命令并重试。"
+      "couldnapostrequestaccessthelink": "无法请求访问。该链接可能已过期。请再次发送连接命令并重试。",
+      "localboard": "本地董事会"
     }
   },
   "photonconnectstep": {
@@ -450,7 +452,10 @@
       "connecting": "正在连接…",
       "reconnectphoton": "重新连接 Photon",
       "connectshareddms": "连接共享直接消息",
-      "connectselectednumber": "连接所选号码"
+      "connectselectednumber": "连接所选号码",
+      "reconnectkeepsprojectallocation": "重新连接会保留此项目及{{allocation}}。将密钥留空可复用已保存的连接。",
+      "shareddmsinproject": "项目 {{projectName}} 中的共享直接消息",
+      "dedicatednumbersinproject": "项目 {{projectName}} 中的专用号码"
     }
   },
   "emailendpointsetup": {
@@ -540,7 +545,14 @@
       "emailaddresssource": "电子邮箱地址来源",
       "createanewaddress": "创建新地址",
       "useanexistinginbox": "使用现有收件箱",
-      "alreadyassigned": "——已分配"
+      "alreadyassigned": "——已分配",
+      "receivingemailstatus": "正在接收电子邮件",
+      "draftstatus": "草稿",
+      "verifyingstatus": "验证中",
+      "pausedstatus": "已暂停",
+      "attentionstatus": "需要处理",
+      "revokedstatus": "访问权限已撤销",
+      "archivedstatus": "已归档"
     }
   },
   "chatendpointsetup": {
@@ -574,7 +586,15 @@
       "assignedagent": "已分配的智能体",
       "loadingagentavatar": "正在加载智能体头像…",
       "couldntloadtheagentsavatar": "无法加载该智能体的头像。",
-      "skipfornow": "暂时跳过"
+      "skipfornow": "暂时跳过",
+      "connectors": "连接器",
+      "chooseconnection": "选择连接方式",
+      "connectchat": "连接聊天",
+      "addcredentialsstep": "添加凭据",
+      "addavatarstep": "添加头像",
+      "connectyourslackaccountstep": "连接您的 Slack 账号",
+      "endpointunavailablecheckpublicurl": "此端点不可用。请检查服务器的公开 URL。",
+      "couldnotreadprivatekeyfile": "Paperclip 无法读取该文件。请重新选择 .pem 文件或粘贴私钥。"
     },
     "discord": {
       "title": "将 {{agentName}} 连接到 Discord",

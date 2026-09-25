@@ -74,8 +74,11 @@ export function PhotonConnectStep({
       </div>
       {repairing && (
         <p className="text-sm text-muted-foreground">
-          {t("photonconnectstep.general.reconnectkeepsthisprojectand")}{" "}
-          {endpoint.photonAllocation === "shared" ? t("photonconnectstep.general.shareddmallocation") : endpoint.botExternalId ?? t("photonconnectstep.general.dedicatednumber")}{t("photonconnectstep.general.leavethesecretblanktoreusethe")}</p>
+          {t("photonconnectstep.general.reconnectkeepsprojectallocation", {
+            allocation: endpoint.photonAllocation === "shared"
+              ? t("photonconnectstep.general.shareddmallocation")
+              : endpoint.botExternalId ?? t("photonconnectstep.general.dedicatednumber"),
+          })}</p>
       )}
       <label className="grid gap-2 text-sm font-medium">
         {t("photonconnectstep.general.projectid")}<Input
@@ -117,7 +120,11 @@ export function PhotonConnectStep({
       {inspection.data && (
         <fieldset className="space-y-3">
           <legend className="text-sm font-medium">
-            {inspection.data.allocation === "shared" ? t("photonconnectstep.general.shareddms") : t("photonconnectstep.general.dedicatednumbers")} {t("photonconnectstep.general.in")} {inspection.data.projectName}
+            {t(inspection.data.allocation === "shared"
+              ? "photonconnectstep.general.shareddmsinproject"
+              : "photonconnectstep.general.dedicatednumbersinproject", {
+              projectName: inspection.data.projectName,
+            })}
           </legend>
           {!inspection.data.eligible && (
             <p role="alert" className="text-sm text-destructive">
