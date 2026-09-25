@@ -1,0 +1,42 @@
+[
+  {
+    "name": "desktop-zh",
+    "state": "step1",
+    "scrollWidth": 1366,
+    "bodyWidth": 1366,
+    "errors": [],
+    "pass": true
+  },
+  {
+    "name": "desktop-zh",
+    "state": "agent-picker",
+    "scrollWidth": 1366,
+    "visibleText": false,
+    "errors": [],
+    "pass": true
+  },
+  {
+    "name": "narrow-zh",
+    "state": "step1",
+    "scrollWidth": 390,
+    "bodyWidth": 390,
+    "errors": [],
+    "pass": true
+  },
+  {
+    "name": "narrow-zh",
+    "state": "agent-picker",
+    "scrollWidth": 390,
+    "visibleText": false,
+    "errors": [],
+    "pass": true
+  },
+  {
+    "name": "desktop-en",
+    "state": "step1",
+    "scrollWidth": 1366,
+    "bodyWidth": 1366,
+    "errors": [],
+    "pass": true
+  }
+]
