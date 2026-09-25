@@ -485,6 +485,7 @@ export function Search() {
       const dashOut = filtersActive && (value === "agents" || value === "projects");
       return {
         value,
+        mobileLabel: `${scopeLabel(value as CompanySearchScope, t)}${dashOut ? " —" : count !== null && data ? ` (${count})` : ""}`,
         label: (
           <span className="flex items-center">
             {scopeLabel(value as CompanySearchScope, t)}

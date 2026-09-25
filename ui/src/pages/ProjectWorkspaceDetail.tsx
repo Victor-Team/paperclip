@@ -473,7 +473,7 @@ export function ProjectWorkspaceDetail() {
 
       <Tabs value={activeTab} onValueChange={(value) => handleTabChange(value as ProjectWorkspaceTab)}>
         <PageTabBar
-          items={tabItems.map((item) => ({ value: item.value, label: item.label }))}
+          items={tabItems.map((item) => ({ value: item.value, label: item.value === "configuration" ? t("projectworkspacedetail.general.configuration") : item.label }))}
           align="start"
           value={activeTab}
           onValueChange={(value) => handleTabChange(value as ProjectWorkspaceTab)}

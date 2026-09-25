@@ -90,7 +90,7 @@ export function Approvals() {
       <div className="flex items-center justify-between">
         <Tabs value={statusFilter} onValueChange={(v) => navigate(`/approvals/${v}`)}>
           <PageTabBar items={[
-            { value: "pending", label: <>{t("approvals.general.pending")}{pendingCount > 0 && (
+            { value: "pending", mobileLabel: `${t("approvals.general.pending")}${pendingCount > 0 ? ` (${pendingCount})` : ""}`, label: <>{t("approvals.general.pending")}{pendingCount > 0 && (
               <Badge variant="ghost" className={cn(
                 "ml-1.5 px-1.5 text-(length:--text-nano)",
                 "bg-yellow-500/20 text-yellow-500"
@@ -98,7 +98,7 @@ export function Approvals() {
                 {pendingCount}
               </Badge>
             )}</> },
-            { value: "all", label: "All" },
+            { value: "all", label: t("approvals.general.all") },
           ]} />
         </Tabs>
       </div>

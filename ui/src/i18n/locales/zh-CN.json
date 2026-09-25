@@ -2425,7 +2425,9 @@
   },
   "command": {
     "general": {
-      "close": "关闭"
+      "close": "关闭",
+      "commandpalette": "命令面板",
+      "searchforacommandtorun": "搜索要执行的命令…"
     }
   },
   "dialog": {
@@ -5269,7 +5271,8 @@
       "selectanorganizationfirst": "请先选择公司。",
       "pending": "待处理",
       "nopendingapprovals": "没有待审批项。",
-      "noapprovalsyet": "尚无审批项。"
+      "noapprovalsyet": "尚无审批项。",
+      "all": "全部"
     }
   },
   "auth": {
@@ -6351,7 +6354,8 @@
       "testing": "正在测试...",
       "testconfiguration": "测试配置",
       "missingdirectories": "缺少目录",
-      "missingfiles": "缺少文件"
+      "missingfiles": "缺少文件",
+      "configuration": "配置"
     }
   },
   "projectdetail": {
@@ -6369,7 +6373,12 @@
       "managedby": "管理者",
       "projectsummary": "项目摘要",
       "loadingworkspaces": "加载中工作区",
-      "summarizerkeepsthelatestprojectstatusnext": "摘要智能体会在这里记录最新项目状态、下一步和需要操作人员处理的事项。"
+      "summarizerkeepsthelatestprojectstatusnext": "摘要智能体会在这里记录最新项目状态、下一步和需要操作人员处理的事项。",
+      "tasks": "任务",
+      "pluginoperations": "插件操作",
+      "workspaces": "工作区",
+      "configuration": "配置",
+      "budget": "预算"
     }
   },
   "projectworkspacedetail": {
@@ -6428,7 +6437,8 @@
       "executionworkspacesinheritthisconfigunlessthey": "执行工作区会继承此配置，除非自行覆盖。旧版 `services` 数组仍可使用，`commands` 同时支持服务和作业。",
       "nooneshotjobsareconfiguredfor": "此工作区尚未配置一次性作业。",
       "projectworkspacesneedaworkingdirectorybefore": "项目工作区需要设置工作目录才能运行本地命令；服务还需要运行时配置。",
-      "backtoconfiguration": "返回配置"
+      "backtoconfiguration": "返回配置",
+      "configuration": "配置"
     }
   },
   "responsibleuserdenialuxlab": {
@@ -7956,7 +7966,8 @@
       "createanagentfromtheagentspage": "在「智能体」页面创建一个智能体即可开始聊天。",
       "paused": "已暂停",
       "terminated": "已终止",
-      "awaitingapproval": "等待审批"
+      "awaitingapproval": "等待审批",
+      "noagentsmatch": "没有与“{{search}}”匹配的智能体"
     }
   },
   "agentchatsidebar": {
@@ -8534,7 +8545,11 @@
       "goals": "目标",
       "agents": "智能体",
       "costs": "费用",
-      "activity": "动态"
+      "activity": "动态",
+      "search": "搜索",
+      "quickfilters": "快捷筛选",
+      "actions": "操作",
+      "pages": "页面"
     }
   },
   "commentattributionchip": {
@@ -12317,6 +12332,18 @@
       "failedloadmorerunlog": "加载更多运行日志失败",
       "navigationchannels": "频道",
       "last14days": "最近 14 天"
+    },
+    "tabs": {
+      "dashboard": "概览",
+      "instructions": "指令",
+      "skills": "技能",
+      "configuration": "配置",
+      "secrets": "机密",
+      "tools": "工具",
+      "channels": "频道",
+      "runs": "运行",
+      "audit": "审计",
+      "budget": "预算"
     }
   },
   "agentdetail": {

@@ -1,0 +1,90 @@
+[
+  {
+    "name": "desktop-zh",
+    "status": 200,
+    "url": "http://127.0.0.1:3200/ANC/search?lng=zh-CN&q=test",
+    "options": [],
+    "headings": [
+      "快捷筛选",
+      "操作",
+      "页面"
+    ],
+    "titles": [
+      "命令面板",
+      "搜索要执行的命令…"
+    ],
+    "overflow": false,
+    "errors": [],
+    "passed": true
+  },
+  {
+    "name": "narrow-zh",
+    "status": 200,
+    "url": "http://127.0.0.1:3200/ANC/search?lng=zh-CN&q=test",
+    "options": [
+      "全部 (0)",
+      "任务 (0)",
+      "评论 (0)",
+      "文档 (0)",
+      "产物 (0)",
+      "智能体 (0)",
+      "项目 (0)"
+    ],
+    "headings": [
+      "快捷筛选",
+      "操作",
+      "页面"
+    ],
+    "titles": [
+      "命令面板",
+      "搜索要执行的命令…"
+    ],
+    "overflow": false,
+    "errors": [],
+    "passed": true
+  },
+  {
+    "name": "desktop-en",
+    "status": 200,
+    "url": "http://127.0.0.1:3200/ANC/search?lng=en&q=test",
+    "options": [],
+    "headings": [
+      "Quick filters",
+      "Actions",
+      "Pages"
+    ],
+    "titles": [
+      "Command Palette",
+      "Search for a command to run..."
+    ],
+    "overflow": false,
+    "errors": [],
+    "passed": true
+  },
+  {
+    "name": "narrow-en",
+    "status": 200,
+    "url": "http://127.0.0.1:3200/ANC/search?lng=en&q=test",
+    "options": [
+      "All (0)",
+      "Tasks (0)",
+      "Comments (0)",
+      "Documents (0)",
+      "Artifacts (0)",
+      "Agents (0)",
+      "Projects (0)"
+    ],
+    "headings": [
+      "Quick filters",
+      "Actions",
+      "Pages"
+    ],
+    "titles": [
+      "Command Palette",
+      "Search for a command to run..."
+    ],
+    "overflow": false,
+    "errors": [],
+    "passed": true
+  }
+]

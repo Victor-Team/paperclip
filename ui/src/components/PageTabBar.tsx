@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { Children, isValidElement, type ReactNode } from "react";
 import { ChevronDown } from "lucide-react";
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useSidebar } from "../context/SidebarContext";
@@ -7,6 +7,14 @@ import { useTranslation } from "@/i18n";
 export interface PageTabItem {
   value: string;
   label: ReactNode;
+  mobileLabel?: string;
+}
+
+function labelText(node: ReactNode): string {
+  if (typeof node === "string" || typeof node === "number") return String(node);
+  if (Array.isArray(node)) return node.map(labelText).filter(Boolean).join(" ");
+  if (!isValidElement<{ children?: ReactNode }>(node)) return "";
+  return Children.toArray(node.props.children).map(labelText).filter(Boolean).join(" ");
 }
 
 interface PageTabBarProps {
@@ -31,7 +39,7 @@ export function PageTabBar({ items, value, onValueChange, align = "center" }: Pa
         >
           {items.map((item) => (
             <option key={item.value} value={item.value}>
-              {typeof item.label === "string" ? item.label : item.value}
+              {item.mobileLabel ?? labelText(item.label).replace(/\s+/g, " ").trim()}
             </option>
           ))}
         </select>

@@ -2425,7 +2425,9 @@
   },
   "command": {
     "general": {
-      "close": "Close"
+      "close": "Close",
+      "commandpalette": "Command Palette",
+      "searchforacommandtorun": "Search for a command to run..."
     }
   },
   "dialog": {
@@ -5269,7 +5271,8 @@
       "selectanorganizationfirst": "Select an organization first.",
       "pending": "Pending",
       "nopendingapprovals": "No pending approvals.",
-      "noapprovalsyet": "No approvals yet."
+      "noapprovalsyet": "No approvals yet.",
+      "all": "All"
     }
   },
   "auth": {
@@ -6351,7 +6354,8 @@
       "testing": "Testing...",
       "testconfiguration": "Test Configuration",
       "missingdirectories": "Missing directories",
-      "missingfiles": "Missing files"
+      "missingfiles": "Missing files",
+      "configuration": "Configuration"
     }
   },
   "projectdetail": {
@@ -6369,7 +6373,12 @@
       "managedby": "Managed by",
       "projectsummary": "Project summary",
       "loadingworkspaces": "Loading workspaces...",
-      "summarizerkeepsthelatestprojectstatusnext": "Summarizer keeps the latest project status, next step, and operator-needed items here."
+      "summarizerkeepsthelatestprojectstatusnext": "Summarizer keeps the latest project status, next step, and operator-needed items here.",
+      "tasks": "Tasks",
+      "pluginoperations": "Plugin operations",
+      "workspaces": "Workspaces",
+      "configuration": "Configuration",
+      "budget": "Budget"
     }
   },
   "projectworkspacedetail": {
@@ -6428,7 +6437,8 @@
       "executionworkspacesinheritthisconfigunlessthey": "Execution workspaces inherit this config unless they override it. Legacy `services` arrays still work, but `commands` supports both services and jobs.",
       "nooneshotjobsareconfiguredfor": "No one-shot jobs are configured for this workspace yet.",
       "projectworkspacesneedaworkingdirectorybefore": "Project workspaces need a working directory before local commands can run, and services also need runtime config.",
-      "backtoconfiguration": "Back to configuration"
+      "backtoconfiguration": "Back to configuration",
+      "configuration": "Configuration"
     }
   },
   "responsibleuserdenialuxlab": {
@@ -7956,7 +7966,8 @@
       "createanagentfromtheagentspage": "Create an agent from the Agents page to start chatting.",
       "paused": "Paused",
       "terminated": "Terminated",
-      "awaitingapproval": "Awaiting approval"
+      "awaitingapproval": "Awaiting approval",
+      "noagentsmatch": "No agents match “{{search}}”"
     }
   },
   "agentchatsidebar": {
@@ -8534,7 +8545,11 @@
       "goals": "Goals",
       "agents": "Agents",
       "costs": "Costs",
-      "activity": "Activity"
+      "activity": "Activity",
+      "search": "Search",
+      "quickfilters": "Quick filters",
+      "actions": "Actions",
+      "pages": "Pages"
     }
   },
   "commentattributionchip": {
@@ -12317,6 +12332,18 @@
       "failedloadmorerunlog": "Failed to load more run log",
       "navigationchannels": "Channels",
       "last14days": "Last 14 days"
+    },
+    "tabs": {
+      "dashboard": "Dashboard",
+      "instructions": "Instructions",
+      "skills": "Skills",
+      "configuration": "Configuration",
+      "secrets": "Secrets",
+      "tools": "Tools",
+      "channels": "Channels",
+      "runs": "Runs",
+      "audit": "Audit",
+      "budget": "Budget"
     }
   },
   "agentdetail": {

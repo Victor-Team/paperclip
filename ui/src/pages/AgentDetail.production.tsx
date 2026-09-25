@@ -1406,7 +1406,7 @@ export function AgentDetail() {
           onValueChange={handleAgentTabChange}
         >
           <PageTabBar
-            items={AGENT_DETAIL_TABS.filter((item) => item.value !== "channels" || chatConnectorsEnabled)}
+            items={AGENT_DETAIL_TABS.filter((item) => item.value !== "channels" || chatConnectorsEnabled).map((item) => ({ ...item, label: t(`agentdetailproduction.tabs.${item.value}`) }))}
             value={activeView}
             onValueChange={handleAgentTabChange}
           />
