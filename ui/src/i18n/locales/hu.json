@@ -4,6 +4,10 @@
       "title": "Create your first organization",
       "description": "Get started by creating an organization.",
       "newCompany": "New Organization"
+    },
+    "general": {
+      "addagent": "Add Agent",
+      "startonboarding": "Start Onboarding"
     }
   },
   "appdetail": {
