@@ -264,8 +264,14 @@ export function SmokeLabTab({ companyId }: { companyId: string }) {
             <div key={service.id} className="rounded-lg border border-border bg-card p-4">
               <div className="flex items-start justify-between gap-2">
                 <div>
-                  <p className="text-sm font-semibold text-foreground">{service.label}</p>
-                  <p className="text-xs text-muted-foreground">{service.detail ?? service.id}</p>
+                  <p className="text-sm font-semibold text-foreground">
+                    {t(`smokelabtab.general.serviceLabel.${service.id}`, { defaultValue: service.label })}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {service.id === "fake-oauth" && service.detail === "In-process deterministic OAuth provider with fixed smoke credentials."
+                      ? t("smokelabtab.general.fakeOAuthServiceDetail")
+                      : service.detail ?? service.id}
+                  </p>
                 </div>
                 <span className="inline-flex items-center gap-1.5 text-xs font-medium">
                   <span

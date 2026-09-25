@@ -570,9 +570,9 @@ function AllowList({ rows, catalogLoading }: { rows: AllowListRow[]; catalogLoad
         <h4 className="text-sm font-semibold text-foreground">{t("profilestab.general.allowlist")}</h4>
         <p className="text-xs text-muted-foreground">
           {t("profilestab.general.toolcount", { count: rows.length })}
-          {explicitCount > 0 ? ` · ${explicitCount} explicit` : ""}
-          {patternCount > 0 ? ` · ${patternCount} via pattern` : ""}
-          {defaultCount > 0 ? ` · ${defaultCount} via default` : ""}
+          {explicitCount > 0 ? t("profilestab.general.explicitCount", { count: explicitCount }) : ""}
+          {patternCount > 0 ? t("profilestab.general.patternCount", { count: patternCount }) : ""}
+          {defaultCount > 0 ? t("profilestab.general.defaultCount", { count: defaultCount }) : ""}
         </p>
       </div>
       {rows.length === 0 ? (

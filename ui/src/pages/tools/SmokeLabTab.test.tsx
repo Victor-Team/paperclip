@@ -117,7 +117,7 @@ describe("SmokeLabTab", () => {
           status: "running",
           url: "http://127.0.0.1:3100/api/companies/company-1/smoke-lab/oauth/authorize",
           health: { ok: true },
-          detail: "In-process deterministic OAuth provider.",
+          detail: "In-process deterministic OAuth provider with fixed smoke credentials.",
         },
       ],
     });
@@ -185,6 +185,9 @@ describe("SmokeLabTab", () => {
       expect(container.textContent).toContain("结构变更隔离");
       expect(container.textContent).toContain("失败路径：P7");
       expect(container.textContent).toContain("手动");
+      expect(container.textContent).toContain("模拟 OAuth 2.0 提供方");
+      expect(container.textContent).toContain("使用固定测试凭据的内置 OAuth 提供方。");
+      expect(container.textContent).not.toContain("In-process deterministic OAuth provider");
     } finally {
       await act(async () => { await i18n.changeLanguage("en"); });
     }

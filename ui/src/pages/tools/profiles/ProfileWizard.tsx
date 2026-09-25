@@ -27,7 +27,7 @@ import {
 import { useProfilesData } from "./useProfilesData";
 import { WizardToolsStep } from "./WizardToolsStep";
 import { readWizardMeta, resumeStep, withWizardMeta, type WizardStep } from "./wizard-draft";
-import { useTranslation } from "@/i18n";
+import { t, useTranslation } from "@/i18n";
 
 function slugifyProfileKey(name: string): string {
   return name
@@ -155,7 +155,7 @@ export function ProfileWizard({
       if (!draftId) {
         const created = await toolsApi.createProfile(companyId, {
           profileKey: profileKey || slugifyProfileKey(name) || "profile",
-          name: name.trim() || "Untitled profile",
+          name: name.trim() || t("profilewizard.general.untitledProfile"),
           description: description.trim() || null,
           status: "draft",
           defaultAction: newToolsAction,
@@ -166,7 +166,7 @@ export function ProfileWizard({
       }
       const updated = await toolsApi.updateProfile(draftId, {
         profileKey: profileKey || undefined,
-        name: name.trim() || "Untitled profile",
+        name: name.trim() || t("profilewizard.general.untitledProfile"),
         description: description.trim() || null,
         defaultAction: newToolsAction,
         entries,
@@ -387,8 +387,10 @@ async function reconcileBindings(
     } catch (error) {
       const rollbacks = await Promise.allSettled(completed.reverse().map((done) => done.rollback()));
       const rollbackFailures = rollbacks.filter((result) => result.status === "rejected").length;
-      const suffix = rollbackFailures > 0 ? `; ${rollbackFailures} rollback operation(s) also failed` : "";
-      throw new Error(`Could not update assignment ${operation.key}${suffix}`, { cause: error });
+      const message = rollbackFailures > 0
+        ? t("profilewizard.general.assignmentRollbackFailed", { key: operation.key, count: rollbackFailures })
+        : t("profilewizard.general.assignmentUpdateFailed", { key: operation.key });
+      throw new Error(message, { cause: error });
     }
   }
 }
@@ -607,7 +609,9 @@ export function StepAssign({
         <span className="flex flex-col gap-0.5">
           <span className="text-sm font-medium text-foreground">{t("profilewizard.general.makethistheorganizationdefault")}</span>
           <span className="text-xs text-muted-foreground">
-            {t("profilewizard.general.everyagentwithoutitsownprofileuses")}            {defaultProfileName ? ` Replaces “${defaultProfileName}”.` : ""}
+            {defaultProfileName
+              ? t("profilewizard.general.replacesDefaultProfile", { name: defaultProfileName })
+              : t("profilewizard.general.everyagentwithoutitsownprofileuses")}
           </span>
         </span>
       </label>
@@ -625,8 +629,10 @@ export function StepAssign({
           getDescription={(agent) => {
             const context = contextByAgent.get(agent.id) ?? [];
             const bits = [...context];
-            if (defaultProfileName) bits.push("organization default");
-            return bits.length > 0 ? `already has: ${bits.join(" · ")}` : "no profiles yet";
+            if (defaultProfileName) bits.push(t("profilewizard.general.companyDefault"));
+            return bits.length > 0
+              ? t("profilewizard.general.alreadyHasProfiles", { profiles: bits.join(" · ") })
+              : t("profilewizard.general.noProfilesYet");
           }}
         />
         <p className="text-xs text-muted-foreground">
