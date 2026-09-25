@@ -908,6 +908,13 @@ export function createPostgresRunDispatchAdapter(
             ...(decision.errorCode === "execution_reconciliation_required"
               ? { executionWait: decision.details }
               : {}),
+            // Both callers cancel before the adapter executes, so a legacy run
+            // never reached the provider. Without this evidence the release
+            // drain treats it as a failed provider attempt and strands the
+            // deferred wakes queued behind it (e.g. the new owner's).
+            ...(run.runtimeMode !== "native"
+              ? { executionRecovery: { kind: "bootstrap", providerWorkStarted: false } }
+              : {}),
             effectiveTimeoutSec: 0,
             timeoutConfigured: false,
             timeoutSource: "stale_queued_run_gate",
