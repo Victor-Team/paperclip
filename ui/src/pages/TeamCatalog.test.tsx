@@ -2,6 +2,7 @@
 
 import { flushSync } from "react-dom";
 import { createRoot } from "react-dom/client";
+import { renderToStaticMarkup } from "react-dom/server";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type {
   CatalogTeam,
@@ -10,12 +11,14 @@ import type {
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   TeamCatalog,
+  TeamRow,
   listTeamInstallAdapterTypes,
   parseTeamRoute,
   resolveTeamInstallAdapterType,
   teamRoute,
 } from "./TeamCatalog";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { i18n } from "../i18n";
 
 const mockTeamCatalogApi = vi.hoisted(() => ({
   catalogList: vi.fn(),
@@ -100,6 +103,25 @@ if (typeof Element !== "undefined" && !Element.prototype.scrollIntoView) {
 }
 
 describe("TeamCatalog routes", () => {
+  it("renders team skill counts and trust tooltip in Chinese without English suffixes", async () => {
+    await i18n.changeLanguage("zh-CN");
+    try {
+      const team = makeTeam({
+        counts: { ...makeTeam().counts, localSkills: 3 },
+      });
+      const html = renderToStaticMarkup(
+        <TooltipProvider>
+          <TeamRow team={team} selected={false} onSelect={() => {}} />
+        </TooltipProvider>,
+      );
+      expect(html).toContain("3 项技能");
+      expect(html).not.toContain("3秒");
+      expect(i18n.t("teamcatalog.general.trustMarkdownOnlyTip")).toContain("没有可执行内容");
+    } finally {
+      await i18n.changeLanguage("en");
+    }
+  });
+
   it("round-trips file paths containing literal tildes", () => {
     const route = teamRoute("paperclipai/bundled/test/team", "agents/a~b/AGENTS.md");
 

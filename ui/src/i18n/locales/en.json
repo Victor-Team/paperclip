@@ -5823,7 +5823,20 @@
       "errorCountOther": "{{count}} errors",
       "importFileCountOne": "Import {{count}} file",
       "importFileCountOther": "Import {{count}} files",
-      "uploadProgressWithResume": "Uploading part {{currentPart}} of {{totalParts}} — {{uploadedBytes}} of {{totalBytes}} uploaded. An interrupted upload resumes from the finished parts."
+      "uploadProgressWithResume": "Uploading part {{currentPart}} of {{totalParts}} — {{uploadedBytes}} of {{totalBytes}} uploaded. An interrupted upload resumes from the finished parts.",
+      "previewFailedToast": "Preview failed",
+      "previewFailedFallback": "Failed to preview import.",
+      "importCompletedToast": "Import completed",
+      "openOrganizationToView": "Open the organization to view it.",
+      "importFailedToast": "Import failed",
+      "importFailedFallback": "Failed to apply import.",
+      "packageReadFailedToast": "Package read failed",
+      "packageReadFailedFallback": "Failed to read folder.",
+      "activationFailedFallback": "Activation failed.",
+      "someItemsNotActivated": "Some items were not activated",
+      "activationPartialFailure": "{{count}} items failed to activate; the rest were activated.",
+      "uploadAnalysisPending": "Uploading and analyzing your package{{packageSize}} — large packages can take a few minutes. Keep this page open.",
+      "compressedPackageSize": " ({{size}} zip)"
     }
   },
   "companysettingspluginpage": {
@@ -6621,10 +6634,6 @@
       "updateavailable12": "Update available",
       "updateavailableinstalledteamisoutof": "Update available — installed team is out of date",
       "hasexternalsources": "Has external sources",
-      "a": "a ·",
-      "p": "p ·",
-      "r": "r ·",
-      "s13": "s",
       "agent": "agent",
       "project": "project",
       "routine": "routine",
@@ -6673,7 +6682,18 @@
       "projectCountOne": "{{count}} project",
       "projectCountOther": "{{count}} projects",
       "routineCountOne": "{{count}} routine",
-      "routineCountOther": "{{count}} routines"
+      "routineCountOther": "{{count}} routines",
+      "teamRowCounts": "{{agents}}a · {{projects}}p · {{routines}}r · {{skills}}s",
+      "trustMarkdownOnly": "Markdown only",
+      "trustMarkdownOnlyTip": "Contains only markdown and references. No executable content.",
+      "trustAssets": "Assets",
+      "trustAssetsTip": "Includes static assets (images, fixtures). No executable content.",
+      "trustScripts": "Scripts",
+      "trustScriptsTip": "Includes executable scripts that were security-reviewed before bundling.",
+      "trustExternalSources": "External sources",
+      "trustExternalSourcesTip": "References external sources resolved at install time.",
+      "teamImportedToast": "{{teamName}} was imported.",
+      "selectedCategory": "Category · {{category}}"
     }
   },
   "timeline": {

@@ -1172,8 +1172,8 @@ export function CompanyImport() {
       if (generation !== previewGenerationRef.current) return;
       pushToast({
         tone: "error",
-        title: "Preview failed",
-        body: err instanceof Error ? err.message : "Failed to preview import.",
+        title: t("companyimport.general.previewFailedToast"),
+        body: err instanceof Error ? err.message : t("companyimport.general.previewFailedFallback"),
       });
     },
   });
@@ -1291,8 +1291,8 @@ export function CompanyImport() {
         });
         pushToast({
           tone: "success",
-          title: "Import completed",
-          body: "Open the organization to view it.",
+          title: t("companyimport.general.importCompletedToast"),
+          body: t("companyimport.general.openOrganizationToView"),
         });
         return;
       }
@@ -1326,8 +1326,8 @@ export function CompanyImport() {
       setResumedWatchJobId(null);
       pushToast({
         tone: "error",
-        title: "Import failed",
-        body: err instanceof Error ? err.message : "Failed to apply import.",
+        title: t("companyimport.general.importFailedToast"),
+        body: err instanceof Error ? err.message : t("companyimport.general.importFailedFallback"),
       });
     },
   });
@@ -1380,8 +1380,8 @@ export function CompanyImport() {
     } catch (err) {
       pushToast({
         tone: "error",
-        title: "Package read failed",
-        body: err instanceof Error ? err.message : "Failed to read folder.",
+        title: t("companyimport.general.packageReadFailedToast"),
+        body: err instanceof Error ? err.message : t("companyimport.general.packageReadFailedFallback"),
       });
     }
   }
@@ -1571,7 +1571,7 @@ export function CompanyImport() {
         }
         nextActivated.add(item.key);
       } catch (err) {
-        nextFailures[item.key] = err instanceof Error ? err.message : "Activation failed.";
+        nextFailures[item.key] = err instanceof Error ? err.message : t("companyimport.general.activationFailedFallback");
       }
     }
     setActivatedKeys(nextActivated);
@@ -1581,8 +1581,8 @@ export function CompanyImport() {
     if (failureCount > 0) {
       pushToast({
         tone: "error",
-        title: "Some items were not activated",
-        body: `${failureCount} item${failureCount === 1 ? "" : "s"} failed to activate; the rest were activated.`,
+        title: t("companyimport.general.someItemsNotActivated"),
+        body: t("companyimport.general.activationPartialFailure", { count: failureCount }),
       });
     }
   }
@@ -2011,9 +2011,11 @@ export function CompanyImport() {
             <p className="text-xs text-muted-foreground">
               {transferProgress
                 ? formatTransferProgress(transferProgress, t)
-                : `Uploading and analyzing your package${
-                    localCompressedBytes !== null ? ` (${formatMegabytes(localCompressedBytes)} zip)` : ""
-                  } — large packages can take a few minutes. Keep this page open.`}
+                : t("companyimport.general.uploadAnalysisPending", {
+                    packageSize: localCompressedBytes !== null
+                      ? t("companyimport.general.compressedPackageSize", { size: formatMegabytes(localCompressedBytes) })
+                      : "",
+                  })}
             </p>
           </div>
         )}

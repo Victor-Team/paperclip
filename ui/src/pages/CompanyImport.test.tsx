@@ -713,6 +713,44 @@ describe("CompanyImport", () => {
     expect(container.textContent).not.toContain("Preview failed:");
   });
 
+  it("localizes the pending preview and its fallback failure toast", async () => {
+    await i18n.changeLanguage("zh-CN");
+    let rejectPreview!: (reason: unknown) => void;
+    mockCompaniesApi.importPreview.mockImplementation(() => new Promise((_resolve, reject) => {
+      rejectPreview = reject;
+    }));
+    await renderPage();
+    await enterGithubUrl();
+    await clickButton((text) => text === "预览导入");
+
+    expect(container.textContent).toContain("正在上传并分析导入包");
+    expect(container.textContent).toContain("请保持此页面打开");
+    expect(container.textContent).not.toContain("Uploading and analyzing");
+
+    await act(async () => rejectPreview({}));
+    await flushReact();
+    expect(mockPushToast).toHaveBeenCalledWith(expect.objectContaining({
+      tone: "error",
+      title: "预览失败",
+      body: "无法预览导入内容。",
+    }));
+  });
+
+  it("localizes the import failure toast when the server supplies no error message", async () => {
+    await i18n.changeLanguage("zh-CN");
+    mockCompaniesApi.importBundleAsync.mockRejectedValue({});
+    await renderPage();
+    await enterGithubUrl();
+    await clickButton((text) => text === "预览导入");
+    await clickButton((text) => text.startsWith("导入 3 个文件"));
+    await settle();
+    expect(mockPushToast).toHaveBeenCalledWith(expect.objectContaining({
+      tone: "error",
+      title: "导入失败",
+      body: "无法完成导入。",
+    }));
+  });
+
   it("shows a progress panel while the import runs and a durable error panel when it fails", async () => {
     // The submit stays pending across the whole job, so the progress panel and
     // structural locks cover it. Rejecting the submit surfaces the error panel.

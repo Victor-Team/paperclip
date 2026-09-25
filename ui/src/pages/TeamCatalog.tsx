@@ -240,29 +240,29 @@ export function teamRoute(catalogRef: string, filePath?: string | null): string 
 
 const TRUST_META: Record<
   CatalogTeamTrustLevel,
-  { label: string; tip: string; tone: string; Icon: typeof ShieldCheck }
+  { labelKey: string; tipKey: string; tone: string; Icon: typeof ShieldCheck }
 > = {
   markdown_only: {
-    label: "Markdown only",
-    tip: "Contains only markdown and references. No executable content.",
+    labelKey: "teamcatalog.general.trustMarkdownOnly",
+    tipKey: "teamcatalog.general.trustMarkdownOnlyTip",
     tone: "text-emerald-600 dark:text-emerald-300 border-emerald-500/30",
     Icon: ShieldCheck,
   },
   assets: {
-    label: "Assets",
-    tip: "Includes static assets (images, fixtures). No executable content.",
+    labelKey: "teamcatalog.general.trustAssets",
+    tipKey: "teamcatalog.general.trustAssetsTip",
     tone: "text-emerald-600 dark:text-emerald-300 border-emerald-500/30",
     Icon: ShieldCheck,
   },
   scripts_executables: {
-    label: "Scripts",
-    tip: "Includes executable scripts that were security-reviewed before bundling.",
+    labelKey: "teamcatalog.general.trustScripts",
+    tipKey: "teamcatalog.general.trustScriptsTip",
     tone: "text-amber-600 dark:text-amber-300 border-amber-500/30",
     Icon: AlertTriangle,
   },
   external_sources: {
-    label: "External sources",
-    tip: "References external sources resolved at install time.",
+    labelKey: "teamcatalog.general.trustExternalSources",
+    tipKey: "teamcatalog.general.trustExternalSourcesTip",
     tone: "text-amber-600 dark:text-amber-300 border-amber-500/30",
     Icon: AlertTriangle,
   },
@@ -271,6 +271,7 @@ const TRUST_META: Record<
 function TrustChip({ level, iconOnly = false }: { level: CatalogTeamTrustLevel; iconOnly?: boolean }) {
   const meta = TRUST_META[level];
   const { Icon } = meta;
+  const { t } = useTranslation();
   return (
     <Tooltip>
       <TooltipTrigger asChild>
@@ -281,10 +282,10 @@ function TrustChip({ level, iconOnly = false }: { level: CatalogTeamTrustLevel; 
           )}
         >
           <Icon className="h-3 w-3" />
-          {!iconOnly && meta.label}
+          {!iconOnly && t(meta.labelKey)}
         </Badge>
       </TooltipTrigger>
-      <TooltipContent>{meta.tip}</TooltipContent>
+      <TooltipContent>{t(meta.tipKey)}</TooltipContent>
     </Tooltip>
   );
 }
@@ -2156,7 +2157,12 @@ export function TeamRow({
       </div>
       <div className="flex items-center gap-1.5 text-(length:--text-micro) text-muted-foreground">
         <span>
-          {team.counts.agents}{t("teamcatalog.general.a")} {team.counts.projects}{t("teamcatalog.general.p")} {team.counts.routines}{t("teamcatalog.general.r")} {skillCount(team)}{t("teamcatalog.general.s13")}</span>
+          {t("teamcatalog.general.teamRowCounts", {
+            agents: team.counts.agents,
+            projects: team.counts.projects,
+            routines: team.counts.routines,
+            skills: skillCount(team),
+          })}</span>
         <TrustChip level={team.trustLevel} iconOnly />
       </div>
     </button>
@@ -2416,7 +2422,9 @@ export function TeamCatalog() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm" className="h-8">
-                {categoryFilter ? `Category · ${titleCase(categoryFilter)}` : t("teamcatalog.general.allcategories")}
+                {categoryFilter
+                  ? t("teamcatalog.general.selectedCategory", { category: titleCase(categoryFilter) })
+                  : t("teamcatalog.general.allcategories")}
                 <ChevronDown className="h-3.5 w-3.5" />
               </Button>
             </DropdownMenuTrigger>
@@ -2593,7 +2601,11 @@ export function TeamCatalog() {
           open={installOpen}
           onClose={() => setInstallOpen(false)}
           onInstalled={() => {
-            pushToast({ tone: "success", title: "Team installed", body: `${selectedTeam.name} was imported.` });
+            pushToast({
+              tone: "success",
+              title: t("teamcatalog.general.teaminstalled"),
+              body: t("teamcatalog.general.teamImportedToast", { teamName: selectedTeam.name }),
+            });
             // Provenance now lives on the new agents — refresh installed/out-of-date state.
             void queryClient.invalidateQueries({
               queryKey: queryKeys.teamCatalog.installed(selectedCompanyId),
