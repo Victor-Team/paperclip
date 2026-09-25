@@ -85,4 +85,21 @@ describe("managed install doctor checks", () => {
       expect.objectContaining({ name: "Managed install", status: "pass" }),
     ]);
   });
+
+  it("passes when only the user-level shim exists without a store", () => {
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), "paperclip-install-doctor-"));
+    const paths = resolveInstallStorePaths({
+      paperclipHome: path.join(root, ".paperclip"),
+      homeDir: root,
+    });
+    writeManagedShim(paths);
+
+    expect(fs.existsSync(paths.manifestPath)).toBe(false);
+    expect(fs.existsSync(paths.markerPath)).toBe(false);
+    expect(fs.existsSync(paths.currentPath)).toBe(false);
+    expect(fs.existsSync(paths.shimPath)).toBe(true);
+    expect(managedInstallChecks(paths)).toEqual([
+      expect.objectContaining({ name: "Managed install", status: "pass" }),
+    ]);
+  });
 });
