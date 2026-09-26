@@ -4,6 +4,7 @@ import {
   tenantSessionRecovery,
 } from "@/lib/tenant-session-recovery";
 import { __inflightGetCount, api, detachInflightGet } from "./client";
+import { i18n } from "@/i18n";
 
 interface Deferred<T> {
   promise: Promise<T>;
@@ -39,6 +40,42 @@ beforeEach(() => {
 afterEach(() => {
   vi.restoreAllMocks();
   vi.unstubAllGlobals();
+});
+
+describe("request locale", () => {
+  afterEach(async () => {
+    await i18n.changeLanguage("en");
+  });
+
+  it("sends the selected UI language on requests after switching from English to Chinese", async () => {
+    fetchMock.mockResolvedValue(errorResponse({ error: "无权编辑此任务" }, 403));
+    await i18n.changeLanguage("en");
+    await expect(api.get("/locale-error-en")).rejects.toMatchObject({ status: 403 });
+    expect((fetchMock.mock.calls[0][1].headers as Headers).get("X-Paperclip-Locale")).toBe("en");
+
+    await i18n.changeLanguage("zh-CN");
+    await expect(api.post("/locale-error-zh", {}, { headers: { "X-Test-Request": "present" } }))
+      .rejects.toMatchObject({ status: 403, message: "无权编辑此任务" });
+    const headers = fetchMock.mock.calls[1][1].headers as Headers;
+    expect(headers.get("X-Paperclip-Locale")).toBe("zh-CN");
+    expect(headers.get("X-Test-Request")).toBe("present");
+  });
+
+  it("starts a new GET after a language switch while the old request is pending", async () => {
+    const english = deferred<Response>();
+    const chinese = deferred<Response>();
+    fetchMock.mockReturnValueOnce(english.promise).mockReturnValueOnce(chinese.promise);
+    await i18n.changeLanguage("en");
+    const first = api.get("/same-path");
+    await i18n.changeLanguage("zh-CN");
+    const second = api.get("/same-path");
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect((fetchMock.mock.calls[1][1].headers as Headers).get("X-Paperclip-Locale")).toBe("zh-CN");
+    english.resolve(jsonResponse({ locale: "en" }));
+    chinese.resolve(jsonResponse({ locale: "zh-CN" }));
+    expect(await first).toEqual({ locale: "en" });
+    expect(await second).toEqual({ locale: "zh-CN" });
+  });
 });
 
 describe("tenant-session recovery", () => {

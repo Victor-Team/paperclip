@@ -1,0 +1,18 @@
+{
+  "browserLanguage": "en-US",
+  "chosenLocale": "zh-CN",
+  "realServerPatchStatus": 200,
+  "realServerTitle": "编辑权限错误分支测试任务（请求已验证）",
+  "requests": [
+    {
+      "method": "PATCH",
+      "path": "/api/issues/CMP-1",
+      "locale": "zh-CN",
+      "body": "{\"title\":\"编辑权限错误分支测试任务（请求已验证）\"}"
+    },
+    {
+      "responseStatus": 200,
+      "responseBody": "{\"id\":\"ab8b6f62-b44f-4396-9de7-8dd351911363\",\"companyId\":\"26c87d7e-82e6-46a4-af6e-3c8c72e0f1a0\",\"conversationAgentId\":null,\"conversationUserId\":null,\"conversationState\":null,\"conversationSessionGeneration\":0,\"conversationBoundaryCommentId\":null,\"projectId\":null,\"projectWorkspaceId\":null,\"goalId\":nul"
+    }
+  ]
+}

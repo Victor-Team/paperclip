@@ -4052,9 +4052,9 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
         );
       }
       pushToast({
-        title: "Task update failed",
+        title: t("tok224.taskUpdateFailed"),
         body:
-          err instanceof Error ? err.message : "Unable to save task changes",
+          err instanceof Error ? err.message : t("tok224.unableToSaveTaskChanges"),
         tone: "error",
       });
     },
@@ -4268,8 +4268,8 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
       pushToast({
         title:
           status === "done"
-            ? "Run stopped and task done"
-            : "Run stopped and task cancelled",
+            ? t("tok224.runStoppedTaskDone")
+            : t("tok224.runStoppedTaskCancelled"),
         tone: "success",
       });
     },
@@ -4277,14 +4277,14 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
       const runWasStopped = didRunCancelBeforeStatusUpdateFail(err);
       pushToast({
         title: runWasStopped
-          ? "Run stopped; task update failed"
+          ? t("tok224.runStoppedTaskUpdateFailed")
           : status === "done"
-            ? "Stop and done failed"
-            : "Stop and cancel failed",
+            ? t("tok224.stopAndDoneFailed")
+            : t("tok224.stopAndCancelFailed"),
         body:
           err instanceof Error
             ? err.message
-            : "Unable to stop the run and update the task",
+            : t("tok224.unableToStopAndUpdateTask"),
         tone: "error",
       });
     },
@@ -4322,11 +4322,11 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
     },
     onError: (err) => {
       pushToast({
-        title: "Task update failed",
+        title: t("tok224.taskUpdateFailed"),
         body:
           err instanceof Error
             ? err.message
-            : "Unable to save sub-task changes",
+            : t("tok224.unableToSaveSubtaskChanges"),
         tone: "error",
       });
     },
