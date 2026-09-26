@@ -1,3 +1,4 @@
+import { t, useTranslation } from "@/i18n";
 import { AgentIdentity } from "@/components/AgentIdentity";
 import { AgentAvatar } from "@/components/AgentAvatar";
 import { useEffect, useMemo, useRef, useState, type SVGProps } from "react";
@@ -578,7 +579,7 @@ export function skillDetailBreadcrumbs(
     ? folderBreadcrumbTrail(treeFromResult(folderResult), detail.folderId)
     : [];
   return [
-    { label: "Skills", href: "/skills" },
+    { label: t("tok224.skills"), href: "/skills" },
     ...trail.map((folder, index) => ({
       label: index === 0 ? reservedRootLabel(folder) : folder.name,
       href: `/skills?folder=${encodeURIComponent(folder.id)}`,
@@ -834,6 +835,7 @@ function SkillCard({
   onCreateFolderAndMove?: (card: DiscoveryCard) => void;
   onOpenMove?: (card: DiscoveryCard) => void;
 }) {
+  useTranslation();
   const source = sourceMeta(card.sourceBadge ?? "catalog", card.sourceLabel ?? null);
   const SourceIcon = source.icon;
   const badgeFolder = showFolderBadge && card.installed
@@ -877,7 +879,7 @@ function SkillCard({
         <div className="min-w-0 flex-1">
           <div className="truncate font-mono text-sm font-medium text-foreground">{card.name}</div>
           <div className="truncate text-xs text-muted-foreground">
-            by {card.author}{card.version ? ` · ${card.version}` : ""}
+            {t("tok224.byAuthor", { name: card.author })}{card.version ? ` · ${card.version}` : ""}
           </div>
           {badgeFolder !== undefined ? (
             <div className="mt-1 flex min-w-0 items-center gap-1.5 text-xs text-muted-foreground">
@@ -943,9 +945,9 @@ function SkillCard({
           <span>
             {card.installed
               ? card.agentCount > 0
-                ? `Enabled for ${card.agentCount} ${card.agentCount === 1 ? "agent" : "agents"}`
-                : "Not enabled for any agents"
-              : "Available to install"}
+                ? t("tok224.enabledFor", { count: card.agentCount })
+                : t("tok224.notEnabled")
+              : t("tok224.availableInstall")}
           </span>
           {card.starCount > 0 ? (
             <>
@@ -963,7 +965,7 @@ function SkillCard({
         <div className="mt-2 flex flex-wrap items-center gap-1">
           {card.installed ? (
             <Badge variant="secondary" className="text-(length:--text-nano)">
-              Installed
+              {t("tok224.installed")}
             </Badge>
           ) : null}
           <Badge variant="outline" className="max-w-full text-(length:--text-nano) text-muted-foreground">
@@ -976,7 +978,7 @@ function SkillCard({
           {card.required ? (
             <Badge variant="outline" className="ml-auto border-border bg-muted/60 text-(length:--text-nano) text-muted-foreground">
               <Lock className="h-3 w-3" aria-hidden="true" />
-              Bundled
+              {t("tok224.bundled")}
             </Badge>
           ) : card.sourceKind === "optional" ? (
             <Badge variant="outline" className="ml-auto text-(length:--text-nano) text-muted-foreground">
@@ -1131,12 +1133,13 @@ export function DiscoveryGrid({
   /** Category/folder navigation stays available in production, but the Streamlined UI relies on search and scrolling. */
   showBrowseRails?: boolean;
 }) {
+  useTranslation();
   const installedView = tab === "installed";
-  const viewTitle = installedView ? "Installed skills" : "Discover skills";
+  const viewTitle = t(installedView ? "tok224.installedSkills" : "tok224.discoverSkills");
   const viewDescription = installedView
-    ? "Skills available to this organization."
-    : "Browse skills from every available source.";
-  const searchLabel = installedView ? "Search installed skills" : "Search discoverable skills";
+    ? t("tok224.skillsAvailable")
+    : t("tok224.discoverHint");
+  const searchLabel = t(installedView ? "tok224.searchInstalled" : "tok224.searchDiscover");
   // Source filter (github / skills.sh / local / …) lives in the grid so it
   // narrows whatever the parent already filtered by tab/category/search (PAP-10907 E).
   const [sourceBadgeFilter, setSourceBadgeFilter] = useState<string>("all");
@@ -1144,7 +1147,7 @@ export function DiscoveryGrid({
     const facets = new Map<string, string>();
     for (const card of cards) {
       if (card.sourceKind) {
-        facets.set(`kind:${card.sourceKind}`, card.sourceKind === "bundled" ? "Bundled" : "Optional");
+        facets.set(`kind:${card.sourceKind}`, card.sourceKind === "bundled" ? t("tok224.bundled") : t("tok224.optional"));
       }
       if (card.sourceBadge) {
         facets.set(`badge:${card.sourceBadge}`, sourceMeta(card.sourceBadge, null).label);
@@ -1249,8 +1252,8 @@ export function DiscoveryGrid({
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm">
-                <span className="text-muted-foreground">Sort</span>
-                <span className="ml-1.5">{DISCOVERY_SORT_LABELS[sort]}</span>
+                <span className="text-muted-foreground">{t("tok224.sort")}</span>
+                <span className="ml-1.5">{t(`tok224.${({agents:"mostAgents",stars:"mostStars",forks:"mostForks",recent:"recentlyUpdated",alphabetical:"alphabetical"} as const)[sort]}`)}</span>
                 <ChevronDown className="ml-1 h-3.5 w-3.5" />
               </Button>
             </DropdownMenuTrigger>
@@ -1258,7 +1261,7 @@ export function DiscoveryGrid({
               <DropdownMenuRadioGroup value={sort} onValueChange={(value) => onSortChange(value as DiscoverySort)}>
                 {DISCOVERY_SORTS.map((option) => (
                   <DropdownMenuRadioItem key={option} value={option}>
-                    {DISCOVERY_SORT_LABELS[option]}
+                    {t(`tok224.${({agents:"mostAgents",stars:"mostStars",forks:"mostForks",recent:"recentlyUpdated",alphabetical:"alphabetical"} as const)[option]}`)}
                   </DropdownMenuRadioItem>
                 ))}
               </DropdownMenuRadioGroup>
@@ -1268,18 +1271,18 @@ export function DiscoveryGrid({
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm">
-                  <span className="text-muted-foreground">Source</span>
+                  <span className="text-muted-foreground">{t("tok224.source")}</span>
                   <span className="ml-1.5">
                     {sourceBadgeFilter === "all"
-                      ? "All"
-                      : availableSources.find((source) => source.value === sourceBadgeFilter)?.label ?? "All"}
+                      ? t("tok224.all")
+                      : availableSources.find((source) => source.value === sourceBadgeFilter)?.label ?? t("tok224.all")}
                   </span>
                   <ChevronDown className="ml-1 h-3.5 w-3.5" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuRadioGroup value={sourceBadgeFilter} onValueChange={setSourceBadgeFilter}>
-                  <DropdownMenuRadioItem value="all">All sources</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="all">{t("tok224.allSources")}</DropdownMenuRadioItem>
                   {availableSources.map((source) => (
                     <DropdownMenuRadioItem key={source.value} value={source.value}>
                       {source.label}
@@ -1294,8 +1297,8 @@ export function DiscoveryGrid({
             size="icon-sm"
             onClick={() => onScan()}
             disabled={scanPending}
-            aria-label="Scan project workspaces for skills"
-            title="Scan project workspaces for skills"
+            aria-label={t("tok224.scanProjectSkills")}
+            title={t("tok224.scanProjectSkills")}
           >
             <RefreshCw className={cn("h-4 w-4", scanPending && "animate-spin")} />
           </Button>
@@ -1303,26 +1306,26 @@ export function DiscoveryGrid({
             <DropdownMenuTrigger asChild>
               <Button size="sm" variant="default">
                 <Plus className="mr-1 h-3.5 w-3.5" />
-                New
+                {t("tok224.new")}
                 <ChevronDown className="ml-1 h-3.5 w-3.5" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem onSelect={onCreate}>
                 <Pencil className="mr-2 h-4 w-4" />
-                Create new skill
+                {t("tok224.createNewSkill")}
               </DropdownMenuItem>
               <DropdownMenuItem onSelect={onBrowseDiscover}>
                 <Compass className="mr-2 h-4 w-4" />
-                Discover skills
+                {t("tok224.discoverSkills")}
               </DropdownMenuItem>
               <DropdownMenuItem onSelect={onImport}>
                 <Globe className="mr-2 h-4 w-4" />
-                Import from path or URL
+                {t("tok224.importPath")}
               </DropdownMenuItem>
               <DropdownMenuItem onSelect={onImportFromProject}>
                 <FolderSearch className="mr-2 h-4 w-4" />
-                Import skills from project
+                {t("tok224.importProject")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -1331,7 +1334,7 @@ export function DiscoveryGrid({
               <FolderChip
                 result={folderResult}
                 selection={folderSelection}
-                allLabel="All skills"
+                allLabel={t("tok224.allSkills")}
                 onClick={onOpenMobileFolders ?? (() => undefined)}
               />
             </div>
@@ -1339,12 +1342,12 @@ export function DiscoveryGrid({
           {onCreateFolder && !showFolderRail ? (
             <Button variant="outline" size="sm" onClick={onCreateFolder}>
               <Plus className="mr-1 h-3.5 w-3.5" />
-              New folder
+              {t("tok224.newFolder")}
             </Button>
           ) : null}
           {onToggleSelectMode ? (
             <Button variant="ghost" size="sm" onClick={onToggleSelectMode}>
-              {selectMode ? "Done" : "Select"}
+              {t(selectMode ? "tok224.done" : "tok224.select")}
             </Button>
           ) : null}
         </div>
@@ -1355,7 +1358,7 @@ export function DiscoveryGrid({
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm" className="w-full justify-between">
-                  <span className="capitalize">{activeCategory ?? "All categories"}</span>
+                  <span className="capitalize">{activeCategory ?? t("tok224.allCategories")}</span>
                   <ChevronDown className="h-3.5 w-3.5" />
                 </Button>
               </DropdownMenuTrigger>
@@ -1400,7 +1403,7 @@ export function DiscoveryGrid({
           {folderNudgeStorageKey && onCreateFolder && folderResult && folderResult.folders.length === 0 && !loading && cards.length > 0 ? (
             <AllUnfiledBanner
               storageKey={folderNudgeStorageKey}
-              itemLabelPlural="skills"
+              itemLabelPlural={t("tok224.skills")}
               onCreateFolder={onCreateFolder}
             />
           ) : null}
@@ -1427,22 +1430,22 @@ export function DiscoveryGrid({
                 message={
                   totalCount === 0
                     ? installedView
-                      ? "No installed skills yet. Discover a skill or create one."
-                      : "No skills are available to discover yet."
+                      ? t("tok224.noInstalled")
+                      : t("tok224.noDiscover")
                     : search || activeCategory || sourceFilterActive
-                      ? "No skills match your filters."
-                      : "No skills in this view yet."
+                      ? t("tok224.noMatch")
+                      : t("tok224.noSkillsView")
                 }
               />
               {totalCount === 0 ? (
                 <div className="mt-3 flex flex-col items-center gap-2">
                   {installedView ? (
                     <Button size="sm" onClick={onBrowseDiscover}>
-                      <Compass className="mr-1.5 h-3.5 w-3.5" /> Discover skills
+                      <Compass className="mr-1.5 h-3.5 w-3.5" /> {t("tok224.discoverSkills")}
                     </Button>
                   ) : null}
                   <Button size="sm" variant="ghost" onClick={onCreate}>
-                    Create a skill
+                    {t("tok224.createSkill")}
                   </Button>
                 </div>
               ) : (search || activeCategory || sourceFilterActive) ? (
@@ -1456,7 +1459,7 @@ export function DiscoveryGrid({
                       setSourceBadgeFilter("all");
                     }}
                   >
-                    Clear filters
+                    {t("tok224.clearFilters")}
                   </Button>
                 </div>
               ) : null}
@@ -1464,7 +1467,7 @@ export function DiscoveryGrid({
           ) : (
             <>
               <p className="mb-3 text-xs text-muted-foreground">
-                {sourceFilteredCards.length} {sourceFilteredCards.length === 1 ? "skill" : "skills"}
+                {t("tok224.skillCount", { count: sourceFilteredCards.length })}
                 {activeCategory ? <span className="capitalize"> · {activeCategory}</span> : null}
               </p>
               <div className="grid gap-3 [grid-template-columns:repeat(auto-fill,minmax(19rem,1fr))]">
@@ -3813,7 +3816,7 @@ function SkillPane({
         <div className="mt-4 space-y-3 border-t border-border pt-4 text-sm">
           <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
             <div className="flex min-w-0 items-center gap-2">
-              <span className="text-(length:--text-micro) uppercase tracking-(--tracking-caps) text-muted-foreground">Source</span>
+              <span className="text-(length:--text-micro) uppercase tracking-(--tracking-caps) text-muted-foreground">{t("tok224.source")}</span>
               <span className="flex min-w-0 items-center gap-2">
                 <SourceIcon className="h-3.5 w-3.5 text-muted-foreground" />
                 {detail.sourcePath && displaySourcePath ? (
@@ -4010,6 +4013,7 @@ function SkillPane({
 }
 
 export function CompanySkills() {
+  useTranslation();
   const { "*": routePath } = useParams<{ "*": string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -4361,7 +4365,7 @@ export function CompanySkills() {
   const activeDetail = detailQuery.data ?? displayedDetail;
   useEffect(() => {
     setBreadcrumbs([
-      { label: "Skills", href: "/skills" },
+      { label: t("tok224.skills"), href: "/skills" },
       ...(isStudioNew
         ? [{ label: studioForkFromId ? "Fork skill" : "New skill" }]
         : activeDetail
@@ -5401,7 +5405,7 @@ export function CompanySkills() {
       <DeleteFolderDialog
         open={deleteFolderTarget !== null}
         folder={deleteFolderTarget}
-        itemLabelPlural="skills"
+        itemLabelPlural={t("tok224.skills")}
         pending={deleteFolder.isPending}
         onOpenChange={(open) => {
           if (!open) setDeleteFolderTarget(null);
@@ -5415,8 +5419,8 @@ export function CompanySkills() {
         onOpenChange={setMobileFoldersOpen}
         result={railSkillFolderResult}
         selection={folderSelection}
-        allLabel="All skills"
-        itemLabelPlural="Skills"
+        allLabel={t("tok224.allSkills")}
+        itemLabelPlural={t("tok224.skills")}
         onSelect={setFolderSelection}
         onCreate={() => openCreateFolder()}
       />

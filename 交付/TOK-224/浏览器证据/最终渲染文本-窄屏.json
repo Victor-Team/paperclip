@@ -1,0 +1,90 @@
+[
+  {
+    "page": "仪表盘",
+    "breakpoint": "窄屏",
+    "route": "/CMP/dashboard",
+    "title": "仪表盘 • 汉化测试组织 • Paperclip",
+    "text": "跳转到主要内容\n汉\n汉化测试组织\n新建任务\n搜索\n仪表盘\n收件箱\n工作\n任务\n项目\n例程\n产物\n公司\n智能体\n技能\n连接器\n审计\nBO\nBoard\n仪表盘\n\n您还没有智能体。\n\n在此创建\n智能体\n\n暂无近期智能体运行记录。\n\n0\n\n已启用智能体\n\n0\n\n进行中的任务\n\n$0.00\n\n本月支出\n\n0\n\n待处理审批\n\n运行动态\n过去 14 天\n\n暂无运行记录\n\n按状态统计任务\n过去 14 天\n9/13\n9/19\n9/26\n待办列表\n成功率\n过去 14 天\n\n暂无运行记录\n\n最近活动\nBO\n\nBoard 已读\n中文渲染检查任务\n\nCMP-1\n刚刚\nBO\n\nBoard 已读\n中文渲染检查任务\n\nCMP-1\n刚刚\nBO\n\nBoard 已读\n中文渲染检查任务\n\nCMP-1\n1 分钟前\nBO\n\nBoard 已读\n中文渲染检查任务\n\nCMP-1\n1 分钟前\nBO\n\nBoard 已读\n中文渲染检查任务\n\nCMP-1\n1 分钟前\nBO\n\nBoard 已读\n中文渲染检查任务\n\nCMP-1\n4 分钟前\nBO\n\nBoard 已读\n中文渲染检查任务\n\nCMP-1\n4 分钟前\nBO\n\nBoard 已读\n中文渲染检查任务\n\nCMP-1\n10 分钟前\nBO\n\nBoard 已读\n中文渲染检查任务\n\nCMP-1\n11 分钟前\nBO\n\nBoard 已读\n中文渲染检查任务\n\nCMP-1\n11 分钟前\n最近任务\n中文渲染检查任务\nCMP-1\n28 分钟前\n首页\n任务\n新建任务\n智能体\n收件箱\n命令面板\n\n搜索要运行的命令...\n\n第 1 步，共 3\n创建首位智能体\n\n首位智能体已准备好工作！\n\n智能体名称\n下一步",
+    "errors": []
+  },
+  {
+    "page": "收件箱",
+    "breakpoint": "窄屏",
+    "route": "/CMP/inbox",
+    "title": "收件箱 • 汉化测试组织 • Paperclip",
+    "text": "跳转到主要内容\n汉\n汉化测试组织\n新建任务\n搜索\n仪表盘\n收件箱\n工作\n任务\n项目\n例程\n产物\n公司\n智能体\n技能\n连接器\n审计\nBO\nBoard\n收件箱\n我的\n最近\n未读\n已阻塞\n全部\n今天\n归档\n打开 CMP-1：中文渲染检查任务\n中文渲染检查任务\n28 分钟前\n首页\n任务\n新建任务\n智能体\n收件箱\n命令面板\n\n搜索要运行的命令...",
+    "errors": []
+  },
+  {
+    "page": "任务列表",
+    "breakpoint": "窄屏",
+    "route": "/CMP/issues/all",
+    "title": "任务 • 汉化测试组织 • Paperclip",
+    "text": "跳转到主要内容\n汉\n汉化测试组织\n新建任务\n搜索\n仪表盘\n收件箱\n工作\n任务\n项目\n例程\n产物\n公司\n智能体\n技能\n连接器\n审计\nBO\nBoard\n任务\n今天\n打开 CMP-1：中文渲染检查任务\n中文渲染检查任务\n28 分钟前\n首页\n任务\n新建任务\n智能体\n收件箱\n命令面板\n\n搜索要运行的命令...",
+    "errors": []
+  },
+  {
+    "page": "项目",
+    "breakpoint": "窄屏",
+    "route": "/CMP/projects",
+    "title": "项目 • 汉化测试组织 • Paperclip",
+    "text": "跳转到主要内容\n汉\n汉化测试组织\n新建任务\n搜索\n仪表盘\n收件箱\n工作\n任务\n项目\n例程\n产物\n公司\n智能体\n技能\n连接器\n审计\nBO\nBoard\n项目\n排序：名称\n添加项目\n\n还没有项目。\n\n添加项目\n首页\n任务\n新建任务\n智能体\n收件箱\n命令面板\n\n搜索要运行的命令...",
+    "errors": []
+  },
+  {
+    "page": "例程",
+    "breakpoint": "窄屏",
+    "route": "/CMP/routines",
+    "title": "例程 • 汉化测试组织 • Paperclip",
+    "text": "跳转到主要内容\n汉\n汉化测试组织\n新建任务\n搜索\n仪表盘\n收件箱\n工作\n任务\n项目\n例程\n产物\n公司\n智能体\n技能\n连接器\n审计\nBO\nBoard\n例程\n例程\n\n定义定期工作，并生成可审计的执行任务。\n\n查看全部运行\n创建例程\n\n0 个例程\n\n新建文件夹\n全部例程\n0\n\n暂无活跃例程。请创建首个定期工作。\n\n首页\n任务\n新建任务\n智能体\n收件箱\n命令面板\n\n搜索要运行的命令...",
+    "errors": []
+  },
+  {
+    "page": "产物",
+    "breakpoint": "窄屏",
+    "route": "/CMP/artifacts",
+    "title": "产物 • 汉化测试组织 • Paperclip",
+    "text": "跳转到主要内容\n汉\n汉化测试组织\n新建任务\n搜索\n仪表盘\n收件箱\n工作\n任务\n项目\n例程\n产物\n公司\n智能体\n技能\n连接器\n审计\nBO\nBoard\n产物\n全部\n图片\n视频\n文档\n文本\n文件\n\n还没有产物堆栈。\n\n首页\n任务\n新建任务\n智能体\n收件箱\n命令面板\n\n搜索要运行的命令...",
+    "errors": []
+  },
+  {
+    "page": "智能体",
+    "breakpoint": "窄屏",
+    "route": "/CMP/agents",
+    "title": "智能体 • 汉化测试组织 • Paperclip",
+    "text": "跳转到主要内容\n汉\n汉化测试组织\n新建任务\n搜索\n仪表盘\n收件箱\n工作\n任务\n项目\n例程\n产物\n公司\n智能体\n技能\n连接器\n审计\nBO\nBoard\n智能体\n全部\n活跃\n已暂停\n错误\n新建智能体\n\n创建你的第一个智能体，开始使用吧。\n\n新建智能体\n首页\n任务\n新建任务\n智能体\n收件箱\n命令面板\n\n搜索要运行的命令...",
+    "errors": []
+  },
+  {
+    "page": "技能",
+    "breakpoint": "窄屏",
+    "route": "/CMP/skills",
+    "title": "技能 • 汉化测试组织 • Paperclip",
+    "text": "跳转到主要内容\n已安装\n发现\n创作\n\n创建、编辑和测试自己的技能。\n\n我的技能\nBO\nBoard\n技能\n已安装的技能\n\n此组织可用的技能。\n\n排序\n智能体最多\n新建\n新建文件夹\n\n8 个技能\n\nA\nagentmail\n作者：Paperclip bundled\n\nUse your assigned AgentMail inbox to read email tasks, explicitly send or reply, and check delivery. Provided automatically by your inbox assignment.\n\n未为任何智能体启用\n已安装\nPaperclip bundled\nF\nfirst-task\n作者：Paperclip bundled\n\nGuide the user's first Paperclip task when its description invokes /first-task. Interpret the opening answer, clarify their goal, propose a plan or a single task, and wait for approval before hiring agents or executing approved work.\n\n未为任何智能体启用\n已安装\nPaperclip bundled\nP\npaperclip\n作者：Paperclip bundled\n\nInteract with the Paperclip control plane API for task coordination and governance. Use when checking assignments, updating issue status, posting comments, delegating work, managing routines, or calling Paperclip API endpoints.\n\n未为任何智能体启用\n已安装\nPaperclip bundled\nP\npaperclip-board\n作者：Paperclip bundled\n\nManage a Paperclip company as a board member via chat. Use when the user wants onboarding, company or agent management, approvals, task monitoring, cost oversight, or work product review in the Paperclip control plane.\n\n未为任何智能体启用\n已安装\nPaperclip bundled\nP\npaperclip-converting-plans-to-tasks\n作者：Paperclip bundled\n\nConvert Paperclip plans into executable issue graphs. Use when asked to plan, scope, or break down Paperclip company work into assigned tasks with specialty fit, dependencies, blockers, and parallelization.\n\n未为任何智能体启用\n已安装\nPaperclip bundled\nP\npaperclip-create-agent\n作者：Paperclip bundled\n\nCreate new agents in Paperclip with governance-aware hiring. Use when you need to inspect adapter configuration options, compare existing agent configs, draft a new agent prompt/config, and submit a hire request.\n\n未为任何智能体启用\n已安装\nPaperclip bundled\nP\npara-memory-files\n作者：Paperclip bundled\n\nUse a file-based PARA memory system to store, retrieve, and organize durable knowledge across sessions. Trigger on saving facts, daily notes, entity records, weekly synthesis, recall, tacit user patterns, or plan memory.\n\n未为任何智能体启用\n已安装\nPaperclip bundled\nS\nslack\n作者：Paperclip bundled\n\nUse the originating Slack bot to read shared discussions and collaborate in Slack during a verified Slack task.\n\n未为任何智能体启用\n已安装\nPaperclip bundled\n首页\n任务\n新建任务\n智能体\n收件箱\n命令面板\n\n搜索要运行的命令...",
+    "errors": []
+  },
+  {
+    "page": "连接器",
+    "breakpoint": "窄屏",
+    "route": "/CMP/apps",
+    "title": "连接器 • 汉化测试组织 • Paperclip",
+    "text": "跳转到主要内容\n浏览\n审查\nBO\nBoard\n连接器\nAirtable\n\nConnect Airtable's provider-hosted MCP server.\n\n连接\nAnthropic\n\nUse Anthropic APIs with a restricted key.\n\n连接\nAsana\n\nConnect Asana's provider-hosted MCP server.\n\n连接\nBox\n\nConnect Box's provider-hosted MCP server.\n\n连接\nClickHouse\n\nConnect ClickHouse's provider-hosted MCP server.\n\n连接\nCloudflare\n\nConnect Cloudflare's provider-hosted MCP server.\n\n连接\nCloudinary\n\nConnect Cloudinary's provider-hosted MCP server.\n\n连接\nFireflies\n\nSearch meeting transcripts, read summaries and action items, and connect meeting-ready routines.\n\n连接\nGitHub\n\nRead code and pull requests, comment on issues.\n\n连接\nGmail\n\nSearch and read Gmail messages and create drafts without enabling mail sending.\n\n连接\nGoogle Calendar\n\nRead calendars and manage Google Calendar events.\n\n连接\nGoogle Chat\n\nSearch and read Google Chat conversations and send messages.\n\n连接\nGoogle Docs\n\nRead and update Google Docs documents.\n\n连接\nGoogle Drive\n\nSearch, read, create, and copy files in Google Drive.\n\n连接\nGoogle People\n\nSearch contacts and directory profiles with the Google People API.\n\n连接\nGoogle Sheets\n\nRead and update Google Sheets spreadsheets.\n\n连接\nGoogle Slides\n\nRead and update Google Slides presentations.\n\n连接\nGoogle Workspace Search\n\nSearch Gmail, Drive, Calendar, and Chat through one read-only Google Workspace search tool.\n\n连接\nGrok\n\nConnect Grok accounts for your agents.\n\n连接\nHugging Face\n\nConnect Hugging Face's provider-hosted MCP server.\n\n连接\nJira\n\nConnect Jira's provider-hosted MCP server.\n\n连接\nLinear\n\nCreate, update, and read Linear issues.\n\n连接\nMem0\n\nConnect Mem0's provider-hosted MCP server.\n\n连接\nMiro\n\nConnect Miro's provider-hosted MCP server.\n\n连接\nMixpanel\n\nConnect Mixpanel's provider-hosted MCP server.\n\n连接\nNetlify\n\nConnect Netlify's provider-hosted MCP server.\n\n连接\nNotion\n\nRead and update pages in your Notion workspace.\n\n连接\nOpenAI\n\nConnect OpenAI accounts for your agents.\n\n连接\nOpenRouter\n\nConnect OpenRouter accounts for your agents.\n\n连接\nPagerDuty\n\nConnect PagerDuty's provider-hosted MCP server.\n\n连接\nPostHog\n\nAnalyze product usage, errors, feature flags, and experiments with PostHog's hosted MCP server.\n\n连接\nPostman\n\nConnect Postman's provider-hosted MCP server.\n\n连接\nRailway\n\nInspect services and logs, deploy applications, and run commands in your Railway containers.\n\n连接\nResend\n\nConnect Resend's provider-hosted MCP server.\n\n连接\nSentry\n\nInvestigate errors, releases, and production issues.\n\n连接\nShopify\n\nSearch a store's products and policies, and manage shopping carts.\n\n连接\nSlack\n\nSend and read messages in your team's channels.\n\n连接\nStripe\n\nConnect Stripe's provider-hosted MCP server.\n\n连接\nSupabase\n\nConnect Supabase's provider-hosted MCP server.\n\n连接\nTodoist\n\nConnect Todoist's provider-hosted MCP server.\n\n连接\nWebflow\n\nConnect Webflow's provider-hosted MCP server.\n\n连接\nWix\n\nConnect Wix's provider-hosted MCP server.\n\n连接\nYou.com\n\nConnect You.com's provider-hosted MCP server.\n\n连接\n连接自己的工具\n\n添加自定义 MCP 服务器或粘贴现有配置。\n\n连接\n首页\n任务\n新建任务\n智能体\n收件箱\n命令面板\n\n搜索要运行的命令...",
+    "errors": []
+  },
+  {
+    "page": "审计",
+    "breakpoint": "窄屏",
+    "route": "/CMP/audit",
+    "title": "审计 • 汉化测试组织 • Paperclip",
+    "text": "跳转到主要内容\n汉\n汉化测试组织\n新建任务\n搜索\n仪表盘\n收件箱\n工作\n任务\n项目\n例程\n产物\n公司\n智能体\n技能\n连接器\n审计\nBO\nBoard\n审计\n审计\n\n查看发生了什么，检查智能体运行，并了解组织的成本和预算控制。\n\n活动\n运行\n成本\n预算\n时间线\n活动\n智能体操作\n智能体\n全部智能体\n负责用户\n全部负责用户\n操作\n全部操作\n实体\n全部实体\n起始\n结束\n导出 CSV\n\n这里还没有内容\n\n智能体开始工作后，其操作会显示在这里。\n\n由 Paperclip 记录，条目不可编辑，且不会存储敏感信息。\n\n首页\n任务\n新建任务\n智能体\n收件箱\n命令面板\n\n搜索要运行的命令...",
+    "errors": []
+  },
+  {
+    "page": "任务详情",
+    "breakpoint": "窄屏",
+    "route": "/CMP/issues/2497cbe2-ec88-4721-8031-7d5b4b0de99f",
+    "title": "中文渲染检查任务 • 任务 • 汉化测试组织 • Paperclip",
+    "text": "跳转到主要内容\n汉\n汉化测试组织\n新建任务\n搜索\n仪表盘\n收件箱\n工作\n任务\n项目\n例程\n产物\n公司\n智能体\n技能\n连接器\n审计\n最近任务\n中文渲染检查任务\nBO\nBoard\n任务\nCMP-1\n中文渲染检查任务\n中文渲染检查任务\nCMP-1\n无项目\nBO\n\n检查属性栏和活动评论\n\n18:51\n\n开发部·前端实现席 · 本机渲染测试评论\n检查活动区中文显示和时间格式。\n\n19:01\n\n\n\n\n给智能体发消息…\n\n自动模式\n未分配\n首页\n任务\n新建任务\n智能体\n收件箱\n命令面板\n\n搜索要运行的命令...",
+    "errors": []
+  }
+]

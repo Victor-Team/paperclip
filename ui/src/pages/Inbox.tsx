@@ -1,4 +1,5 @@
 import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { t, useTranslation } from "@/i18n";
 import { Link, useLocation, useNavigate } from "@/lib/router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { deriveOriginatingActor, INBOX_MINE_ISSUE_STATUS_FILTER } from "@paperclipai/shared";
@@ -796,6 +797,7 @@ export function Inbox() {
 }
 
 function StreamlinedInbox() {
+  const { i18n } = useTranslation();
   const streamlinedUiEnabled = true;
   const { selectedCompanyId } = useCompany();
   const { setBreadcrumbs } = useBreadcrumbs();
@@ -881,8 +883,8 @@ function StreamlinedInbox() {
   });
 
   useEffect(() => {
-    setBreadcrumbs([{ label: "Inbox" }]);
-  }, [setBreadcrumbs]);
+    setBreadcrumbs([{ label: t("tok224.inbox") }]);
+  }, [setBreadcrumbs, i18n.language]);
 
   useEffect(() => {
     saveLastInboxTab(tab);
@@ -2400,16 +2402,16 @@ function StreamlinedInbox() {
     <div className="space-y-6">
       <InboxCollectionToolbar
         streamlined={streamlinedUiEnabled}
-        ariaLabel="Inbox controls"
+        ariaLabel={t("tok224.inboxControls")}
         context={(
           <Tabs value={tab} onValueChange={(value) => navigate(`/inbox/${value}`)}>
             <PageTabBar
               items={[
-                { value: "mine", label: "Mine" },
-                { value: "recent", label: "Recent" },
-                { value: "unread", label: "Unread" },
-                { value: "blocked", label: "Blocked" },
-                { value: "all", label: "All" },
+                { value: "mine", label: t("tok224.mine") },
+                { value: "recent", label: t("tok224.recent") },
+                { value: "unread", label: t("tok224.unread") },
+                { value: "blocked", label: t("tok224.blocked") },
+                { value: "all", label: t("tok224.all") },
               ]}
             />
           </Tabs>
@@ -2419,7 +2421,7 @@ function StreamlinedInbox() {
             <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
             <Input
               type="search"
-              placeholder="Search inbox…"
+              placeholder={t("tok224.searchInbox")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyDown={(e) => {
@@ -2471,7 +2473,7 @@ function StreamlinedInbox() {
                     variant="outline"
                     size="icon"
                     className={cn("h-8 w-8 shrink-0", blockedGroupBy !== "none" && "bg-accent")}
-                    title="Group"
+                    title={t("tok224.group")}
                   >
                     <Layers className="h-3.5 w-3.5" />
                   </Button>
@@ -2591,7 +2593,7 @@ function StreamlinedInbox() {
                     variant="outline"
                     size="icon"
                     className={cn("h-8 w-8 shrink-0", groupBy !== "none" && "bg-accent")}
-                    title="Group"
+                    title={t("tok224.group")}
                   >
                     <Layers className="h-3.5 w-3.5" />
                   </Button>
