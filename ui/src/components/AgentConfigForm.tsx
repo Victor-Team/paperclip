@@ -1077,6 +1077,14 @@ export function AgentConfigForm(props: AgentConfigFormProps) {
       return agentsApi.testEnvironment(selectedCompanyId, adapterType, { adapterConfig, agentId, aiConnection, environmentId });
     },
   });
+  // Ledger #19: the server reads the persisted config (the env this form
+  // holds is redacted), so this saves what is stored, not unsaved edits.
+  const saveAsCompanyDefault = useMutation({
+    mutationFn: async () => {
+      if (isCreate) throw new Error("Save the agent first");
+      return agentsApi.saveAdapterConfigAsCompanyDefault(props.agent.id, selectedCompanyId ?? undefined);
+    },
+  });
   const [testActionPending, setTestActionPending] = useState(false);
   const [testActionError, setTestActionError] = useState<string | null>(null);
   const testActionLabel = "Test";
@@ -1651,6 +1659,38 @@ export function AgentConfigForm(props: AgentConfigFormProps) {
                   }
                 }}
               />
+            </Field>
+          )}
+
+          {!isCreate && showAdapterTypeField && (
+            <Field
+              label={t("agentconfigform.general.saveascompanydefault")}
+              hint={t("agentconfigform.general.saveascompanydefaulthint")}
+            >
+              <div className="flex items-center gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="h-7 px-2.5 text-xs"
+                  onClick={() => saveAsCompanyDefault.mutate()}
+                  disabled={saveAsCompanyDefault.isPending || isDirty}
+                >
+                  {t("agentconfigform.general.saveascompanydefault")}
+                </Button>
+                {saveAsCompanyDefault.isSuccess && (
+                  <span className="text-xs text-muted-foreground">
+                    {t("agentconfigform.general.savedascompanydefault", {
+                      adapterType: saveAsCompanyDefault.data.adapterType,
+                    })}
+                  </span>
+                )}
+                {saveAsCompanyDefault.isError && (
+                  <span className="text-xs text-destructive">
+                    {saveAsCompanyDefault.error instanceof Error ? saveAsCompanyDefault.error.message : String(saveAsCompanyDefault.error)}
+                  </span>
+                )}
+              </div>
             </Field>
           )}
 

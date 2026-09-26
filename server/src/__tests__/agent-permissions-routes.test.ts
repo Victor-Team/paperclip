@@ -111,6 +111,15 @@ const mockCompanySkillService = vi.hoisted(() => ({
 }));
 const mockWorkspaceOperationService = vi.hoisted(() => ({}));
 const mockLogActivity = vi.hoisted(() => vi.fn());
+
+// Ledger #19: adapter switches read/write the server-owned per-adapter
+// profile table. These route tests have no database, so use an empty stand-in.
+const mockAdapterConfigProfileService = vi.hoisted(() => ({
+  getAgentProfile: vi.fn(async () => null),
+  saveAgentProfile: vi.fn(async () => undefined),
+  getCompanyDefault: vi.fn(async () => null),
+  saveCompanyDefault: vi.fn(async () => undefined),
+}));
 const mockTrackAgentCreated = vi.hoisted(() => vi.fn());
 const mockGetTelemetryClient = vi.hoisted(() => vi.fn());
 const mockSyncInstructionsBundleConfigFromFilePath = vi.hoisted(() => vi.fn());
@@ -173,6 +182,9 @@ function registerModuleMocks() {
     issueService: () => mockIssueService,
   }));
 
+  vi.doMock("../services/adapter-config-profiles.js", () => ({
+    adapterConfigProfileService: () => mockAdapterConfigProfileService,
+  }));
   vi.doMock("../services/secrets.js", () => ({
     secretService: () => mockSecretService,
   }));
