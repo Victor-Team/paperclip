@@ -22,6 +22,7 @@ import {
 import type { InspectDatabaseBackupHealthOptions } from "./services/database-backup-health.js";
 import type { StorageService } from "./storage/types.js";
 import { httpLogger, errorHandler } from "./middleware/index.js";
+import { localizeErrorResponses } from "./i18n/index.js";
 import { actorMiddleware } from "./middleware/auth.js";
 import { boardMutationGuard } from "./middleware/board-mutation-guard.js";
 import {
@@ -516,6 +517,11 @@ export async function createApp(
   // when the server may be reachable without a known reverse proxy in front.
   applyTrustProxy(app, parseTrustProxyEnv(process.env.TRUST_PROXY));
 
+  // Localize the `error` field of JSON error responses by request language
+  // (TOK-224). Registered before the body parsers so parser errors — which
+  // skip straight to the error handler — also flow through the wrapped
+  // `res.json`. English/default requests are untouched.
+  app.use(localizeErrorResponses());
   app.use(
     COMPANY_IMPORT_API_PATH,
     express.json({
