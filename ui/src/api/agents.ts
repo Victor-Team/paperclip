@@ -178,6 +178,11 @@ export const agentsApi = {
   resume: (id: string, companyId?: string) => api.post<Agent>(agentPath(id, companyId, "/resume"), {}),
   clearError: (id: string, companyId?: string) =>
     api.post<ClearAgentErrorResponse>(agentPath(id, companyId, "/clear-error"), {}),
+  saveAdapterConfigAsCompanyDefault: (id: string, companyId?: string) =>
+    api.post<{ adapterType: string; savedKeys: string[]; envKeys: string[] }>(
+      agentPath(id, companyId, "/adapter-config/save-as-company-default"),
+      {},
+    ),
   approve: (id: string, companyId?: string) => api.post<Agent>(agentPath(id, companyId, "/approve"), {}),
   terminate: (id: string, companyId?: string) => api.post<Agent>(agentPath(id, companyId, "/terminate"), {}),
   remove: (id: string, companyId?: string) => api.delete<{ ok: true }>(agentPath(id, companyId)),

@@ -121,7 +121,10 @@ describe("buildAgentUpdatePatch", () => {
     });
   });
 
-  it("preserves adapter-agnostic keys when changing adapter types", () => {
+  it("preserves adapter-agnostic keys but not env when changing adapter types", () => {
+    // Ledger #19: env is adapter-specific. The server restores the target
+    // adapter's own env (profile / company default / portable allowlist), so
+    // the UI must not copy the leaving adapter's env into the switch patch.
     const patch = buildAgentUpdatePatch(
       makeAgent(),
       makeOverlay({
@@ -133,15 +136,10 @@ describe("buildAgentUpdatePatch", () => {
       }),
     );
 
+    expect(patch.adapterConfig).not.toHaveProperty("env");
     expect(patch).toEqual({
       adapterType: "codex_local",
       adapterConfig: {
-        env: {
-          OPENAI_API_KEY: {
-            type: "plain",
-            value: "secret",
-          },
-        },
         promptTemplate: "Work the issue.",
         model: "gpt-5.4",
         dangerouslyBypassApprovalsAndSandbox: true,

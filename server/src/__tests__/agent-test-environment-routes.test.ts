@@ -93,6 +93,37 @@ vi.mock("../services/instance-settings.js", () => ({
   instanceSettingsService: () => mockInstanceSettingsService,
 }));
 
+const mockAdapterConfigProfiles = vi.hoisted(() => {
+  // In-memory stand-in for the server-owned per-adapter profile table.
+  const agentProfiles = new Map<string, Record<string, unknown>>();
+  const companyDefaults = new Map<string, Record<string, unknown>>();
+  const clone = (value: Record<string, unknown>) => JSON.parse(JSON.stringify(value)) as Record<string, unknown>;
+  return {
+    agentProfiles,
+    companyDefaults,
+    reset() {
+      agentProfiles.clear();
+      companyDefaults.clear();
+    },
+    service: {
+      getAgentProfile: vi.fn(async (agentId: string, adapterType: string) => {
+        const value = agentProfiles.get(`${agentId}:${adapterType}`);
+        return value ? clone(value) : null;
+      }),
+      saveAgentProfile: vi.fn(async () => undefined),
+      getCompanyDefault: vi.fn(async (companyId: string, adapterType: string) => {
+        const value = companyDefaults.get(`${companyId}:${adapterType}`);
+        return value ? clone(value) : null;
+      }),
+      saveCompanyDefault: vi.fn(async () => undefined),
+    },
+  };
+});
+
+vi.mock("../services/adapter-config-profiles.js", () => ({
+  adapterConfigProfileService: () => mockAdapterConfigProfiles.service,
+}));
+
 const testEnvironmentSpy = vi.fn();
 
 const externalAdapter: ServerAdapterModule = {
@@ -182,6 +213,7 @@ describe("agent test-environment route", () => {
   beforeEach(async () => {
     vi.resetModules();
     vi.clearAllMocks();
+    mockAdapterConfigProfiles.reset();
     mockInstanceSettingsService.get.mockResolvedValue({ defaultEnvironmentId: null });
     mockInstanceSettingsService.getExperimental.mockResolvedValue({ enableManagedSandboxOnly: false });
     mockEnvironmentService.findManagedSandboxEnvironment.mockResolvedValue(null);

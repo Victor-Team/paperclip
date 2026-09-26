@@ -79,8 +79,11 @@ export const WORKSPACE_BRANCH_ROUTINE_VARIABLE = "workspaceBranch";
 
 // Config keys owned by Paperclip/company state rather than one concrete adapter.
 // `paperclipSkillSync` is persisted in adapterConfig but must survive adapter swaps.
+// `env` is deliberately NOT here (ledger #19): each harness keeps its own home,
+// config dir and credentials in env, so carrying it across a swap breaks the
+// new harness. The server carries only a small portable env allowlist and
+// restores the target adapter's own saved env (see server routes/agents.ts).
 export const ADAPTER_AGNOSTIC_KEYS = [
-  "env",
   "promptTemplate",
   "instructionsFilePath",
   "cwd",

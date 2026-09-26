@@ -146,6 +146,7 @@ export { userSecretDefinitions } from "./user_secret_definitions.js";
 export { companySecrets } from "./company_secrets.js";
 export { managedAgentProfiles } from "./managed_agent_profiles.js";
 export { remoteAgentProfiles } from "./remote_agent_profiles.js";
+export { agentAdapterConfigProfiles } from "./agent_adapter_config_profiles.js";
 export { companySecretVersions } from "./company_secret_versions.js";
 export { companySecretBindings } from "./company_secret_bindings.js";
 export { companySecretProposals } from "./company_secret_proposals.js";

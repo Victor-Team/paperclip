@@ -248,6 +248,7 @@ import {
 } from "../services/native-runtime/provider-profile.js";
 import { managedAgentProfileService } from "../services/managed-agent-profiles.js";
 import { remoteAgentProfileService } from "../services/remote-agent-profiles.js";
+import { adapterConfigProfileService } from "../services/adapter-config-profiles.js";
 
 const AGENT_SKILL_ASSIGNMENT_MODES = ["add", "remove", "replace"] as const;
 
@@ -532,6 +533,7 @@ export function agentRoutes(
   const approvalsSvc = approvalService(db);
   const budgets = budgetService(db);
   const environmentsSvc = environmentService(db);
+  const adapterProfiles = adapterConfigProfileService(db);
   const environmentRuntime = environmentRuntimeService(db, {
     pluginWorkerManager: options.pluginWorkerManager,
   });
@@ -2383,6 +2385,139 @@ export function agentRoutes(
     return merged;
   }
 
+  // Adapter switch configuration (ledger #19).
+  //
+  // Upstream treats `env` as adapter-agnostic and carries it across an adapter
+  // switch. In practice env is where each harness keeps its own home/config dir
+  // and credentials (HOME, GROK_HOME, CLAUDE_CONFIG_DIR, CLAUDE_CODE_OAUTH_TOKEN,
+  // ...). Carrying it made the new harness look in the old harness's home and
+  // fail with "not logged in" / "model not found" (grok -> codex -> claude kept
+  // the grok env; opencode -> omp kept HOME=.../claude-work). So env is
+  // adapter-specific here: a switch carries only this small allowlist of
+  // host-level variables. The proxy variables must never be dropped: on this
+  // host some providers are only reachable through the proxy.
+  const ADAPTER_PORTABLE_ENV_KEYS: ReadonlySet<string> = new Set([
+    "HTTP_PROXY",
+    "HTTPS_PROXY",
+    "NO_PROXY",
+    "ALL_PROXY",
+    "LANG",
+    "TZ",
+  ]);
+  // Keys that belong to the agent (seat), not to one adapter. On a switch the
+  // agent's current values win over a stored profile, and a company default
+  // never supplies them.
+  const SEAT_OWNED_ADAPTER_CONFIG_KEYS: ReadonlySet<string> = new Set<string>([
+    ...ADAPTER_AGNOSTIC_KEYS,
+    ...KNOWN_INSTRUCTIONS_BUNDLE_KEYS,
+  ]);
+
+  function pickPortableAdapterEnv(env: unknown): Record<string, unknown> {
+    return Object.fromEntries(
+      Object.entries(parseObject(env)).filter(([key]) => ADAPTER_PORTABLE_ENV_KEYS.has(key.toUpperCase())),
+    );
+  }
+
+  function stripCompanyDefaultSeatKeys(config: Record<string, unknown>): Record<string, unknown> {
+    return Object.fromEntries(
+      Object.entries(config).filter(([key]) => !SEAT_OWNED_ADAPTER_CONFIG_KEYS.has(key)),
+    );
+  }
+
+  function sameJsonValue(left: unknown, right: unknown): boolean {
+    const canonical = (value: unknown): unknown => {
+      if (Array.isArray(value)) return value.map(canonical);
+      if (value && typeof value === "object") {
+        return Object.fromEntries(
+          Object.keys(value as Record<string, unknown>)
+            .sort()
+            .map((key) => [key, canonical((value as Record<string, unknown>)[key])]),
+        );
+      }
+      return value;
+    };
+    return JSON.stringify(canonical(left)) === JSON.stringify(canonical(right));
+  }
+
+  function isRedactedPlainEnvBinding(value: unknown): boolean {
+    const binding = asRecord(value);
+    return binding?.type === "plain" && binding.value === REDACTED_EVENT_VALUE;
+  }
+
+  type AdapterSwitchBaseSource = "agent_profile" | "company_default" | "none";
+
+  /** The stored config an agent switching onto `adapterType` starts from. */
+  async function loadAdapterSwitchBase(
+    agent: { id: string; companyId: string },
+    adapterType: string,
+  ): Promise<{ config: Record<string, unknown> | null; source: AdapterSwitchBaseSource }> {
+    const profile = await adapterProfiles.getAgentProfile(agent.id, adapterType);
+    if (profile) {
+      // Instructions-bundle keys always come from the agent's current config
+      // (preserveInstructionsBundleConfig), never from an older snapshot.
+      const config = Object.fromEntries(
+        Object.entries(profile).filter(([key]) => !KNOWN_INSTRUCTIONS_BUNDLE_KEY_SET.has(key)),
+      );
+      return { config, source: "agent_profile" };
+    }
+    const companyDefault = await adapterProfiles.getCompanyDefault(agent.companyId, adapterType);
+    if (companyDefault) {
+      return { config: stripCompanyDefaultSeatKeys(companyDefault), source: "company_default" };
+    }
+    return { config: null, source: "none" };
+  }
+
+  /**
+   * The adapterConfig an agent gets when it switches adapters.
+   *
+   * base (the agent's profile for the target adapter, else the company
+   * default, else nothing) -> the agent's current seat-owned keys -> the keys
+   * the request explicitly gives.
+   *
+   * "Explicitly gives" excludes values that are empty strings (the UI blanks
+   * model/effort/... on a switch) and values that only echo the leaving
+   * adapter's config (clients send the current config back). Env follows the
+   * same rule: redacted placeholders are dropped (the target's own value comes
+   * from the base), echoed leaving-adapter values are dropped, and only the
+   * portable allowlist is carried from the leaving adapter.
+   */
+  function resolveAdapterSwitchConfig(input: {
+    existingAdapterConfig: Record<string, unknown>;
+    requestedAdapterConfig: Record<string, unknown> | null;
+    base: Record<string, unknown> | null;
+  }): Record<string, unknown> {
+    const existing = input.existingAdapterConfig;
+    const existingEnv = parseObject(existing.env);
+    const base = input.base ?? {};
+    const baseEnv = parseObject(base.env);
+    const requested = input.requestedAdapterConfig ?? {};
+
+    const explicit: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(requested)) {
+      if (key === "env" || value === undefined || value === "") continue;
+      if (existing[key] !== undefined && sameJsonValue(value, existing[key])) continue;
+      explicit[key] = value;
+    }
+    const explicitEnv: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(parseObject(requested.env))) {
+      if (value === undefined || isRedactedPlainEnvBinding(value)) continue;
+      if (existingEnv[key] !== undefined && sameJsonValue(value, existingEnv[key])) continue;
+      explicitEnv[key] = value;
+    }
+
+    const seatOwned: Record<string, unknown> = {};
+    for (const key of ADAPTER_AGNOSTIC_KEYS) {
+      if (KNOWN_INSTRUCTIONS_BUNDLE_KEY_SET.has(key)) continue;
+      if (existing[key] !== undefined) seatOwned[key] = existing[key];
+    }
+
+    const next: Record<string, unknown> = { ...base, ...seatOwned, ...explicit };
+    delete next.env;
+    const env = { ...pickPortableAdapterEnv(existingEnv), ...baseEnv, ...explicitEnv };
+    if (Object.keys(env).length > 0) next.env = env;
+    return next;
+  }
+
   function parseBooleanLike(value: unknown): boolean | null {
     if (typeof value === "boolean") return value;
     if (typeof value === "number") {
@@ -3420,18 +3555,36 @@ export function agentRoutes(
               ? "claude_local"
               : null
           : null;
-        const canRestoreEnv = savedAgent.adapterType === type || providerAdapter === type;
-        // Permit testing a prospective adapter switch, but do not transfer
-        // hidden values from the saved adapter into an unrelated harness.
-        if (!canRestoreEnv && Object.values(parseObject(inputAdapterConfig.env)).some(value => {
-          const binding = asRecord(value);
-          return binding?.type === "plain" && binding.value === REDACTED_EVENT_VALUE;
-        })) {
-          throw unprocessable("Re-enter environment values when testing a different adapter");
+        const savedAdapterConfig = asRecord(savedAgent.adapterConfig) ?? {};
+        if (savedAgent.adapterType === type) {
+          // Ledger #19: probe the agent's real config. Keys the request omits
+          // (including env) fall back to the saved values, like a PATCH merge.
+          adapterConfigForTest = {
+            ...savedAdapterConfig,
+            ...restoreRedactedAgentEnv(inputAdapterConfig, savedAdapterConfig),
+          };
+        } else if (providerAdapter === type) {
+          adapterConfigForTest = restoreRedactedAgentEnv(inputAdapterConfig, savedAdapterConfig);
+        } else {
+          // A prospective adapter switch: probe the config the switch would
+          // persist (target profile / company default / portable env), not
+          // the leaving adapter's env. Hidden values of the saved adapter are
+          // never transferred. This is an early warning only: a passing probe
+          // does not prove the switched agent will run.
+          const switchBase = await loadAdapterSwitchBase(savedAgent, type);
+          adapterConfigForTest = preserveInstructionsBundleConfig(
+            savedAdapterConfig,
+            resolveAdapterSwitchConfig({
+              existingAdapterConfig: savedAdapterConfig,
+              requestedAdapterConfig: inputAdapterConfig,
+              base: switchBase.config,
+            }),
+          );
         }
-        adapterConfigForTest = canRestoreEnv
-          ? restoreRedactedAgentEnv(inputAdapterConfig, savedAgent.adapterConfig)
-          : inputAdapterConfig;
+        if (aiBinding) {
+          // A managed connection test never takes auth from the saved env.
+          adapterConfigForTest = { ...adapterConfigForTest, env: stripAiAuthBindings(adapterConfigForTest.env) };
+        }
       }
       const normalizedAdapterConfig = await secretsSvc.normalizeAdapterConfigForPersistence(
         companyId,
@@ -5276,6 +5429,9 @@ export function agentRoutes(
     const touchesAdapterConfiguration =
       hasOwn(patchData, "adapterType") ||
       hasOwn(patchData, "adapterConfig");
+    let adapterSwitchConfigSource: AdapterSwitchBaseSource | null = null;
+    let restoresFixedClaudeBinding = false;
+    let leavingAdapterProfile: Record<string, unknown> | null = null;
     if (touchesAdapterConfiguration) {
       assertExternalInstructionsAdmin(req, existing);
       const existingAdapterConfig = asRecord(existing.adapterConfig) ?? {};
@@ -5293,22 +5449,40 @@ export function agentRoutes(
       ) {
         await assertCanManageInstructionsPath(req, existing);
       }
-      let rawEffectiveAdapterConfig = requestedAdapterConfig
-        ? restoreRedactedAgentEnv(requestedAdapterConfig, existingAdapterConfig)
-        : changingAdapterType ? {} : existingAdapterConfig;
+      let rawEffectiveAdapterConfig = changingAdapterType
+        ? {}
+        : requestedAdapterConfig
+          ? restoreRedactedAgentEnv(requestedAdapterConfig, existingAdapterConfig)
+          : existingAdapterConfig;
       if (requestedAdapterConfig && !changingAdapterType && !replaceAdapterConfig) {
         rawEffectiveAdapterConfig = { ...existingAdapterConfig, ...rawEffectiveAdapterConfig };
       }
       if (changingAdapterType) {
-        // Preserve adapter-agnostic keys (env, cwd, etc.) from the existing config
-        // when the adapter type changes. Without this, a PATCH that includes
-        // adapterConfig but omits these keys would silently drop them.
-        for (const key of ADAPTER_AGNOSTIC_KEYS) {
-          if (KNOWN_INSTRUCTIONS_BUNDLE_KEY_SET.has(key)) continue;
-          if (rawEffectiveAdapterConfig[key] === undefined && existingAdapterConfig[key] !== undefined) {
-            rawEffectiveAdapterConfig = { ...rawEffectiveAdapterConfig, [key]: existingAdapterConfig[key] };
-          }
-        }
+        // Ledger #19: keep one config per adapter. Save the leaving adapter's
+        // full config as this agent's profile for it, then start the target
+        // adapter from its own profile (or the company default). Seat-owned
+        // keys (cwd, prompts, skills, instructions bundle) still carry over;
+        // env does not, except the portable allowlist. See
+        // resolveAdapterSwitchConfig.
+        // (The save itself runs after the update authorization below.)
+        leavingAdapterProfile = existingAdapterConfig;
+        const switchBase = await loadAdapterSwitchBase(existing, requestedAdapterType);
+        adapterSwitchConfigSource = switchBase.source;
+        rawEffectiveAdapterConfig = resolveAdapterSwitchConfig({
+          existingAdapterConfig,
+          requestedAdapterConfig,
+          base: switchBase.config,
+        });
+        // A restored Claude profile (or company default) can carry the fixed
+        // Claude OAuth user-secret binding. The update path rejects a newly
+        // introduced binding unless the user actor applies their stored login,
+        // so treat the restore as that apply-existing action. Agent actors
+        // still get the service's claim rejection.
+        const restoredClaudeBinding = parseObject(switchBase.config?.env).CLAUDE_CODE_OAUTH_TOKEN;
+        restoresFixedClaudeBinding =
+          restoredClaudeBinding !== undefined
+          && isFixedClaudeOAuthBinding(restoredClaudeBinding)
+          && sameJsonValue(parseObject(rawEffectiveAdapterConfig.env).CLAUDE_CODE_OAUTH_TOKEN, restoredClaudeBinding);
         rawEffectiveAdapterConfig = preserveInstructionsBundleConfig(
           existingAdapterConfig,
           rawEffectiveAdapterConfig,
@@ -5391,6 +5565,17 @@ export function agentRoutes(
       await assertCanUpdateAgent(req, existing);
     }
 
+    if (leavingAdapterProfile) {
+      // Authorized: snapshot the leaving adapter's config (idempotent, so a
+      // failed update below leaves only the agent's own current config).
+      await adapterProfiles.saveAgentProfile({
+        companyId: existing.companyId,
+        agentId: existing.id,
+        adapterType: existing.adapterType,
+        adapterConfig: leavingAdapterProfile,
+      });
+    }
+
     const actor = getActorInfo(req);
     const agent = await svc.update(id, patchData, {
       recordRevision: {
@@ -5403,7 +5588,7 @@ export function agentRoutes(
         // The apply-existing path runs only for a user actor. The owner comes
         // from the actor, so an agent actor never reaches the no-claim bind.
         applyExistingWithoutClaim:
-          req.actor.type !== "agent" && applyStoredClaudeLogin,
+          req.actor.type !== "agent" && (applyStoredClaudeLogin || restoresFixedClaudeBinding),
       },
     });
     if (!agent) {
@@ -5421,10 +5606,49 @@ export function agentRoutes(
       action: "agent.updated",
       entityType: "agent",
       entityId: agent.id,
-      details: summarizeAgentUpdateDetails(patchData),
+      details: adapterSwitchConfigSource
+        ? { ...summarizeAgentUpdateDetails(patchData), adapterSwitchConfigSource }
+        : summarizeAgentUpdateDetails(patchData),
     });
 
     res.json(redactAgentRowForResponse(agent));
+  });
+
+  // Save this agent's persisted config as the company default for its current
+  // adapter (ledger #19). Reads the stored config server-side: client copies
+  // of the env are redacted ("***REDACTED***"). Seat-owned keys are left out.
+  // Responds with key names only, never values.
+  router.post("/agents/:id/adapter-config/save-as-company-default", async (req, res) => {
+    const id = req.params.id as string;
+    const existing = await getAccessibleResource(req, res, svc.getById(id), "Agent not found");
+    if (!existing) return;
+    await assertBoardCanManageAgentsForCompany(req, existing.companyId);
+
+    const adapterConfig = stripCompanyDefaultSeatKeys(asRecord(existing.adapterConfig) ?? {});
+    await adapterProfiles.saveCompanyDefault({
+      companyId: existing.companyId,
+      adapterType: existing.adapterType,
+      adapterConfig,
+      updatedByUserId: req.actor.userId ?? null,
+    });
+    const savedKeys = Object.keys(adapterConfig).sort();
+    const envKeys = Object.keys(parseObject(adapterConfig.env)).sort();
+
+    const actor = getActorInfo(req);
+    await logActivity(db, {
+      companyId: existing.companyId,
+      actorType: actor.actorType,
+      actorId: actor.actorId,
+      agentId: actor.agentId,
+      runId: actor.runId,
+      agentApiKeyId: actor.agentApiKeyId,
+      action: "agent.adapter_config_saved_as_company_default",
+      entityType: "agent",
+      entityId: existing.id,
+      details: { adapterType: existing.adapterType, savedKeys, envKeys },
+    });
+
+    res.json({ adapterType: existing.adapterType, savedKeys, envKeys });
   });
 
   router.post("/agents/:id/pause", async (req, res) => {

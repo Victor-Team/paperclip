@@ -4,7 +4,6 @@ import { describe, expect, it } from "vitest";
 import { ADAPTER_AGNOSTIC_KEYS } from "./constants.js";
 
 const EXPECTED_ADAPTER_AGNOSTIC_KEYS = [
-  "env",
   "promptTemplate",
   "instructionsFilePath",
   "cwd",
@@ -24,6 +23,10 @@ function readRepoFile(pathFromRoot: string) {
 describe("adapter-agnostic config keys", () => {
   it("keeps the preserved adapter config keys explicit", () => {
     expect(ADAPTER_AGNOSTIC_KEYS).toEqual(EXPECTED_ADAPTER_AGNOSTIC_KEYS);
+  });
+
+  it("does not treat env as adapter-agnostic (ledger #19)", () => {
+    expect((ADAPTER_AGNOSTIC_KEYS as readonly string[]).includes("env")).toBe(false);
   });
 
   it("is imported by the server and UI instead of being re-declared", () => {

@@ -80,6 +80,38 @@ const mockRemoteAgentProfileService = vi.hoisted(() => ({
 
 const mockLogActivity = vi.hoisted(() => vi.fn());
 
+const mockAdapterConfigProfiles = vi.hoisted(() => {
+  // In-memory stand-in for the server-owned per-adapter profile table.
+  const agentProfiles = new Map<string, Record<string, unknown>>();
+  const companyDefaults = new Map<string, Record<string, unknown>>();
+  const clone = (value: Record<string, unknown>) => JSON.parse(JSON.stringify(value)) as Record<string, unknown>;
+  return {
+    agentProfiles,
+    companyDefaults,
+    reset() {
+      agentProfiles.clear();
+      companyDefaults.clear();
+    },
+    service: {
+      getAgentProfile: vi.fn(async (agentId: string, adapterType: string) => {
+        const value = agentProfiles.get(`${agentId}:${adapterType}`);
+        return value ? clone(value) : null;
+      }),
+      saveAgentProfile: vi.fn(async (input: { agentId: string; adapterType: string; adapterConfig: Record<string, unknown> }) => {
+        agentProfiles.set(`${input.agentId}:${input.adapterType}`, clone(input.adapterConfig));
+      }),
+      getCompanyDefault: vi.fn(async (companyId: string, adapterType: string) => {
+        const value = companyDefaults.get(`${companyId}:${adapterType}`);
+        return value ? clone(value) : null;
+      }),
+      saveCompanyDefault: vi.fn(async (input: { companyId: string; adapterType: string; adapterConfig: Record<string, unknown> }) => {
+        companyDefaults.set(`${input.companyId}:${input.adapterType}`, clone(input.adapterConfig));
+      }),
+    },
+  };
+});
+
+
 vi.mock("../services/index.js", () => ({
   agentService: () => mockAgentService,
   agentInstructionsService: () => mockAgentInstructionsService,
@@ -111,6 +143,10 @@ vi.mock("../services/managed-agent-profiles.js", () => ({
 
 vi.mock("../services/remote-agent-profiles.js", () => ({
   remoteAgentProfileService: () => mockRemoteAgentProfileService,
+}));
+
+vi.mock("../services/adapter-config-profiles.js", () => ({
+  adapterConfigProfileService: () => mockAdapterConfigProfiles.service,
 }));
 
 function registerModuleMocks() {
@@ -145,6 +181,10 @@ function registerModuleMocks() {
 
   vi.doMock("../services/remote-agent-profiles.js", () => ({
     remoteAgentProfileService: () => mockRemoteAgentProfileService,
+  }));
+
+  vi.doMock("../services/adapter-config-profiles.js", () => ({
+    adapterConfigProfileService: () => mockAdapterConfigProfiles.service,
   }));
 
   // The adapter registry reads the disabled set from this store. Mock it so a
@@ -248,6 +288,7 @@ describe("agent routes adapter validation", () => {
     vi.doUnmock("../routes/agents.js");
     registerModuleMocks();
     vi.clearAllMocks();
+    mockAdapterConfigProfiles.reset();
     mockAdapterPluginStore.getDisabledAdapterTypes.mockReturnValue([]);
     mockCompanySkillService.listRuntimeSkillEntries.mockResolvedValue([]);
     mockCompanySkillService.resolveRequestedSkillKeys.mockResolvedValue([]);
@@ -566,7 +607,15 @@ describe("agent routes adapter validation", () => {
     );
   });
 
-  it("rejects redacted-value restoration from an incompatible saved agent", async () => {
+  it("never restores an incompatible saved agent's redacted values into a prospective switch probe", async () => {
+    // Ledger #19: a cross-adapter probe tests the config the switch would
+    // persist. Redacted placeholders from the leaving adapter are dropped, not
+    // restored and not rejected.
+    mockAgentService.getById.mockResolvedValue({
+      ...(await mockAgentService.getById()),
+      adapterType: "codex_local",
+      adapterConfig: { env: { CODEX_HOME: { type: "plain", value: "/stored/codex-home" } } },
+    });
     const { registerServerAdapter } = await import("../adapters/index.js");
     registerServerAdapter(externalAdapter);
     const app = await createApp();
@@ -579,8 +628,12 @@ describe("agent routes adapter validation", () => {
         }),
     );
 
-    expect(res.status).toBe(422);
-    expect(mockSecretService.normalizeAdapterConfigForPersistence).not.toHaveBeenCalled();
+    expect(res.status, JSON.stringify(res.body)).toBe(200);
+    expect(mockSecretService.normalizeAdapterConfigForPersistence).toHaveBeenCalledWith(
+      "company-1",
+      {},
+      expect.objectContaining({ adapterType: "external_test" }),
+    );
   });
 
   it("rejects unknown adapter types even when schema accepts arbitrary strings", async () => {
