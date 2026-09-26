@@ -145,7 +145,9 @@ describe("estimateStatusCardCost", () => {
 
 
 describe("Status Card Chinese formatting", () => {
-  it("keeps counts, token units, and policy labels in the chosen language", () => {
+  it("keeps counts, token units, and policy labels in the chosen language", async () => {
+    // Non-English catalogs load on demand.
+    await i18n.loadLanguages("zh-CN");
     const t = i18n.getFixedT("zh-CN");
     const policy = { mode: "interval" as const, intervalMinutes: 60, dailyTokenCap: 10_000, triggers: {} as never };
     const estimate = estimateStatusCardCost(policy, t, "zh-CN");

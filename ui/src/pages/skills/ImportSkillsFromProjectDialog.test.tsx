@@ -216,7 +216,9 @@ describe("scannable workspace detection", () => {
 
 
 describe("Import Skills dialog language", () => {
-  it("renders whole count phrases in English and Chinese", () => {
+  it("renders whole count phrases in English and Chinese", async () => {
+    // Non-English catalogs load on demand.
+    await i18n.loadLanguages("zh-CN");
     const en = i18n.getFixedT("en");
     const zh = i18n.getFixedT("zh-CN");
     const key = "importskillsfromprojectdialog.general.importskillcount";

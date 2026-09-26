@@ -15,7 +15,10 @@ export function parseIssuePathIdFromPath(pathOrUrl: string | null | undefined): 
   if (!pathname) return null;
   if (/^https?:\/\//i.test(pathname)) return null;
 
-  const segments = pathname.split("/").filter(Boolean);
+  // `/TOK/issues/TOK-213#comment-…` names the same issue as `/TOK/issues/TOK-213`;
+  // keeping the fragment in the id gave every comment link its own cache entry
+  // and its own fetch of the same issue.
+  const segments = pathname.split(/[?#]/, 1)[0]!.split("/").filter(Boolean);
   const issueIndex = segments.findIndex((segment) => segment === "issues");
   if (issueIndex === -1 || issueIndex === segments.length - 1) return null;
   const issuePathId = decodeURIComponent(segments[issueIndex + 1] ?? "");

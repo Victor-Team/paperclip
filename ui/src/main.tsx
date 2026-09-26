@@ -22,6 +22,7 @@ import { PluginLauncherProvider } from "./plugins/launchers";
 import { startPerfMeasureReaper } from "./lib/perf-measure-reaper";
 import { getOrCreatePaperclipReactRoot } from "./lib/react-root";
 import { startServiceWorkerUpdates } from "./lib/service-worker-updates";
+import { i18nReady } from "./i18n";
 import "@mdxeditor/editor/style.css";
 import "./index.css";
 
@@ -60,6 +61,10 @@ function CompanyAwareBreadcrumbProvider({ children }: { children: React.ReactNod
 
 const rootElement = document.getElementById("root");
 if (!rootElement) throw new Error("Paperclip root element is missing");
+
+// A saved non-English language loads as its own chunk; render only once it is
+// in place so the first paint is already in the chosen language.
+await i18nReady;
 
 getOrCreatePaperclipReactRoot(window, rootElement).render(
   <StrictMode>

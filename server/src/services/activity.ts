@@ -82,35 +82,61 @@ export function activityService(db: Db) {
       ))
     end
   `.as("usageJson");
+  // Summary fields of result_json: output name -> source keys in precedence order.
+  const RESULT_SUMMARY_FIELDS: ReadonlyArray<readonly [string, readonly string[]]> = [
+    ["conversationReset", ["conversationReset"]],
+    ["billingType", ["billingType", "billing_type"]],
+    ["billing_type", ["billing_type", "billingType"]],
+    ["costUsd", ["costUsd", "cost_usd", "total_cost_usd"]],
+    ["cost_usd", ["cost_usd", "costUsd", "total_cost_usd"]],
+    ["total_cost_usd", ["total_cost_usd", "cost_usd", "costUsd"]],
+    ["stopReason", ["stopReason"]],
+    ["effectiveTimeoutSec", ["effectiveTimeoutSec"]],
+    ["effectiveTimeoutMs", ["effectiveTimeoutMs"]],
+    ["timeoutConfigured", ["timeoutConfigured"]],
+    ["timeoutSource", ["timeoutSource"]],
+    ["timeoutFired", ["timeoutFired"]],
+  ];
+  const RESULT_SUMMARY_KEYS = [...new Set(RESULT_SUMMARY_FIELDS.flatMap(([, keys]) => keys))];
+  const resultKey = (key: string) => sql.raw(`result_summary."${key}"`);
+  // Same value as coalesce(result_json -> k1, result_json -> k2, ...).
+  // jsonb_to_record turns a JSON null into SQL NULL, so a key holding JSON null
+  // is told apart from a missing key (`?`) only when a later key has a value —
+  // the one case where the two differ. The last key needs no check: JSON null
+  // and SQL NULL both end up stripped from the summary.
+  const resultSummaryValue = (keys: readonly string[]) => {
+    if (keys.length === 1) return resultKey(keys[0]!);
+    const branches = keys.map((key, index) => {
+      const later = keys.slice(index + 1);
+      if (later.length === 0) return sql`else ${resultKey(key)}`;
+      return sql`when ${resultKey(key)} is not null then ${resultKey(key)}
+        when coalesce(${sql.join(later.map(resultKey), sql`, `)}) is not null and result_source.obj ? ${key} then 'null'::jsonb`;
+    });
+    return sql`case ${sql.join(branches, sql` `)} end`;
+  };
+  // result_json can hold tens of KB per run, and every `->` re-reads
+  // (de-TOASTs) the whole value: the previous ~25 `->` per row made
+  // /issues/:id/runs take ~2s on an issue with ~470 runs. jsonb_to_record reads
+  // every summary key in one pass. Non-object values summarize to '{}', exactly
+  // as `->` on them yields NULL.
   const summarizedResultJson = sql<Record<string, unknown> | null>`
     case
       when ${heartbeatRuns.resultJson} is null then null
-      else jsonb_strip_nulls(jsonb_build_object(
-        'conversationReset', ${heartbeatRuns.resultJson} -> 'conversationReset',
-        'billingType', coalesce(${heartbeatRuns.resultJson} -> 'billingType', ${heartbeatRuns.resultJson} -> 'billing_type'),
-        'billing_type', coalesce(${heartbeatRuns.resultJson} -> 'billing_type', ${heartbeatRuns.resultJson} -> 'billingType'),
-        'costUsd', coalesce(
-          ${heartbeatRuns.resultJson} -> 'costUsd',
-          ${heartbeatRuns.resultJson} -> 'cost_usd',
-          ${heartbeatRuns.resultJson} -> 'total_cost_usd'
-        ),
-        'cost_usd', coalesce(
-          ${heartbeatRuns.resultJson} -> 'cost_usd',
-          ${heartbeatRuns.resultJson} -> 'costUsd',
-          ${heartbeatRuns.resultJson} -> 'total_cost_usd'
-        ),
-        'total_cost_usd', coalesce(
-          ${heartbeatRuns.resultJson} -> 'total_cost_usd',
-          ${heartbeatRuns.resultJson} -> 'cost_usd',
-          ${heartbeatRuns.resultJson} -> 'costUsd'
-        ),
-        'stopReason', ${heartbeatRuns.resultJson} -> 'stopReason',
-        'effectiveTimeoutSec', ${heartbeatRuns.resultJson} -> 'effectiveTimeoutSec',
-        'effectiveTimeoutMs', ${heartbeatRuns.resultJson} -> 'effectiveTimeoutMs',
-        'timeoutConfigured', ${heartbeatRuns.resultJson} -> 'timeoutConfigured',
-        'timeoutSource', ${heartbeatRuns.resultJson} -> 'timeoutSource',
-        'timeoutFired', ${heartbeatRuns.resultJson} -> 'timeoutFired'
-      ))
+      else (
+        select jsonb_strip_nulls(jsonb_build_object(${sql.join(
+          RESULT_SUMMARY_FIELDS.map(([name, keys]) => sql`${sql.raw(`'${name}'`)}, ${resultSummaryValue(keys)}`),
+          sql`, `,
+        )}))
+        from (
+          select case
+            when jsonb_typeof(${heartbeatRuns.resultJson}) = 'object' then ${heartbeatRuns.resultJson}
+            else '{}'::jsonb
+          end as obj
+        ) as result_source
+        cross join lateral jsonb_to_record(result_source.obj) as result_summary(${sql.raw(
+          RESULT_SUMMARY_KEYS.map((key) => `"${key}" jsonb`).join(", "),
+        )})
+      )
     end
   `.as("resultJson");
 

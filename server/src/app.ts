@@ -123,6 +123,7 @@ import { remoteAgentProfileRoutes } from "./routes/remote-agent-profiles.js";
 import { pluginUiStaticRoutes } from "./routes/plugin-ui-static.js";
 import { readBrandedStaticIndexHtml } from "./static-index-html.js";
 import { staticUiCacheControl } from "./static-ui-cache.js";
+import { precompressedStatic } from "./static-precompressed.js";
 import { applyUiBranding } from "./ui-branding.js";
 import { logger } from "./middleware/logger.js";
 import {
@@ -976,6 +977,9 @@ export async function createApp(
       // never change once built, so they can be cached aggressively.
       app.use(
         "/assets",
+        precompressedStatic(path.join(uiDist, "assets"), {
+          cacheControl: "public, max-age=31536000, immutable",
+        }),
         express.static(path.join(uiDist, "assets"), {
           maxAge: "1y",
           immutable: true,

@@ -452,7 +452,9 @@ describe("Routines page", () => {
     expect(groups[1]?.items.map((item) => item.title)).toEqual(["Reflection review"]);
   });
 
-  it("uses Chinese group labels when the page supplies a Chinese translator", () => {
+  it("uses Chinese group labels when the page supplies a Chinese translator", async () => {
+    // Non-English catalogs load on demand.
+    await i18n.loadLanguages("zh-CN");
     const translate = i18n.getFixedT("zh-CN");
     const groups = buildRoutineSections(
       [

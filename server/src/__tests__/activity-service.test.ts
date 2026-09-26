@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
+import { sql } from "drizzle-orm";
 import {
   activityLog,
   agents,
@@ -115,6 +116,86 @@ describeEmbeddedPostgres("activity service", () => {
     const result = await activityService(db).list({ companyId, limit: 2 });
 
     expect(result.map((event) => event.action)).toEqual(["test.newest", "test.middle"]);
+  });
+
+  it("summarizes result_json exactly like the per-key `->` expression it replaced", async () => {
+    const companyId = randomUUID();
+    const agentId = randomUUID();
+    const issueId = randomUUID();
+    await db.insert(companies).values({
+      id: companyId,
+      name: "Paperclip",
+      issuePrefix: `T${companyId.replace(/-/g, "").slice(0, 6).toUpperCase()}`,
+      requireBoardApprovalForNewAgents: false,
+    });
+    await db.insert(agents).values({
+      id: agentId,
+      companyId,
+      name: "CodexCoder",
+      role: "engineer",
+      status: "running",
+      adapterType: "codex_local",
+      adapterConfig: {},
+      runtimeConfig: {},
+      permissions: {},
+    });
+    const shapes: unknown[] = [
+      null,
+      {},
+      [1, "costUsd"],
+      "plain string",
+      42,
+      { costUsd: null, cost_usd: 1.5, billingType: null, billing_type: "api" },
+      { cost_usd: null, total_cost_usd: 2 },
+      { total_cost_usd: 3, billing_type: "subscription", timeoutFired: false, timeoutSource: null },
+      { stopReason: { nested: [1, null, { deep: null }] }, conversationReset: false, extra: "x".repeat(200_000) },
+      { effectiveTimeoutSec: 30, effectiveTimeoutMs: 30000, timeoutConfigured: true, costUsd: 0 },
+    ];
+    for (const [index, resultJson] of shapes.entries()) {
+      await db.insert(heartbeatRuns).values({
+        id: randomUUID(),
+        companyId,
+        agentId,
+        invocationSource: "assignment",
+        status: "succeeded",
+        contextSnapshot: { issueId },
+        resultJson: resultJson as Record<string, unknown> | null,
+        createdAt: new Date(Date.UTC(2026, 8, 25, 0, index)),
+      });
+    }
+    // The implementation before the single-pass rewrite, kept as the oracle.
+    const r = sql.raw("result_json");
+    const legacy = await db.execute(sql`
+      select id, case when ${r} is null then null else jsonb_strip_nulls(jsonb_build_object(
+        'conversationReset', ${r} -> 'conversationReset',
+        'billingType', coalesce(${r} -> 'billingType', ${r} -> 'billing_type'),
+        'billing_type', coalesce(${r} -> 'billing_type', ${r} -> 'billingType'),
+        'costUsd', coalesce(${r} -> 'costUsd', ${r} -> 'cost_usd', ${r} -> 'total_cost_usd'),
+        'cost_usd', coalesce(${r} -> 'cost_usd', ${r} -> 'costUsd', ${r} -> 'total_cost_usd'),
+        'total_cost_usd', coalesce(${r} -> 'total_cost_usd', ${r} -> 'cost_usd', ${r} -> 'costUsd'),
+        'stopReason', ${r} -> 'stopReason',
+        'effectiveTimeoutSec', ${r} -> 'effectiveTimeoutSec',
+        'effectiveTimeoutMs', ${r} -> 'effectiveTimeoutMs',
+        'timeoutConfigured', ${r} -> 'timeoutConfigured',
+        'timeoutSource', ${r} -> 'timeoutSource',
+        'timeoutFired', ${r} -> 'timeoutFired'
+      )) end as summary
+      from heartbeat_runs where company_id = ${companyId}
+    `);
+    const expected = new Map(
+      (legacy as unknown as Array<{ id: string; summary: unknown }>).map((row) => [row.id, row.summary]),
+    );
+
+    const runs = await activityService(db).runsForIssue(companyId, issueId);
+
+    expect(runs).toHaveLength(shapes.length);
+    expect(expected.size).toBe(shapes.length);
+    for (const run of runs) {
+      expect(run.resultJson, run.runId).toEqual(expected.get(run.runId));
+    }
+    // The JSON-null-with-fallback case is the one a naive rewrite gets wrong.
+    const nullPrimary = runs.find((run) => (run.resultJson as { cost_usd?: number } | null)?.cost_usd === 1.5);
+    expect(nullPrimary?.resultJson).toEqual({ cost_usd: 1.5, total_cost_usd: 1.5, billing_type: "api" });
   });
 
   it("returns compact usage and result summaries for issue runs", async () => {

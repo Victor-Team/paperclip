@@ -11,6 +11,18 @@ import { LocaleProvider, useLocale } from "./LocaleContext";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
 
+function waitForLanguage(language: string) {
+  if (i18n.language === language) return Promise.resolve();
+  return new Promise<void>((resolve) => {
+    const onChange = (next: string) => {
+      if (next !== language) return;
+      i18n.off("languageChanged", onChange);
+      resolve();
+    };
+    i18n.on("languageChanged", onChange);
+  });
+}
+
 describe("LocaleContext", () => {
   let container: HTMLDivElement;
   let observedLocale: string | null = null;
@@ -59,6 +71,8 @@ describe("LocaleContext", () => {
 
     await act(async () => {
       setLocale?.("zh-CN");
+      // Non-English catalogs load on demand; the switch lands once zh-CN is in.
+      await waitForLanguage("zh-CN");
     });
     expect(i18n.language).toBe("zh-CN");
     expect(observedLocale).toBe("zh-CN");
@@ -124,6 +138,7 @@ describe("LocaleContext", () => {
       const setValue = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, "value")!.set!;
       setValue.call(select, "zh-CN");
       select!.dispatchEvent(new Event("change", { bubbles: true }));
+      await waitForLanguage("zh-CN");
     });
     expect(i18n.language).toBe("zh-CN");
     expect(window.localStorage.getItem(LOCALE_STORAGE_KEY)).toBe("zh-CN");

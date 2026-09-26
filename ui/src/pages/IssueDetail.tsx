@@ -435,6 +435,11 @@ const FEEDBACK_TERMS_URL =
   import.meta.env.VITE_FEEDBACK_TERMS_URL?.trim() ||
   "https://paperclip.ing/tos";
 const ISSUE_COMMENT_AUTOLOAD_LIMIT = ISSUE_COMMENT_PAGE_SIZE * 3;
+// Run lifecycle/progress events for the visible issue already invalidate the
+// runs query (LiveUpdatesProvider `invalidateVisibleIssueRunQueries`), so this
+// poll is only a safety net. At 1s it re-ran the full run history back to back
+// on long issues, where one fetch takes about a second.
+const ISSUE_RUNS_FALLBACK_POLL_MS = 5000;
 const JUMP_TO_LATEST_MAX_COMMENT_PAGES = 10;
 function treeControlPreviewErrorCopy(error: unknown): string {
   if (error instanceof ApiError) {
@@ -1545,7 +1550,9 @@ const IssueDetailChatTab = memo(function IssueDetailChatTab({
     queryFn: () => activityApi.runsForIssue(issueId),
     enabled: !!issueId,
     refetchInterval:
-      hasLiveRuns || issueStatus === "in_progress" ? 1000 : false,
+      hasLiveRuns || issueStatus === "in_progress"
+        ? ISSUE_RUNS_FALLBACK_POLL_MS
+        : false,
     placeholderData: keepPreviousDataForSameQueryTail<RunForIssue[]>(issueId),
   });
   const resolvedActivity = activity ?? [];

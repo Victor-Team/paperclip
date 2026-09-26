@@ -18,6 +18,9 @@ describe("issue-reference", () => {
     expect(parseIssuePathIdFromPath("/issues/pc1a2-7")).toBe("PC1A2-7");
     expect(parseIssuePathIdFromPath("/PC1A2/issues/pc1a2-7")).toBe("PC1A2-7");
     expect(parseIssuePathIdFromPath("/issues/PAP-1179")).toBe("PAP-1179");
+    expect(parseIssuePathIdFromPath("/PAP/issues/PAP-1179#comment-850083f3")).toBe("PAP-1179");
+    expect(parseIssuePathIdFromPath("/PAP/issues/pap-1179?tab=activity")).toBe("PAP-1179");
+    expect(parseIssueReferenceFromHref("/PAP/issues/PAP-1179#comment-850083f3")?.issuePathId).toBe("PAP-1179");
     expect(parseIssuePathIdFromPath("/issues/:id")).toBeNull();
   });
 
