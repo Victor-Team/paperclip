@@ -17,3 +17,17 @@ export const announcementAnimationPreview: Announcement = {
   animation: { path: "assets/78bafb6adbfd9da899cdbb5d934b4c0b9df5d419d6f0a5104a87a7b25dcc6bd8.html", alt: "Agents plan, build and review work together." },
 };
 export const announcementAnimationPreviewSrc = `data:text/html;charset=utf-8,${encodeURIComponent(animatedHero)}`;
+
+export function localizedAnnouncementAnimationPreviewSrc(
+  language: string,
+  translate: (key: string) => string,
+): string {
+  const localized = language.toLowerCase().startsWith("zh")
+    ? animatedHero
+      .replace("ONE IDEA. A WHOLE TEAM.", translate("designGuide.artworkHeadline"))
+      .replace(">Plan</div>", `>${translate("designGuide.artworkPlan")}</div>`)
+      .replace(">Build</div>", `>${translate("designGuide.artworkBuild")}</div>`)
+      .replace(">Review</div>", `>${translate("designGuide.artworkReview")}</div>`)
+    : animatedHero;
+  return `data:text/html;charset=utf-8,${encodeURIComponent(localized)}`;
+}

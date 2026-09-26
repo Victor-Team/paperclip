@@ -5,7 +5,8 @@ import { RemoteMcpDesignExample } from "@/features/connections/remote-mcp/Remote
 import { AgentChatPicker } from "@/components/AgentChatPicker";
 import { TaskChatProjectCreatedCard } from "@/components/task-chat/TaskChatProjectCreatedCard";
 import { AnnouncementCard } from "@/components/AnnouncementCard";
-import { announcementPreview, announcementAnimationPreview, announcementAnimationPreviewSrc } from "@/lib/announcement-preview";
+import { announcementPreview, announcementAnimationPreview, localizedAnnouncementAnimationPreviewSrc } from "@/lib/announcement-preview";
+import announcementArtwork from "../../public/announcement-preview.svg?raw";
 import { TaskDetailTasksPanel } from "@/components/task-detail/TaskDetailTasksPanel";
 import { AiConnectionDesignExamples } from "@/components/ai-connections/AiConnectionDesignExamples";
 import { SavedProviderKeySelect } from "../components/onboarding/SavedProviderKeySelect";
@@ -491,6 +492,11 @@ export function DesignGuide() {
   const [allowExternal, setAllowExternal] = useState(false);
   const [allowUnpinned, setAllowUnpinned] = useState(false);
   const [allowLocalPath, setAllowLocalPath] = useState(false);
+  const isChinesePreview = i18n.language.toLowerCase().startsWith("zh");
+  const localizedAnnouncementImageSrc = isChinesePreview
+    ? `data:image/svg+xml;charset=utf-8,${encodeURIComponent(announcementArtwork.replace("Ideas become work.", t("designGuide.artworkTagline")))}`
+    : "/announcement-preview.svg";
+  const localizedAnnouncementAnimationSrc = localizedAnnouncementAnimationPreviewSrc(i18n.language, t);
   const localizedAnnouncement = {
     ...announcementPreview,
     eyebrow: t("designGuide.announcementEyebrow"),
@@ -553,8 +559,8 @@ export function DesignGuide() {
 
       <Section title={t("designGuide.d0010")}>
         <div className="grid gap-4 md:grid-cols-2">
-          <AnnouncementCard announcement={localizedAnimatedAnnouncement} imageSrc="/announcement-preview.svg" animationSrc={announcementAnimationPreviewSrc} onDismiss={() => {}} />
-          <AnnouncementCard announcement={localizedAnnouncement} imageSrc="/announcement-preview.svg" onDismiss={() => {}} />
+          <AnnouncementCard announcement={localizedAnimatedAnnouncement} imageSrc={localizedAnnouncementImageSrc} animationSrc={localizedAnnouncementAnimationSrc} onDismiss={() => {}} />
+          <AnnouncementCard announcement={localizedAnnouncement} imageSrc={localizedAnnouncementImageSrc} onDismiss={() => {}} />
           <AnnouncementCard announcement={{ ...localizedAnnouncement, image: undefined, secondaryLink: undefined }} onDismiss={() => {}} />
         </div>
       </Section>
