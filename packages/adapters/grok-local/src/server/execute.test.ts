@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
@@ -71,7 +72,7 @@ vi.mock("@paperclipai/adapter-utils/execution-target", () => ({
     (mocks.runProcessMock as (...args: unknown[]) => unknown)(...args),
 }));
 
-import { execute } from "./execute.js";
+import { execute, GROK_RULES_ARG_MAX_BYTES, readGrokInstructionsRules } from "./execute.js";
 import { resolveManagedGrokHomeDir } from "./grok-home.js";
 
 const tempRoots: string[] = [];
@@ -187,28 +188,12 @@ describe("grok_local execute", () => {
     await Promise.all(tempRoots.splice(0).map((root) => fs.rm(root, { recursive: true, force: true })));
   });
 
-  it("stages Grok-native instructions and skills into the workspace for the run and cleans them up afterward", async () => {
+  it("passes the instructions file content via --rules and writes nothing into the workspace", async () => {
     const root = await makeTempRoot();
     const instructionsPath = path.join(root, "managed", "AGENTS.md");
-    const skillSource = path.join(root, "runtime-skills", "paperclip");
     await fs.mkdir(path.dirname(instructionsPath), { recursive: true });
-    await fs.writeFile(instructionsPath, "You are Grok.\n", "utf8");
-    await fs.mkdir(skillSource, { recursive: true });
-    await fs.writeFile(path.join(skillSource, "SKILL.md"), "---\nname: paperclip\ndescription: test\n---\n", "utf8");
-
-    runProcessMock.mockImplementation(async (_runId, _target, _command, args, options) => {
-      expect(args).toEqual(
-        expect.arrayContaining([
-          "--output-format",
-          "streaming-json",
-          "--always-approve",
-        ]),
-      );
-      // Grok >= 1.0 enforces `dontAsk` as deny-by-default over --always-approve,
-      // so no permission mode may be passed unless explicitly configured.
-      expect(args).not.toContain("--permission-mode");
-      expect(await fs.readFile(path.join(root, "Agents.md"), "utf8")).toContain("You are Grok.");
-      expect(await pathExists(path.join(root, ".claude", "skills", "paperclip", "SKILL.md"))).toBe(true);
+    await fs.writeFile(instructionsPath, "You are Grok.\n岗位标记句-7f3a\n", "utf8");
+    runProcessMock.mockImplementation(async (_runId, _target, _command, _args, options) => {
       await options.onLog?.("stdout", '{"type":"text","data":"done"}\n');
       return {
         exitCode: 0,
@@ -221,53 +206,163 @@ describe("grok_local execute", () => {
         stderr: "",
       };
     });
-
-    const logs: Array<{ stream: "stdout" | "stderr"; chunk: string }> = [];
-    const ctx: AdapterExecutionContext = {
-      runId: "run-1",
-      agent: {
-        id: "agent-1",
-        companyId: "company-1",
-        name: "Grok Agent",
-        adapterType: "grok_local",
-        adapterConfig: {},
-      },
-      runtime: {
-        sessionId: null,
-        sessionParams: null,
-        sessionDisplayId: null,
-        taskKey: null,
-      },
-      config: {
-        cwd: root,
-        instructionsFilePath: instructionsPath,
-        paperclipRuntimeSkills: [{
-          key: "paperclip",
-          runtimeName: "paperclip",
-          source: skillSource,
-          required: false,
-        }],
-        paperclipSkillSync: { desiredSkills: ["paperclip"] },
-      },
-      context: {},
-      authToken: "run-token",
-      onLog: async (stream: "stdout" | "stderr", chunk: string) => {
-        logs.push({ stream, chunk });
-      },
+    const metas: Array<{ commandArgs?: string[]; commandNotes?: string[] }> = [];
+    const ctx = await makeCtx("run-1", root);
+    ctx.config = { cwd: root, instructionsFilePath: instructionsPath };
+    ctx.onMeta = async (meta) => {
+      metas.push(meta as { commandArgs?: string[]; commandNotes?: string[] });
     };
 
     const result = await execute(ctx);
 
-    expect(result).toMatchObject({
-      exitCode: 0,
-      errorMessage: null,
-      summary: "done",
-      sessionId: "sess-1",
-      sessionDisplayId: "sess-1",
-    });
+    expect(result).toMatchObject({ exitCode: 0, errorMessage: null, summary: "done", sessionId: "sess-1" });
+    const args = runProcessMock.mock.calls[0][3] as string[];
+    expect(args).toEqual(expect.arrayContaining(["--output-format", "streaming-json", "--always-approve"]));
+    // Grok >= 1.0 enforces `dontAsk` as deny-by-default over --always-approve,
+    // so no permission mode may be passed unless explicitly configured.
+    expect(args).not.toContain("--permission-mode");
+    // Folder trust must stay off: it would also trust workspace hooks and MCP config.
+    expect(args).not.toContain("--trust");
+    const rules = args[args.indexOf("--rules") + 1];
+    expect(rules).toContain("You are Grok.\n岗位标记句-7f3a");
+    expect(rules).toContain(`loaded from ${instructionsPath}`);
+    expect(args.filter((arg) => arg.startsWith("@"))).toEqual([]);
     expect(await pathExists(path.join(root, "Agents.md"))).toBe(false);
-    expect(await pathExists(path.join(root, ".claude", "skills", "paperclip"))).toBe(false);
-    expect(logs.map((entry) => entry.chunk)).not.toEqual([]);
+    expect(await pathExists(path.join(root, ".claude"))).toBe(false);
+    const loggedArgs = metas[0].commandArgs ?? [];
+    expect(loggedArgs[loggedArgs.indexOf("--rules") + 1]).toBe(`<rules ${rules.length} chars>`);
+    expect(JSON.stringify(loggedArgs)).not.toContain("岗位标记句-7f3a");
+  });
+
+  describe("resume against the instructions a session was started with", () => {
+    async function setup(savedDigest: "current" | "other" | "none") {
+      const root = await makeTempRoot();
+      const instructionsPath = path.join(root, "AGENTS.md");
+      await fs.writeFile(instructionsPath, "resume-marker-91c2\n", "utf8");
+      const rules = await readGrokInstructionsRules({ cwd: root, instructionsFilePath: instructionsPath });
+      const currentDigest = createHash("sha256").update(rules!.text).digest("hex");
+      const sessionParams: Record<string, unknown> = { sessionId: "sess-saved", cwd: root };
+      if (savedDigest === "current") sessionParams.instructionsDigest = currentDigest;
+      if (savedDigest === "other") sessionParams.instructionsDigest = "0".repeat(64);
+      const logs: string[] = [];
+      const ctx = await makeCtx("run-resume", root);
+      ctx.config = { cwd: root, instructionsFilePath: instructionsPath };
+      ctx.runtime = { sessionId: "sess-saved", sessionParams, sessionDisplayId: null, taskKey: null };
+      ctx.onLog = async (_stream, chunk) => {
+        logs.push(chunk);
+      };
+      return { ctx, logs, currentDigest };
+    }
+
+    it("resumes and still passes the instructions when the saved digest matches", async () => {
+      const { ctx, currentDigest } = await setup("current");
+      runProcessMock.mockResolvedValue(makeSuccessfulRunResult({ sessionId: "sess-saved" }));
+
+      const result = await execute(ctx);
+
+      const args = runProcessMock.mock.calls[0][3] as string[];
+      expect(args[args.indexOf("--resume") + 1]).toBe("sess-saved");
+      expect(args[args.indexOf("--rules") + 1]).toContain("resume-marker-91c2");
+      expect(result.sessionParams?.instructionsDigest).toBe(currentDigest);
+    });
+
+    it.each(["none", "other"] as const)(
+      "starts a fresh session when the saved session has %s instructions digest",
+      async (savedDigest) => {
+        const { ctx, logs, currentDigest } = await setup(savedDigest);
+        runProcessMock.mockResolvedValue(makeSuccessfulRunResult({ sessionId: "sess-new" }));
+
+        const result = await execute(ctx);
+
+        const args = runProcessMock.mock.calls[0][3] as string[];
+        expect(args).not.toContain("--resume");
+        expect(args[args.indexOf("--rules") + 1]).toContain("resume-marker-91c2");
+        expect(logs.join("")).toContain("was started with different agent instructions");
+        expect(result.sessionId).toBe("sess-new");
+        expect(result.sessionParams?.instructionsDigest).toBe(currentDigest);
+      },
+    );
+
+    it("does not relabel the old session with the new digest when the fresh run reports no session", async () => {
+      const { ctx } = await setup("none");
+      runProcessMock.mockResolvedValue({ exitCode: 1, signal: null, timedOut: false, stdout: "", stderr: "boom" });
+
+      const result = await execute(ctx);
+
+      expect(result.sessionId).toBeNull();
+      expect(result.sessionParams).toBeNull();
+    });
+
+    it("keeps resuming sessions when no instructions file is configured", async () => {
+      const root = await makeTempRoot();
+      runProcessMock.mockResolvedValue(makeSuccessfulRunResult({ sessionId: "sess-saved" }));
+      const ctx = await makeCtx("run-resume-no-instructions", root);
+      ctx.runtime = { sessionId: "sess-saved", sessionParams: { sessionId: "sess-saved", cwd: root }, sessionDisplayId: null, taskKey: null };
+
+      await execute(ctx);
+
+      const args = runProcessMock.mock.calls[0][3] as string[];
+      expect(args[args.indexOf("--resume") + 1]).toBe("sess-saved");
+    });
+  });
+
+  it("resolves a relative instructions path against the run cwd", async () => {
+    const root = await makeTempRoot();
+    await fs.writeFile(path.join(root, "ROLE.md"), "relative-marker-5d10\n", "utf8");
+    runProcessMock.mockResolvedValue(makeSuccessfulRunResult());
+    const ctx = await makeCtx("run-relative", root);
+    ctx.config = { cwd: root, instructionsFilePath: "ROLE.md" };
+
+    await execute(ctx);
+
+    const args = runProcessMock.mock.calls[0][3] as string[];
+    expect(args[args.indexOf("--rules") + 1]).toContain("relative-marker-5d10");
+  });
+
+  it("passes no --rules when no instructions file is configured", async () => {
+    const root = await makeTempRoot();
+    await fs.writeFile(path.join(root, "AGENTS.md"), "workspace file\n", "utf8");
+    runProcessMock.mockResolvedValue(makeSuccessfulRunResult());
+
+    await execute(await makeCtx("run-no-instructions", root));
+
+    const args = runProcessMock.mock.calls[0][3] as string[];
+    expect(args).not.toContain("--rules");
+    expect(await pathExists(path.join(root, "Agents.md"))).toBe(false);
+  });
+
+  it("refuses to start when the configured instructions file is missing", async () => {
+    const root = await makeTempRoot();
+    const ctx = await makeCtx("run-missing-instructions", root);
+    ctx.config = { cwd: root, instructionsFilePath: path.join(root, "gone", "AGENTS.md") };
+
+    await expect(execute(ctx)).rejects.toThrow(/could not be read/);
+    expect(runProcessMock).not.toHaveBeenCalled();
+  });
+
+  it("measures the --rules limit in UTF-8 bytes, not characters", async () => {
+    const root = await makeTempRoot();
+    const instructionsPath = path.join(root, "AGENTS.md");
+    await fs.writeFile(instructionsPath, "", "utf8");
+    const probe = await readGrokInstructionsRules({ cwd: root, instructionsFilePath: instructionsPath });
+    const overheadBytes = Buffer.byteLength(probe!.text, "utf8");
+    // Fill exactly up to the limit with 3-byte characters plus ASCII padding.
+    const room = GROK_RULES_ARG_MAX_BYTES - overheadBytes;
+    const atLimit = "中".repeat(Math.floor(room / 3)) + "x".repeat(room % 3);
+    await fs.writeFile(instructionsPath, atLimit, "utf8");
+    const accepted = await readGrokInstructionsRules({ cwd: root, instructionsFilePath: instructionsPath });
+    expect(Buffer.byteLength(accepted!.text, "utf8")).toBe(GROK_RULES_ARG_MAX_BYTES);
+    // One more byte fails, although the text is far below the limit in characters.
+    await fs.writeFile(instructionsPath, `${atLimit}x`, "utf8");
+    expect(atLimit.length + 1 + overheadBytes).toBeLessThan(GROK_RULES_ARG_MAX_BYTES);
+    await expect(
+      readGrokInstructionsRules({ cwd: root, instructionsFilePath: instructionsPath }),
+    ).rejects.toThrow(`${GROK_RULES_ARG_MAX_BYTES + 1} bytes`);
+
+    const ctx = await makeCtx("run-oversized-instructions", root);
+    ctx.config = { cwd: root, instructionsFilePath: instructionsPath };
+    await expect(execute(ctx)).rejects.toThrow(/single-argument limit/);
+    expect(runProcessMock).not.toHaveBeenCalled();
   });
 
   it("reports real per-run token usage, marks it as per_run, and only surfaces cost for API billing", async () => {
@@ -404,6 +499,80 @@ describe("grok_local execute", () => {
       expect(seenEnv.GROK_HOME).toBe(companyHome);
     });
 
+    async function makeSkillConfig(root: string) {
+      const skillSource = path.join(root, "runtime-skills", "paperclip");
+      await fs.mkdir(skillSource, { recursive: true });
+      await fs.writeFile(path.join(skillSource, "SKILL.md"), "---\nname: paperclip\ndescription: test\n---\n", "utf8");
+      return {
+        skillSource,
+        config: {
+          paperclipRuntimeSkills: [{ key: "paperclip", runtimeName: "paperclip", source: skillSource, required: false }],
+          paperclipSkillSync: { desiredSkills: ["paperclip"] },
+        },
+      };
+    }
+
+    it("links desired skills into the pinned company GROK_HOME, not the workspace, and keeps them after the run", async () => {
+      const companyHome = resolveManagedGrokHomeDir(process.env, "company-1");
+      await fs.mkdir(companyHome, { recursive: true });
+      await fs.writeFile(path.join(companyHome, "auth.json"), grokAuth({ key: "local-key", expiresAt: NEWER_EXPIRY }));
+      const root = await makeTempRoot();
+      const { skillSource, config } = await makeSkillConfig(root);
+      const target = path.join(companyHome, "skills", "paperclip");
+      let linkedDuringRun = "";
+      runProcessMock.mockImplementation(async (_runId, _target, _command, _args, options) => {
+        expect(options.env.GROK_HOME).toBe(companyHome);
+        linkedDuringRun = await fs.readlink(target);
+        return makeSuccessfulRunResult();
+      });
+      const ctx = await makeCtx("run-skills-pinned", root);
+      ctx.config = { cwd: root, ...config };
+
+      await execute(ctx);
+
+      expect(runProcessMock).toHaveBeenCalledTimes(1);
+      expect(linkedDuringRun).toBe(skillSource);
+      expect((await fs.lstat(target)).isSymbolicLink()).toBe(true);
+      expect(await pathExists(path.join(target, "SKILL.md"))).toBe(true);
+      expect(await pathExists(path.join(root, ".claude"))).toBe(false);
+    });
+
+    it("links skills into an explicitly configured GROK_HOME", async () => {
+      const configuredHome = await makeTempRoot();
+      const root = await makeTempRoot();
+      const { skillSource, config } = await makeSkillConfig(root);
+      runProcessMock.mockResolvedValue(makeSuccessfulRunResult());
+      const ctx = await makeCtx("run-skills-configured", root);
+      ctx.config = { cwd: root, ...config, env: { GROK_HOME: configuredHome } };
+
+      await execute(ctx);
+
+      expect(runProcessMock.mock.calls[0][4].env.GROK_HOME).toBe(configuredHome);
+      expect(await fs.readlink(path.join(configuredHome, "skills", "paperclip"))).toBe(skillSource);
+    });
+
+    it("writes no skills anywhere when the run has no dedicated GROK_HOME", async () => {
+      const hostRoot = await makeTempRoot();
+      const companyHome = resolveManagedGrokHomeDir(process.env, "company-1");
+      const root = await makeTempRoot();
+      const { config } = await makeSkillConfig(root);
+      const logs: string[] = [];
+      runProcessMock.mockResolvedValue(makeSuccessfulRunResult());
+      const ctx = await makeCtx("run-skills-no-home", root);
+      ctx.config = { cwd: root, ...config, env: { HOME: hostRoot } };
+      ctx.onLog = async (_stream, chunk) => {
+        logs.push(chunk);
+      };
+
+      await execute(ctx);
+
+      expect(runProcessMock.mock.calls[0][4].env.GROK_HOME).toBeUndefined();
+      expect(await pathExists(path.join(hostRoot, ".grok"))).toBe(false);
+      expect(await pathExists(path.join(companyHome, "skills"))).toBe(false);
+      expect(await pathExists(path.join(root, ".claude"))).toBe(false);
+      expect(logs.join("")).toContain("Grok skills were not injected: no dedicated GROK_HOME");
+    });
+
     it.each(["{invalid", "{}", JSON.stringify({ [GROK_IDENTITY]: { key: "incomplete" } })])(
       "uses host login when company auth is unusable (%s)",
       async (contents) => {
@@ -512,51 +681,18 @@ describe("grok_local execute", () => {
     expect(seenArgs[flagIndex + 1]).toBe("bypassPermissions");
   });
 
-  it("cleans up staged assets when setup fails before the Grok process starts", async () => {
+  it("leaves the workspace untouched when setup fails before the Grok process starts", async () => {
     const root = await makeTempRoot();
     const instructionsPath = path.join(root, "managed", "AGENTS.md");
-    const skillSource = path.join(root, "runtime-skills", "paperclip");
     await fs.mkdir(path.dirname(instructionsPath), { recursive: true });
     await fs.writeFile(instructionsPath, "You are Grok.\n", "utf8");
-    await fs.mkdir(skillSource, { recursive: true });
-    await fs.writeFile(path.join(skillSource, "SKILL.md"), "---\nname: paperclip\ndescription: test\n---\n", "utf8");
     ensureCommandMock.mockRejectedValueOnce(new Error("grok not installed"));
-
-    const ctx: AdapterExecutionContext = {
-      runId: "run-setup-fail",
-      agent: {
-        id: "agent-1",
-        companyId: "company-1",
-        name: "Grok Agent",
-        adapterType: "grok_local",
-        adapterConfig: {},
-      },
-      runtime: {
-        sessionId: null,
-        sessionParams: null,
-        sessionDisplayId: null,
-        taskKey: null,
-      },
-      config: {
-        cwd: root,
-        instructionsFilePath: instructionsPath,
-        paperclipRuntimeSkills: [{
-          key: "paperclip",
-          runtimeName: "paperclip",
-          source: skillSource,
-          required: false,
-        }],
-        paperclipSkillSync: { desiredSkills: ["paperclip"] },
-      },
-      context: {},
-      authToken: "run-token",
-      onLog: async () => {},
-    };
+    const ctx = await makeCtx("run-setup-fail", root);
+    ctx.config = { cwd: root, instructionsFilePath: instructionsPath };
 
     await expect(execute(ctx)).rejects.toThrow("grok not installed");
     expect(runProcessMock).not.toHaveBeenCalled();
-    expect(await pathExists(path.join(root, "Agents.md"))).toBe(false);
-    expect(await pathExists(path.join(root, ".claude", "skills", "paperclip"))).toBe(false);
+    expect((await fs.readdir(root)).sort()).toEqual(["managed"]);
   });
 
   describe("remote lane credential staging", () => {

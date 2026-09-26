@@ -21,7 +21,7 @@ async function buildGrokSkillSnapshot(
     adapterType: "grok_local",
     availableEntries,
     desiredSkills,
-    configuredDetail: "Will be copied into `.claude/skills` in the execution workspace on the next run.",
+    configuredDetail: "Will be linked into the effective GROK_HOME/skills/ directory on the next run.",
   });
 }
 
