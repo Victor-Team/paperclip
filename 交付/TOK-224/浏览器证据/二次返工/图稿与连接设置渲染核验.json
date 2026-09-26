@@ -1,0 +1,82 @@
+{
+  "browser": "Google Chrome headless; browser language en-US",
+  "viewports": [
+    "1440x900",
+    "390x844"
+  ],
+  "routeLanguage": "zh-CN",
+  "accountMenuLanguageSelection": "简体中文",
+  "firstRunOverlay": "The initial setup wizard was removed in-browser for these screenshots because this isolated instance has no provider login. No production settings or server data were changed.",
+  "designGuide": {
+    "svgContainsChinese": true,
+    "animationContainsChinese": true,
+    "englishAssetCompatibility": {
+      "svgOriginal": true,
+      "animationOriginal": true
+    }
+  },
+  "connectionSetup": {
+    "route": "/CMP/apps/connect?source=posthog&method=mcp-api-key&stage=setup",
+    "visibleText": [
+      "Board",
+      "连接器",
+      "连接应用",
+      "浏览",
+      "审查",
+      "连接 PostHog",
+      "",
+      "第 2 步，共 2 步",
+      "",
+      "取消",
+      "访问权限 · 选择连接方式",
+      "查看配置要求",
+      "选择连接方式",
+      "Sign in with PostHog",
+      "Use a personal API key",
+      "高级选项",
+      "您的 PostHog 密钥在哪里可以找到？",
+      "返回",
+      "连接",
+      "命令面板",
+      "",
+      "搜索要运行的命令..."
+    ],
+    "nonTranslatedCatalogLabels": [
+      "Sign in with PostHog",
+      "Use a personal API key"
+    ],
+    "reasons": "Connector AppDefinition method labels are catalog metadata, not fixed UI labels."
+  },
+  "vercelConnect": {
+    "route": "/CMP/apps/vercel-connect?source=posthog&method=mcp-api-key&stage=setup",
+    "visibleText": [
+      "连接 PostHog",
+      "",
+      "第 2 步，共 2 步",
+      "",
+      "取消",
+      "访问权限 · 选择连接方式",
+      "查看配置要求",
+      "选择连接方式",
+      "Sign in with PostHog",
+      "Use a personal API key",
+      "在 Vercel 中创建或关联连接器",
+      "",
+      "Paperclip 不会复制 Vercel 的设置表单。请先在 Vercel 中完成连接器设置，再在下方粘贴其 UID。",
+      "",
+      "打开 Vercel Connect",
+      "连接器 UID 或 ID",
+      "",
+      "Paperclip 会验证连接器，并且只保存其引用和脱敏后的验证元数据。",
+      "",
+      "高级选项",
+      "返回",
+      "验证并连接",
+      "命令面板",
+      "",
+      "搜索要运行的命令..."
+    ],
+    "injectedResponse": "GET /api/companies/{companyId}/tools/gallery: only credentialSources.vercelConnect was changed in the browser response to available=true, enabled=true, authentication=workload_oidc, manageUrl=https://vercel.com/connect; no backend config changed.",
+    "pageErrors": []
+  }
+}
