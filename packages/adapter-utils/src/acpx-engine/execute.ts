@@ -117,6 +117,7 @@ import type {
   TurnCompletion,
 } from "./run-contracts.js";
 import { createRunResourceLedger } from "./run-resource-ledger.js";
+import { applyHostServiceManagerIsolation } from "../host-service-manager-env.js";
 import { settleAcpRun, type SettlementSteps } from "./settlement-sequence.js";
 import {
   runAttempt,
@@ -2447,6 +2448,9 @@ async function buildRuntime(input: {
       // Local / runner-less lanes never start a bridge, so they add no
       // contribution. `finalizeLaunchEnvironment` still produces the one branded
       // launch env the prepared runtime and the log builder read.
+      if (!executionTargetIsRemote) {
+        applyHostServiceManagerIsolation(env, { companyId: agent.companyId });
+      }
       runtimeEnv = finalizeLaunchEnvironment(env, [], {
         acpxAgent,
         inheritHostEnvironment: !useRemoteProcessSession,

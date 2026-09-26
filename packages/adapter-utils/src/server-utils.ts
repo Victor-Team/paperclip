@@ -6,6 +6,7 @@ import os from "node:os";
 import path from "node:path";
 import { CONNECTION_INTENT_AGENT_GUIDANCE } from "@paperclipai/shared";
 import { sanitizeRemoteExecutionEnv } from "./remote-execution-env.js";
+import { applyHostServiceManagerIsolation } from "./host-service-manager-env.js";
 import {
   buildLocalProcessSandboxSpawnTarget,
   type LocalProcessSandboxOptions,
@@ -4644,6 +4645,9 @@ export async function runChildProcess(
     if (opts.localProcessSandbox?.homeDir) {
       mergedEnv.HOME = opts.localProcessSandbox.homeDir;
     }
+    applyHostServiceManagerIsolation(mergedEnv, {
+      companyId: mergedEnv.PAPERCLIP_COMPANY_ID,
+    });
     void resolveSpawnTarget(command, args, opts.cwd, mergedEnv, {
       remoteExecution: opts.remoteExecution ?? null,
       remoteEnv: opts.remoteExecution ? opts.env : null,

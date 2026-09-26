@@ -7788,3 +7788,64 @@ describe("ACPX startup handshake guard and late-completion fence", () => {
     }
   }, 10000);
 });
+
+describe("host user service manager isolation (#57)", () => {
+  const keys = [
+    "XDG_RUNTIME_DIR",
+    "DBUS_SESSION_BUS_ADDRESS",
+    "PAPERCLIP_HOME",
+    "PAPERCLIP_INSTANCE_ID",
+    "PAPERCLIP_HOST_SERVICE_MANAGER_ISOLATION",
+  ] as const;
+  let saved: Record<string, string | undefined> = {};
+  let paperclipHome = "";
+
+  beforeEach(async () => {
+    saved = Object.fromEntries(keys.map((key) => [key, process.env[key]]));
+    for (const key of keys) delete process.env[key];
+    paperclipHome = await makeTempRoot();
+    process.env.PAPERCLIP_HOME = paperclipHome;
+    process.env.XDG_RUNTIME_DIR = "/run/user/4242";
+    process.env.DBUS_SESSION_BUS_ADDRESS = "unix:path=/run/user/4242/bus";
+  });
+
+  afterEach(() => {
+    for (const key of keys) {
+      if (saved[key] === undefined) delete process.env[key];
+      else process.env[key] = saved[key];
+    }
+  });
+
+  const launchEnv = async (env?: Record<string, string>) => {
+    const root = await makeTempRoot();
+    const run = await runExecutor({
+      agent: "claude",
+      cwd: root,
+      stateDir: path.join(root, "state"),
+      mode: "oneshot",
+      ...(env ? { env } : {}),
+    });
+    return (run.sessionInputs[0]?.sessionOptions as { env: Record<string, string> }).env;
+  };
+
+  it("launches a local ACP agent with the company runtime dir and a disabled bus", async () => {
+    const env = await launchEnv();
+    const companyRun = path.join(paperclipHome, "instances", "default", "companies", "company-1", "run");
+    expect(env.XDG_RUNTIME_DIR).toBe(companyRun);
+    expect(env.DBUS_SESSION_BUS_ADDRESS).toBe("disabled:");
+    expect((await fs.stat(companyRun)).mode & 0o777).toBe(0o700);
+  });
+
+  it("keeps runtime dir and bus values the agent configured explicitly", async () => {
+    const env = await launchEnv({ XDG_RUNTIME_DIR: "/srv/agent-run", DBUS_SESSION_BUS_ADDRESS: "unix:path=/srv/agent-bus" });
+    expect(env.XDG_RUNTIME_DIR).toBe("/srv/agent-run");
+    expect(env.DBUS_SESSION_BUS_ADDRESS).toBe("unix:path=/srv/agent-bus");
+  });
+
+  it("adds nothing when the switch is off", async () => {
+    process.env.PAPERCLIP_HOST_SERVICE_MANAGER_ISOLATION = "off";
+    const env = await launchEnv();
+    expect(env.XDG_RUNTIME_DIR).toBeUndefined();
+    expect(env.DBUS_SESSION_BUS_ADDRESS).toBeUndefined();
+  });
+});
