@@ -1,3 +1,5 @@
+import { localizedError } from "@/lib/localized-error";
+import { i18n, t, useTranslation } from "@/i18n";
 import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AlertTriangle, FlaskConical, Lock, Play } from "lucide-react";
@@ -53,7 +55,7 @@ function resolveWorktreeRunExecutionDisplayState(
 function formatActivationTimestamp(iso: string): string {
   const parsed = new Date(iso);
   if (Number.isNaN(parsed.getTime())) return iso;
-  return parsed.toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
+  return parsed.toLocaleString(i18n.language, { dateStyle: "medium", timeStyle: "short" });
 }
 
 // PAP-11233: keep Conference Room code intact, but hide the user-facing opt-in for now.
@@ -63,8 +65,8 @@ function ManagedByCloudBadge() {
   return (
     <Badge variant="outline" className="text-muted-foreground">
       <Lock aria-hidden="true" />
-      Managed by Paperclip Cloud
-    </Badge>
+              {t("tok225.settings_managed_by_paperclip_cloud")}
+            </Badge>
   );
 }
 
@@ -119,6 +121,7 @@ function ExperimentalToggleCard({
 }
 
 export function InstanceExperimentalSettings() {
+  useTranslation();
   const { setBreadcrumbs } = useBreadcrumbs();
   const queryClient = useQueryClient();
   const { hidden: hiddenSettings } = useHiddenSettings();
@@ -126,10 +129,10 @@ export function InstanceExperimentalSettings() {
 
   useEffect(() => {
     setBreadcrumbs([
-      { label: "Settings", href: "/company/settings" },
-      { label: "Experimental" },
+      { label: t("tok225.settings_settings"), href: "/company/settings" },
+      { label: t("tok225.settings_experimental") },
     ]);
-  }, [setBreadcrumbs]);
+  }, [setBreadcrumbs, i18n.language]);
 
   const experimentalQuery = useQuery({
     queryKey: queryKeys.instance.experimentalSettings,
@@ -172,20 +175,18 @@ export function InstanceExperimentalSettings() {
       if (context?.previousSettings) {
         queryClient.setQueryData(queryKeys.instance.experimentalSettings, context.previousSettings);
       }
-      setActionError(error instanceof Error ? error.message : "Failed to update experimental settings.");
+      setActionError(localizedError(error, t("tok225.failed_to_update_experimental_settings")));
     },
   });
 
   if (experimentalQuery.isLoading) {
-    return <div className="text-sm text-muted-foreground">Loading experimental settings...</div>;
+    return <div className="text-sm text-muted-foreground">{t("tok225.loading_experimental_settings")}</div>;
   }
 
   if (experimentalQuery.error) {
     return (
       <div className="text-sm text-destructive">
-        {experimentalQuery.error instanceof Error
-          ? experimentalQuery.error.message
-          : "Failed to load experimental settings."}
+        {localizedError(experimentalQuery.error, t("tok225.failed_to_load_experimental_settings"))}
       </div>
     );
   }
@@ -254,11 +255,11 @@ export function InstanceExperimentalSettings() {
       <div className="space-y-2">
         <div className="flex items-center gap-2">
           <FlaskConical className="h-5 w-5 text-muted-foreground" />
-          <h1 className="text-lg font-semibold">Experimental</h1>
+          <h1 className="text-lg font-semibold">{t("tok225.settings_experimental")}</h1>
         </div>
         <p className="text-sm text-muted-foreground">
-          Opt into features that are still being evaluated before they become default behavior.
-        </p>
+              {t("tok225.settings_opt_into_features_that_are_still_being_evaluated_before_they_become_default_be")}
+            </p>
       </div>
 
       <div
@@ -268,10 +269,9 @@ export function InstanceExperimentalSettings() {
         <div className="flex items-start gap-3">
           <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-700" />
           <div className="space-y-1 text-sm">
-            <p className="font-medium text-foreground">Experimental features may break at any time.</p>
+            <p className="font-medium text-foreground">{t("tok225.settings_experimental_features_may_break_at_any_time")}</p>
             <p className="text-muted-foreground">
-              These features are opt-in and come with no compatibility guarantees. They may change, break, or be
-              removed without notice. Avoid relying on them for critical or production workflows.
+              {t("tok225.settings_these_features_are_opt_in_and_come_with_no_compatibility_guarantees_they_may_c")}
             </p>
           </div>
         </div>
@@ -286,142 +286,142 @@ export function InstanceExperimentalSettings() {
       <section className="space-y-3" aria-labelledby="experimental-features-heading">
         <div className="space-y-1">
           <h2 id="experimental-features-heading" className="text-sm font-semibold">
-            Experimental features
-          </h2>
+              {t("tok225.settings_experimental_features")}
+            </h2>
           <p className="text-sm text-muted-foreground">
-            Optional product features that are still being evaluated.
-          </p>
+              {t("tok225.settings_optional_product_features_that_are_still_being_evaluated")}
+            </p>
         </div>
 
         <ExperimentalToggleCard
-          title="Agent Chat"
-          description="Talk to each agent in one ongoing conversation. Clarify goals and create tasks for execution."
-          footnote="Turning this off preserves conversations and lets active runs finish, but prevents new messages."
+          title={t("tok225.settings_agent_chat")}
+          description={t("tok225.settings_talk_to_each_agent_in_one_ongoing_conversation_clarify_goals_and_create_tasks_")}
+          footnote={t("tok225.settings_turning_this_off_preserves_conversations_and_lets_active_runs_finish_but_preve")}
           checked={experimentalQuery.data?.enableAgentChat ?? false}
           onCheckedChange={(checked) => toggleMutation.mutate({ enableAgentChat: checked })}
           disabled={toggleMutation.isPending}
           settingKey="enableAgentChat"
           managed={managedKeys.enableAgentChat}
-          ariaLabel="Toggle agent chat experimental setting"
+          ariaLabel={t("tok225.settings_toggle_agent_chat_experimental_setting")}
         />
 
         <ExperimentalToggleCard
-          title="Beta skills"
-          description="Allow agents to pin beta releases of the Paperclip core skill. Disabling this returns every agent to the default live skill without removing saved pins."
+          title={t("tok225.settings_beta_skills")}
+          description={t("tok225.settings_allow_agents_to_pin_beta_releases_of_the_paperclip_core_skill_disabling_this_r")}
           checked={enableBetaSkills}
           onCheckedChange={(checked) => toggleMutation.mutate({ enableBetaSkills: checked })}
           disabled={toggleMutation.isPending}
           settingKey="enableBetaSkills"
           managed={managedKeys.enableBetaSkills}
-          ariaLabel="Toggle beta skills experimental setting"
+          ariaLabel={t("tok225.settings_toggle_beta_skills_experimental_setting")}
         />
 
         <ExperimentalToggleCard
-          title="Built-in Agents"
-          description="Show Paperclip-managed built-in agent surfaces, including built-in roster badges, the Built-in agents tab, and built-in agent setup controls."
+          title={t("tok225.settings_built_in_agents")}
+          description={t("tok225.settings_show_paperclip_managed_built_in_agent_surfaces_including_built_in_roster_badge")}
           checked={enableBuiltInAgents}
           onCheckedChange={(checked) => toggleMutation.mutate({ enableBuiltInAgents: checked })}
           disabled={toggleMutation.isPending}
           settingKey="enableBuiltInAgents"
           managed={managedKeys.enableBuiltInAgents}
-          ariaLabel="Toggle built-in agents experimental setting"
+          ariaLabel={t("tok225.settings_toggle_built_in_agents_experimental_setting")}
         />
 
         <ExperimentalToggleCard
-          title="Cases"
-          description="Durable work products (blog posts, tweet storms…) that tasks create and iterate on. Adds the Cases tab and the agent case API."
-          footnote="Turning Cases off hides the tab and blocks the case API; existing case data is kept."
+          title={t("tok225.settings_cases")}
+          description={t("tok225.settings_durable_work_products_blog_posts_tweet_storms_that_tasks_create_and_iterate_on")}
+          footnote={t("tok225.settings_turning_cases_off_hides_the_tab_and_blocks_the_case_api_existing_case_data_is_")}
           checked={enableCases}
           onCheckedChange={(checked) => toggleMutation.mutate({ enableCases: checked })}
           disabled={toggleMutation.isPending}
           settingKey="enableCases"
           managed={managedKeys.enableCases}
-          ariaLabel="Toggle cases experimental setting"
+          ariaLabel={t("tok225.settings_toggle_cases_experimental_setting")}
         />
 
         <ExperimentalToggleCard
-          title="Chat connectors"
-          description="Connect agents to Slack, GitHub, Discord, Microsoft Teams, and Telegram conversations."
-          footnote="Turning this off hides chat setup, channels, and connected-task controls. Existing chat connections keep running. GitHub and other tool connectors stay available."
+          title={t("tok225.settings_chat_connectors")}
+          description={t("tok225.settings_connect_agents_to_slack_github_discord_microsoft_teams_and_telegram_conversati")}
+          footnote={t("tok225.settings_turning_this_off_hides_chat_setup_channels_and_connected_task_controls_existin")}
           checked={enableChatConnectors}
           onCheckedChange={(checked) => toggleMutation.mutate({ enableChatConnectors: checked })}
           disabled={toggleMutation.isPending}
           settingKey="enableChatConnectors"
           managed={managedKeys.enableChatConnectors}
-          ariaLabel="Toggle chat connectors experimental setting"
+          ariaLabel={t("tok225.settings_toggle_chat_connectors_experimental_setting")}
         />
 
         {SHOW_CONFERENCE_ROOM_EXPERIMENTAL_SETTING ? (
           <ExperimentalToggleCard
-            title="Conference Room Chat"
-            description="Adds a Conference Room — one chat where you and your whole team work together — plus the live activity feed and the redesigned onboarding. Also restyles task threads as chat bubbles. Turn off anytime to restore the classic UI."
+            title={t("tok225.settings_conference_room_chat")}
+            description={t("tok225.settings_adds_a_conference_room_one_chat_where_you_and_your_whole_team_work_together_pl")}
             checked={enableConferenceRoomChat}
             onCheckedChange={(checked) => toggleMutation.mutate({ enableConferenceRoomChat: checked })}
             disabled={toggleMutation.isPending}
             settingKey="enableConferenceRoomChat"
             managed={managedKeys.enableConferenceRoomChat}
-            ariaLabel="Toggle conference room chat experimental setting"
+            ariaLabel={t("tok225.settings_toggle_conference_room_chat_experimental_setting")}
           />
         ) : null}
 
         <ExperimentalToggleCard
-          title="Decisions"
-          description="Show the Decisions item in the main sidebar — the attention home that surfaces the tasks awaiting your input — while the surface is still being evaluated."
+          title={t("tok225.settings_decisions")}
+          description={t("tok225.settings_show_the_decisions_item_in_the_main_sidebar_the_attention_home_that_surfaces_t")}
           checked={enableDecisions}
           onCheckedChange={(checked) => toggleMutation.mutate({ enableDecisions: checked })}
           disabled={toggleMutation.isPending}
           settingKey="enableDecisions"
           managed={managedKeys.enableDecisions}
-          ariaLabel="Toggle decisions experimental setting"
+          ariaLabel={t("tok225.settings_toggle_decisions_experimental_setting")}
         />
 
         <ExperimentalToggleCard
-          title="Enable Environments"
-          description="Show environment management in company settings and allow project and agent environment assignment controls."
+          title={t("tok225.settings_enable_environments")}
+          description={t("tok225.settings_show_environment_management_in_company_settings_and_allow_project_and_agent_en")}
           checked={enableEnvironments}
           onCheckedChange={(checked) => toggleMutation.mutate({ enableEnvironments: checked })}
           disabled={toggleMutation.isPending}
           settingKey="enableEnvironments"
           managed={managedKeys.enableEnvironments}
-          ariaLabel="Toggle environments experimental setting"
+          ariaLabel={t("tok225.settings_toggle_environments_experimental_setting")}
         />
 
         <ExperimentalToggleCard
-          title="Enable External Objects"
-          description="Detect external URLs in issues and show resolved status for pull requests, tickets, and other referenced work objects."
+          title={t("tok225.settings_enable_external_objects")}
+          description={t("tok225.settings_detect_external_urls_in_issues_and_show_resolved_status_for_pull_requests_tick")}
           checked={enableExternalObjects}
           onCheckedChange={(checked) => toggleMutation.mutate({ enableExternalObjects: checked })}
           disabled={toggleMutation.isPending}
           settingKey="enableExternalObjects"
           managed={managedKeys.enableExternalObjects}
-          ariaLabel="Toggle external objects experimental setting"
+          ariaLabel={t("tok225.settings_toggle_external_objects_experimental_setting")}
         />
 
         <ExperimentalToggleCard
-          title="Enable Isolated Workspaces"
-          description="Show execution workspace controls in project configuration and allow isolated workspace behavior for new and existing task runs."
+          title={t("tok225.settings_enable_isolated_workspaces")}
+          description={t("tok225.settings_show_execution_workspace_controls_in_project_configuration_and_allow_isolated_")}
           checked={enableIsolatedWorkspaces}
           onCheckedChange={(checked) => toggleMutation.mutate({ enableIsolatedWorkspaces: checked })}
           disabled={toggleMutation.isPending}
           settingKey="enableIsolatedWorkspaces"
           managed={managedKeys.enableIsolatedWorkspaces}
-          ariaLabel="Toggle isolated workspaces experimental setting"
+          ariaLabel={t("tok225.settings_toggle_isolated_workspaces_experimental_setting")}
         />
 
         <ExperimentalToggleCard
-          title="Experimental File Viewer"
-          description="Show task detail controls for browsing and previewing workspace files relative to a task."
+          title={t("tok225.settings_experimental_file_viewer")}
+          description={t("tok225.settings_show_task_detail_controls_for_browsing_and_previewing_workspace_files_relative")}
           checked={enableExperimentalFileViewer}
           onCheckedChange={(checked) => toggleMutation.mutate({ enableExperimentalFileViewer: checked })}
           disabled={toggleMutation.isPending}
           settingKey="enableExperimentalFileViewer"
           managed={managedKeys.enableExperimentalFileViewer}
-          ariaLabel="Toggle experimental file viewer setting"
+          ariaLabel={t("tok225.settings_toggle_experimental_file_viewer_setting")}
         />
 
         <ExperimentalToggleCard
-          title="First task: propose with a plan document"
-          description="When the user's first request is a single task, the chief of staff writes a short plan document and a checkbox card instead of a one-card confirmation. Applies to organizations created after the toggle is flipped."
+          title={t("tok225.settings_first_task_propose_with_a_plan_document")}
+          description={t("tok225.settings_when_the_user_s_first_request_is_a_single_task_the_chief_of_staff_writes_a_sho")}
           checked={enableFirstTaskPlanProposal}
           onCheckedChange={(checked) =>
             toggleMutation.mutate({ enableFirstTaskPlanProposal: checked })
@@ -429,24 +429,24 @@ export function InstanceExperimentalSettings() {
           disabled={toggleMutation.isPending}
           settingKey="enableFirstTaskPlanProposal"
           managed={managedKeys.enableFirstTaskPlanProposal}
-          ariaLabel="Toggle first task plan proposal experimental setting"
+          ariaLabel={t("tok225.settings_toggle_first_task_plan_proposal_experimental_setting")}
         />
 
         <ExperimentalToggleCard
-          title="MCP aggregators"
-          description="Connect Zapier, Arcade, Composio Connect, and Executor through their MCP servers."
-          footnote="Turning this off hides setup for these connectors. Existing MCP connections keep running."
+          title={t("tok225.settings_mcp_aggregators")}
+          description={t("tok225.settings_connect_zapier_arcade_composio_connect_and_executor_through_their_mcp_servers")}
+          footnote={t("tok225.settings_turning_this_off_hides_setup_for_these_connectors_existing_mcp_connections_kee")}
           checked={experimentalQuery.data?.enableMcpAggregators === true}
           onCheckedChange={(checked) => toggleMutation.mutate({ enableMcpAggregators: checked })}
           disabled={toggleMutation.isPending}
           settingKey="enableMcpAggregators"
           managed={managedKeys.enableMcpAggregators}
-          ariaLabel="Toggle MCP aggregators experimental setting"
+          ariaLabel={t("tok225.settings_toggle_mcp_aggregators_experimental_setting")}
         />
 
         <ExperimentalToggleCard
-          title="Paperclip Runner"
-          description="Allow new Codex agents to select the experimental Rust Paperclip Runner, including authenticated runner ingress when a sandbox requires it. Onboarding continues to use legacy adapters. Turning this off hides the choice without affecting existing native runs."
+          title={t("tok225.settings_paperclip_runner")}
+          description={t("tok225.settings_allow_new_codex_agents_to_select_the_experimental_rust_paperclip_runner_includ")}
           checked={enableNativeRunner}
           onCheckedChange={(checked) =>
             toggleMutation.mutate({ enableNativeRunner: checked })
@@ -454,12 +454,12 @@ export function InstanceExperimentalSettings() {
           disabled={toggleMutation.isPending}
           settingKey="enableNativeRunner"
           managed={managedKeys.enableNativeRunner}
-          ariaLabel="Toggle Paperclip Runner experimental setting"
+          ariaLabel={t("tok225.settings_toggle_paperclip_runner_experimental_setting")}
         />
 
         <ExperimentalToggleCard
-          title="Simplified English Interactions"
-          description="Instruct agents to write user interactions (plan confirmations, questions, suggested tasks, checkbox prompts) in ASD-STE100 Simplified Technical English, with brief context on what information the decision needs and what happens for each choice."
+          title={t("tok225.settings_simplified_english_interactions")}
+          description={t("tok225.settings_instruct_agents_to_write_user_interactions_plan_confirmations_questions_sugges")}
           checked={enableSimplifiedEnglishInteractions}
           onCheckedChange={(checked) =>
             toggleMutation.mutate({ enableSimplifiedEnglishInteractions: checked })
@@ -467,13 +467,13 @@ export function InstanceExperimentalSettings() {
           disabled={toggleMutation.isPending}
           settingKey="enableSimplifiedEnglishInteractions"
           managed={managedKeys.enableSimplifiedEnglishInteractions}
-          ariaLabel="Toggle simplified english interactions experimental setting"
+          ariaLabel={t("tok225.settings_toggle_simplified_english_interactions_experimental_setting")}
         />
 
         <ExperimentalToggleCard
-          title="Status Cards"
-          description="Enable the experimental shared status-card board and its gated API. Existing card data is kept when this is disabled."
-          footnote="Enabling Status Cards also enables Summaries."
+          title={t("tok225.settings_status_cards")}
+          description={t("tok225.settings_enable_the_experimental_shared_status_card_board_and_its_gated_api_existing_ca")}
+          footnote={t("tok225.settings_enabling_status_cards_also_enables_summaries")}
           checked={enableStatusCards}
           onCheckedChange={(checked) =>
             toggleMutation.mutate(
@@ -485,25 +485,25 @@ export function InstanceExperimentalSettings() {
           disabled={toggleMutation.isPending || statusCardsBlockedByManagedSummaries}
           settingKey="enableStatusCards"
           managed={managedKeys.enableStatusCards}
-          ariaLabel="Toggle status cards experimental setting"
+          ariaLabel={t("tok225.settings_toggle_status_cards_experimental_setting")}
         />
 
         <ExperimentalToggleCard
-          title="Streamlined UI"
-          description="Use the simplified main sidebar, shared Tasks and Inbox presentation, focused task detail layout, and contextual navigation across Agents, Routines, Skills, and Settings."
-          footnote="Turning this off restores the legacy shell and navigation. Task and page data are unchanged."
+          title={t("tok225.settings_streamlined_ui")}
+          description={t("tok225.settings_use_the_simplified_main_sidebar_shared_tasks_and_inbox_presentation_focused_ta")}
+          footnote={t("tok225.settings_turning_this_off_restores_the_legacy_shell_and_navigation_task_and_page_data_a")}
           checked={enableStreamlinedUi}
           onCheckedChange={(checked) => toggleMutation.mutate({ enableStreamlinedUi: checked })}
           disabled={toggleMutation.isPending}
           settingKey="enableStreamlinedUi"
           managed={managedKeys.enableStreamlinedUi}
-          ariaLabel="Toggle Streamlined UI experimental setting"
+          ariaLabel={t("tok225.settings_toggle_streamlined_ui_experimental_setting")}
         />
 
         <ExperimentalToggleCard
-          title="Summaries"
-          description="Show Summarizer-generated status slots on project and workspace pages, with on-demand refresh and revision history. Existing summary data is kept when this is disabled."
-          footnote="Status Cards requires Summaries. Disabling Summaries also disables Status Cards."
+          title={t("tok225.settings_summaries")}
+          description={t("tok225.settings_show_summarizer_generated_status_slots_on_project_and_workspace_pages_with_on_")}
+          footnote={t("tok225.settings_status_cards_requires_summaries_disabling_summaries_also_disables_status_cards")}
           checked={enableSummaries}
           onCheckedChange={(checked) =>
             toggleMutation.mutate(
@@ -515,13 +515,13 @@ export function InstanceExperimentalSettings() {
           disabled={toggleMutation.isPending || summariesRequiredByManagedStatusCards}
           settingKey="enableSummaries"
           managed={managedKeys.enableSummaries}
-          ariaLabel="Toggle summaries experimental setting"
+          ariaLabel={t("tok225.settings_toggle_summaries_experimental_setting")}
         />
 
         {enableIsolatedWorkspaces && (
           <ExperimentalToggleCard
-            title="Use Isolated Workspaces By Default"
-            description="Treat a project that has no execution workspace policy of its own as if it selected isolated workspaces, so its tasks get a per-task worktree instead of sharing the project checkout. A project that carries its own policy keeps it."
+            title={t("tok225.settings_use_isolated_workspaces_by_default")}
+            description={t("tok225.settings_treat_a_project_that_has_no_execution_workspace_policy_of_its_own_as_if_it_sel")}
             checked={enableIsolatedWorkspacesByDefault}
             onCheckedChange={(checked) =>
               toggleMutation.mutate({ enableIsolatedWorkspacesByDefault: checked })
@@ -529,7 +529,7 @@ export function InstanceExperimentalSettings() {
             disabled={toggleMutation.isPending}
             settingKey="enableIsolatedWorkspacesByDefault"
             managed={managedKeys.enableIsolatedWorkspacesByDefault}
-            ariaLabel="Toggle isolated workspaces by default experimental setting"
+            ariaLabel={t("tok225.settings_toggle_isolated_workspaces_by_default_experimental_setting")}
           />
         )}
       </section>
@@ -538,16 +538,16 @@ export function InstanceExperimentalSettings() {
         <section className="space-y-3" aria-labelledby="developer-mode-heading">
           <div className="space-y-1">
             <h2 id="developer-mode-heading" className="text-sm font-semibold">
-              Paperclip Developer Mode
+              {t("tok225.settings_paperclip_developer_mode")}
             </h2>
             <p className="text-sm text-muted-foreground">
-              Internal tools for developing, testing, and debugging Paperclip.
+              {t("tok225.settings_internal_tools_for_developing_testing_and_debugging_paperclip")}
             </p>
           </div>
 
           <ExperimentalToggleCard
-            title="Auto-Restart Dev Server When Idle"
-            description="In `pnpm dev:once`, wait for all queued and running local agent runs to finish, then restart the server automatically when backend changes or migrations make the current boot stale."
+            title={t("tok225.settings_auto_restart_dev_server_when_idle")}
+            description={t("tok225.settings_in_pnpm_dev_once_wait_for_all_queued_and_running_local_agent_runs_to_finish_th")}
             checked={autoRestartDevServerWhenIdle}
             onCheckedChange={(checked) =>
               toggleMutation.mutate({ autoRestartDevServerWhenIdle: checked })
@@ -555,12 +555,12 @@ export function InstanceExperimentalSettings() {
             disabled={toggleMutation.isPending}
             settingKey="autoRestartDevServerWhenIdle"
             managed={managedKeys.autoRestartDevServerWhenIdle}
-            ariaLabel="Toggle guarded dev-server auto-restart"
+            ariaLabel={t("tok225.settings_toggle_guarded_dev_server_auto_restart")}
           />
 
           <ExperimentalToggleCard
-            title="Managed Environment Only"
-            description="Hide the local environment and run all agents in the platform-managed environment."
+            title={t("tok225.settings_managed_environment_only")}
+            description={t("tok225.settings_hide_the_local_environment_and_run_all_agents_in_the_platform_managed_environm")}
             checked={enableManagedSandboxOnly}
             onCheckedChange={(checked) =>
               toggleMutation.mutate({ enableManagedSandboxOnly: checked })
@@ -568,12 +568,12 @@ export function InstanceExperimentalSettings() {
             disabled={toggleMutation.isPending}
             settingKey="enableManagedSandboxOnly"
             managed={managedKeys.enableManagedSandboxOnly}
-            ariaLabel="Toggle managed environment only experimental setting"
+            ariaLabel={t("tok225.settings_toggle_managed_environment_only_experimental_setting")}
           />
 
           <ExperimentalToggleCard
-            title="Paperclip Developer Mode"
-            description="Show internal Paperclip maintainer tools and observability links, including Honeycomb trace queries on run pages."
+            title={t("tok225.settings_paperclip_developer_mode")}
+            description={t("tok225.settings_show_internal_paperclip_maintainer_tools_and_observability_links_including_hon")}
             checked={enablePaperclipDeveloperMode}
             onCheckedChange={(checked) =>
               toggleMutation.mutate({ enablePaperclipDeveloperMode: checked })
@@ -581,7 +581,7 @@ export function InstanceExperimentalSettings() {
             disabled={toggleMutation.isPending}
             settingKey="enablePaperclipDeveloperMode"
             managed={managedKeys.enablePaperclipDeveloperMode}
-            ariaLabel="Toggle Paperclip developer mode experimental setting"
+            ariaLabel={t("tok225.settings_toggle_paperclip_developer_mode_experimental_setting")}
           />
 
           {showWorktreeRunExecution ? (
@@ -590,13 +590,11 @@ export function InstanceExperimentalSettings() {
                 <div className="flex items-start justify-between gap-4">
                   <div className="space-y-1.5">
                     <div className="flex flex-wrap items-center gap-2">
-                      <h3 className="text-sm font-semibold">Run tasks in this worktree</h3>
+                      <h3 className="text-sm font-semibold">{t("tok225.settings_run_tasks_in_this_worktree")}</h3>
                       {worktreeRunExecutionManaged ? <ManagedByCloudBadge /> : null}
                     </div>
                     <p className="max-w-2xl text-sm text-muted-foreground">
-                      This is an isolated git-worktree preview instance. Turn this on to let the scheduler execute runs
-                      here. Only tasks created after enabling will run automatically — copied/pre-existing tasks stay
-                      parked. Toggling off and on resets the cutoff.
+                      {t("tok225.settings_worktree_preview_explanation")}
                     </p>
                   </div>
                   <ToggleSwitch
@@ -606,7 +604,7 @@ export function InstanceExperimentalSettings() {
                       toggleMutation.mutate({ enableWorktreeRunExecution: checked });
                     }}
                     disabled={toggleMutation.isPending || worktreeRunExecutionManaged}
-                    aria-label="Toggle worktree run execution setting"
+                    aria-label={t("tok225.settings_toggle_worktree_run_execution_setting")}
                   />
                 </div>
 
@@ -614,11 +612,11 @@ export function InstanceExperimentalSettings() {
                   <div className="flex items-center gap-2 rounded-md border border-emerald-500/30 bg-emerald-500/5 px-3 py-2 text-sm text-foreground">
                     <Play className="h-4 w-4 shrink-0 text-emerald-600" />
                     <span>
-                      Running tasks created after{" "}
+                      {t("tok225.settings_running_tasks_created_after")}{" "}
                       <span className="font-medium">
                         {formatActivationTimestamp(worktreeRunExecutionState.activatedAt)}
                       </span>
-                      .
+                      {t("tok225.settings_period")}
                     </span>
                   </div>
                 ) : null}
@@ -627,12 +625,12 @@ export function InstanceExperimentalSettings() {
                   <div className="flex items-start gap-2 rounded-md border border-amber-500/30 bg-amber-500/5 px-3 py-2 text-sm">
                     <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-700" />
                     <div className="space-y-0.5">
-                      <p className="font-medium text-foreground">Execution is suppressed — effectively off.</p>
+                      <p className="font-medium text-foreground">{t("tok225.settings_execution_suppressed")}</p>
                       <p className="text-muted-foreground">
                         {worktreeRunExecutionState.reason === "instance_mismatch"
-                          ? "This setting was armed in a different instance and copied here, so no tasks run automatically."
-                          : "This setting is missing its activation cutoff, so no tasks run automatically."}{" "}
-                        Toggle it off and back on to arm execution for tasks created here.
+                          ? t("tok225.settings_worktree_instance_mismatch")
+                          : t("tok225.settings_worktree_missing_cutoff")}{" "}
+                        {t("tok225.settings_worktree_rearm")}
                       </p>
                     </div>
                   </div>
@@ -642,8 +640,8 @@ export function InstanceExperimentalSettings() {
           ) : null}
 
           <ExperimentalToggleCard
-            title="Server Info Debug View"
-            description='Show a "Server" section in the account drawer with the current server restart time and running commit.'
+            title={t("tok225.settings_server_info_debug_view")}
+            description={t("tok225.settings_show_a_server_section_in_the_account_drawer_with_the_current_server_restart_ti")}
             checked={enableServerInfoDebugView}
             onCheckedChange={(checked) =>
               toggleMutation.mutate({ enableServerInfoDebugView: checked })
@@ -651,23 +649,23 @@ export function InstanceExperimentalSettings() {
             disabled={toggleMutation.isPending}
             settingKey="enableServerInfoDebugView"
             managed={managedKeys.enableServerInfoDebugView}
-            ariaLabel="Toggle server info debug view experimental setting"
+            ariaLabel={t("tok225.settings_toggle_server_info_debug_view_experimental_setting")}
           />
 
           <ExperimentalToggleCard
-            title="Smoke Lab"
-            description='Add a "Smoke Lab" tab under Apps → Developer and an "Integration smoke" card on the dashboard for exercising every integration path against deterministic local fixtures (fake OAuth provider + loopback MCP servers). Private (non-public) deployments only.'
+            title={t("tok225.settings_smoke_lab")}
+            description={t("tok225.settings_add_a_smoke_lab_tab_under_apps_developer_and_an_integration_smoke_card_on_the_")}
             checked={enableSmokeLab}
             onCheckedChange={(checked) => toggleMutation.mutate({ enableSmokeLab: checked })}
             disabled={toggleMutation.isPending}
             settingKey="enableSmokeLab"
             managed={managedKeys.enableSmokeLab}
-            ariaLabel="Toggle smoke lab experimental setting"
+            ariaLabel={t("tok225.settings_toggle_smoke_lab_experimental_setting")}
           />
 
           <ExperimentalToggleCard
-            title="Task Plan Decomposition"
-            description="Show accepted-plan decomposition history on task detail pages. Intended for debugging and validating subtask creation behavior while the presentation is still being refined."
+            title={t("tok225.settings_task_plan_decomposition")}
+            description={t("tok225.settings_show_accepted_plan_decomposition_history_on_task_detail_pages_intended_for_deb")}
             checked={enableIssuePlanDecompositions}
             onCheckedChange={(checked) =>
               toggleMutation.mutate({ enableIssuePlanDecompositions: checked })
@@ -675,7 +673,7 @@ export function InstanceExperimentalSettings() {
             disabled={toggleMutation.isPending}
             settingKey="enableIssuePlanDecompositions"
             managed={managedKeys.enableIssuePlanDecompositions}
-            ariaLabel="Toggle task plan decomposition panel experimental setting"
+            ariaLabel={t("tok225.settings_toggle_task_plan_decomposition_panel_experimental_setting")}
           />
         </section>
       ) : null}
@@ -684,15 +682,15 @@ export function InstanceExperimentalSettings() {
         <section className="space-y-3" aria-labelledby="legacy-heading">
           <div className="space-y-1">
             <h2 id="legacy-heading" className="text-sm font-semibold">
-              Legacy
+              {t("tok225.settings_legacy")}
             </h2>
-            <p className="text-sm text-muted-foreground">These features are going to be removed.</p>
+            <p className="text-sm text-muted-foreground">{t("tok225.settings_these_features_are_going_to_be_removed")}</p>
           </div>
 
           <ExperimentalToggleCard
-            title="Classic Task Interface"
-            description="Restores the previous task detail page: the page-level header with inline description editing, the plain comment thread, and the fixed Properties sidebar. Chat-only features — streaming activity folding, inline plan and question cards, the three-mode composer — are unavailable in the classic view."
-            footnote="Switching takes effect immediately. No task data is affected."
+            title={t("tok225.settings_classic_task_interface")}
+            description={t("tok225.settings_restores_the_previous_task_detail_page_the_page_level_header_with_inline_descr")}
+            footnote={t("tok225.settings_switching_takes_effect_immediately_no_task_data_is_affected")}
             checked={enableClassicTaskInterface}
             onCheckedChange={(checked) =>
               toggleMutation.mutate({ enableClassicTaskInterface: checked })
@@ -700,12 +698,12 @@ export function InstanceExperimentalSettings() {
             disabled={toggleMutation.isPending}
             settingKey="enableClassicTaskInterface"
             managed={managedKeys.enableClassicTaskInterface}
-            ariaLabel="Toggle classic task interface experimental setting"
+            ariaLabel={t("tok225.settings_toggle_classic_task_interface_experimental_setting")}
           />
 
           <ExperimentalToggleCard
-            title="Goals Sidebar Link"
-            description="Restore the Goals item in the main sidebar while the goals surface is being evaluated."
+            title={t("tok225.settings_goals_sidebar_link")}
+            description={t("tok225.settings_restore_the_goals_item_in_the_main_sidebar_while_the_goals_surface_is_being_ev")}
             checked={enableGoalsSidebarLink}
             onCheckedChange={(checked) =>
               toggleMutation.mutate({ enableGoalsSidebarLink: checked })
@@ -713,7 +711,7 @@ export function InstanceExperimentalSettings() {
             disabled={toggleMutation.isPending}
             settingKey="enableGoalsSidebarLink"
             managed={managedKeys.enableGoalsSidebarLink}
-            ariaLabel="Toggle goals sidebar link experimental setting"
+            ariaLabel={t("tok225.settings_toggle_goals_sidebar_link_experimental_setting")}
           />
         </section>
       ) : null}

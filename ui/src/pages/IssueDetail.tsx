@@ -1,5 +1,6 @@
+import { localizedError } from "@/lib/localized-error";
 import { AgentAvatar } from "@/components/AgentAvatar";
-import { t, useTranslation } from "@/i18n";
+import { i18n, t, useTranslation } from "@/i18n";
 import { AgentIdentity } from "@/components/AgentIdentity";
 import { clearLegacyChatMessageRequests } from "@/lib/chat-message-request";
 import { agentChatDraft } from "@/lib/agent-chat-draft";
@@ -371,10 +372,9 @@ type StopAndFinalizeRunError = Error & {
 function createRunCancelledStatusUpdateError(
   err: unknown,
 ): StopAndFinalizeRunError {
-  const message =
-    err instanceof Error
-      ? `Run was stopped, but updating the task failed: ${err.message}`
-      : "Run was stopped, but updating the task failed. Retry the task status update.";
+  const message = t("tok225.run_stopped_status_update_failed", {
+    error: localizedError(err, t("tok225.retry_task_status_update")),
+  });
   const error = new Error(message) as StopAndFinalizeRunError;
   error.runCancelledBeforeStatusUpdateFailed = true;
   return error;
@@ -423,9 +423,10 @@ function isPlanConfirmationInteraction(
 function buildPlanDecisionResponseText(
   interaction: RequestConfirmationInteraction,
 ) {
-  if (interaction.status === "accepted") return "Approved plan";
+  if (interaction.status === "accepted") return t("tok225.approved_plan");
   const reason = interaction.result?.reason?.trim();
-  return reason ? `Requested changes\n\n${reason}` : "Requested changes";
+  const heading = t("tok225.requested_changes");
+  return reason ? `${heading}\n\n${reason}` : heading;
 }
 
 const FEEDBACK_TERMS_URL =
@@ -436,13 +437,13 @@ const JUMP_TO_LATEST_MAX_COMMENT_PAGES = 10;
 function treeControlPreviewErrorCopy(error: unknown): string {
   if (error instanceof ApiError) {
     if (error.status === 403)
-      return "Only board users can preview subtree controls.";
+      return t("tok225.only_board_can_preview_subtree");
     if (error.status === 409)
-      return "Preview is stale because subtree hold state changed. Retry to refresh.";
+      return t("tok225.subtree_preview_stale");
     if (error.status === 422)
-      return "This subtree action is currently invalid for the selected tasks.";
+      return t("tok225.subtree_action_invalid");
   }
-  return error instanceof Error ? error.message : "Unable to load preview.";
+  return localizedError(error, t("tok225.unable_to_load_preview"));
 }
 
 export function canBoardResolveRecoveryAction(
@@ -705,9 +706,10 @@ function AttributionAvatar({
   actor: AttributionActor;
   via?: string | null;
 }) {
+  const translatedLabel = label === "Assignee" ? t("tok225.assignee") : t("tok225.originating");
   const accessibleLabel = via
-    ? `${label}: ${actor.name} · via ${via}`
-    : `${label}: ${actor.name}`;
+    ? t("tok225.attribution_via", { label: translatedLabel, name: actor.name, via })
+    : t("tok225.attribution", { label: translatedLabel, name: actor.name });
   const testIdLabel = label.toLowerCase();
 
   return (
@@ -735,14 +737,14 @@ function AttributionAvatar({
           )}
           <div className="min-w-0">
             <div className="text-(length:--text-nano) font-medium uppercase leading-none text-background/70">
-              {label}
+              {translatedLabel}
             </div>
             <div className="max-w-48 truncate text-xs font-medium leading-4 text-background">
               {actor.name}
             </div>
             {via ? (
               <div className="max-w-48 truncate text-(length:--text-nano) leading-3 text-background/60">
-                via {via}
+                {t("tok225.via_actor", { via })}
               </div>
             ) : null}
           </div>
@@ -818,7 +820,7 @@ function IssueAttributionByline({
     <TooltipProvider>
       <AvatarGroup
         className="-space-x-1.5"
-        aria-label="Task people"
+        aria-label={t("tok225.task_people")}
         data-testid="issue-attribution-avatar-stack"
       >
         {assignee ? (
@@ -994,10 +996,10 @@ function IssueDetailLoadingState({
                 <Badge
                   variant="outline"
                   className="border-violet-500/30 bg-violet-500/10 text-(length:--text-nano) text-violet-600 dark:text-violet-400"
-                  title={`Routine execution from routine ${headerSeed.originId}`}
+                  title={t("tok225.routine_execution_from", { id: headerSeed.originId })}
                 >
                   <Repeat className="h-3 w-3" />
-                  Routine
+                  {t("tok225.routine")}
                 </Badge>
               ) : null}
               {/* Seeded header — same anatomy as the resolved one below, so the
@@ -1112,7 +1114,7 @@ function InboxMobileToolbar({
             navigate(backHref);
           }
         }}
-        aria-label="Back to inbox"
+        aria-label={t("tok225.back_to_inbox")}
       >
         <ArrowLeft className="h-5 w-5" />
       </Button>
@@ -1548,7 +1550,7 @@ const IssueDetailChatTab = memo(function IssueDetailChatTab({
   const retryFailedRun = useMutation({
     mutationFn: async (runId: string) => {
       const failedRun = resolvedLinkedRuns.find((run) => run.runId === runId);
-      if (!failedRun) throw new Error("Failed run is no longer available.");
+      if (!failedRun) throw new Error(t("tok225.failed_run_unavailable"));
       return agentsApi.retryFailedRun(
         failedRun.agentId,
         failedRun.runId,
@@ -1558,8 +1560,8 @@ const IssueDetailChatTab = memo(function IssueDetailChatTab({
     onSuccess: (result) => {
       if (!result.runId) {
         pushToast({
-          title: "Retry queued",
-          body: "The exact request will retry when this task is ready.",
+          title: t("tok225.retry_queued"),
+          body: t("tok225.the_exact_request_will_retry_when_this_task_is_ready"),
           tone: "success",
         });
       }
@@ -1577,8 +1579,8 @@ const IssueDetailChatTab = memo(function IssueDetailChatTab({
     },
     onError: (error) => {
       pushToast({
-        title: "Run retry failed",
-        body: error instanceof Error ? error.message : "Unable to retry run",
+        title: t("tok225.run_retry_failed"),
+        body: localizedError(error, t("tok225.unable_to_retry_run")),
         tone: "error",
       });
     },
@@ -2068,7 +2070,7 @@ const IssueDetailChatTab = memo(function IssueDetailChatTab({
       const queueId = effectiveQueuedCommentQueue?.queueId;
       if (!queueId)
         throw new Error(
-          "The queued message is awaiting server acknowledgement.",
+          t("tok225.queued_message_awaiting_server"),
         );
       try {
         storeQueuedCommentQueue(
@@ -2099,7 +2101,7 @@ const IssueDetailChatTab = memo(function IssueDetailChatTab({
       const queueId = effectiveQueuedCommentQueue?.queueId;
       if (!queueId)
         throw new Error(
-          "The queued messages are awaiting server acknowledgement.",
+          t("tok225.queued_messages_awaiting_server"),
         );
       try {
         storeQueuedCommentQueue(
@@ -2127,7 +2129,7 @@ const IssueDetailChatTab = memo(function IssueDetailChatTab({
       const targetRunId = effectiveQueuedCommentQueue?.targetRunId;
       if (!queueId || !targetRunId)
         throw new Error(
-          "The queued message no longer has an active run target.",
+          t("tok225.queued_message_no_active_run"),
         );
       try {
         const nextQueue = await issuesApi.steerQueuedComment(
@@ -2193,7 +2195,7 @@ const IssueDetailChatTab = memo(function IssueDetailChatTab({
       const queueId = effectiveQueuedCommentQueue?.queueId;
       if (!queueId)
         throw new Error(
-          "The queued message is awaiting server acknowledgement.",
+          t("tok225.queued_message_awaiting_server"),
         );
       try {
         storeQueuedCommentQueue(
@@ -2242,8 +2244,8 @@ const IssueDetailChatTab = memo(function IssueDetailChatTab({
               : null;
         if (code === "queued_comment_already_dispatching") {
           pushToast({
-            title: "Message is already being sent",
-            body: "The continuation started before the discard was confirmed, so Paperclip could not unsend it.",
+            title: t("tok225.message_is_already_being_sent"),
+            body: t("tok225.the_continuation_started_before_the_discard_was_confirmed_so_paperclip_could_not_unse"),
             tone: "error",
             ttlMs: 15_000,
             dedupeKey: `queued-comment-already-dispatching:${issueId}:${commentId}`,
@@ -2281,8 +2283,8 @@ const IssueDetailChatTab = memo(function IssueDetailChatTab({
         onClick={onLoadOlderComments}
       >
         {commentsLoadingOlder
-          ? "Loading earlier comments..."
-          : "Load earlier comments"}
+          ? t("tok225.loading_earlier_comments")
+          : t("tok225.load_earlier_comments")}
       </Button>
     </div>
   ) : null;
@@ -2646,18 +2648,18 @@ function IssueDetailActivityTab({
       {shouldShowCostSummary && (
         <div className="mb-3 px-3 py-2 rounded-lg border border-border">
           <div className="text-sm font-medium text-muted-foreground mb-1">
-            Cost Summary
+            {t("tok225.cost_summary")}
           </div>
           {!issueCostSummary.hasCost &&
           !issueCostSummary.hasTokens &&
           !hasIssueTreeCost ? (
             <div className="text-xs text-muted-foreground">
-              No cost data yet.
+              {t("tok225.no_cost_data_yet")}
             </div>
           ) : (
             <div className="space-y-1 text-xs text-muted-foreground tabular-nums">
               <div className="flex flex-wrap gap-3">
-                <span className="font-medium text-foreground">This task</span>
+                <span className="font-medium text-foreground">{t("tok225.this_task")}</span>
                 {issueCostSummary.hasCost ? (
                   <span className="font-medium text-foreground">
                     ${issueCostSummary.cost.toFixed(4)}
@@ -2665,30 +2667,30 @@ function IssueDetailActivityTab({
                 ) : null}
                 {issueCostSummary.hasTokens ? (
                   <span>
-                    Tokens {formatTokens(issueCostSummary.totalTokens)}
+                    {t("tok225.tokens_count", { value: formatTokens(issueCostSummary.totalTokens) })}
                     {issueCostSummary.cached > 0
-                      ? ` (in ${formatTokens(issueCostSummary.input)}, out ${formatTokens(issueCostSummary.output)}, cached ${formatTokens(issueCostSummary.cached)})`
-                      : ` (in ${formatTokens(issueCostSummary.input)}, out ${formatTokens(issueCostSummary.output)})`}
+                      ? t("tok225.token_breakdown_cached", { input: formatTokens(issueCostSummary.input), output: formatTokens(issueCostSummary.output), cached: formatTokens(issueCostSummary.cached) })
+                      : t("tok225.token_breakdown", { input: formatTokens(issueCostSummary.input), output: formatTokens(issueCostSummary.output) })}
                   </span>
                 ) : null}
                 {issueCostSummary.hasRuntime ? (
                   <span>
-                    Runtime {formatDurationMs(issueCostSummary.runtimeMs)}
-                    {` (${issueCostSummary.runCount} run${issueCostSummary.runCount === 1 ? "" : "s"})`}
+                    {t("tok225.runtime_duration", { duration: formatDurationMs(issueCostSummary.runtimeMs) })}
+                    {t("tok225.run_count", { count: issueCostSummary.runCount })}
                   </span>
                 ) : null}
                 {!issueCostSummary.hasCost &&
                 !issueCostSummary.hasTokens &&
                 !issueCostSummary.hasRuntime ? (
-                  <span>No direct cost data.</span>
+                  <span>{t("tok225.no_direct_cost_data")}</span>
                 ) : null}
               </div>
               {hasIssueTreeCost && issueTreeCostSummary ? (
                 <div className="flex flex-wrap gap-3">
                   <span className="font-medium text-foreground">
-                    Including sub-tasks{" "}
+                    {t("tok225.including_subtasks")}{" "}
                     {(issueTreeCostSummary.costCents / 100).toLocaleString(
-                      undefined,
+                      i18n.language,
                       {
                         style: "currency",
                         currency: "USD",
@@ -2698,20 +2700,19 @@ function IssueDetailActivityTab({
                     )}
                   </span>
                   <span>
-                    Tokens {formatTokens(issueTreeCostTokens)}
+                    {t("tok225.tokens_count", { value: formatTokens(issueTreeCostTokens) })}
                     {issueTreeCostSummary.cachedInputTokens > 0
-                      ? ` (in ${formatTokens(issueTreeCostSummary.inputTokens)}, out ${formatTokens(issueTreeCostSummary.outputTokens)}, cached ${formatTokens(issueTreeCostSummary.cachedInputTokens)})`
-                      : ` (in ${formatTokens(issueTreeCostSummary.inputTokens)}, out ${formatTokens(issueTreeCostSummary.outputTokens)})`}
+                      ? t("tok225.token_breakdown_cached", { input: formatTokens(issueTreeCostSummary.inputTokens), output: formatTokens(issueTreeCostSummary.outputTokens), cached: formatTokens(issueTreeCostSummary.cachedInputTokens) })
+                      : t("tok225.token_breakdown", { input: formatTokens(issueTreeCostSummary.inputTokens), output: formatTokens(issueTreeCostSummary.outputTokens) })}
                   </span>
                   {issueTreeCostSummary.runCount > 0 ? (
                     <span>
-                      Runtime {formatDurationMs(issueTreeCostSummary.runtimeMs)}
-                      {` (${issueTreeCostSummary.runCount} run${issueTreeCostSummary.runCount === 1 ? "" : "s"})`}
+                      {t("tok225.runtime_duration", { duration: formatDurationMs(issueTreeCostSummary.runtimeMs) })}
+                      {t("tok225.run_count", { count: issueTreeCostSummary.runCount })}
                     </span>
                   ) : null}
                   <span>
-                    {issueTreeCostSummary.issueCount} task
-                    {issueTreeCostSummary.issueCount === 1 ? "" : "s"}
+                    {t("tok225.task_count", { count: issueTreeCostSummary.issueCount })}
                   </span>
                 </div>
               ) : null}
@@ -3683,7 +3684,7 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
       options.push({ id: `agent:${agent.id}`, label: agent.name });
     }
     if (currentUserId) {
-      options.push({ id: `user:${currentUserId}`, label: "Me" });
+      options.push({ id: `user:${currentUserId}`, label: t("tok225.me") });
     }
     return options;
   }, [agents, companyMembers?.users, currentUserId]);
@@ -3713,7 +3714,7 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
       }),
     [comments, optimisticComments],
   );
-  const breadcrumbTitle = issue?.title ?? issueId ?? "Task";
+  const breadcrumbTitle = issue?.title ?? issueId ?? t("tok225.task");
   const breadcrumbIdentifier =
     issue?.identifier ?? issueHeaderSeed?.identifier ?? undefined;
   const breadcrumbStatus = issue?.status;
@@ -3879,7 +3880,7 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
 
       try {
         await issuesApi.unarchiveFromInbox(id);
-        pushToast({ title: "Task restored to inbox", tone: "success" });
+        pushToast({ title: t("tok225.task_restored_to_inbox"), tone: "success" });
       } catch (error) {
         if (companyId) {
           beginLocalInboxArchive(companyId, id);
@@ -3887,11 +3888,9 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
           boundLocalInboxArchive(companyId, id);
         }
         pushToast({
-          title: "Undo failed",
+          title: t("tok225.undo_failed"),
           body:
-            error instanceof Error
-              ? error.message
-              : "Unable to restore this task to the inbox",
+            localizedError(error, t("tok225.unable_to_restore_this_task_to_the_inbox")),
           tone: "error",
         });
       } finally {
@@ -4054,7 +4053,7 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
       pushToast({
         title: t("tok224.taskUpdateFailed"),
         body:
-          err instanceof Error ? err.message : t("tok224.unableToSaveTaskChanges"),
+          localizedError(err, t("tok224.unableToSaveTaskChanges")),
         tone: "error",
       });
     },
@@ -4087,11 +4086,9 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
     },
     onError: (err) => {
       pushToast({
-        title: "Recovery resolution failed",
+        title: t("tok225.recovery_resolution_failed"),
         body:
-          err instanceof Error
-            ? err.message
-            : "Unable to resolve recovery action",
+          localizedError(err, t("tok225.unable_to_resolve_recovery_action")),
         tone: "error",
       });
     },
@@ -4124,7 +4121,7 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
         const pauseHoldId = treeControlState?.activePauseHold?.holdId;
         if (!pauseHoldId) {
           throw new Error(
-            "No active subtree pause hold is available to resume.",
+            t("tok225.no_pause_hold_to_resume"),
           );
         }
         const releasedHold = await issuesApi.releaseTreeHold(
@@ -4173,7 +4170,7 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
     onSuccess: (result) => {
       if (result.kind === "release" && result.hold.wakeFailures?.length) {
         setTreeControlWakeWarning(
-          `Pause released, but ${result.hold.wakeFailures.length} ${result.hold.wakeFailures.length === 1 ? "task" : "tasks"} could not start. ${result.hold.wakeFailures[0].message} Check the affected agents and try starting them again.`,
+          t("tok225.pause_released_wake_failed", { count: result.hold.wakeFailures.length, error: result.hold.wakeFailures[0].message }),
         );
       }
       setTreeControlOpen(false);
@@ -4282,9 +4279,7 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
             ? t("tok224.stopAndDoneFailed")
             : t("tok224.stopAndCancelFailed"),
         body:
-          err instanceof Error
-            ? err.message
-            : t("tok224.unableToStopAndUpdateTask"),
+          localizedError(err, t("tok224.unableToStopAndUpdateTask")),
         tone: "error",
       });
     },
@@ -4324,9 +4319,7 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
       pushToast({
         title: t("tok224.taskUpdateFailed"),
         body:
-          err instanceof Error
-            ? err.message
-            : t("tok224.unableToSaveSubtaskChanges"),
+          localizedError(err, t("tok224.unableToSaveSubtaskChanges")),
         tone: "error",
       });
     },
@@ -4390,17 +4383,15 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
       invalidateIssueRunState();
       invalidateIssueCollections();
       pushToast({
-        title: "Monitor check queued",
+        title: t("tok225.monitor_check_queued"),
         tone: "success",
       });
     },
     onError: (err) => {
       pushToast({
-        title: "Monitor check failed",
+        title: t("tok225.monitor_check_failed"),
         body:
-          err instanceof Error
-            ? err.message
-            : "Unable to trigger the monitor right now",
+          localizedError(err, t("tok225.unable_to_trigger_the_monitor_right_now")),
         tone: "error",
       });
     },
@@ -4439,8 +4430,8 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
       pushToast({
         title:
           variables.action === "approve"
-            ? "Approval approved"
-            : "Approval rejected",
+            ? t("tok225.approval_approved")
+            : t("tok225.approval_rejected"),
         tone: "success",
       });
     },
@@ -4448,9 +4439,9 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
       pushToast({
         title:
           variables.action === "approve"
-            ? "Approval failed"
-            : "Rejection failed",
-        body: err instanceof Error ? err.message : "Unable to update approval",
+            ? t("tok225.approval_failed")
+            : t("tok225.rejection_failed"),
+        body: localizedError(err, t("tok225.unable_to_update_approval")),
         tone: "error",
       });
     },
@@ -4537,11 +4528,9 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
           return;
         } catch (err) {
           pushToast({
-            title: "Cancel failed",
+            title: t("tok225.cancel_failed"),
             body:
-              err instanceof Error
-                ? err.message
-                : "Unable to cancel the queued comment",
+              localizedError(err, t("tok225.unable_to_cancel_the_queued_comment")),
             tone: "error",
           });
         }
@@ -4604,9 +4593,11 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
       pushToast({
         title:
           err instanceof CommentSubmissionUnknownError
-            ? "Comment save unconfirmed"
-            : "Comment failed",
-        body: err instanceof Error ? err.message : "Unable to post comment",
+            ? t("tok225.comment_save_unconfirmed")
+            : t("tok225.comment_failed"),
+        body: err instanceof CommentSubmissionUnknownError
+          ? t("tok225.comment_save_unconfirmed")
+          : localizedError(err, t("tok225.unable_to_post_comment")),
         tone: "error",
       });
     },
@@ -4672,22 +4663,20 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
       pushToast({
         title:
           interaction.kind === "request_confirmation"
-            ? "Request confirmed"
+            ? t("tok225.request_confirmed")
             : interaction.kind === "request_checkbox_confirmation"
-              ? "Selection confirmed"
+              ? t("tok225.selection_confirmed")
               : skippedCount > 0
-                ? `Accepted ${createdCount} draft${createdCount === 1 ? "" : "s"} and skipped ${skippedCount}`
-                : "Suggested tasks accepted",
+                ? t("tok225.accepted_drafts_skipped", { createdCount, skippedCount })
+                : t("tok225.suggested_tasks_accepted"),
         tone: "success",
       });
     },
     onError: (err) => {
       pushToast({
-        title: "Accept failed",
+        title: t("tok225.accept_failed"),
         body:
-          err instanceof Error
-            ? err.message
-            : "Unable to accept the suggested tasks",
+          localizedError(err, t("tok225.unable_to_accept_the_suggested_tasks")),
         tone: "error",
       });
     },
@@ -4708,17 +4697,15 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
         title:
           interaction.kind === "request_confirmation"
             ? buildIssueThreadInteractionSummary(interaction)
-            : "Suggestion rejected",
+            : t("tok225.suggestion_rejected"),
         tone: "success",
       });
     },
     onError: (err) => {
       pushToast({
-        title: "Reject failed",
+        title: t("tok225.reject_failed"),
         body:
-          err instanceof Error
-            ? err.message
-            : "Unable to reject the suggested tasks",
+          localizedError(err, t("tok225.unable_to_reject_the_suggested_tasks")),
         tone: "error",
       });
     },
@@ -4736,14 +4723,14 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
       invalidateIssueDetail();
       invalidateIssueCollections();
       pushToast({
-        title: "Answers submitted",
+        title: t("tok225.answers_submitted"),
         tone: "success",
       });
     },
     onError: (err) => {
       pushToast({
-        title: "Submit failed",
-        body: err instanceof Error ? err.message : "Unable to submit answers",
+        title: t("tok225.submit_failed"),
+        body: localizedError(err, t("tok225.unable_to_submit_answers")),
         tone: "error",
       });
     },
@@ -4773,16 +4760,16 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
           : false;
       pushToast({
         title: complete
-          ? "All verdicts applied"
+          ? t("tok225.all_verdicts_applied")
           : `Applied ${applied} decision${applied === 1 ? "" : "s"}`,
         tone: "success",
       });
     },
     onError: (err) => {
       pushToast({
-        title: "Apply failed",
+        title: t("tok225.apply_failed"),
         body:
-          err instanceof Error ? err.message : "Unable to apply the verdicts",
+          localizedError(err, t("tok225.unable_to_apply_the_verdicts")),
         tone: "error",
       });
     },
@@ -4799,15 +4786,15 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
       invalidateIssueDetail();
       invalidateIssueCollections();
       pushToast({
-        title: "Question cancelled",
+        title: t("tok225.question_cancelled"),
         tone: "success",
       });
     },
     onError: (err) => {
       pushToast({
-        title: "Cancel failed",
+        title: t("tok225.cancel_failed"),
         body:
-          err instanceof Error ? err.message : "Unable to cancel the question",
+          localizedError(err, t("tok225.unable_to_cancel_the_question")),
         tone: "error",
       });
     },
@@ -4823,9 +4810,9 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
     },
     onError: (err) => {
       pushToast({
-        title: "Skip failed",
+        title: t("tok225.skip_failed"),
         body:
-          err instanceof Error ? err.message : "Unable to skip this request",
+          localizedError(err, t("tok225.unable_to_skip_this_request")),
         tone: "error",
       });
     },
@@ -4932,11 +4919,9 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
           return;
         } catch (err) {
           pushToast({
-            title: "Cancel failed",
+            title: t("tok225.cancel_failed"),
             body:
-              err instanceof Error
-                ? err.message
-                : "Unable to cancel the queued comment",
+              localizedError(err, t("tok225.unable_to_cancel_the_queued_comment")),
             tone: "error",
           });
         }
@@ -4996,9 +4981,11 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
       pushToast({
         title:
           err instanceof CommentSubmissionUnknownError
-            ? "Comment save unconfirmed"
-            : "Comment failed",
-        body: err instanceof Error ? err.message : "Unable to post comment",
+            ? t("tok225.comment_save_unconfirmed")
+            : t("tok225.comment_failed"),
+        body: err instanceof CommentSubmissionUnknownError
+          ? t("tok225.comment_save_unconfirmed")
+          : localizedError(err, t("tok225.unable_to_post_comment")),
         tone: "error",
       });
     },
@@ -5025,8 +5012,8 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
       invalidateIssueDetail();
       invalidateIssueRunState();
       pushToast({
-        title: "Interrupt requested",
-        body: "Queued messages will be sent when the previous run has stopped.",
+        title: t("tok225.interrupt_requested"),
+        body: t("tok225.queued_messages_will_be_sent_when_the_previous_run_has_stopped"),
         tone: "success",
       });
     },
@@ -5034,11 +5021,9 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
       invalidateIssueDetail();
       invalidateIssueRunState();
       pushToast({
-        title: "Interrupt failed",
+        title: t("tok225.interrupt_failed"),
         body:
-          err instanceof Error
-            ? err.message
-            : "Unable to interrupt the active run",
+          localizedError(err, t("tok225.unable_to_interrupt_the_active_run")),
         tone: "error",
       });
     },
@@ -5060,18 +5045,16 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
       invalidateIssueThreadLazily();
       invalidateIssueCollections();
       pushToast({
-        title: "Queued comment canceled",
-        body: "The queued message was restored to the composer.",
+        title: t("tok225.queued_comment_canceled"),
+        body: t("tok225.the_queued_message_was_restored_to_the_composer"),
         tone: "success",
       });
     },
     onError: (err) => {
       pushToast({
-        title: "Cancel failed",
+        title: t("tok225.cancel_failed"),
         body:
-          err instanceof Error
-            ? err.message
-            : "Unable to cancel the queued comment",
+          localizedError(err, t("tok225.unable_to_cancel_the_queued_comment")),
         tone: "error",
       });
     },
@@ -5088,16 +5071,16 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
       invalidateIssueCollections();
       invalidateIssueDocumentAnnotationState();
       pushToast({
-        title: "Comment deleted",
-        body: "The thread now shows a deleted-comment marker.",
+        title: t("tok225.comment_deleted"),
+        body: t("tok225.the_thread_now_shows_a_deleted_comment_marker"),
         tone: "success",
       });
     },
     onError: (err) => {
       pushToast({
-        title: "Delete failed",
+        title: t("tok225.delete_failed"),
         body:
-          err instanceof Error ? err.message : "Unable to delete the comment",
+          localizedError(err, t("tok225.unable_to_delete_the_comment")),
         tone: "error",
       });
     },
@@ -5116,8 +5099,8 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
         if (cancelledCommentBody) {
           restoreQueuedCommentDraft(cancelledCommentBody);
           pushToast({
-            title: "Queued comment canceled",
-            body: "The queued message was restored to the composer.",
+            title: t("tok225.queued_comment_canceled"),
+            body: t("tok225.the_queued_message_was_restored_to_the_composer"),
             tone: "success",
           });
         }
@@ -5180,11 +5163,11 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
         title:
           variables.sharingPreferenceAtSubmit === "prompt"
             ? variables.allowSharing
-              ? "Feedback saved. Future votes will share"
-              : "Feedback saved. Future votes will stay local"
+              ? t("tok225.feedback_saved_future_votes_will_share")
+              : t("tok225.feedback_saved_future_votes_will_stay_local")
             : variables.allowSharing
-              ? "Feedback saved and sharing enabled"
-              : "Feedback saved",
+              ? t("tok225.feedback_saved_and_sharing_enabled")
+              : t("tok225.feedback_saved"),
         tone: "success",
       });
     },
@@ -5196,8 +5179,8 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
         );
       }
       pushToast({
-        title: "Failed to save feedback",
-        body: err instanceof Error ? err.message : "Unknown error",
+        title: t("tok225.failed_to_save_feedback"),
+        body: localizedError(err, t("tok225.unknown_error")),
         tone: "error",
       });
     },
@@ -5209,7 +5192,7 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
         return issuesApi.uploadAttachment(conversation.agent.companyId, await resolveWritableIssueId(), file);
       }
       if (!loadedIssue)
-        throw new Error("Task details are still loading. Please try again.");
+        throw new Error(t("tok225.task_details_loading_retry"));
       return issuesApi.uploadAttachment(
         loadedIssue.companyId,
         loadedIssue.id,
@@ -5225,7 +5208,7 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
       if (!issueId) void queryClient.invalidateQueries({ queryKey: queryKeys.issues.detail(result.issueId) });
     },
     onError: (err) => {
-      setAttachmentError(err instanceof Error ? err.message : "Upload failed");
+      setAttachmentError(localizedError(err, t("tok225.upload_failed")));
     },
   });
 
@@ -5255,7 +5238,7 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
     },
     onError: (err) => {
       setAttachmentError(
-        err instanceof Error ? err.message : "Document import failed",
+        localizedError(err, t("tok225.document_import_failed")),
       );
     },
   });
@@ -5271,7 +5254,7 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
       invalidateIssueDetail();
     },
     onError: (err) => {
-      setAttachmentError(err instanceof Error ? err.message : "Delete failed");
+      setAttachmentError(localizedError(err, t("tok225.delete_failed")));
     },
   });
 
@@ -5301,10 +5284,10 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
         { replace: true },
       );
       pushToast({
-        title: "Task archived from inbox",
+        title: t("tok225.task_archived_from_inbox"),
         tone: "success",
         action: {
-          label: "Undo",
+          label: t("tok225.undo"),
           onClick: () => {
             void undoInboxArchive(
               id,
@@ -5321,11 +5304,9 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
         restoreIssueToInboxCaches(queryClient, context.previousData, id);
       }
       pushToast({
-        title: "Archive failed",
+        title: t("tok225.archive_failed"),
         body:
-          err instanceof Error
-            ? err.message
-            : "Unable to archive this task from the inbox",
+          localizedError(err, t("tok225.unable_to_archive_this_task_from_the_inbox")),
         tone: "error",
       });
     },
@@ -6039,15 +6020,13 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
     try {
       await copyTextToClipboard(md);
       setCopied(true);
-      pushToast({ title: "Copied to clipboard", tone: "success" });
+      pushToast({ title: t("tok225.copied_to_clipboard"), tone: "success" });
       setTimeout(() => setCopied(false), 2000);
     } catch (error) {
       pushToast({
-        title: "Copy failed",
+        title: t("tok225.copy_failed"),
         body:
-          error instanceof Error
-            ? error.message
-            : "Unable to copy task markdown",
+          localizedError(error, t("tok225.unable_to_copy_task_markdown")),
         tone: "error",
       });
     }
@@ -6238,8 +6217,8 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
     () => [
       {
         id: "cancel",
-        label: "Stop and cancel",
-        pendingLabel: "Stopping and cancelling...",
+        label: t("tok225.stop_and_cancel"),
+        pendingLabel: t("tok225.stopping_and_cancelling"),
         isPending:
           stopAndFinalizeRun.isPending &&
           stopAndFinalizeRun.variables?.status === "cancelled",
@@ -6252,8 +6231,8 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
       },
       {
         id: "done",
-        label: "Stop and done",
-        pendingLabel: "Stopping and marking done...",
+        label: t("tok225.stop_and_done"),
+        pendingLabel: t("tok225.stopping_and_marking_done"),
         isPending:
           stopAndFinalizeRun.isPending &&
           stopAndFinalizeRun.variables?.status === "done",
@@ -6443,7 +6422,7 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
     mutationFn: async (
       request: import("../components/IssueRecoveryActionCard").RecoveryReissueRequest,
     ) => {
-      if (!issue) throw new Error("Task is not loaded yet.");
+      if (!issue) throw new Error(t("tok225.task_not_loaded"));
       const sourceLabel = issue.identifier ?? "the stalled task";
       const descriptionLines = [
         `Re-issued from ${sourceLabel} on an isolated git worktree after a workspace branch divergence.`,
@@ -6478,10 +6457,10 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
     onSuccess: (created) => {
       invalidateIssueCollections();
       pushToast({
-        title: "Isolated re-issue created",
+        title: t("tok225.isolated_re_issue_created"),
         body: created.identifier
           ? `${created.identifier} will run on a fresh isolated workspace.`
-          : "A fresh isolated re-issue was created.",
+          : t("tok225.a_fresh_isolated_re_issue_was_created"),
         tone: "success",
       });
       if (created.identifier) {
@@ -6490,11 +6469,9 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
     },
     onError: (err) => {
       pushToast({
-        title: "Re-issue failed",
+        title: t("tok225.re_issue_failed"),
         body:
-          err instanceof Error
-            ? err.message
-            : "Unable to create an isolated re-issue.",
+          localizedError(err, t("tok225.unable_to_create_an_isolated_re_issue")),
         tone: "error",
       });
     },
@@ -6534,24 +6511,22 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
       pushToast(
         variables.mode === "quarantine_restore"
           ? {
-              title: "Workspace repaired",
-              body: "Dirty changes were quarantined onto a rescue branch and the recorded branch restored; the task will resume.",
+              title: t("tok225.workspace_repaired"),
+              body: t("tok225.dirty_changes_were_quarantined_onto_a_rescue_branch_and_the_recorded_branch_restored_"),
               tone: "success",
             }
           : {
-              title: "Workspace branch reconciled",
-              body: "The recorded branch now matches the live branch; the task will resume.",
+              title: t("tok225.workspace_branch_reconciled"),
+              body: t("tok225.the_recorded_branch_now_matches_the_live_branch_the_task_will_resume"),
               tone: "success",
             },
       );
     },
     onError: (err) => {
       pushToast({
-        title: "Reconcile failed",
+        title: t("tok225.reconcile_failed"),
         body:
-          err instanceof Error
-            ? err.message
-            : "Unable to reconcile the workspace branch.",
+          localizedError(err, t("tok225.unable_to_reconcile_the_workspace_branch")),
         tone: "error",
       });
     },
@@ -6569,8 +6544,8 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
   const handleReconcileForwardRecoveryAction = useCallback(() => {
     if (!reconcileExecutionWorkspaceId) {
       pushToast({
-        title: "Reconcile failed",
-        body: "This task has no execution workspace to reconcile.",
+        title: t("tok225.reconcile_failed"),
+        body: t("tok225.this_task_has_no_execution_workspace_to_reconcile"),
         tone: "error",
       });
       return;
@@ -6588,8 +6563,8 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
     (reason: string) => {
       if (!reconcileExecutionWorkspaceId) {
         pushToast({
-          title: "Reconcile failed",
-          body: "This task has no execution workspace to reconcile.",
+          title: t("tok225.reconcile_failed"),
+          body: t("tok225.this_task_has_no_execution_workspace_to_reconcile"),
           tone: "error",
         });
         return;
@@ -6611,8 +6586,8 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
   const handleQuarantineRestoreRecoveryAction = useCallback(() => {
     if (!reconcileExecutionWorkspaceId) {
       pushToast({
-        title: "Repair failed",
-        body: "This task has no execution workspace to repair.",
+        title: t("tok225.repair_failed"),
+        body: t("tok225.this_task_has_no_execution_workspace_to_repair"),
         tone: "error",
       });
       return;
@@ -6676,7 +6651,7 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
 
   if (isLoading)
     return <IssueDetailLoadingState headerSeed={issueHeaderSeed} />;
-  if (error) return <p className="text-sm text-destructive">{error.message}</p>;
+  if (error) return <p className="text-sm text-destructive">{localizedError(error, t("tok225.task_load_failed"))}</p>;
   if (!issue) return null;
   // Do not expose a file chooser on the outgoing UUID/company/interface
   // branch: its input can be detached before the chosen file is returned.
@@ -6767,7 +6742,7 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
   const previewAffectedAgentCount =
     treeControlPreview?.totals.affectedAgents ?? 0;
   const reopenComposerHint = closedIsolatedWorkspaceReopenPending
-    ? "This issue's isolated workspace was archived. Your next comment or resume reopens it and rebuilds the worktree."
+    ? t("tok225.isolated_workspace_archived_hint")
     : null;
   const composerHint = activePauseHold ? null : reopenComposerHint;
   const queuedCommentReason: "hold" | "active_run" | "other" = activePauseHold
@@ -6800,11 +6775,11 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
       >
         <Paperclip className="h-3.5 w-3.5 mr-1.5" />
         {uploadAttachment.isPending || importMarkdownDocument.isPending ? (
-          "Uploading..."
+          t("tok225.uploading")
         ) : (
           <>
-            <span className="hidden sm:inline">Upload attachment</span>
-            <span className="sm:hidden">Upload</span>
+            <span className="hidden sm:inline">{t("tok225.upload_attachment")}</span>
+            <span className="sm:hidden">{t("tok225.upload")}</span>
           </>
         )}
       </Button>
@@ -6935,10 +6910,10 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
           <Link
             to={`/routines/${issue.originId}`}
             className="inline-flex items-center gap-1 rounded-full bg-violet-500/10 border border-violet-500/30 px-2 py-0.5 text-(length:--text-nano) font-medium text-violet-600 dark:text-violet-400 shrink-0 hover:bg-violet-500/20 transition-colors"
-            title={`Routine execution from routine ${issue.originId}`}
+            title={t("tok225.routine_execution_from", { id: issue.originId })}
           >
             <Repeat className="h-3 w-3" />
-            Routine
+            {t("tok225.routine")}
           </Link>
         )}
 
@@ -6946,10 +6921,10 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
           <Badge
             variant="outline"
             className="border-sky-500/40 bg-sky-500/10 text-(length:--text-nano) text-sky-700 dark:text-sky-300"
-            title="This task is a generated watchdog task. It verifies whether stopped work in the watched task tree is legitimate."
+            title={t("tok225.watchdog_explanation")}
           >
             <ScanEye className="h-3 w-3" />
-            Watchdog
+            {t("tok225.watchdog")}
           </Badge>
         ) : null}
 
@@ -6969,7 +6944,7 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
                     "text-(length:--text-nano)",
                     workModeMeta.classes.badge,
                   )}
-                  title={`This task is in ${workModeMeta.label.toLowerCase()}.`}
+                  title={t("tok225.task_in_mode", { mode: workModeMeta.label.toLowerCase() })}
                 >
                   <WorkModeIcon className="h-3 w-3" aria-hidden />
                   {workModeMeta.label}
@@ -6983,10 +6958,10 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
             variant="outline"
             data-testid="issue-detail-parked-blocker"
             className="border-amber-500/60 bg-amber-500/15 text-(length:--text-nano) text-amber-700 dark:text-amber-300"
-            title="Blocked by parked work — at least one assigned blocker is in backlog and will not wake its assignee."
+            title={t("tok225.blocked_by_parked_explanation")}
           >
             <Flag className="h-3 w-3" />
-            Blocked by parked work
+            {t("tok225.blocked_by_parked")}
           </Badge>
         ) : null}
 
@@ -7392,7 +7367,7 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
           />
 
           {issue.status === "in_review" && issue.externalConversationState === "waiting" && (
-            <p role="status" className="text-sm text-muted-foreground">Reply sent. Send a message to continue.</p>
+            <p role="status" className="text-sm text-muted-foreground">{t("tok225.reply_sent_continue")}</p>
           )}
 
           {issue.hiddenAt && (
@@ -7422,7 +7397,7 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
                 role="alert"
                 className={cn("text-sm text-destructive", shellSectionClass)}
               >
-                {executeTreeControl.error.message}
+                {localizedError(executeTreeControl.error, t("tok225.tree_control_failed"))}
               </p>
             )}
 
@@ -7434,7 +7409,7 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
             <div className="space-y-3">
               <div className="flex items-center justify-between gap-2">
                 <h3 className="text-sm font-medium text-muted-foreground">
-                  Sub-tasks
+                  {t("tok225.subtasks")}
                 </h3>
               </div>
               <IssuesList
@@ -7457,7 +7432,7 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
                   issue,
                   currentUserId,
                 )}
-                createIssueLabel="Sub-task"
+                createIssueLabel={t("tok225.subtask")}
                 defaultSortField="workflow"
                 showProgressSummary
                 parentIssueIdForCostSummary={issue.id}
@@ -7473,7 +7448,7 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
                 className="shrink-0 shadow-none"
               >
                 <Plus className="mr-1.5 h-3.5 w-3.5" />
-                New Sub-task
+                {t("tok225.new_subtask")}
               </Button>
             </div>
           )}
@@ -7659,15 +7634,15 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
               >
                 <TabsTrigger value="chat" className="gap-1.5">
                   <MessageSquare className="h-3.5 w-3.5" />
-                  Chat
+                  {t("tok225.chat_tab")}
                 </TabsTrigger>
                 <TabsTrigger value="activity" className="gap-1.5">
                   <ActivityIcon className="h-3.5 w-3.5" />
-                  Activity
+                  {t("tok225.activity_tab")}
                 </TabsTrigger>
                 <TabsTrigger value="related-work" className="gap-1.5">
                   <ListTree className="h-3.5 w-3.5" />
-                  Related work
+                  {t("tok225.related_work_tab")}
                 </TabsTrigger>
                 {issuePluginTabItems.map((item) => (
                   <TabsTrigger key={item.value} value={item.value}>
@@ -7845,7 +7820,7 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
                     } : undefined,
                     resumeHref: !activePauseHold.isRoot ? createIssueDetailPath(activePauseHoldRoot?.identifier ?? activePauseHold.rootIssueId) : undefined,
                   } : null}
-                  composerDisabledReason={issue.conversationAgentId && !instanceExperimentalSettings?.enableAgentChat ? "Agent Chat is disabled in Experimental settings." : treeControlStateError ? "Couldn’t check whether this task is paused. Refresh to try again." : null}
+                  composerDisabledReason={issue.conversationAgentId && !instanceExperimentalSettings?.enableAgentChat ? t("tok225.agent_chat_disabled") : treeControlStateError ? t("tok225.pause_state_check_failed") : null}
                   composerHint={composerHint}
                   queuedCommentReason={queuedCommentReason}
                   onVote={handleCommentVote}
@@ -8087,7 +8062,7 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
               {taskChatShellEnabled ? (
                 <>
                   <SheetHeader className="sr-only">
-                    <SheetTitle>Task side panel</SheetTitle>
+                    <SheetTitle>{t("tok225.task_side_panel")}</SheetTitle>
                   </SheetHeader>
                   <TaskSidePanel
                     key={`${issue.id}:mobile`}

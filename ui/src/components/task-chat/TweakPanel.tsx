@@ -230,10 +230,10 @@ export function TweakPanel() {
               {/* Focusing the box copies it silently; say so, or the click looks inert. */}
               <p className="mt-1 text-(length:--text-nano) text-muted-foreground" aria-live="polite">
                 {exportCopy.copied
-                  ? "Copied to clipboard"
+                  ? t("tok225.copied_to_clipboard")
                   : exportCopy.failed
-                    ? "Copy failed — select the text and copy it manually"
-                    : "Click the box to copy"}
+                    ? t("tok225.copy_failed_select_manually")
+                    : t("tok225.click_box_to_copy")}
               </p>
             </>
           ) : null}

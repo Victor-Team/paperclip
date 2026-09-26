@@ -1,0 +1,39 @@
+{
+  "requests": [
+    {
+      "url": "http://127.0.0.1:3204/api/issues/08554666-da6b-4322-a76f-dd579ca0c4e8/read",
+      "headers": {
+        "accept": "*/*",
+        "accept-language": "en-US",
+        "origin": "http://127.0.0.1:3204",
+        "referer": "http://127.0.0.1:3204/CMP/issues/CMP-1",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.0.0 Safari/537.36",
+        "content-type": "application/json",
+        "sec-ch-ua": "\"Not=A?Brand\";v=\"99\", \"Google Chrome\";v=\"151\", \"Chromium\";v=\"151\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Linux\"",
+        "x-paperclip-locale": "zh-CN",
+        "x-paperclip-route": "/CMP/issues/CMP-1",
+        "x-paperclip-tab-visible": "focused"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:3204/api/issues/CMP-1/comments",
+      "headers": {
+        "accept": "*/*",
+        "accept-language": "en-US",
+        "origin": "http://127.0.0.1:3204",
+        "referer": "http://127.0.0.1:3204/CMP/issues/CMP-1",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.0.0 Safari/537.36",
+        "content-type": "application/json",
+        "sec-ch-ua": "\"Not=A?Brand\";v=\"99\", \"Google Chrome\";v=\"151\", \"Chromium\";v=\"151\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Linux\"",
+        "x-paperclip-locale": "zh-CN",
+        "x-paperclip-route": "/CMP/issues/CMP-1",
+        "x-paperclip-tab-visible": "focused"
+      }
+    }
+  ],
+  "visibleText": "跳转到主要内容\n汉\n汉化二次返工测试组织\n新建任务\n搜索\n仪表盘\n收件箱\n工作\n任务\n项目\n例程\n产物\n公司\n智能体\n技能\n连接器\n审计\n最近任务\n汉化错误态测试任务\nBO\nBoard\n任务\n汉化错误态测试任务\nCMP-1\n汉化错误态测试任务\nCMP-1\n无项目\nBO\n\n仅用于本机浏览器验证。\n\n1:06\n\n浏览器错误态取证评论\n\n自动模式\n未分配\n属性\n工作\n状态\n待处理\n指派人\n未分配\n项目\n无\n标签\n无\n关联关系\n父级\n无\n被阻塞于\n无\n阻塞项\n无\n子任务\n无\n执行\n审核人\n无\n批准人\n无\n监控\n无\n看门狗\n无\n关于\n来源\nBO\nBoard\n已创建\n2026年9月26日 1:06\n已更新\n14 分钟前\n命令面板\n\n搜索要运行的命令...\n\n发表评论失败\n\n无权发表此评论"
+}

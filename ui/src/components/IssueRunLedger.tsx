@@ -13,6 +13,7 @@ import {
   type RunLivenessState,
 } from "../api/activity";
 import { ApiError } from "../api/client";
+import { t, useTranslation } from "@/i18n";
 import {
   heartbeatsApi,
   type ActiveRunForIssue,
@@ -606,6 +607,7 @@ export function IssueRunLedgerContent({
   onRerunWithTrace,
   providerTraceMetadata = new Map(),
 }: IssueRunLedgerContentProps) {
+  useTranslation();
   const [inspectedRun, setInspectedRun] = useState<LedgerRun | null>(null);
   const ledgerRuns = useMemo(
     () => mergeRuns(runs, liveRuns, activeRun),
@@ -664,18 +666,18 @@ export function IssueRunLedgerContent({
   }, [activityEvents, canRenderActivityEvents, ledgerRuns]);
 
   return (
-    <section className="space-y-3" aria-label="Task run ledger">
+    <section className="space-y-3" aria-label={t("tok225.task_run_ledger")}>
       <div className="flex items-center justify-between gap-2">
         <div className="min-w-0">
           <h3 className="text-sm font-medium text-muted-foreground">
-            Run ledger
+            {t("tok225.run_ledger")}
           </h3>
           <p className="text-xs text-muted-foreground">
             {latestRun
               ? runSummary(latestRun, agentMap)
               : issueStatus === "in_progress"
-                ? "Waiting for the first run record."
-                : "No runs linked yet."}
+                ? t("tok225.waiting_first_run")
+                : t("tok225.no_runs_linked")}
           </p>
         </div>
         {latestRun ? (
@@ -683,7 +685,7 @@ export function IssueRunLedgerContent({
             to={`/agents/${latestRun.agentId}/runs/${latestRun.runId}`}
             className="shrink-0 rounded-md border border-border px-2 py-1 text-xs text-muted-foreground hover:text-foreground"
           >
-            Latest run
+            {t("tok225.latest_run")}
           </Link>
         ) : null}
       </div>
@@ -1016,7 +1018,7 @@ export function IssueRunLedgerContent({
           })}
           {feedItems.length > 20 ? (
             <div className="px-3 py-2 text-xs text-muted-foreground">
-              {feedItems.length - 20} older items not shown
+              {t("tok225.older_items_not_shown", { count: feedItems.length - 20 })}
             </div>
           ) : null}
         </div>

@@ -1,3 +1,5 @@
+import { t } from "@/i18n";
+
 export interface AssigneeSelection {
   assigneeAgentId: string | null;
   assigneeUserId: string | null;
@@ -77,7 +79,7 @@ export function formatAssigneeUserLabel(
   userLabels?: ReadonlyMap<string, string> | Record<string, string> | null,
 ): string | null {
   if (!userId) return null;
-  if (currentUserId && userId === currentUserId) return "You";
+  if (currentUserId && userId === currentUserId) return t("tok225.you");
   return formatUserLabel(userId, userLabels);
 }
 

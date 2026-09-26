@@ -1,4 +1,5 @@
-import { t, useTranslation } from "@/i18n";
+import { localizedError } from "@/lib/localized-error";
+import { i18n, t, useTranslation } from "@/i18n";
 import { AgentAvatar } from "@/components/AgentAvatar";
 import { startTransition, useEffect, useMemo, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -177,8 +178,8 @@ export function buildRoutineGroups(
         const positionCompare = leftPosition - rightPosition;
         if (positionCompare !== 0) return positionCompare;
 
-        const labelCompare = (leftFolder?.name ?? "Unknown folder").localeCompare(
-          rightFolder?.name ?? "Unknown folder",
+        const labelCompare = (leftFolder?.name ?? t("tok225.unknown_folder")).localeCompare(
+          rightFolder?.name ?? t("tok225.unknown_folder"),
           undefined,
           { sensitivity: "base" },
         );
@@ -186,7 +187,7 @@ export function buildRoutineGroups(
       })
       .map((key) => ({
         key,
-        label: key === "__unfiled" ? "Unfiled" : (folderById.get(key)?.name ?? "Unknown folder"),
+        label: key === "__unfiled" ? t("tok225.unfiled") : (folderById.get(key)?.name ?? t("tok225.unknown_folder")),
         items: groups[key]!,
       }));
   }
@@ -441,10 +442,10 @@ export function Routines() {
       setAdvancedOpen(false);
       await queryClient.invalidateQueries({ queryKey: queryKeys.routines.list(selectedCompanyId!) });
       pushToast({
-        title: "Routine created",
+        title: t("tok225.routine_created"),
         body: routine.assigneeAgentId
-          ? "Add the first trigger to turn it into a live workflow."
-          : "Draft saved. Add a default agent before enabling automation.",
+          ? t("tok225.add_the_first_trigger_to_turn_it_into_a_live_workflow")
+          : t("tok225.draft_saved_add_a_default_agent_before_enabling_automation"),
         tone: "success",
       });
       navigate(routineDetailHref(routine.id, "triggers"));
@@ -470,8 +471,8 @@ export function Routines() {
           ]);
         } catch (moveError) {
           pushToast({
-            title: "Folder created, move failed",
-            body: moveError instanceof Error ? moveError.message : "Paperclip could not move the selected routines.",
+            title: t("tok225.folder_created_move_failed"),
+            body: localizedError(moveError, t("tok225.paperclip_could_not_move_the_selected_routines")),
             tone: "error",
           });
           return;
@@ -479,12 +480,12 @@ export function Routines() {
       } else {
         setFolderSelection(folder.id);
       }
-      pushToast({ title: "Folder created", body: folder.name, tone: "success" });
+      pushToast({ title: t("tok225.folder_created"), body: folder.name, tone: "success" });
     },
     onError: (mutationError) => {
       pushToast({
-        title: "Failed to save folder",
-        body: mutationError instanceof Error ? mutationError.message : "Paperclip could not save the folder.",
+        title: t("tok225.failed_to_save_folder"),
+        body: localizedError(mutationError, t("tok225.paperclip_could_not_save_the_folder")),
         tone: "error",
       });
     },
@@ -499,8 +500,8 @@ export function Routines() {
     },
     onError: (mutationError) => {
       pushToast({
-        title: "Folder save failed",
-        body: mutationError instanceof Error ? mutationError.message : "Paperclip could not update the folder.",
+        title: t("tok225.folder_save_failed"),
+        body: localizedError(mutationError, t("tok225.paperclip_could_not_update_the_folder")),
         tone: "error",
       });
     },
@@ -514,12 +515,12 @@ export function Routines() {
         queryClient.invalidateQueries({ queryKey: queryKeys.routines.list(selectedCompanyId!) }),
         queryClient.invalidateQueries({ queryKey: queryKeys.folders.list(selectedCompanyId!, "routine") }),
       ]);
-      pushToast({ title: "Folder deleted", body: "Items moved to Unfiled.", tone: "success" });
+      pushToast({ title: t("tok225.folder_deleted"), body: t("tok225.items_moved_to_unfiled"), tone: "success" });
     },
     onError: (mutationError) => {
       pushToast({
-        title: "Folder delete failed",
-        body: mutationError instanceof Error ? mutationError.message : "Paperclip could not delete the folder.",
+        title: t("tok225.folder_delete_failed"),
+        body: localizedError(mutationError, t("tok225.paperclip_could_not_delete_the_folder")),
         tone: "error",
       });
     },
@@ -535,8 +536,8 @@ export function Routines() {
     },
     onError: (mutationError) => {
       pushToast({
-        title: "Move failed",
-        body: mutationError instanceof Error ? mutationError.message : "Paperclip could not move the routine.",
+        title: t("tok225.move_failed"),
+        body: localizedError(mutationError, t("tok225.paperclip_could_not_move_the_routine")),
         tone: "error",
       });
     },
@@ -557,8 +558,8 @@ export function Routines() {
     },
     onError: (mutationError) => {
       pushToast({
-        title: "Failed to update routine",
-        body: mutationError instanceof Error ? mutationError.message : "Paperclip could not update the routine.",
+        title: t("tok225.failed_to_update_routine"),
+        body: localizedError(mutationError, t("tok225.paperclip_could_not_update_the_routine")),
         tone: "error",
       });
     },
@@ -592,8 +593,8 @@ export function Routines() {
     },
     onError: (mutationError) => {
       pushToast({
-        title: "Routine run failed",
-        body: mutationError instanceof Error ? mutationError.message : "Paperclip could not start the routine run.",
+        title: t("tok225.routine_run_failed"),
+        body: localizedError(mutationError, t("tok225.paperclip_could_not_start_the_routine_run")),
         tone: "error",
       });
     },
@@ -643,8 +644,8 @@ export function Routines() {
     [liveRuns, routineExecutionIssues],
   );
   const recentRunsIssueLinkState = useMemo(
-    () => createIssueDetailLocationState("Recent Runs", "/routines?tab=runs", "issues"),
-    [],
+    () => createIssueDetailLocationState(t("tok225.recent_runs"), "/routines?tab=runs", "issues"),
+    [i18n.language],
   );
   const updateIssue = useMutation({
     mutationFn: ({ id, data }: { id: string; data: Record<string, unknown> }) => issuesApi.update(id, data),
@@ -744,11 +745,11 @@ export function Routines() {
         queryClient.invalidateQueries({ queryKey: queryKeys.routines.list(selectedCompanyId!) }),
         queryClient.invalidateQueries({ queryKey: queryKeys.folders.list(selectedCompanyId!, "routine") }),
       ]);
-      pushToast({ title: "Routines moved", body: `${ids.length} routine${ids.length === 1 ? "" : "s"} filed.`, tone: "success" });
+      pushToast({ title: t("tok225.routines_moved"), body: t("tok225.routines_filed", { count: ids.length }), tone: "success" });
     } catch (moveError) {
       pushToast({
-        title: "Failed to move routines",
-        body: moveError instanceof Error ? moveError.message : "Paperclip could not move the selected routines.",
+        title: t("tok225.failed_to_move_routines"),
+        body: localizedError(moveError, t("tok225.paperclip_could_not_move_the_selected_routines")),
         tone: "error",
       });
     }
@@ -761,8 +762,8 @@ export function Routines() {
   function handleToggleEnabled(routine: RoutineListItem, enabled: boolean) {
     if (!enabled && !routine.assigneeAgentId) {
       pushToast({
-        title: "Default agent required",
-        body: "Set a default agent before enabling routine automation.",
+        title: t("tok225.default_agent_required"),
+        body: t("tok225.set_a_default_agent_before_enabling_routine_automation"),
         tone: "warn",
       });
       return;
@@ -781,7 +782,7 @@ export function Routines() {
   }
 
   if (!selectedCompanyId) {
-    return <EmptyState icon={Repeat} message="Select an organization to view routines." />;
+    return <EmptyState icon={Repeat} message={t("tok225.select_company_for_routines")} />;
   }
 
   if (streamlinedUiEnabled && legacyRunsRequested) {
@@ -885,10 +886,10 @@ export function Routines() {
                 <PopoverContent align="end" className="w-44 p-0">
                   <div className="p-2 space-y-0.5">
                     {([
-                      ["updated", "Updated"],
-                      ["created", "Created"],
-                      ["lastRun", "Last run"],
-                      ["title", "Title"],
+                      ["updated", t("tok225.updated")],
+                      ["created", t("tok225.created")],
+                      ["lastRun", t("tok225.last_run")],
+                      ["title", t("tok225.title")],
                     ] as const).map(([field, label]) => (
                       <button
                         key={field}
@@ -926,10 +927,10 @@ export function Routines() {
                 <PopoverContent align="end" className="w-44 p-0">
                   <div className="p-2 space-y-0.5">
                     {([
-                      ["folder", "Folder"],
-                      ["project", "Project"],
-                      ["assignee", "Agent"],
-                      ["none", "None"],
+                      ["folder", t("tok225.folder")],
+                      ["project", t("tok225.project")],
+                      ["assignee", t("tok225.agent")],
+                      ["none", t("tok225.none")],
                     ] as const).map(([value, label]) => (
                       <button
                         key={value}
@@ -1239,7 +1240,7 @@ export function Routines() {
               </Button>
               {createRoutine.isError ? (
                 <p className="text-sm text-destructive">
-                  {createRoutine.error instanceof Error ? createRoutine.error.message : "Failed to create routine"}
+                  {localizedError(createRoutine.error, t("tok225.failed_to_create_routine"))}
                 </p>
               ) : null}
             </div>
@@ -1250,7 +1251,7 @@ export function Routines() {
       {error ? (
         <Card>
           <CardContent className="pt-6 text-sm text-destructive">
-            {error instanceof Error ? error.message : "Failed to load routines"}
+            {localizedError(error, t("tok225.failed_to_load_routines"))}
           </CardContent>
         </Card>
       ) : null}
@@ -1261,7 +1262,7 @@ export function Routines() {
               result={railFolderResult}
               selection={folderSelection}
               allLabel={t("tok224.allRoutines")}
-              itemLabelPlural="routines"
+              itemLabelPlural={t("tok225.routines")}
               loading={foldersLoading}
               onSelect={setFolderSelection}
               onCreate={() => openCreateFolder()}
@@ -1288,7 +1289,7 @@ export function Routines() {
           {routineViewState.groupBy === "folder" && !hasRoutineFolders && !foldersLoading && visibleRoutines.length > 0 ? (
             <AllUnfiledBanner
               storageKey={`paperclip:routines-folder-nudge:${selectedCompanyId ?? "none"}`}
-              itemLabelPlural="routines"
+              itemLabelPlural={t("tok225.routines")}
               onCreateFolder={() => openCreateFolder()}
             />
           ) : null}
@@ -1382,13 +1383,13 @@ export function Routines() {
                                 const previousFolderId = routine.folderId ?? null;
                                 moveRoutineToFolder.mutate({ itemId: routine.id, folderId });
                                 pushToast({
-                                  title: "Routine moved",
+                                  title: t("tok225.routine_moved"),
                                   body: folderId
-                                    ? `Moved "${routine.title}" to ${routineFolders?.folders.find((folder) => folder.id === folderId)?.name ?? "folder"}.`
-                                    : `Moved "${routine.title}" to Unfiled.`,
+                                    ? t("tok225.routine_moved_to_folder", { title: routine.title, folder: routineFolders?.folders.find((folder) => folder.id === folderId)?.name ?? t("tok225.folder") })
+                                    : t("tok225.routine_moved_to_unfiled", { title: routine.title }),
                                   tone: "success",
                                   action: {
-                                    label: "Undo",
+                                    label: t("tok225.undo"),
                                     onClick: () => moveRoutineToFolder.mutate({ itemId: routine.id, folderId: previousFolderId }),
                                   },
                                 });
@@ -1421,7 +1422,7 @@ export function Routines() {
       <DeleteFolderDialog
         open={deleteFolderTarget !== null}
         folder={deleteFolderTarget}
-        itemLabelPlural="routines"
+        itemLabelPlural={t("tok225.routines")}
         pending={deleteFolder.isPending}
         onOpenChange={(open) => {
           if (!open) setDeleteFolderTarget(null);
@@ -1436,7 +1437,7 @@ export function Routines() {
         result={railFolderResult}
         selection={folderSelection}
         allLabel={t("tok224.allRoutines")}
-        itemLabelPlural="Routines"
+        itemLabelPlural={t("tok225.routines")}
         onSelect={setFolderSelection}
         onCreate={() => openCreateFolder()}
       />

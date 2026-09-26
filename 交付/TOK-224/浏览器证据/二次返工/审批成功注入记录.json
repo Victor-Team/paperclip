@@ -1,0 +1,28 @@
+[
+  {
+    "kind": "审批成功",
+    "bp": "桌面",
+    "requests": [
+      {
+        "method": "POST",
+        "url": "http://127.0.0.1:3204/api/approvals/dadc1eca-cfb0-4592-b5ea-dd4601b6163e/approve",
+        "locale": "zh-CN"
+      }
+    ],
+    "screenshot": "审批成功-桌面.png",
+    "visibleText": "跳转到主要内容\n汉\n汉化二次返工测试组织\n新建任务\n搜索\n仪表盘\n收件箱\n1\n工作\n任务\n项目\n例程\n产物\n公司\n智能体\n技能\n连接器\n审计\n最近任务\n汉化错误态测试任务\nBO\nBoard\n任务\n汉化错误态测试任务\nCMP-1\nCMP-1\n无项目\nBO\n汉化错误态测试任务\n\n仅用于本机浏览器验证。\n\n新建子任务\n上传附件\n新建文档\n聊天\n活动\n关联工作\n运行记录\n\n尚无关联运行。\n\nBO\nBoard\n已标记为已读\n刚刚\nBO\nBoard\n已标记为已读\n刚刚\nBO\nBoard\n已标记为已读\n刚刚\nBO\nBoard\n已标记为已读\n2 分钟前\nBO\nBoard\n已标记为已读\n2 分钟前\nBO\nBoard\n已标记为已读\n3 分钟前\nBO\nBoard\n已标记为已读\n3 分钟前\nBO\nBoard\n已标记为已读\n3 分钟前\nBO\nBoard\n已标记为已读\n6 分钟前\nBO\nBoard\n已标记为已读\n7 分钟前\nBO\nBoard\n已标记为已读\n8 分钟前\nBO\nBoard\n已标记为已读\n9 分钟前\nBO\nBoard\n已标记为已读\n9 分钟前\nBO\nBoard\n已标记为已读\n17 分钟前\nBO\nBoard\n已标记为已读\n17 分钟前\nBO\nBoard\n将状态从待处理改为审查中\n18 分钟前\n状态\n待办\n待复核\n状态版本\n0\n1\n\n针对 Board · 由董事会身份授权\n\nBO\nBoard\n已标记为已读\n19 分钟前\nBO\nBoard\n已标记为已读\n19 分钟前\nBO\nBoard\n已标记为已读\n20 分钟前\nBO\nBoard\n已标记为已读\n20 分钟前\n还有 7 条较早记录未显示\n董事会审批\n界面测试审批\n\n审批请求创建于18 分钟前\n\n待处理\n批准\n拒绝\n查看详情\n属性\n分流\n状态\n审查中\n指派人\n未分配\n项目\n无\n标签\n无\n关联关系\n父级\n无\n被阻塞于\n添加阻塞项\n阻塞项\n无\n子任务\n添加子任务\n执行\n审核人\n无\n批准人\n无\n监控\n无\n看门狗\n无\n关于\n来源\nBO\nBoard\n已创建\n2026年9月26日 1:06\n已更新\n17 分钟前\n命令面板\n\n搜索要运行的命令...\n\n审批已通过"
+  },
+  {
+    "kind": "审批成功",
+    "bp": "窄屏",
+    "requests": [
+      {
+        "method": "POST",
+        "url": "http://127.0.0.1:3204/api/approvals/dadc1eca-cfb0-4592-b5ea-dd4601b6163e/approve",
+        "locale": "zh-CN"
+      }
+    ],
+    "screenshot": "审批成功-窄屏.png",
+    "visibleText": "跳转到主要内容\n汉\n汉化二次返工测试组织\n新建任务\n搜索\n仪表盘\n收件箱\n1\n工作\n任务\n项目\n例程\n产物\n公司\n智能体\n技能\n连接器\n审计\n最近任务\n汉化错误态测试任务\nBO\nBoard\n任务\nCMP-1\n汉化错误态测试任务\nCMP-1\n无项目\nBO\n汉化错误态测试任务\n\n仅用于本机浏览器验证。\n\n新建子任务\n上传\n新建\n聊天\n活动\n关联工作\n运行记录\n\n尚无关联运行。\n\nBO\nBoard\n已标记为已读\n刚刚\nBO\nBoard\n已标记为已读\n刚刚\nBO\nBoard\n已标记为已读\n刚刚\nBO\nBoard\n已标记为已读\n刚刚\nBO\nBoard\n已标记为已读\n2 分钟前\nBO\nBoard\n已标记为已读\n2 分钟前\nBO\nBoard\n已标记为已读\n3 分钟前\nBO\nBoard\n已标记为已读\n3 分钟前\nBO\nBoard\n已标记为已读\n3 分钟前\nBO\nBoard\n已标记为已读\n6 分钟前\nBO\nBoard\n已标记为已读\n7 分钟前\nBO\nBoard\n已标记为已读\n8 分钟前\nBO\nBoard\n已标记为已读\n9 分钟前\nBO\nBoard\n已标记为已读\n10 分钟前\nBO\nBoard\n已标记为已读\n17 分钟前\nBO\nBoard\n已标记为已读\n17 分钟前\nBO\nBoard\n将状态从待处理改为审查中\n18 分钟前\n状态\n待办\n待复核\n状态版本\n0\n1\n\n针对 Board · 由董事会身份授权\n\nBO\nBoard\n已标记为已读\n19 分钟前\nBO\nBoard\n已标记为已读\n19 分钟前\nBO\nBoard\n已标记为已读\n20 分钟前\n还有 8 条较早记录未显示\n董事会审批\n界面测试审批\n\n审批请求创建于18 分钟前\n\n待处理\n批准\n拒绝\n查看详情\n首页\n任务\n新建任务\n智能体\n1\n收件箱\n命令面板\n\n搜索要运行的命令...\n\n审批已通过"
+  }
+]

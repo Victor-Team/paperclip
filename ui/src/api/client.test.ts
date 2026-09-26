@@ -76,6 +76,28 @@ describe("request locale", () => {
     expect(await first).toEqual({ locale: "en" });
     expect(await second).toEqual({ locale: "zh-CN" });
   });
+
+  it("localizes a non-JSON HTTP failure after changing the interface language", async () => {
+    await i18n.changeLanguage("zh-CN");
+    fetchMock.mockResolvedValue({
+      ok: false,
+      status: 503,
+      json: async () => { throw new SyntaxError("Unexpected token"); },
+    } as unknown as Response);
+
+    await expect(api.get("/unavailable"))
+      .rejects.toMatchObject({ status: 503, message: "请求失败：503" });
+  });
+
+  it("localizes browser fetch failures without replacing aborts", async () => {
+    await i18n.changeLanguage("zh-CN");
+    fetchMock.mockRejectedValueOnce(new TypeError("Failed to fetch"));
+    await expect(api.get("/network-offline"))
+      .rejects.toThrow("网络请求失败，请检查连接后重试。");
+    fetchMock.mockRejectedValueOnce(new DOMException("Aborted", "AbortError"));
+    await expect(api.post("/request-aborted", {}))
+      .rejects.toMatchObject({ name: "AbortError" });
+  });
 });
 
 describe("tenant-session recovery", () => {

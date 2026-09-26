@@ -27,6 +27,7 @@ import {
 } from "./TriggerWizard";
 import { AgentInstructions, CopyField } from "./WebhookFields";
 import { WebhookUrlWarning } from "./WebhookUrlWarning";
+import { t, useTranslation } from "@/i18n";
 
 function readDraft(key: string): TriggerDraft | null {
   try {
@@ -63,6 +64,7 @@ function scheduleCron(draft: TriggerDraft) {
 }
 
 export function RoutineTriggers() {
+  useTranslation();
   const ctx = useRoutineDetail();
   const [params, setParams] = useSearchParams();
   const setupId = params.get("triggerSetup");
@@ -193,8 +195,8 @@ export function RoutineTriggers() {
           <p className="text-sm font-medium">{ctx.secretMessage.title}</p>
           {ctx.secretMessage.entries.map((entry) => (
             <div key={entry.webhookUrl} className="space-y-3">
-              <CopyField label="Webhook URL" value={entry.webhookUrl} />
-              <CopyField label="Secret key" value={entry.webhookSecret} />
+              <CopyField label={t("tok225.webhook_url")} value={entry.webhookUrl} />
+              <CopyField label={t("tok225.secret_key")} value={entry.webhookSecret} />
             </div>
           ))}
           <Button variant="outline" onClick={() => ctx.setSecretMessage(null)}>
@@ -512,6 +514,7 @@ function WebhookSettings({
   routineTitle: string;
   onRefresh: () => Promise<void>;
 }) {
+  useTranslation();
   const [secret, setSecret] = useState("");
   const [replace, setReplace] = useState(false);
   const [checkBaseline, setCheckBaseline] = useState<string | null>(null);
@@ -536,15 +539,15 @@ function WebhookSettings({
           )}
         />
       )}
-      <CopyField label="Webhook URL" value={trigger.webhookUrl ?? ""} />
+      <CopyField label={t("tok225.webhook_url")} value={trigger.webhookUrl ?? ""} />
       {trigger.signingMode !== "none" && (
         <div className="space-y-2">
           {secret ? (
             <CopyField
               label={
                 trigger.signingMode === "bearer"
-                  ? "Authorization header value"
-                  : "Secret key"
+                  ? t("tok225.authorization_header_value")
+                  : t("tok225.secret_key")
               }
               value={
                 trigger.signingMode === "bearer" ? `Bearer ${secret}` : secret

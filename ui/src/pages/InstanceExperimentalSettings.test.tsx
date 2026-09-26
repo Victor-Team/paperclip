@@ -10,6 +10,7 @@ import type {
 } from "@paperclipai/shared";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { InstanceExperimentalSettings } from "./InstanceExperimentalSettings";
+import { i18n } from "@/i18n";
 import { queryKeys } from "../lib/queryKeys";
 
 const mockInstanceSettingsApi = vi.hoisted(() => ({
@@ -184,6 +185,7 @@ describe("InstanceExperimentalSettings — Conference Room Chat card (PAP-11233)
   });
 
   afterEach(() => {
+    void i18n.changeLanguage("en");
     flushSync(() => {
       root?.unmount();
     });
@@ -202,6 +204,15 @@ describe("InstanceExperimentalSettings — Conference Room Chat card (PAP-11233)
     );
     expect(warning?.textContent).toContain("Experimental features may break at any time.");
     expect(warning?.textContent).toContain("no compatibility guarantees");
+  });
+
+  it("shows Chinese settings and a network error in the selected language", async () => {
+    await i18n.changeLanguage("zh-CN");
+    mockInstanceSettingsApi.getExperimental.mockRejectedValueOnce(new TypeError("Failed to fetch"));
+    await renderPage();
+
+    expect(container.textContent).toContain("网络请求失败，请检查连接后重试。");
+    expect(container.textContent).not.toContain("Failed to fetch");
   });
 
   it("does not render an Apps experimental setting", async () => {

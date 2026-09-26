@@ -1,3 +1,5 @@
+import { localizedError } from "@/lib/localized-error";
+import { t } from "@/i18n";
 import { AgentAvatar } from "@/components/AgentAvatar";
 import { TaskChatPausedTakeover, type TaskComposerPause } from "./task-chat/TaskChatPausedTakeover";
 import { useEmailComment } from "./EmailMessageCard";
@@ -790,12 +792,12 @@ export function IssueAssigneePausedNotice({
 
   const pauseDetail =
     agent.pauseReason === "budget"
-      ? "It was paused by a budget hard stop."
+      ? t("tok225.chat_it_was_paused_by_a_budget_hard_stop")
       : agent.pauseReason === "import"
-        ? "It arrived paused from an organization import — imported agents stay parked until you resume them."
+        ? t("tok225.chat_it_arrived_paused_from_an_organization_import_imported_agents_stay_parked_un")
         : agent.pauseReason === "system"
-          ? "It was paused by the system."
-          : "It was paused manually.";
+          ? t("tok225.chat_it_was_paused_by_the_system")
+          : t("tok225.chat_it_was_paused_manually");
   // Budget pauses clear on their own when the budget resets; resuming by hand
   // would fight the hard stop, so the action is only offered for the rest.
   const canResume = Boolean(onResume) && agent.pauseReason !== "budget";
@@ -820,7 +822,7 @@ export function IssueAssigneePausedNotice({
               disabled={resuming}
               data-testid="issue-assignee-paused-resume"
             >
-              {resuming ? "Resuming…" : "Resume agent"}
+              {resuming ? t("tok225.chat_resuming") : t("tok225.chat_resume_agent")}
             </Button>
           ) : undefined
         }
@@ -837,9 +839,9 @@ function fallbackAuthorLabel(message: ThreadMessage) {
   if (typeof custom?.["authorName"] === "string") return custom["authorName"];
   if (typeof custom?.["runAgentName"] === "string")
     return custom["runAgentName"];
-  if (message.role === "assistant") return "Agent";
-  if (message.role === "user") return "You";
-  return "System";
+  if (message.role === "assistant") return t("tok225.agent");
+  if (message.role === "user") return t("tok225.you");
+  return t("tok225.system");
 }
 
 function fallbackTextParts(message: ThreadMessage) {
@@ -888,11 +890,10 @@ function IssueChatFallbackThread({
           <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
           <div className="space-y-1">
             <p className="font-medium">
-              Chat renderer hit an internal state error.
-            </p>
+            {t("tok225.chat_ui_chat_renderer_hit_an_internal_state_error")}
+          </p>
             <p className="text-xs opacity-80">
-              Showing a safe fallback transcript instead of crashing the tasks
-              page.
+              {t("tok225.chat_ui_fallback_transcript")}
             </p>
           </div>
         </div>
@@ -940,8 +941,8 @@ function IssueChatFallbackThread({
                     ))
                   ) : (
                     <p className="text-sm text-muted-foreground">
-                      No message content.
-                    </p>
+            {t("tok225.chat_ui_no_message_content")}
+          </p>
                   )}
                 </div>
               </Card>
@@ -1118,7 +1119,10 @@ export function SuccessfulRunHandoffCommentCallout({
 }
 
 function humanizeValue(value: string | null) {
-  if (!value) return "None";
+  if (!value) return t("tok225.none");
+  if (["backlog", "todo", "in_progress", "in_review", "blocked", "done", "cancelled"].includes(value)) {
+    return t(`tok225.status_${value}`);
+  }
   return value.replace(/_/g, " ");
 }
 
@@ -1165,7 +1169,7 @@ export function resolveIssueChatHumanAuthor(args: {
   const resolvedAuthorName =
     profile?.label?.trim() ||
     authorName?.trim() ||
-    (authorUserId === "local-board" ? "Board" : isCurrentUser ? "You" : "User");
+    (authorUserId === "local-board" ? t("tok225.board") : isCurrentUser ? t("tok225.you") : t("tok225.user"));
 
   return {
     isCurrentUser,
@@ -1555,8 +1559,8 @@ function CopyablePreBlock({
           "absolute right-1.5 top-1.5 inline-flex h-6 w-6 items-center justify-center rounded-md bg-background/80 text-muted-foreground opacity-0 backdrop-blur-sm transition-opacity hover:text-foreground group-hover/pre:opacity-100",
           copied && "opacity-100",
         )}
-        title="Copy"
-        aria-label="Copy"
+        title={t("tok225.chat_copy")}
+        aria-label={t("tok225.chat_copy")}
         onClick={() => {
           void copyTextToClipboard(children)
             .then(() => {
@@ -1565,11 +1569,9 @@ function CopyablePreBlock({
             })
             .catch((error) => {
               toastActions?.pushToast({
-                title: "Copy failed",
+                title: t("tok225.chat_copy_failed"),
                 body:
-                  error instanceof Error
-                    ? error.message
-                    : "Unable to copy text",
+                  localizedError(error, t("tok225.chat_unable_to_copy_text")),
                 tone: "error",
               });
             });
@@ -1675,8 +1677,8 @@ function IssueChatToolPart({
             {nonIntentDetails.length > 0 ? (
               <div>
                 <div className="mb-1 text-(length:--text-nano) font-semibold uppercase tracking-(--tracking-eyebrow) text-muted-foreground/60">
-                  Input
-                </div>
+            {t("tok225.chat_ui_input")}
+          </div>
                 <dl className="space-y-1.5">
                   {nonIntentDetails.map((detail) => (
                     <div key={`${detail.label}:${detail.value}`}>
@@ -1699,8 +1701,8 @@ function IssueChatToolPart({
             ) : rawArgsText ? (
               <div>
                 <div className="mb-1 text-(length:--text-nano) font-semibold uppercase tracking-(--tracking-eyebrow) text-muted-foreground/60">
-                  Input
-                </div>
+            {t("tok225.chat_ui_input")}
+          </div>
                 <CopyablePreBlock className="overflow-x-auto rounded-md bg-accent/30 p-2 text-(length:--text-micro) leading-4 text-foreground/70">
                   {rawArgsText}
                 </CopyablePreBlock>
@@ -1709,8 +1711,8 @@ function IssueChatToolPart({
             {result !== undefined ? (
               <div>
                 <div className="mb-1 text-(length:--text-nano) font-semibold uppercase tracking-(--tracking-eyebrow) text-muted-foreground/60">
-                  Result
-                </div>
+            {t("tok225.chat_ui_result")}
+          </div>
                 <CopyablePreBlock className="overflow-x-auto rounded-md bg-accent/30 p-2 text-(length:--text-micro) leading-4 text-foreground/70">
                   {resultText}
                 </CopyablePreBlock>
@@ -1745,7 +1747,7 @@ function IssueChatProviderActivity({
       ? (value.payload as Record<string, unknown>)
       : {};
   const title =
-    typeof value.title === "string" ? value.title : "Provider activity";
+    typeof value.title === "string" ? value.title : t("tok225.chat_provider_activity");
   const summary = typeof value.summary === "string" ? value.summary : "";
   const steps = Array.isArray(payload.steps) ? payload.steps.slice(0, 256) : [];
   const children = Array.isArray(payload.children)
@@ -1827,7 +1829,7 @@ function IssueChatProviderActivity({
               return (
                 <div key={String(child.childId ?? index)}>
                   <span className="font-medium">
-                    {String(child.role ?? "Child agent")}
+                    {String(child.role ?? t("tok225.chat_child_agent"))}
                   </span>{" "}
                   · {String(child.status ?? "unknown")}
                   {child.summary ? ` — ${String(child.summary)}` : ""}
@@ -1856,7 +1858,7 @@ function IssueChatProviderActivity({
                       {String(source.title ?? href)}
                     </a>
                   ) : (
-                    <span>{String(source.title ?? "Unavailable source")}</span>
+                    <span>{String(source.title ?? t("tok225.chat_unavailable_source"))}</span>
                   )}{" "}
                   <span className="text-muted-foreground">
                     (provider-reported)
@@ -1866,7 +1868,7 @@ function IssueChatProviderActivity({
             })}
             {effectiveModel ? (
               <div>
-                <span className="text-muted-foreground">Model</span>{" "}
+                <span className="text-muted-foreground">{t("tok225.chat_model")}</span>{" "}
                 {requestedModel && requestedModel !== effectiveModel
                   ? `${requestedModel} → `
                   : ""}
@@ -2126,7 +2128,7 @@ function IssueChatUserMessage({
                 disabled={isInterruptingQueuedRun}
                 onClick={() => void onInterruptQueued(queueTargetRunId)}
               >
-                {isInterruptingQueuedRun ? "Interrupting..." : "Interrupt"}
+                {isInterruptingQueuedRun ? t("tok225.chat_ui_interrupting") : t("tok225.chat_ui_interrupt")}
               </Button>
             ) : null}
             {onCancelQueued ? (
@@ -2136,14 +2138,14 @@ function IssueChatUserMessage({
                 className="h-6 border-amber-300 px-2 text-(length:--text-micro) text-amber-900 hover:bg-amber-100/80 hover:text-amber-950 dark:border-amber-500/40 dark:text-amber-100 dark:hover:bg-amber-500/10"
                 onClick={() => onCancelQueued(commentId)}
               >
-                Cancel
-              </Button>
+            {t("tok225.chat_ui_cancel")}
+          </Button>
             ) : null}
           </div>
         ) : null}
         {deleted ? (
           <div className="text-sm italic text-muted-foreground">
-            Comment deleted
+            {t("tok225.chat_ui_comment_deleted")}
           </div>
         ) : (
           <div className="min-w-0 max-w-full space-y-3">
@@ -2157,8 +2159,8 @@ function IssueChatUserMessage({
 
       {sentFromIMessage && !deleted ? (
         <div className="mt-1 px-1 text-xs text-muted-foreground">
-          Sent from iMessage
-        </div>
+            {t("tok225.chat_ui_sent_from_imessage")}
+          </div>
       ) : null}
       {pending ? (
         <div
@@ -2167,8 +2169,8 @@ function IssueChatUserMessage({
             isCurrentUser ? "justify-end" : "justify-start",
           )}
         >
-          Sending...
-        </div>
+            {t("tok225.chat_ui_sending")}
+          </div>
       ) : (
         <div
           className={cn(
@@ -2193,8 +2195,8 @@ function IssueChatUserMessage({
             <button
               type="button"
               className="inline-flex h-6 w-6 items-center justify-center text-muted-foreground transition-colors hover:text-foreground"
-              title="Copy message"
-              aria-label="Copy message"
+              title={t("tok225.chat_copy_message")}
+              aria-label={t("tok225.chat_copy_message")}
               onClick={() => {
                 const text = message.content
                   .filter(
@@ -2210,11 +2212,9 @@ function IssueChatUserMessage({
                   })
                   .catch((error) => {
                     toastActions?.pushToast({
-                      title: "Copy failed",
+                      title: t("tok225.chat_copy_failed"),
                       body:
-                        error instanceof Error
-                          ? error.message
-                          : "Unable to copy message",
+                        localizedError(error, t("tok225.chat_unable_to_copy_message")),
                       tone: "error",
                     });
                   });
@@ -2231,8 +2231,8 @@ function IssueChatUserMessage({
             <button
               type="button"
               className="inline-flex h-6 w-6 items-center justify-center text-muted-foreground transition-colors hover:text-destructive"
-              title="Delete comment"
-              aria-label="Delete comment"
+              title={t("tok225.chat_delete_comment")}
+              aria-label={t("tok225.chat_delete_comment_action")}
               onClick={handleDeleteComment}
             >
               <Trash2 className="h-3.5 w-3.5" />
@@ -2268,20 +2268,20 @@ function IssueChatUserMessage({
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete comment?</DialogTitle>
+            <DialogTitle>{t("tok225.chat_delete_comment")}</DialogTitle>
             <DialogDescription>
-              This will replace the comment with a deleted-comment marker.
-            </DialogDescription>
+            {t("tok225.chat_ui_this_will_replace_the_comment_with_a_deleted_comment_marker")}
+          </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button
               variant="outline"
               onClick={() => setDeleteDialogOpen(false)}
             >
-              Cancel
-            </Button>
+            {t("tok225.chat_ui_cancel")}
+          </Button>
             <Button variant="destructive" onClick={confirmDeleteComment}>
-              Delete comment
+              {t("tok225.chat_delete_comment_action")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -2307,7 +2307,7 @@ function IssueChatAssistantMessage({
     onVote,
     agentMap,
     onStopRun,
-    stopRunLabel = "Stop run",
+    stopRunLabel = t("tok225.chat_stop_run"),
     stoppingRunLabel = "Stopping...",
     stopRunVariant = "stop",
     runFinalizationActions = [],
@@ -2433,8 +2433,8 @@ function IssueChatAssistantMessage({
       <button
         type="button"
         className="inline-flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-        title="Copy message"
-        aria-label="Copy message"
+        title={t("tok225.chat_copy_message")}
+        aria-label={t("tok225.chat_copy_message")}
         onClick={() => {
           void copyTextToClipboard(copyText)
             .then(() => {
@@ -2443,11 +2443,9 @@ function IssueChatAssistantMessage({
             })
             .catch((error) => {
               toastActions?.pushToast({
-                title: "Copy failed",
+                title: t("tok225.chat_copy_failed"),
                 body:
-                  error instanceof Error
-                    ? error.message
-                    : "Unable to copy message",
+                  localizedError(error, t("tok225.chat_unable_to_copy_message")),
                 tone: "error",
               });
             });
@@ -2486,8 +2484,8 @@ function IssueChatAssistantMessage({
             variant="ghost"
             size="icon-xs"
             className="text-muted-foreground hover:text-foreground"
-            title="More actions"
-            aria-label="More actions"
+            title={t("tok225.chat_more_actions")}
+            aria-label={t("tok225.chat_more_actions")}
           >
             <MoreHorizontal className="h-3.5 w-3.5" />
           </Button>
@@ -2497,11 +2495,9 @@ function IssueChatAssistantMessage({
             onClick={() => {
               void copyTextToClipboard(copyText).catch((error) => {
                 toastActions?.pushToast({
-                  title: "Copy failed",
+                  title: t("tok225.chat_copy_failed"),
                   body:
-                    error instanceof Error
-                      ? error.message
-                      : "Unable to copy message",
+                    localizedError(error, t("tok225.chat_unable_to_copy_message")),
                   tone: "error",
                 });
               });
@@ -2534,8 +2530,8 @@ function IssueChatAssistantMessage({
             <DropdownMenuItem asChild>
               <Link to={runHref} target="_blank" rel="noreferrer noopener">
                 <Search className="mr-2 h-3.5 w-3.5" />
-                View run
-              </Link>
+            {t("tok225.chat_ui_view_run")}
+          </Link>
             </DropdownMenuItem>
           ) : null}
         </DropdownMenuContent>
@@ -2597,8 +2593,8 @@ function IssueChatAssistantMessage({
           >
             {deleted ? (
               <div className="text-sm italic text-muted-foreground">
-                Comment deleted
-              </div>
+            {t("tok225.chat_ui_comment_deleted")}
+          </div>
             ) : (
               <div className="min-w-0 max-w-full space-y-3">
                 <IssueChatAssistantParts message={message} hasCoT={false} />
@@ -2687,7 +2683,7 @@ function IssueChatAssistantMessage({
                   )}
                 >
                   <Loader2 className="h-3 w-3 animate-spin" />
-                  Running
+                  {t("tok225.chat_ui_running")}
                 </Badge>
               ) : null}
             </div>
@@ -2695,8 +2691,8 @@ function IssueChatAssistantMessage({
 
           {deleted ? (
             <div className="rounded-sm bg-muted/40 px-3 py-2 text-sm italic text-muted-foreground">
-              Comment deleted
-            </div>
+            {t("tok225.chat_ui_comment_deleted")}
+          </div>
           ) : !folded ? (
             <>
               <div className="space-y-3">
@@ -2838,8 +2834,8 @@ function IssueChatFeedbackButtons({
             ? "text-green-600 dark:text-green-400"
             : "text-muted-foreground hover:bg-accent hover:text-foreground",
         )}
-        title="Helpful"
-        aria-label="Helpful"
+        title={t("tok225.chat_helpful")}
+        aria-label={t("tok225.chat_helpful")}
         onClick={handleThumbsUp}
       >
         <ThumbsUp className="h-3.5 w-3.5" />
@@ -2855,8 +2851,8 @@ function IssueChatFeedbackButtons({
                 ? "text-amber-600 dark:text-amber-400"
                 : "text-muted-foreground hover:bg-accent hover:text-foreground",
             )}
-            title="Needs work"
-            aria-label="Needs work"
+            title={t("tok225.chat_needs_work")}
+            aria-label={t("tok225.chat_needs_work")}
             onClick={handleThumbsDown}
           >
             <ThumbsDown className="h-3.5 w-3.5" />
@@ -2864,12 +2860,12 @@ function IssueChatFeedbackButtons({
         </PopoverTrigger>
         <PopoverContent side="top" align="start" className="w-80 p-3">
           <div className="mb-2 text-sm font-medium">
-            What could have been better?
+            {t("tok225.chat_ui_what_could_have_been_better")}
           </div>
           <Textarea
             value={downvoteReason}
             onChange={(event) => setDownvoteReason(event.target.value)}
-            placeholder="Add a short note"
+            placeholder={t("tok225.chat_add_a_short_note")}
             className="min-h-20 resize-y bg-background text-sm"
             disabled={isSaving}
           />
@@ -2884,15 +2880,15 @@ function IssueChatFeedbackButtons({
                 setDownvoteReason("");
               }}
             >
-              Dismiss
-            </Button>
+            {t("tok225.chat_ui_dismiss")}
+          </Button>
             <Button
               type="button"
               size="sm"
               disabled={isSaving || !downvoteReason.trim()}
               onClick={handleSubmitReason}
             >
-              {isSaving ? "Saving..." : "Save note"}
+              {isSaving ? t("tok225.chat_saving") : t("tok225.chat_save_note")}
             </Button>
           </div>
         </PopoverContent>
@@ -2909,23 +2905,21 @@ function IssueChatFeedbackButtons({
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Save your feedback sharing preference</DialogTitle>
+            <DialogTitle>{t("tok225.chat_save_your_feedback_sharing_preference")}</DialogTitle>
             <DialogDescription>
-              Choose whether voted AI outputs can be shared with Paperclip Labs.
-              This answer becomes the default for future thumbs up and thumbs
-              down votes.
+              {t("tok225.chat_choose_whether_voted_ai_outputs_can_be_shared_with_paperclip_labs_this_answer_be")}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-3 text-sm text-muted-foreground">
-            <p>This vote is always saved locally.</p>
+            <p>{t("tok225.chat_this_vote_is_always_saved_locally")}</p>
             <p>
-              Choose{" "}
-              <span className="font-medium text-foreground">Always allow</span>{" "}
-              to share this vote and future voted AI outputs. Choose{" "}
-              <span className="font-medium text-foreground">Don't allow</span>{" "}
-              to keep this vote and future votes local.
+              {t("tok225.chat_choose")}{" "}
+              <span className="font-medium text-foreground">{t("tok225.chat_always_allow")}</span>{" "}
+              {t("tok225.chat_to_share_this_vote_and_future_voted_ai_outputs_choose")}{" "}
+              <span className="font-medium text-foreground">{t("tok225.chat_don_t_allow")}</span>{" "}
+              {t("tok225.chat_to_keep_this_vote_and_future_votes_local")}
             </p>
-            <p>You can change this later in Settings &gt; General.</p>
+            <p>{t("tok225.chat_change_later_in_settings")}</p>
             {termsUrl ? (
               <a
                 href={termsUrl}
@@ -2933,7 +2927,7 @@ function IssueChatFeedbackButtons({
                 rel="noreferrer"
                 className="inline-flex text-sm text-foreground underline underline-offset-4"
               >
-                Read our terms of service
+                {t("tok225.chat_read_terms")}
               </a>
             ) : null}
           </div>
@@ -2952,7 +2946,7 @@ function IssueChatFeedbackButtons({
                 ).then(() => setPendingSharingDialog(null));
               }}
             >
-              {isSaving ? "Saving..." : "Don't allow"}
+              {isSaving ? t("tok225.chat_saving") : t("tok225.chat_don_t_allow")}
             </Button>
             <Button
               type="button"
@@ -2967,7 +2961,7 @@ function IssueChatFeedbackButtons({
                 }).then(() => setPendingSharingDialog(null));
               }}
             >
-              {isSaving ? "Saving..." : "Always allow"}
+              {isSaving ? t("tok225.chat_saving") : t("tok225.chat_always_allow")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -3032,7 +3026,7 @@ function ExpiredRequestConfirmationActivity({
         )}
       >
         <span className="font-medium text-foreground">{actorName}</span>
-        <span className="text-muted-foreground">updated this task</span>
+        <span className="text-muted-foreground">{t("tok225.chat_updated_this_task")}</span>
         <a
           href={anchorId ? `#${anchorId}` : undefined}
           className="text-xs text-muted-foreground transition-colors hover:text-foreground hover:underline"
@@ -3052,7 +3046,7 @@ function ExpiredRequestConfirmationActivity({
               expanded && "rotate-180",
             )}
           />
-          {expanded ? "Hide confirmation" : "Expired confirmation"}
+          {expanded ? t("tok225.chat_hide_confirmation") : t("tok225.chat_expired_confirmation")}
         </button>
       </div>
       {expanded ? (
@@ -3307,8 +3301,8 @@ function StaleDispositionWarningDetails({
   if (sections.length === 0) {
     return (
       <div className="text-xs leading-5 text-muted-foreground">
-        No additional details.
-      </div>
+            {t("tok225.chat_ui_no_additional_details")}
+          </div>
     );
   }
 
@@ -3365,8 +3359,8 @@ function StaleDispositionWarningRow({
             onClick={() => setOpen((value) => !value)}
           >
             <span className="text-sm font-medium text-foreground/80">
-              Stale disposition warning
-            </span>
+            {t("tok225.chat_ui_stale_disposition_warning")}
+          </span>
             <span className="ml-auto flex items-center gap-1.5">
               {message.createdAt ? (
                 <span
@@ -3570,11 +3564,9 @@ function SystemNoticeCommentContent({
       })
       .catch((error) => {
         toastActions?.pushToast({
-          title: "Copy failed",
+          title: t("tok225.chat_copy_failed"),
           body:
-            error instanceof Error
-              ? error.message
-              : "Unable to copy system notice",
+            localizedError(error, t("tok225.chat_unable_to_copy_system_notice")),
           tone: "error",
         });
       });
@@ -3590,11 +3582,9 @@ function SystemNoticeCommentContent({
       })
       .catch((error) => {
         toastActions?.pushToast({
-          title: "Copy failed",
+          title: t("tok225.chat_copy_failed"),
           body:
-            error instanceof Error
-              ? error.message
-              : "Unable to copy system notice link",
+            localizedError(error, t("tok225.chat_unable_to_copy_system_notice_link")),
           tone: "error",
         });
       });
@@ -3651,8 +3641,8 @@ function SystemNoticeCommentContent({
             <button
               type="button"
               className="inline-flex h-6 w-6 items-center justify-center text-muted-foreground transition-colors hover:text-foreground"
-              title="Copy link"
-              aria-label="Copy link to system notice"
+              title={t("tok225.chat_copy_link")}
+              aria-label={t("tok225.chat_copy_link_to_system_notice")}
               onClick={handleCopyLink}
             >
               {copiedLink ? (
@@ -3665,8 +3655,8 @@ function SystemNoticeCommentContent({
           <button
             type="button"
             className="inline-flex h-6 w-6 items-center justify-center text-muted-foreground transition-colors hover:text-foreground"
-            title="Copy notice text"
-            aria-label="Copy system notice"
+            title={t("tok225.chat_copy_notice_text")}
+            aria-label={t("tok225.chat_copy_system_notice")}
             onClick={handleCopy}
           >
             {copied ? (
@@ -3681,7 +3671,7 @@ function SystemNoticeCommentContent({
   );
 }
 
-// Non-comment timeline items (run/status events, "updated this task",
+// Non-comment timeline items (run/status events, t("tok225.chat_updated_this_task"),
 // "worked for N minutes") render as quiet, subordinate metadata rows hung off a
 // left rail — visually distinct from the bubbles used for genuine comments.
 // Virtualized rows are absolutely positioned, so each row carries its own rail
@@ -3816,7 +3806,7 @@ function IssueChatSystemMessage({ message }: { message: ThreadMessage }) {
           <span className="text-muted-foreground">
             {custom.followUpRequested === true
               ? "requested follow-up"
-              : "updated this task"}
+              : t("tok225.chat_updated_this_task")}
           </span>
           <a
             href={anchorId ? `#${anchorId}` : undefined}
@@ -3829,8 +3819,8 @@ function IssueChatSystemMessage({ message }: { message: ThreadMessage }) {
         {statusChange ? (
           <div className="flex flex-wrap items-center gap-1.5 text-xs">
             <span className="text-(length:--text-nano) font-medium uppercase tracking-wider text-muted-foreground/70">
-              Status
-            </span>
+            {t("tok225.chat_ui_status")}
+          </span>
             <span className="text-muted-foreground">
               {humanizeValue(statusChange.from)}
             </span>
@@ -3850,8 +3840,8 @@ function IssueChatSystemMessage({ message }: { message: ThreadMessage }) {
               )}
             >
               <span className="text-(length:--text-nano) font-medium uppercase tracking-wider text-muted-foreground/70">
-                Assignee
-              </span>
+            {t("tok225.chat_ui_assignee")}
+          </span>
               <AssigneeChip
                 assignee={assigneeChange.from}
                 resolvers={handoffResolvers}
@@ -3875,8 +3865,8 @@ function IssueChatSystemMessage({ message }: { message: ThreadMessage }) {
         {workspaceChange ? (
           <div className="flex flex-wrap items-center gap-1.5 text-xs">
             <span className="text-(length:--text-nano) font-medium uppercase tracking-wider text-muted-foreground/70">
-              Workspace
-            </span>
+            {t("tok225.chat_ui_workspace")}
+          </span>
             <span className="text-muted-foreground">
               {formatTimelineWorkspaceLabel(workspaceChange.from)}
             </span>
@@ -3908,7 +3898,7 @@ function IssueChatSystemMessage({ message }: { message: ThreadMessage }) {
           >
             {displayedRunAgentName}
           </Link>
-          <span className="text-muted-foreground">run</span>
+          <span className="text-muted-foreground">{t("tok225.chat_run")}</span>
           <Link
             to={`/agents/${runAgentId}/runs/${runId}`}
             className="inline-flex items-center rounded-md border border-border bg-accent/40 px-1.5 py-0.5 font-mono text-(length:--text-nano) text-muted-foreground transition-colors hover:bg-accent/60 hover:text-foreground"
@@ -4529,7 +4519,7 @@ function IssueChatDeletedComment({
   const anchorId =
     typeof custom.anchorId === "string" ? custom.anchorId : undefined;
   const authorName =
-    typeof custom.authorName === "string" ? custom.authorName : "Comment";
+    typeof custom.authorName === "string" ? custom.authorName : t("tok225.comment");
   const deletedDate = new Date(deletedAt);
   const deletedDateLabel = Number.isNaN(deletedDate.getTime())
     ? ""
@@ -4541,8 +4531,9 @@ function IssueChatDeletedComment({
         <Trash2 className="h-3.5 w-3.5" />
       </div>
       <div className="min-w-0 rounded-md border border-dashed border-border bg-muted/20 px-3 py-2 text-sm text-muted-foreground">
-        <span className="font-medium text-foreground/80">{authorName}</span>
-        <span> deleted this comment</span>
+        <span className="font-medium text-foreground/80">
+          {t("tok225.chat_user_deleted_this_comment", { author: authorName })}
+        </span>
         {deletedDateLabel ? (
           <span className="text-xs"> · {deletedDateLabel}</span>
         ) : null}
@@ -5112,7 +5103,7 @@ const IssueChatComposer = forwardRef<
               ? {
                   ...item,
                   status: "error",
-                  error: "This file type cannot be attached here",
+                  error: t("tok225.chat_this_file_type_cannot_be_attached_here"),
                 }
               : item,
           ),
@@ -5125,7 +5116,7 @@ const IssueChatComposer = forwardRef<
             ? {
                 ...item,
                 status: "error",
-                error: err instanceof Error ? err.message : "Upload failed",
+                error: localizedError(err, t("tok225.chat_upload_failed")),
               }
             : item,
         ),
@@ -5334,11 +5325,10 @@ const IssueChatComposer = forwardRef<
             </span>
             <div className="min-w-0">
               <div className="text-sm font-medium text-foreground">
-                Drop to upload
-              </div>
+            {t("tok225.chat_ui_drop_to_upload")}
+          </div>
               <div className="mt-0.5 text-xs leading-5 text-muted-foreground">
-                Images insert into the reply. Other files are added to this
-                task.
+                {t("tok225.chat_ui_upload_behavior")}
               </div>
             </div>
           </div>
@@ -5378,16 +5368,15 @@ const IssueChatComposer = forwardRef<
               }
             }}
           >
-            Review conversation
+            {t("tok225.chat_ui_review_conversation")}
           </Button>
           {reviewError ? (
-            <p>Couldn’t refresh the conversation. Try reviewing it again.</p>
+            <p>{t("tok225.chat_couldn_t_refresh_the_conversation_try_reviewing_it_again")}</p>
           ) : null}
           {uncertainSubmission.reviewed ? (
             <>
               <p>
-                Discarding this draft does not remove any saved comment or
-                uploaded file.
+                {t("tok225.chat_ui_discard_explanation")}
               </p>
               <Button
                 type="button"
@@ -5402,8 +5391,8 @@ const IssueChatComposer = forwardRef<
                   setUncertainSubmission(null);
                 }}
               >
-                Discard draft and start new
-              </Button>
+            {t("tok225.chat_ui_discard_draft_and_start_new")}
+          </Button>
             </>
           ) : null}
         </div>
@@ -5413,7 +5402,7 @@ const IssueChatComposer = forwardRef<
         readOnly={!!uncertainSubmission}
         value={body}
         onChange={changeBody}
-        placeholder="Reply"
+        placeholder={t("tok225.chat_reply")}
         mentions={mentions}
         onSubmit={handleSubmit}
         imageUploadHandler={
@@ -5458,12 +5447,12 @@ const IssueChatComposer = forwardRef<
             const sizeLabel = formatAttachmentSize(attachment.size);
             const statusLabel =
               attachment.status === "uploading"
-                ? "Uploading to task"
+                ? t("tok225.chat_uploading_to_task")
                 : attachment.status === "error"
-                  ? (attachment.error ?? "Upload failed")
+                  ? (attachment.error ?? t("tok225.chat_upload_failed"))
                   : attachment.inline
-                    ? "Inserted inline"
-                    : "Attached to task";
+                    ? t("tok225.chat_inserted_inline")
+                    : t("tok225.chat_attached_to_task");
             return (
               <div
                 key={attachment.id}
@@ -5538,7 +5527,7 @@ const IssueChatComposer = forwardRef<
                 size="icon-sm"
                 onClick={() => attachInputRef.current?.click()}
                 disabled={attaching}
-                title="Attach file"
+                title={t("tok225.chat_attach_file")}
               >
                 <Paperclip className="h-4 w-4" />
               </Button>
@@ -5613,16 +5602,16 @@ const IssueChatComposer = forwardRef<
             ref={reassignTriggerRef}
             value={reassignTarget}
             options={reassignOptions}
-            placeholder="Responsible"
-            noneLabel="No responsible"
-            searchPlaceholder="Search responsible..."
-            emptyMessage="No responsible found."
+            placeholder={t("tok225.chat_responsible")}
+            noneLabel={t("tok225.chat_no_responsible")}
+            searchPlaceholder={t("tok225.chat_search_responsible")}
+            emptyMessage={t("tok225.chat_no_responsible_found")}
             onChange={setReassignTarget}
             className="h-8 text-xs"
             renderTriggerValue={(option) => {
               if (!option)
                 return (
-                  <span className="text-muted-foreground">Responsible</span>
+                  <span className="text-muted-foreground">{t("tok225.chat_responsible")}</span>
                 );
               const agentId = option.id.startsWith("agent:")
                 ? option.id.slice("agent:".length)
@@ -5661,8 +5650,8 @@ const IssueChatComposer = forwardRef<
             size="icon-sm"
             disabled={stopControl.stopping}
             onClick={() => void stopControl.stop()}
-            aria-label={stopControl.stopping ? "Stopping…" : "Stop"}
-            title="Stop response"
+            aria-label={stopControl.stopping ? t("tok225.stopping") : t("tok225.stop")}
+            title={t("tok225.chat_stop_response")}
           >
             {stopControl.stopping ? (
               <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
@@ -5676,7 +5665,7 @@ const IssueChatComposer = forwardRef<
             disabled={!canSubmit}
             onClick={() => void handleSubmit()}
           >
-            {submitting ? "Posting..." : "Send"}
+            {submitting ? t("tok225.posting") : t("tok225.send")}
           </Button>
         )}
       </div>
@@ -5702,11 +5691,9 @@ const IssueChatComposer = forwardRef<
           }}
         >
           <AlertDialogHeader>
-            <AlertDialogTitle>No responsible selected</AlertDialogTitle>
+            <AlertDialogTitle>{t("tok225.chat_ui_no_responsible_selected")}</AlertDialogTitle>
             <AlertDialogDescription>
-              This comment will be posted without an assignee, so no agent will
-              be woken to act on it. Go back to pick a responsible, or send
-              anyway.
+              {t("tok225.chat_ui_no_assignee_warning")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -5716,16 +5703,16 @@ const IssueChatComposer = forwardRef<
                 focusAssigneeOnDialogCloseRef.current = true;
               }}
             >
-              Go back
-            </AlertDialogCancel>
+            {t("tok225.chat_ui_go_back")}
+          </AlertDialogCancel>
             <AlertDialogAction
               data-testid="issue-chat-no-assignee-send-anyway"
               onClick={() => {
                 void submitComment();
               }}
             >
-              Send anyway
-            </AlertDialogAction>
+            {t("tok225.chat_ui_send_anyway")}
+          </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
@@ -6527,8 +6514,8 @@ export function IssueChatThread({
   const resolvedEmptyMessage =
     emptyMessage ??
     (variant === "embedded"
-      ? "No run output yet."
-      : "This task conversation is empty. Start with a message below.");
+      ? t("tok225.chat_no_run_output_yet")
+      : t("tok225.chat_this_task_conversation_is_empty_start_with_a_message_below"));
   const previousErrorBoundaryMessagesRef = useRef<
     readonly ThreadMessage[] | null
   >(null);
@@ -6550,8 +6537,8 @@ export function IssueChatThread({
                 onClick={handleJumpToLatest}
                 className="text-xs text-muted-foreground transition-colors hover:text-foreground"
               >
-                Jump to latest
-              </button>
+            {t("tok225.chat_ui_jump_to_latest")}
+          </button>
             </div>
           ) : null}
 
@@ -6639,11 +6626,10 @@ export function IssueChatThread({
                     {legacyRecoverySourceIssue ? (
                       <SystemNotice
                         tone="info"
-                        label="Legacy recovery task"
+                        label={t("tok225.chat_legacy_recovery_task")}
                         body={
                           <span>
-                            Legacy recovery task. Newer recovery actions live on
-                            the source task
+                            {t("tok225.chat_ui_legacy_recovery_source")}
                             {legacyRecoverySourceIssue.identifier ? (
                               <>
                                 {" — "}

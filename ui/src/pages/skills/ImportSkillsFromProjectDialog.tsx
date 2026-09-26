@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { t } from "@/i18n";
+import { localizedError } from "@/lib/localized-error";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   AlertCircle,
@@ -217,11 +219,7 @@ export function isValidSelectionSlug(selection: SkillSelection): boolean {
 }
 
 function readableErrorMessage(error: unknown): string {
-  if (error instanceof ApiError) {
-    return error.message || `Request failed: ${error.status}`;
-  }
-  if (error instanceof Error) return error.message;
-  return "Unexpected error";
+  return localizedError(error, t("tok225.unexpected_error"));
 }
 
 export function isGrantError(error: unknown): boolean {
