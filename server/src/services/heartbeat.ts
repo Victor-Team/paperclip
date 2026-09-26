@@ -501,6 +501,7 @@ import {
   ACTIVE_RUN_OUTPUT_SUSPICION_THRESHOLD_MS as RECOVERY_ACTIVE_RUN_OUTPUT_SUSPICION_THRESHOLD_MS,
   capProviderQuotaWait,
   isProviderQuotaFailureMessage,
+  parseProviderQuotaResetFromMessage,
   recoveryService,
 } from "./recovery/service.js";
 import {
@@ -11624,6 +11625,8 @@ export function heartbeatService(
               now: input.now,
               delayMs: 0,
               maxAttempts: executionFailureRetryCount(sourceRun) + 1,
+              // The monitor's own nextCheckAt already was the quota wait.
+              ignoreRetryNotBefore: true,
               ...(isProviderQuotaReviewMonitor
                 ? {
                     retryReason:
@@ -15218,6 +15221,10 @@ export function heartbeatService(
       wakeReason?: string;
       maxAttempts?: number;
       delayMs?: number;
+      // The caller already waited (a provider-quota wait that came due, or an
+      // operator "check now"); the source run's retry-not-before must not add
+      // a second wait on top of it.
+      ignoreRetryNotBefore?: boolean;
     },
   ) {
     const now = opts?.now ?? new Date();
@@ -15353,6 +15360,7 @@ export function heartbeatService(
     }
 
     const schedule =
+      !opts?.ignoreRetryNotBefore &&
       transientRetryNotBefore &&
       transientRetryNotBefore.getTime() > baseSchedule.dueAt.getTime()
         ? {
@@ -16578,6 +16586,205 @@ export function heartbeatService(
       message: "Scheduled retry was already promoted",
       scheduledRetry,
     };
+  }
+
+  type ProviderQuotaWaitKind = "scheduled_retry" | "quota_monitor" | "stale_monitor";
+  type ProviderQuotaWait = {
+    issueId: string;
+    agentId: string | null;
+    kind: ProviderQuotaWaitKind;
+    waitingUntil: Date | null;
+  };
+
+  /**
+   * Work parked on provider quota: a bounded/quota retry that is still
+   * scheduled (phase one), or an issue carrying the provider-quota wait monitor
+   * (phase two). A quota monitor left on a finished issue is reported as stale.
+   */
+  async function listProviderQuotaWaits(companyId: string): Promise<ProviderQuotaWait[]> {
+    const retryRows = await db
+      .select({
+        issueId: sql<string>`${heartbeatRuns.contextSnapshot}->>'issueId'`,
+        agentId: heartbeatRuns.agentId,
+        scheduledRetryAt: heartbeatRuns.scheduledRetryAt,
+      })
+      .from(heartbeatRuns)
+      .where(
+        and(
+          eq(heartbeatRuns.companyId, companyId),
+          eq(heartbeatRuns.status, "scheduled_retry"),
+          sql`${heartbeatRuns.contextSnapshot}->>'issueId' is not null`,
+          or(
+            eq(heartbeatRuns.scheduledRetryReason, "provider_quota_recovery"),
+            sql`${heartbeatRuns.contextSnapshot}->>'errorFamily' = 'provider_quota'`,
+          ),
+        ),
+      );
+    const monitorRows = await db
+      .select({
+        issueId: issues.id,
+        agentId: issues.assigneeAgentId,
+        status: issues.status,
+        monitorNextCheckAt: issues.monitorNextCheckAt,
+      })
+      .from(issues)
+      .where(
+        and(
+          eq(issues.companyId, companyId),
+          isNull(issues.hiddenAt),
+          sql`${issues.monitorNextCheckAt} is not null`,
+          sql`${issues.executionPolicy}->'monitor'->>'serviceName' = ${PROVIDER_QUOTA_MONITOR_SERVICE_NAME}`,
+        ),
+      );
+    const waits = new Map<string, ProviderQuotaWait>();
+    for (const row of retryRows) {
+      waits.set(row.issueId, {
+        issueId: row.issueId,
+        agentId: row.agentId,
+        kind: "scheduled_retry",
+        waitingUntil: row.scheduledRetryAt,
+      });
+    }
+    for (const row of monitorRows) {
+      if (waits.has(row.issueId)) continue;
+      waits.set(row.issueId, {
+        issueId: row.issueId,
+        agentId: row.agentId,
+        kind: ["in_progress", "in_review"].includes(row.status)
+          ? "quota_monitor"
+          : "stale_monitor",
+        waitingUntil: row.monitorNextCheckAt,
+      });
+    }
+    return [...waits.values()];
+  }
+
+  type ProviderQuotaResumeOutcome =
+    | "released"
+    | "already_running"
+    | "not_needed"
+    | "stale_monitor_cleared"
+    | "failed";
+
+  /**
+   * Operator "quota is back, continue now". Only releases parked work into the
+   * normal queue: a due quota monitor is triggered (it schedules a due retry),
+   * every quota retry is promoted, then each affected seat is asked to start
+   * its next queued run. Per-seat concurrency stays with startNextQueuedRunForAgent.
+   * Idempotent: released work is no longer parked, so a repeat finds nothing.
+   */
+  async function resumeProviderQuotaWaits(input: {
+    companyId: string;
+    actor: { actorType: "user" | "agent" | "system"; actorId: string };
+    now?: Date;
+  }) {
+    const now = input.now ?? new Date();
+    const results = new Map<
+      string,
+      {
+        issueId: string;
+        agentId: string | null;
+        phase: ProviderQuotaWaitKind;
+        outcome: ProviderQuotaResumeOutcome;
+        message: string | null;
+      }
+    >();
+    const initial = await listProviderQuotaWaits(input.companyId);
+
+    for (const wait of initial) {
+      if (wait.kind === "quota_monitor") {
+        try {
+          await triggerIssueMonitor(wait.issueId, {
+            now,
+            actorType: input.actor.actorType,
+            actorId: input.actor.actorId,
+          });
+          results.set(wait.issueId, { ...wait, phase: wait.kind, outcome: "released", message: null });
+        } catch (error) {
+          results.set(wait.issueId, {
+            ...wait,
+            phase: wait.kind,
+            outcome: "failed",
+            message: error instanceof Error ? error.message : String(error),
+          });
+        }
+      } else if (wait.kind === "stale_monitor") {
+        const [issue] = await db.select().from(issues).where(eq(issues.id, wait.issueId));
+        if (issue) {
+          const policy = normalizeIssueExecutionPolicy(issue.executionPolicy ?? null);
+          await db
+            .update(issues)
+            .set({
+              ...buildIssueMonitorClearedPatch({
+                issue,
+                policy,
+                clearReason:
+                  issue.status === "done" || issue.status === "cancelled"
+                    ? issue.status
+                    : "invalid_status",
+                clearedAt: now,
+              }),
+              updatedAt: now,
+            })
+            .where(eq(issues.id, issue.id));
+        }
+        results.set(wait.issueId, {
+          ...wait,
+          phase: wait.kind,
+          outcome: "stale_monitor_cleared",
+          message: null,
+        });
+      }
+    }
+
+    // Triggered monitors created due retries; promote those and every retry
+    // that was already parked.
+    const retries = (await listProviderQuotaWaits(input.companyId)).filter(
+      (wait) => wait.kind === "scheduled_retry",
+    );
+    for (const wait of retries) {
+      const phase = results.get(wait.issueId)?.phase ?? "scheduled_retry";
+      try {
+        const retry = await retryScheduledRetryNow({
+          issueId: wait.issueId,
+          actor: input.actor,
+          now,
+        });
+        results.set(wait.issueId, {
+          issueId: wait.issueId,
+          agentId: wait.agentId,
+          phase,
+          outcome:
+            retry.outcome === "promoted"
+              ? "released"
+              : retry.outcome === "already_promoted"
+                ? "already_running"
+                : retry.outcome === "no_scheduled_retry"
+                  ? "not_needed"
+                  : "failed",
+          message: retry.outcome === "promoted" ? null : retry.message,
+        });
+      } catch (error) {
+        results.set(wait.issueId, {
+          issueId: wait.issueId,
+          agentId: wait.agentId,
+          phase,
+          outcome: "failed",
+          message: error instanceof Error ? error.message : String(error),
+        });
+      }
+    }
+
+    const agentIds = new Set(
+      [...results.values()]
+        .filter((result) => result.outcome === "released" && result.agentId)
+        .map((result) => result.agentId!),
+    );
+    for (const agentId of agentIds) {
+      await startNextQueuedRunForAgent(agentId);
+    }
+
+    return { results: [...results.values()] };
   }
 
   function parseHeartbeatPolicy(agent: typeof agents.$inferSelect) {
@@ -24755,6 +24962,29 @@ export function heartbeatService(
                 );
         const recordedResponsibleUserDenialCode =
           normalizeResponsibleUserDenialCode(latestRun?.errorCode);
+        // External adapters cannot set errorFamily themselves, and built-in
+        // adapters that do not classify quota (TOK-226: opencode_local's
+        // "exceeded the 5-hour usage quota ... reset at ...") report it only as
+        // prose in errorMessage. Derive the family from either text so
+        // provider-quota failures keep the bounded retry-with-backoff,
+        // keep-idle, and recovery classification paths. An adapter-provided
+        // errorFamily always wins.
+        const providerQuotaMessage =
+          outcome === "failed" && !adapterResult.errorFamily
+            ? [adapterResult.errorMessage, structuredFinalFailure?.message].find(
+                (message) => isProviderQuotaFailureMessage(message),
+              ) ?? null
+            : null;
+        const structuredFailureErrorFamily = providerQuotaMessage
+          ? ("provider_quota" as const)
+          : null;
+        const derivedProviderQuotaRetryNotBefore = providerQuotaMessage
+          ? (parseProviderQuotaResetFromMessage(providerQuotaMessage)?.toISOString() ?? null)
+          : null;
+        // errorCode keeps the adapter's value: every quota consumer reads the
+        // persisted errorFamily first (readHeartbeatRunErrorFamily,
+        // isProviderQuotaRecovery) and recovery classification also accepts
+        // `adapter_failed` with quota wording, so relabelling is not needed.
         const runErrorCode =
           outcome === "timed_out"
             ? "timeout"
@@ -24765,14 +24995,6 @@ export function heartbeatService(
                   recordedResponsibleUserDenialCode ??
                   "adapter_failed")
                 : null;
-        // External adapters cannot set errorFamily themselves; derive it from
-        // the structured failure so provider-quota failures keep the bounded
-        // retry-with-backoff, keep-idle, and recovery classification paths.
-        const structuredFailureErrorFamily =
-          outcome === "failed" &&
-          isProviderQuotaFailureMessage(structuredFinalFailure?.message)
-            ? ("provider_quota" as const)
-            : null;
 
         let logSummary: {
           bytes: number;
@@ -24883,7 +25105,8 @@ export function heartbeatService(
               },
               errorFamily:
                 adapterResult.errorFamily ?? structuredFailureErrorFamily,
-              retryNotBefore: adapterResult.retryNotBefore ?? null,
+              retryNotBefore:
+                adapterResult.retryNotBefore ?? derivedProviderQuotaRetryNotBefore,
             }),
             errorCode: runErrorCode,
             errorMessage: runErrorMessage,
@@ -29617,6 +29840,8 @@ export function heartbeatService(
 
     promoteDueScheduledRetries,
     retryScheduledRetryNow,
+    listProviderQuotaWaits,
+    resumeProviderQuotaWaits,
 
     resumeQueuedRuns,
 

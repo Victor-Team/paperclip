@@ -39,6 +39,7 @@ import { InlineBanner } from "../components/InlineBanner";
 import type { Agent, Issue } from "@paperclipai/shared";
 import { PluginSlotOutlet } from "@/plugins/slots";
 import { SmokeLabDashboardCard } from "../components/SmokeLabDashboardCard";
+import { ProviderQuotaResumeBanner } from "../components/ProviderQuotaResumeBanner";
 
 const DASHBOARD_ACTIVITY_LIMIT = 10;
 
@@ -325,6 +326,7 @@ export function Dashboard() {
   return (
     <div className="space-y-6">
       {error && <p className="text-sm text-destructive">{error.message}</p>}
+      <ProviderQuotaResumeBanner companyId={selectedCompanyId} />
 
       {pausedBanner?.kind === "imported" ? (
         <InlineBanner

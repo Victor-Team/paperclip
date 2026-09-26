@@ -4234,7 +4234,15 @@ export function issueRoutes(
     if (!scheduledRetryRunId) return null;
 
     try {
-      const cancelled = await heartbeat.cancelRun(scheduledRetryRunId);
+      // The comment's own wake is the explicit successor. Without suppression
+      // the release creates an `issue_continuation_needed` run from the
+      // cancelled retry before the comment wake is enqueued, and the deferred
+      // comment wake then runs a second, duplicate turn.
+      const cancelled = await heartbeat.cancelRun(
+        scheduledRetryRunId,
+        undefined,
+        { suppressImmediateRecovery: true },
+      );
       const cancelledRunId = cancelled?.id ?? scheduledRetryRunId;
       await logActivity(db, {
         companyId: input.issue.companyId,
@@ -12570,6 +12578,38 @@ export function issueRoutes(
     });
 
     res.json({ ok: true });
+  });
+
+  router.get("/companies/:companyId/provider-quota/waits", async (req, res) => {
+    const companyId = req.params.companyId as string;
+    assertCompanyAccess(req, companyId);
+    const waits = await heartbeat.listProviderQuotaWaits(companyId);
+    const active = waits.filter((wait) => wait.kind !== "stale_monitor");
+    res.json({ count: active.length, waits: active });
+  });
+
+  router.post("/companies/:companyId/provider-quota/resume-now", async (req, res) => {
+    assertBoard(req);
+    const companyId = req.params.companyId as string;
+    assertCompanyAccess(req, companyId);
+    const actor = getActorInfo(req);
+    const result = await heartbeat.resumeProviderQuotaWaits({
+      companyId,
+      actor: { actorType: actor.actorType, actorId: actor.actorId },
+    });
+    await logActivity(db, {
+      companyId,
+      actorType: actor.actorType,
+      actorId: actor.actorId,
+      action: "company.provider_quota_resume_now",
+      entityType: "company",
+      entityId: companyId,
+      details: {
+        released: result.results.filter((item) => item.outcome === "released").length,
+        results: result.results,
+      },
+    });
+    res.json(result);
   });
 
   router.post("/issues/:id/scheduled-retry/retry-now", async (req, res) => {

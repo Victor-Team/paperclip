@@ -946,7 +946,13 @@
       "titleSuccessrate": "Success Rate",
       "recentActivity": "Recent Activity",
       "recentTasks": "Recent Tasks",
-      "noTasksYet": "No tasks yet."
+      "noTasksYet": "No tasks yet.",
+      "providerQuotaWaitingTitle": "{{count}} items are waiting for model quota to come back",
+      "providerQuotaWaitingBody": "They retry on their own at least once an hour. If you have topped up or the quota has already reset, continue them now.",
+      "providerQuotaResumeNow": "Quota is back, continue now",
+      "providerQuotaResuming": "Continuing…",
+      "providerQuotaResumeResult": "Released {{released}} items; {{failed}} could not be released.",
+      "providerQuotaResumeError": "Could not continue: {{message}}"
     }
   },
   "issues": {

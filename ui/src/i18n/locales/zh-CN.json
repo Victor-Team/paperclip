@@ -946,7 +946,13 @@
       "titleSuccessrate": "成功率",
       "recentActivity": "最近活动",
       "recentTasks": "最近任务",
-      "noTasksYet": "暂无任务。"
+      "noTasksYet": "暂无任务。",
+      "providerQuotaWaitingTitle": "有 {{count}} 项工作在等模型额度恢复",
+      "providerQuotaWaitingBody": "它们会至少每小时自动重试一次。如果你已经充值或额度已提前恢复，可以立即继续。",
+      "providerQuotaResumeNow": "额度已恢复，立即继续",
+      "providerQuotaResuming": "正在继续…",
+      "providerQuotaResumeResult": "已放行 {{released}} 项；{{failed}} 项未能放行。",
+      "providerQuotaResumeError": "未能继续：{{message}}"
     }
   },
   "issues": {

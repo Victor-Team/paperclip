@@ -556,6 +556,21 @@ const PROVIDER_QUOTA_ERROR_RE =
 export function isProviderQuotaFailureMessage(value: string | null | undefined) {
   return typeof value === "string" && PROVIDER_QUOTA_ERROR_RE.test(value);
 }
+
+/**
+ * The provider's own reset instant parsed from a quota error text, or null
+ * when the text carries none (or it is already past). Lets the heartbeat
+ * outcome path attach a retry-not-before for adapters that report quota only
+ * as prose in `errorMessage`.
+ */
+export function parseProviderQuotaResetFromMessage(
+  value: string | null | undefined,
+  now = new Date(),
+): Date | null {
+  if (typeof value !== "string" || !value) return null;
+  const parsed = parseProviderQuotaClockReset(value, now);
+  return parsed && parsed.getTime() > now.getTime() ? parsed : null;
+}
 const CONFIGURATION_INCOMPLETE_ERROR_RE =
   /(?:model_not_found|model [^\n]{0,120} not found|missing (?:api )?(?:key|credentials?)|credentials? (?:are |is )?missing|no (?:api )?(?:key|credentials?) (?:was |were )?(?:found|configured|provided)|api key (?:is )?(?:not set|unavailable))/i;
 
