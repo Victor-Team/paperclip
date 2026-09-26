@@ -952,7 +952,12 @@
       "providerQuotaResumeNow": "Quota is back, continue now",
       "providerQuotaResuming": "Continuing…",
       "providerQuotaResumeResult": "Released {{released}} items; {{failed}} could not be released.",
-      "providerQuotaResumeError": "Could not continue: {{message}}"
+      "providerQuotaResumeError": "Could not continue: {{message}}",
+      "providerUnreachableWaitingTitle": "有 {{count}} 項工作在等網路恢復（連不上模型服務）",
+      "providerUnreachableWaitingBody": "它們會自動重試（最長每 10 分鐘一次），網路一恢復就接著做。如果網路已經恢復，可以立即繼續。",
+      "providerWaitResumeNow": "立即繼續",
+      "providerRetryWaitingTitle": "有 {{count}} 項工作在等模型服務恢復後重試",
+      "providerRetryWaitingBody": "它們會自動重試（最長每 10 分鐘一次）；連續失敗約 6 小時後會轉給董事會處理。如果問題已經解決，可以立即繼續。"
     }
   },
   "issues": {

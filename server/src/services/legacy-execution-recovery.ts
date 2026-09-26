@@ -31,6 +31,9 @@ export function legacyExecutionNeedsReconciliation(
   // exhausted quota or missing model (TOK-226, ledger #55).
   const errorFamily = run.resultJson?.errorFamily;
   if (run.errorCode === "provider_quota" || errorFamily === "provider_quota") return false;
+  // An unreachable provider (network down, ledger #56) is a resource wait too:
+  // the connectivity wait owns it, nothing ran against the provider.
+  if (errorFamily === "provider_unreachable") return false;
   if (
     run.errorCode === "configuration_incomplete" ||
     run.errorCode === "model_not_found" ||

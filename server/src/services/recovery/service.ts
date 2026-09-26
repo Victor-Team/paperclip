@@ -26,6 +26,8 @@ import { authorizeChatConversationForBoundRun } from "../native-runtime/chat-att
 import {
   ONBOARDING_FIRST_TASK_ORIGIN_KIND,
   PROVIDER_QUOTA_MONITOR_SERVICE_NAME,
+  PROVIDER_UNREACHABLE_MONITOR_SERVICE_NAME,
+  PROVIDER_TRANSIENT_RETRY_WAIT_MONITOR_SERVICE_NAME,
   ISSUE_DISPOSITION_REPAIR_RETRY_REASON,
   requiresExecutionReconciliation,
   type IssueCommentMetadata,
@@ -70,6 +72,7 @@ import {
 import { redactSensitiveText } from "../../redaction.js";
 import { isUniqueViolation } from "../../db-errors.js";
 import { claimedAdapterType } from "../conversation-continuation.js";
+import { executionFailureRetryCount } from "../execution-recovery-attempt.js";
 import {
   logActivity,
   publishActivity,
@@ -238,6 +241,7 @@ export type StrandedRecoveryCause =
   | "deliberate_wait_without_target"
   | "process_lost"
   | "provider_quota"
+  | "provider_retry_exhausted"
   | "codex_output_inactivity_monitor"
   | "workspace_validation_failed"
   | "configuration_incomplete"
@@ -304,6 +308,8 @@ function recoveryCauseTitle(cause: StrandedRecoveryCause) {
       return "reviewer recovery failed";
     case "provider_quota":
       return "provider quota unavailable";
+    case "provider_retry_exhausted":
+      return "automatic retries exhausted";
     case SUCCESSFUL_RUN_MISSING_STATE_REASON:
       return "missing disposition recovery failed";
     default:
@@ -373,6 +379,42 @@ function readRecoveryRunErrorFamily(latestRun: LatestIssueRun) {
   const result = parseObject(latestRun?.resultJson);
   return readNonEmptyString(result.errorFamily);
 }
+
+/** Why a failed run waits for another probe instead of being dropped (ledger #56). */
+type RetryWaitCause = "provider_unreachable" | "transient_failure";
+
+// Failures the platform treats as transient (bounded retries). Allow-list:
+// anything else (auth, budget, setup, workspace, deliberate waits, quota,
+// configuration) keeps its own owner.
+const RETRY_WAIT_ERROR_CODES = new Set<string>([
+  "adapter_failed",
+  "acpx_turn_failed",
+  "claude_transient_upstream",
+  "codex_transient_upstream",
+  "codex_harness_crash",
+]);
+
+/**
+ * The latest failed run is a transient provider failure (TOK-227: provider
+ * unreachable; TOK-229: repeated ACP turn failures). Returns null for quota,
+ * configuration, login and every non-retryable code.
+ */
+function classifyRetryWaitCause(latestRun: LatestIssueRun): RetryWaitCause | null {
+  if (!latestRun || latestRun.status !== "failed") return null;
+  if (isProviderQuotaRecovery(latestRun) || isConfigurationIncompleteRecovery(latestRun)) return null;
+  if (isProviderQuotaFailureMessage(latestRun.error) || isConfigurationIncompleteFailureMessage(latestRun.error))
+    return null;
+  const family = readRecoveryRunErrorFamily(latestRun);
+  if (family === "provider_unreachable") return "provider_unreachable";
+  if (family && family !== "transient_upstream") return null;
+  if (family !== "transient_upstream" && !RETRY_WAIT_ERROR_CODES.has(latestRun.errorCode ?? "")) return null;
+  return isProviderUnreachableFailureMessage(latestRun.error) ? "provider_unreachable" : "transient_failure";
+}
+
+const RETRY_WAIT_MONITOR_SERVICE_NAMES = new Set<string>([
+  PROVIDER_UNREACHABLE_MONITOR_SERVICE_NAME,
+  PROVIDER_TRANSIENT_RETRY_WAIT_MONITOR_SERVICE_NAME,
+]);
 
 function isProviderQuotaRecovery(latestRun: LatestIssueRun) {
   if (latestRun?.errorCode === "provider_quota") return true;
@@ -592,6 +634,47 @@ export function parseProviderQuotaResetFromMessage(
 }
 const CONFIGURATION_INCOMPLETE_ERROR_RE =
   /(?:model_not_found|model [^\n]{0,120} not found|missing (?:api )?(?:key|credentials?)|credentials? (?:are |is )?missing|no (?:api )?(?:key|credentials?) (?:was |were )?(?:found|configured|provided)|api key (?:is )?(?:not set|unavailable))/i;
+
+// Ledger #56 (TOK-227): the machine could not reach the provider at all
+// (network down, DNS, TLS handshake, proxy). Node/undici errno tokens plus the
+// fixed phrases the Claude/Codex CLIs and fetch() print. Deliberately anchored
+// on those tokens so a rate limit, an overload or a quota text never matches.
+const PROVIDER_UNREACHABLE_ERROR_RE =
+  /(?:\bE(?:PROTO|CONNREFUSED|CONNRESET|TIMEDOUT|NOTFOUND|AI_AGAIN|NETUNREACH|HOSTUNREACH|PIPE)\b|getaddrinfo|unable to connect to (?:the )?api|fetch failed|socket hang up|network (?:is )?unreachable|connection error)/i;
+
+/**
+ * Whether a failure text says the provider could not be reached. Quota and
+ * configuration wording win: those have their own owners and waits.
+ */
+export function isProviderUnreachableFailureMessage(value: string | null | undefined) {
+  return (
+    typeof value === "string" &&
+    PROVIDER_UNREACHABLE_ERROR_RE.test(value) &&
+    !PROVIDER_QUOTA_ERROR_RE.test(value) &&
+    !CONFIGURATION_INCOMPLETE_ERROR_RE.test(value)
+  );
+}
+
+/**
+ * Connectivity wait between probes, indexed by probes already made after the
+ * bounded transient retries (attempts 1 and 2): 1, 2, 5, then every 10 minutes.
+ */
+export const PROVIDER_UNREACHABLE_WAIT_MS = [60_000, 120_000, 300_000, 600_000] as const;
+const PROVIDER_UNREACHABLE_BOUNDED_RETRY_ATTEMPTS = 2;
+/**
+ * Probes after the bounded retries before the wait gives up and hands the
+ * issue to the board (blocked, restored automatically once the seat's
+ * configuration changes). 36 probes = 1+2+5 minutes, then every 10 minutes:
+ * about 6 hours.
+ */
+export const PROVIDER_RETRY_WAIT_MAX_PROBES = 36;
+export function providerUnreachableWaitMs(failedAttempt: number) {
+  const index = Math.min(
+    Math.max(0, failedAttempt - PROVIDER_UNREACHABLE_BOUNDED_RETRY_ATTEMPTS),
+    PROVIDER_UNREACHABLE_WAIT_MS.length - 1,
+  );
+  return PROVIDER_UNREACHABLE_WAIT_MS[index]!;
+}
 
 /** Whether an adapter-reported failure message describes missing configuration (model, credentials). */
 export function isConfigurationIncompleteFailureMessage(value: string | null | undefined) {
@@ -2715,6 +2798,8 @@ export function recoveryService(
                           ) ?? "error",
                         )}, then explicitly retry the original owner or reassign.`
                       : "Board operator: bind the missing secret(s) named in the run failure, then explicitly retry the original owner or reassign."
+                    : recoveryCause === "provider_retry_exhausted"
+                      ? "Board operator: the AI provider kept failing after hours of automatic retries; check the seat's terminal, network and provider status. Changing the seat's configuration or terminal resumes the task automatically; otherwise retry the original owner or reassign."
                     : recoveryCause === "execution_review_participant_recovery"
                       ? "Board operator: repair the failed review participant path, restore a live reviewer, explicitly reassign, or record an intentional resolution."
                       : "Board operator: inspect the evidence, repair the runtime if appropriate, then explicitly retry the original owner, reassign, or intentionally resolve the task.",
@@ -4125,7 +4210,10 @@ export function recoveryService(
     // A configuration failure reproduces on every retry; a liveness retry
     // would only re-run the seat against the same missing model/credential.
     // Stop and leave it to the board (fall through to the blocked branch).
-    const isConfigurationStop = recoveryCause === "configuration_incomplete";
+    // Also the retry wait that gave up (ledger #56): probing more would only
+    // repeat the same failure; the board decides, a seat change restores it.
+    const isConfigurationStop =
+      recoveryCause === "configuration_incomplete" || recoveryCause === "provider_retry_exhausted";
     if (blockerIds.length === 0 && !hasExistingMonitor && !isConfigurationStop) {
       // A recovery action or a board descriptor is evidence of an escalation,
       // not an execution path. Keep the source runnable only after the retry
@@ -4158,6 +4246,8 @@ export function recoveryService(
             action:
               recoveryCause === "provider_quota"
                 ? `Provider usage quota was exhausted. Retry the original assignee after the quota reset, or record a manual resolution. Source run: ${input.latestRun?.id ?? "unknown"}.`
+                : recoveryCause === "provider_retry_exhausted"
+                ? `The AI provider kept failing after hours of automatic retries (error ${input.latestRun?.errorCode ?? "adapter_failed"}). Check the seat's terminal, network and provider status; changing the seat's configuration or terminal resumes the task automatically. Source run: ${input.latestRun?.id ?? "unknown"}.`
                 : isConfigurationStop
                 ? `The seat's configuration is incomplete (for example a model that does not exist, missing credentials, or a missing command). Fix the configuration named in the run failure, then retry the original assignee or reassign. Source run: ${input.latestRun?.id ?? "unknown"}.`
                 : `Automatic recovery could not restore a live execution path. Inspect the run evidence, then retry the original assignee, reassign, or record a manual resolution. Source run: ${input.latestRun?.id ?? "unknown"}.`,
@@ -4544,6 +4634,234 @@ export function recoveryService(
     return participant?.type === "agent" ? participant.agentId : null;
   }
 
+  /** A retry wait already armed for this very failed run (due or not). */
+  function hasRetryWaitMonitor(
+    issue: typeof issues.$inferSelect,
+    latestRun: LatestIssueRun,
+  ) {
+    if (!latestRun || !issue.monitorNextCheckAt) return false;
+    const monitor = parseObject(parseObject(issue.executionPolicy).monitor);
+    return (
+      RETRY_WAIT_MONITOR_SERVICE_NAMES.has(readNonEmptyString(monitor.serviceName) ?? "") &&
+      readNonEmptyString(monitor.externalRef) === latestRun.id
+    );
+  }
+
+  type RetryWaitCandidate = {
+    cause: RetryWaitCause;
+    latestRun: NonNullable<LatestIssueRun>;
+    sourceRun: typeof heartbeatRuns.$inferSelect;
+    failedAttempt: number;
+    probesExhausted: boolean;
+  };
+
+  /**
+   * A transient failure of the recovery target whose bounded retries are spent
+   * (attempt >= 2). Before that the existing bounded retry owns it.
+   */
+  async function readRetryWaitCandidate(
+    issue: typeof issues.$inferSelect,
+    latestRun: LatestIssueRun,
+  ): Promise<RetryWaitCandidate | null> {
+    const cause = classifyRetryWaitCause(latestRun);
+    if (!cause || !latestRun) return null;
+    const targetAgentId = getAdapterFailureRecoveryTargetAgentId(issue);
+    if (!targetAgentId || latestRun.agentId !== targetAgentId) return null;
+    const [sourceRun] = await db
+      .select()
+      .from(heartbeatRuns)
+      .where(and(eq(heartbeatRuns.companyId, issue.companyId), eq(heartbeatRuns.id, latestRun.id)));
+    if (!sourceRun || sourceRun.runtimeMode === "native") return null;
+    const failedAttempt = executionFailureRetryCount(sourceRun);
+    if (failedAttempt < PROVIDER_UNREACHABLE_BOUNDED_RETRY_ATTEMPTS) return null;
+    return {
+      cause,
+      latestRun,
+      sourceRun,
+      failedAttempt,
+      probesExhausted:
+        failedAttempt - PROVIDER_UNREACHABLE_BOUNDED_RETRY_ATTEMPTS >= PROVIDER_RETRY_WAIT_MAX_PROBES,
+    };
+  }
+
+  /** Arm the wait, pull an armed one forward after a seat change, or give up at the cap. */
+  async function applyRetryWait(
+    issue: typeof issues.$inferSelect,
+    candidate: RetryWaitCandidate,
+    previousStatus: "in_progress" | "in_review",
+  ): Promise<"monitored" | "escalated" | "skipped"> {
+    if (hasRetryWaitMonitor(issue, candidate.latestRun)) {
+      await pullRetryWaitForwardOnSeatChange(issue, candidate.sourceRun);
+      return "skipped";
+    }
+    if (candidate.probesExhausted) {
+      const updated = await escalateStrandedAssignedIssue({
+        issue,
+        previousStatus,
+        latestRun: candidate.latestRun,
+        recoveryCause: "provider_retry_exhausted",
+        comment:
+          `Paperclip retried this task ${candidate.failedAttempt} times over several hours after a transient ` +
+          `provider failure (\`${candidate.latestRun.errorCode ?? "adapter_failed"}\`) and it still fails. ` +
+          "Moving it to `blocked` for the board. Changing the seat's configuration or terminal resumes it automatically.",
+      });
+      return updated ? "escalated" : "skipped";
+    }
+    return (await scheduleRetryWaitMonitor({ issue, candidate })) ? "monitored" : "skipped";
+  }
+
+  /**
+   * The board changed the seat (a new configuration revision, or another
+   * terminal) while its task waits: probe on the next timer tick instead of
+   * the next back-off step. Same monitor, only its due time moves.
+   */
+  async function pullRetryWaitForwardOnSeatChange(
+    issue: typeof issues.$inferSelect,
+    sourceRun: typeof heartbeatRuns.$inferSelect,
+  ) {
+    const now = new Date();
+    if (!issue.monitorNextCheckAt || issue.monitorNextCheckAt.getTime() <= now.getTime()) return false;
+    const agent = await getAgent(sourceRun.agentId);
+    if (!agent || agent.companyId !== issue.companyId) return false;
+    const failedAt = sourceRun.finishedAt ?? sourceRun.updatedAt;
+    const runAdapterType = claimedAdapterType(sourceRun);
+    const adapterChanged = Boolean(runAdapterType && runAdapterType !== agent.adapterType);
+    const [revision] = adapterChanged
+      ? [{ id: "adapter-type" }]
+      : await db
+          .select({ id: agentConfigRevisions.id })
+          .from(agentConfigRevisions)
+          .where(
+            and(
+              eq(agentConfigRevisions.companyId, issue.companyId),
+              eq(agentConfigRevisions.agentId, agent.id),
+              gt(agentConfigRevisions.createdAt, failedAt),
+            ),
+          )
+          .limit(1);
+    if (!revision) return false;
+    const policy = parseObject(issue.executionPolicy);
+    await db
+      .update(issues)
+      .set({
+        monitorNextCheckAt: now,
+        executionPolicy: {
+          ...policy,
+          monitor: { ...parseObject(policy.monitor), nextCheckAt: now.toISOString() },
+        } as typeof issue.executionPolicy,
+        updatedAt: now,
+      })
+      .where(and(eq(issues.id, issue.id), eq(issues.companyId, issue.companyId)));
+    await logActivity(db, {
+      companyId: issue.companyId,
+      actorType: "system",
+      actorId: "recovery",
+      agentId: null,
+      runId: sourceRun.id,
+      action: "issue.updated",
+      entityType: "issue",
+      entityId: issue.id,
+      details: {
+        identifier: issue.identifier,
+        source: "recovery.retry_wait_seat_changed",
+        adapterChanged,
+        previousNextCheckAt: issue.monitorNextCheckAt.toISOString(),
+        nextCheckAt: now.toISOString(),
+      },
+    });
+    return true;
+  }
+
+  /**
+   * Arm the retry wait (ledger #56): the same server-owned issue monitor as the
+   * provider-quota wait, so its due tick starts one counted retry of the
+   * original assignee and the board's "continue now" can release it.
+   * Back-off 1 -> 2 -> 5 -> 10 minutes, then every 10 minutes.
+   */
+  async function scheduleRetryWaitMonitor(input: {
+    issue: typeof issues.$inferSelect;
+    candidate: RetryWaitCandidate;
+  }) {
+    const { issue, candidate } = input;
+    if (issue.status !== "in_progress" && issue.status !== "in_review") return null;
+    const now = new Date();
+    const waitMs = providerUnreachableWaitMs(candidate.failedAttempt);
+    const nextCheckAt = new Date(now.getTime() + waitMs).toISOString();
+    const unreachable = candidate.cause === "provider_unreachable";
+    const previousPolicy = normalizeIssueExecutionPolicy(issue.executionPolicy ?? null);
+    const retryTargetDescription =
+      issue.status === "in_review" ? "the active review participant" : "the original assignee";
+    const policy = {
+      ...(previousPolicy ?? { mode: "normal" as const, commentRequired: true, stages: [] }),
+      monitor: {
+        nextCheckAt,
+        notes: unreachable
+          ? `The AI provider could not be reached (network); retry ${retryTargetDescription} when the wait elapses.`
+          : `The AI provider failed repeatedly (transient); retry ${retryTargetDescription} when the wait elapses.`,
+        scheduledBy: "assignee" as const,
+        kind: "external_service" as const,
+        serviceName: unreachable
+          ? PROVIDER_UNREACHABLE_MONITOR_SERVICE_NAME
+          : PROVIDER_TRANSIENT_RETRY_WAIT_MONITOR_SERVICE_NAME,
+        externalRef: candidate.latestRun.id,
+        timeoutAt: null,
+        maxAttempts: null,
+        recoveryPolicy: "wake_owner" as const,
+      },
+    };
+    const transition = applyIssueMonitorPolicyTransition({
+      issue,
+      policy,
+      previousPolicy,
+      requestedStatus: issue.status,
+      requestedAssigneePatch: {},
+      actor: { agentId: null, userId: null },
+      monitorExplicitlyUpdated: true,
+    });
+    const updated = await issuesSvc.update(issue.id, {
+      ...transition.patch,
+      executionPolicy: policy,
+    });
+    if (!updated) return null;
+    // A run finalized before the family existed: record it so every other
+    // owner (legacy reconciliation, release, waits list) sees the same class.
+    if (
+      unreachable &&
+      readNonEmptyString(parseObject(candidate.sourceRun.resultJson).errorFamily) !== "provider_unreachable"
+    ) {
+      await db
+        .update(heartbeatRuns)
+        .set({
+          resultJson: { ...parseObject(candidate.sourceRun.resultJson), errorFamily: "provider_unreachable" },
+          updatedAt: new Date(),
+        })
+        .where(eq(heartbeatRuns.id, candidate.sourceRun.id));
+    }
+    await logActivity(db, {
+      companyId: issue.companyId,
+      actorType: "system",
+      actorId: "recovery",
+      agentId: null,
+      runId: candidate.latestRun.id,
+      action: "issue.monitor_scheduled",
+      entityType: "issue",
+      entityId: issue.id,
+      details: {
+        identifier: issue.identifier,
+        source: unreachable ? "recovery.provider_unreachable" : "recovery.transient_retry_wait",
+        latestRunId: candidate.latestRun.id,
+        errorCode: candidate.latestRun.errorCode,
+        cause: candidate.cause,
+        failedAttempt: candidate.failedAttempt,
+        waitMs,
+        scheduledAt: now.toISOString(),
+        nextCheckAt,
+        targetAgentId: candidate.latestRun.agentId,
+      },
+    });
+    return updated;
+  }
+
   function hasPendingProviderQuotaRecoveryMonitor(
     issue: typeof issues.$inferSelect,
     latestRun: LatestIssueRun,
@@ -4564,6 +4882,8 @@ export function recoveryService(
   }
 
   const CONFIGURATION_RESTORED_WAKE_SOURCE = "issue.configuration_restored";
+  // Stops that end when the board changes the seat (ledger #55, #56).
+  const SEAT_CHANGE_RESTORABLE_CAUSES = new Set<string>(["configuration_incomplete", "provider_retry_exhausted"]);
   const CONFIGURATION_RESTORED_NOTE =
     "席位配置已修改：the seat's configuration changed after the failed run, so the task resumes automatically.";
 
@@ -4621,7 +4941,7 @@ export function recoveryService(
       .where(
         and(
           inArray(issueRecoveryActions.status, ["active", "escalated"]),
-          eq(issueRecoveryActions.cause, "configuration_incomplete"),
+          inArray(issueRecoveryActions.cause, [...SEAT_CHANGE_RESTORABLE_CAUSES]),
           eq(issues.status, "blocked"),
           isNull(issues.assigneeUserId),
           sql`${issues.assigneeAgentId} is not null`,
@@ -4689,7 +5009,7 @@ export function recoveryService(
         if (
           !active ||
           active.id !== action.id ||
-          active.cause !== "configuration_incomplete" ||
+          !SEAT_CHANGE_RESTORABLE_CAUSES.has(active.cause) ||
           readNonEmptyString(active.evidence.latestRunId) !== sourceRunId
         )
           return null;
@@ -4748,7 +5068,7 @@ export function recoveryService(
         and(
           eq(issueRecoveryActions.status, "resolved"),
           eq(issueRecoveryActions.outcome, "restored"),
-          eq(issueRecoveryActions.cause, "configuration_incomplete"),
+          inArray(issueRecoveryActions.cause, [...SEAT_CHANGE_RESTORABLE_CAUSES]),
           eq(issueRecoveryActions.resolutionNote, CONFIGURATION_RESTORED_NOTE),
           eq(issues.status, "in_progress"),
           sql`${issues.assigneeAgentId} is not null`,
@@ -4822,6 +5142,7 @@ export function recoveryService(
       escalated: 0,
       waitingOnReviewResolved: 0,
       providerQuotaMonitored: 0,
+      providerUnreachableMonitored: 0,
       recentProgressExempted: 0,
       operatorCancelExempted: 0,
       onboardingFirstTaskExempted: 0,
@@ -5161,6 +5482,29 @@ export function recoveryService(
         continue;
       }
 
+      // Ledger #56: a transient provider failure (network down, repeated ACP
+      // turn failures) whose bounded retries are spent. Wait and probe again
+      // on a back-off instead of dropping the work: no board action, no
+      // recovery-only turn. The issue keeps a single wait: a monitor armed for
+      // this failed run is left alone even when already due (the timer tick
+      // fires it once), and is only pulled forward when the seat changed.
+      if (issue.status === "in_progress") {
+        const retryWait = await readRetryWaitCandidate(issue, latestRun);
+        if (retryWait) {
+          const outcome = await applyRetryWait(issue, retryWait, "in_progress");
+          if (outcome === "monitored") {
+            result.providerUnreachableMonitored += 1;
+            result.issueIds.push(issue.id);
+          } else if (outcome === "escalated") {
+            result.escalated += 1;
+            result.issueIds.push(issue.id);
+          } else {
+            result.skipped += 1;
+          }
+          continue;
+        }
+      }
+
       const adapterFailureClassification =
         issue.status !== "in_review" &&
         latestRun &&
@@ -5389,6 +5733,17 @@ export function recoveryService(
           continue;
         }
 
+        const participantRetryWait = await readRetryWaitCandidate(issue, participantLatestRun);
+        if (participantRetryWait && !participantRetryWait.probesExhausted) {
+          const outcome = await applyRetryWait(issue, participantRetryWait, "in_review");
+          if (outcome === "monitored") {
+            result.providerUnreachableMonitored += 1;
+            result.issueIds.push(issue.id);
+          } else {
+            result.skipped += 1;
+          }
+          continue;
+        }
         const participantAdapterFailureClassification =
           isUnsuccessfulTerminalIssueRun(participantLatestRun)
             ? classifyAdapterFailureForRecovery(

@@ -90,6 +90,8 @@ import {
   ISSUE_CONTINUATION_SUMMARY_DOCUMENT_KEY,
   ISSUE_DISPOSITION_REPAIR_RETRY_REASON,
   PROVIDER_QUOTA_MONITOR_SERVICE_NAME,
+  PROVIDER_UNREACHABLE_MONITOR_SERVICE_NAME,
+  PROVIDER_TRANSIENT_RETRY_WAIT_MONITOR_SERVICE_NAME,
   envBindingSchema,
   isEnvironmentDriverSupportedForAdapter,
   isToolConnectionAttentionHealth,
@@ -502,6 +504,7 @@ import {
   capProviderQuotaWait,
   isConfigurationIncompleteFailureMessage,
   isProviderQuotaFailureMessage,
+  isProviderUnreachableFailureMessage,
   parseProviderQuotaResetFromMessage,
   recoveryService,
 } from "./recovery/service.js";
@@ -1117,7 +1120,8 @@ function readTransientRecoveryContractFromRun(
 ) {
   const errorFamily = readHeartbeatRunErrorFamily(run);
   return errorFamily === "transient_upstream" ||
-    errorFamily === "provider_quota"
+    errorFamily === "provider_quota" ||
+    errorFamily === "provider_unreachable"
     ? {
         errorFamily,
         retryNotBefore: readTransientRetryNotBeforeFromRun(run),
@@ -1204,6 +1208,29 @@ function isRetryableInteractionContinuationInfrastructureFailure(
     isSandboxProviderWorkerUnavailableFailureMessage(run.error) ||
     isSandboxProviderWorkerUnavailableFailureMessage(resultJson.errorMessage) ||
     isSandboxProviderWorkerUnavailableFailureMessage(resultJson.message)
+  );
+}
+
+/**
+ * Ledger #56 (TOK-227 11:18): the adapter already received the turn's final
+ * result and judged it successful, but the CLI process stayed alive (the seat
+ * left a task in the background), so adapter-utils' terminal-result cleanup
+ * stopped it after the grace period (SIGTERM -> exit 143). That exit code is
+ * the platform's own cleanup, not a failed turn. Only the terminal-result
+ * kind with `terminalResultSeen` qualifies (not orphaned process-group
+ * cleanup), and only when the adapter reported no error.
+ */
+function isStoppedAfterTerminalResult(adapterResult: {
+  errorMessage?: string | null;
+  errorCode?: string | null;
+  resultJson?: Record<string, unknown> | null;
+}) {
+  if (adapterResult.errorMessage || adapterResult.errorCode) return false;
+  const evidence = parseObject(parseObject(adapterResult.resultJson).unmanagedBackgroundTask);
+  return (
+    evidence.kind === "terminal_result_cleanup" &&
+    evidence.terminalResultSeen === true &&
+    evidence.stopped === true
   );
 }
 
@@ -11537,8 +11564,15 @@ export function heartbeatService(
         : null;
     const reviewParticipantAgentId =
       currentParticipant?.type === "agent" ? currentParticipant.agentId : null;
+    // Server-owned resource waits (provider quota, provider connectivity,
+    // transient retry wait): when due they start one counted retry of the
+    // failed run's owner.
+    const isProviderResourceWaitMonitor =
+      monitor?.serviceName === PROVIDER_QUOTA_MONITOR_SERVICE_NAME ||
+      monitor?.serviceName === PROVIDER_UNREACHABLE_MONITOR_SERVICE_NAME ||
+      monitor?.serviceName === PROVIDER_TRANSIENT_RETRY_WAIT_MONITOR_SERVICE_NAME;
     const isProviderQuotaReviewMonitor =
-      monitor?.serviceName === PROVIDER_QUOTA_MONITOR_SERVICE_NAME &&
+      isProviderResourceWaitMonitor &&
       Boolean(reviewParticipantAgentId);
     const targetAgentId = isProviderQuotaReviewMonitor
       ? reviewParticipantAgentId
@@ -11578,7 +11612,7 @@ export function heartbeatService(
     }
 
     try {
-      if (monitor?.serviceName === PROVIDER_QUOTA_MONITOR_SERVICE_NAME) {
+      if (isProviderResourceWaitMonitor) {
         // Normalized monitor projections redact externalRef. Read the claimed
         // persisted policy only on this server-owned quota recovery path.
         const sourceRunId = readNonEmptyString(
@@ -16590,10 +16624,13 @@ export function heartbeatService(
   }
 
   type ProviderQuotaWaitKind = "scheduled_retry" | "quota_monitor" | "stale_monitor";
+  // Why the work waits: model quota, or the provider being unreachable (ledger #56).
+  type ProviderWaitReason = "provider_quota" | "provider_unreachable" | "transient_failure";
   type ProviderQuotaWait = {
     issueId: string;
     agentId: string | null;
     kind: ProviderQuotaWaitKind;
+    reason: ProviderWaitReason;
     waitingUntil: Date | null;
   };
 
@@ -16608,6 +16645,7 @@ export function heartbeatService(
         issueId: sql<string>`${heartbeatRuns.contextSnapshot}->>'issueId'`,
         agentId: heartbeatRuns.agentId,
         scheduledRetryAt: heartbeatRuns.scheduledRetryAt,
+        errorFamily: sql<string | null>`${heartbeatRuns.contextSnapshot}->>'errorFamily'`,
       })
       .from(heartbeatRuns)
       .where(
@@ -16617,7 +16655,7 @@ export function heartbeatService(
           sql`${heartbeatRuns.contextSnapshot}->>'issueId' is not null`,
           or(
             eq(heartbeatRuns.scheduledRetryReason, "provider_quota_recovery"),
-            sql`${heartbeatRuns.contextSnapshot}->>'errorFamily' = 'provider_quota'`,
+            sql`${heartbeatRuns.contextSnapshot}->>'errorFamily' in ('provider_quota', 'provider_unreachable')`,
           ),
         ),
       );
@@ -16627,6 +16665,7 @@ export function heartbeatService(
         agentId: issues.assigneeAgentId,
         status: issues.status,
         monitorNextCheckAt: issues.monitorNextCheckAt,
+        serviceName: sql<string | null>`${issues.executionPolicy}->'monitor'->>'serviceName'`,
       })
       .from(issues)
       .where(
@@ -16634,7 +16673,7 @@ export function heartbeatService(
           eq(issues.companyId, companyId),
           isNull(issues.hiddenAt),
           sql`${issues.monitorNextCheckAt} is not null`,
-          sql`${issues.executionPolicy}->'monitor'->>'serviceName' = ${PROVIDER_QUOTA_MONITOR_SERVICE_NAME}`,
+          sql`${issues.executionPolicy}->'monitor'->>'serviceName' in (${PROVIDER_QUOTA_MONITOR_SERVICE_NAME}, ${PROVIDER_UNREACHABLE_MONITOR_SERVICE_NAME}, ${PROVIDER_TRANSIENT_RETRY_WAIT_MONITOR_SERVICE_NAME})`,
         ),
       );
     const waits = new Map<string, ProviderQuotaWait>();
@@ -16643,6 +16682,7 @@ export function heartbeatService(
         issueId: row.issueId,
         agentId: row.agentId,
         kind: "scheduled_retry",
+        reason: row.errorFamily === "provider_unreachable" ? "provider_unreachable" : "provider_quota",
         waitingUntil: row.scheduledRetryAt,
       });
     }
@@ -16654,6 +16694,12 @@ export function heartbeatService(
         kind: ["in_progress", "in_review"].includes(row.status)
           ? "quota_monitor"
           : "stale_monitor",
+        reason:
+          row.serviceName === PROVIDER_UNREACHABLE_MONITOR_SERVICE_NAME
+            ? "provider_unreachable"
+            : row.serviceName === PROVIDER_TRANSIENT_RETRY_WAIT_MONITOR_SERVICE_NAME
+              ? "transient_failure"
+              : "provider_quota",
         waitingUntil: row.monitorNextCheckAt,
       });
     }
@@ -24925,13 +24971,15 @@ export function heartbeatService(
         } else if (adapterResult.timedOut) {
           outcome = "timed_out";
         } else if (
-          (adapterResult.exitCode ?? 0) === 0 &&
-          !adapterResult.errorMessage &&
-          !adapterResult.signal &&
-          !processCancellation?.failed &&
-          !structuredFinalFailure
+          ((adapterResult.exitCode ?? 0) === 0 && !adapterResult.signal) ||
+          isStoppedAfterTerminalResult(adapterResult)
         ) {
-          outcome = "succeeded";
+          outcome =
+            !adapterResult.errorMessage &&
+            !processCancellation?.failed &&
+            !structuredFinalFailure
+              ? "succeeded"
+              : "failed";
         } else {
           outcome = "failed";
         }
@@ -24989,11 +25037,27 @@ export function heartbeatService(
                 (message) => isConfigurationIncompleteFailureMessage(message),
               ) ?? null
             : null;
+        // Ledger #56 (TOK-227): the provider could not be reached (network
+        // down). Recognised from prose whether the adapter reported nothing
+        // (adapter_failed) or only the generic transient family (the first
+        // claude_local round: claude_transient_upstream). This refines
+        // transient_upstream only; quota and configuration keep precedence.
+        const providerUnreachableMessage =
+          outcome === "failed" &&
+          (!adapterResult.errorFamily || adapterResult.errorFamily === "transient_upstream") &&
+          !providerQuotaMessage &&
+          !configurationFailureMessage
+            ? [adapterResult.errorMessage, structuredFinalFailure?.message].find(
+                (message) => isProviderUnreachableFailureMessage(message),
+              ) ?? null
+            : null;
         const structuredFailureErrorFamily = providerQuotaMessage
           ? ("provider_quota" as const)
           : configurationFailureMessage
             ? ("configuration_incomplete" as const)
-            : null;
+            : providerUnreachableMessage
+              ? ("provider_unreachable" as const)
+              : null;
         const derivedProviderQuotaRetryNotBefore = providerQuotaMessage
           ? (parseProviderQuotaResetFromMessage(providerQuotaMessage)?.toISOString() ?? null)
           : null;
@@ -25119,8 +25183,9 @@ export function heartbeatService(
                   : {}),
                 configFreshness: configFreshnessResultMetadata,
               },
-              errorFamily:
-                adapterResult.errorFamily ?? structuredFailureErrorFamily,
+              errorFamily: providerUnreachableMessage
+                ? structuredFailureErrorFamily
+                : (adapterResult.errorFamily ?? structuredFailureErrorFamily),
               retryNotBefore:
                 adapterResult.retryNotBefore ?? derivedProviderQuotaRetryNotBefore,
             }),

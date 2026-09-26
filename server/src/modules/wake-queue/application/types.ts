@@ -29,6 +29,8 @@ export type RunSnapshot = {
    * uncounted immediate successor that would reset the retry budget.
    */
   providerQuota?: boolean;
+  /** An unreachable-provider failure (ledger #56): same counted retry, then the connectivity wait. */
+  providerUnreachable?: boolean;
 };
 
 export type IssueSnapshot = {

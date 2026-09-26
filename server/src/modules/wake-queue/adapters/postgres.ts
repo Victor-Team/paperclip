@@ -93,6 +93,7 @@ function toRunSnapshot(row: HeartbeatRunRow): RunSnapshot {
     runtimeMode: row.runtimeMode,
     conversationContinuation: row.runtimeMode === "legacy" && hasConversationContinuationPolicy(row.resultJson),
     providerQuota: row.errorCode === "provider_quota" || parseObject(row.resultJson).errorFamily === "provider_quota",
+    providerUnreachable: parseObject(row.resultJson).errorFamily === "provider_unreachable",
     errorCode: row.errorCode,
     responsibleUserId: row.responsibleUserId,
     contextSnapshot: parseObject(row.contextSnapshot),

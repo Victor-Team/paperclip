@@ -730,7 +730,12 @@ describe("provider quota closed loop (default production entries)", () => {
     expectNoDuplicateRuns(end);
   }, 180_000);
 
-  it("I: production 09-25 shape (acpx_turn_failed, no errorFamily): 2 transient retries then stops silently until someone acts", async () => {
+  // Deliberate policy change (ledger #56, TOK-229, coordinator ruling
+  // 2026-09-26): this test used to assert that after the 2 bounded transient
+  // retries the issue "stops silently until someone acts". That silent stop is
+  // the defect: a transient failure whose bounded retries are spent now enters
+  // the retry wait (1 -> 2 -> 5 -> 10 minute probes) and resumes by itself.
+  it("I: production 09-25 shape (acpx_turn_failed, no errorFamily): 2 transient retries, then the retry wait probes and resumes by itself (no board)", async () => {
     const { companyId, agentId, issueId } = await seed(CONVERSATION_ADAPTER);
     adapterState.mode = { kind: "acpx_turn_failed" };
     await wakeAssigned(agentId, issueId);
@@ -740,27 +745,29 @@ describe("provider quota closed loop (default production entries)", () => {
     expect(pendingRetries(s1)).toEqual([
       expect.objectContaining({ scheduledRetryAttempt: 1, scheduledRetryReason: "transient_failure" }),
     ]);
-    await sweep(new Date(Date.now() + 60_000));
-    await sweep(new Date(Date.now() + 2 * 60_000));
+    await sweepNoTick(new Date(Date.now() + 60_000));
+    await sweepNoTick(new Date(Date.now() + 2 * 60_000));
     const s3 = await snapshot(companyId, issueId);
     log("I after run 3", s3);
     expect(s3.runs.map((run) => [run.status, run.scheduledRetryAttempt])).toEqual([
       ["failed", 0], ["failed", 1], ["failed", 2],
     ]);
+    // Not dropped: the retry wait is armed, no board action.
+    expect(s3.issue.monitorNextCheckAt).not.toBeNull();
+    expect(s3.actions).toEqual([]);
 
     adapterState.mode = { kind: "success" };
-    for (const offsetMs of [3 * 60_000, 60 * 60_000, 24 * 60 * 60_000]) {
-      const result = await sweep(new Date(Date.now() + offsetMs));
-      expect(result.promoted).toBe(0);
-      expect(result.reconciled.providerQuotaMonitored).toBe(0);
-    }
+    const monitorAt = Date.parse(s3.issue.monitorNextCheckAt!);
+    await sweep(new Date(monitorAt + 1_000));
+    await sweepNoTick(new Date(monitorAt + 1_000));
     const sEnd = await snapshot(companyId, issueId);
-    expect(adapterState.calls).toHaveLength(3);
-    expect(sEnd.runs).toHaveLength(3);
+    log("I end", sEnd);
+    expect(adapterState.calls.map((call) => call.mode)).toEqual([
+      "acpx_turn_failed", "acpx_turn_failed", "acpx_turn_failed", "success",
+    ]);
     expect(sEnd.actions).toEqual([]);
     expect(sEnd.interactions).toEqual([]);
-    expect(sEnd.issue.monitorNextCheckAt).toBeNull();
-    expect(sEnd.issue.status).toBe("in_progress");
+    expect(sEnd.issue.status).toBe("done");
   }, 120_000);
   // ---- Operator "resume now" entries after an early top-up (production shape).
 

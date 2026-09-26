@@ -639,7 +639,7 @@ async function runReleaseRecoveryTail(
       "wake-queue: queued a recovery run with no invokable recovery agent",
     );
 
-  if ((run.conversationContinuation || run.providerQuota) && ["failed", "timed_out", "interrupted"].includes(run.status)) {
+  if ((run.conversationContinuation || run.providerQuota || run.providerUnreachable) && ["failed", "timed_out", "interrupted"].includes(run.status)) {
     // Do not create an uncounted immediate successor inside the issue lock.
     // The host's idempotent scheduler claims it after commit with the same
     // retry counter used by restart and process-loss recovery.

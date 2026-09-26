@@ -952,7 +952,12 @@
       "providerQuotaResumeNow": "Quota is back, continue now",
       "providerQuotaResuming": "Continuing…",
       "providerQuotaResumeResult": "Released {{released}} items; {{failed}} could not be released.",
-      "providerQuotaResumeError": "Could not continue: {{message}}"
+      "providerQuotaResumeError": "Could not continue: {{message}}",
+      "providerUnreachableWaitingTitle": "{{count}} items are waiting for the network to reach the model service again",
+      "providerUnreachableWaitingBody": "They retry on their own (at most every 10 minutes) and continue as soon as the connection is back. If the network is already back, continue them now.",
+      "providerWaitResumeNow": "Continue now",
+      "providerRetryWaitingTitle": "{{count}} items are waiting to retry after model service errors",
+      "providerRetryWaitingBody": "They retry on their own (at most every 10 minutes); after about 6 hours of failures they are handed to the board. If the problem is fixed, continue them now."
     }
   },
   "issues": {

@@ -531,6 +531,13 @@ export const ISSUE_EXECUTION_MONITOR_KINDS = ["external_service"] as const;
 export type IssueExecutionMonitorKind = (typeof ISSUE_EXECUTION_MONITOR_KINDS)[number];
 
 export const PROVIDER_QUOTA_MONITOR_SERVICE_NAME = "AI provider quota";
+/** Issue monitor that waits for a seat's model provider to become reachable again (ledger #56). */
+export const PROVIDER_UNREACHABLE_MONITOR_SERVICE_NAME = "AI provider connectivity";
+/**
+ * Issue monitor for any other transient provider failure whose bounded retries
+ * are spent (ledger #56, TOK-229): probe again on a back-off instead of dropping the work.
+ */
+export const PROVIDER_TRANSIENT_RETRY_WAIT_MONITOR_SERVICE_NAME = "AI provider retry wait";
 
 export const ISSUE_EXECUTION_MONITOR_RECOVERY_POLICIES = [
   "wake_owner",

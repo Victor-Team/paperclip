@@ -101,6 +101,48 @@ describe("ProviderQuotaResumeBanner", () => {
     alertSpy.mockRestore();
   });
 
+  it("shows network (connectivity) waits with their own title and a neutral continue button (ledger #56)", async () => {
+    waitsMock.mockResolvedValue({
+      count: 1,
+      waits: [{ issueId: "i1", agentId: "a1", kind: "quota_monitor", reason: "provider_unreachable", waitingUntil: null }],
+    });
+    await render();
+    expect(container.textContent).toContain("1 items are waiting for the network to reach the model service again");
+    expect(container.textContent).not.toContain("waiting for model quota");
+    expect(container.querySelector('[data-testid="dashboard-provider-wait-unreachable"]')).not.toBeNull();
+    expect(button()?.textContent).toBe("Continue now");
+  });
+
+  it("shows transient-failure retry waits with their own title (ledger #56, TOK-229)", async () => {
+    waitsMock.mockResolvedValue({
+      count: 2,
+      waits: [
+        { issueId: "i1", agentId: "a1", kind: "quota_monitor", reason: "transient_failure", waitingUntil: null },
+        { issueId: "i2", agentId: "a2", kind: "quota_monitor", reason: "transient_failure", waitingUntil: null },
+      ],
+    });
+    await render();
+    expect(container.textContent).toContain("2 items are waiting to retry after model service errors");
+    expect(container.textContent).not.toContain("waiting for model quota");
+    expect(container.querySelector('[data-testid="dashboard-provider-wait-retry"]')).not.toBeNull();
+    expect(button()?.textContent).toBe("Continue now");
+  });
+
+  it("splits a mixed list into quota and connectivity counts", async () => {
+    waitsMock.mockResolvedValue({
+      count: 3,
+      waits: [
+        { issueId: "i1", agentId: "a1", kind: "scheduled_retry", reason: "provider_quota", waitingUntil: null },
+        { issueId: "i2", agentId: "a1", kind: "quota_monitor", reason: "provider_quota", waitingUntil: null },
+        { issueId: "i3", agentId: "a2", kind: "quota_monitor", reason: "provider_unreachable", waitingUntil: null },
+      ],
+    });
+    await render();
+    expect(container.textContent).toContain("2 items are waiting for model quota to come back");
+    expect(container.textContent).toContain("1 items are waiting for the network to reach the model service again");
+    expect(button()?.textContent).toBe("Continue now");
+  });
+
   it("counts already-running items as released", () => {
     expect(summarizeProviderQuotaResume({
       results: [

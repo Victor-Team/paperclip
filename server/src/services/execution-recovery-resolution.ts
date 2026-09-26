@@ -25,11 +25,13 @@ import { parseIssueExecutionState } from "./issue-execution-policy.js";
 import { isSupersededConversationRun } from "./agent-conversations.js";
 
 const PROVIDER_QUOTA_PROBE_INTERVAL_MS = 60 * 60 * 1000;
+// Longest connectivity wait between probes (ledger #56).
+const PROVIDER_UNREACHABLE_PROBE_INTERVAL_MS = 10 * 60 * 1000;
 
 type ResourceFailureRecoveryOnlyDecision =
   | { kind: "not_resource_failure" }
   | { kind: "wait" }
-  | { kind: "resume_work"; cause: "provider_quota" | "configuration_incomplete"; resolvedBy: string };
+  | { kind: "resume_work"; cause: "provider_quota" | "provider_unreachable" | "configuration_incomplete"; resolvedBy: string };
 
 /**
  * A recovery-only continuation exists for failures whose external action
@@ -51,6 +53,8 @@ function decideResourceFailureRecoveryOnly(input: {
   const cause =
     run.errorCode === "provider_quota" || family === "provider_quota"
       ? ("provider_quota" as const)
+      : family === "provider_unreachable"
+        ? ("provider_unreachable" as const)
       : run.errorCode === "configuration_incomplete" ||
           run.errorCode === "model_not_found" ||
           family === "configuration_incomplete"
@@ -74,6 +78,11 @@ function decideResourceFailureRecoveryOnly(input: {
     );
     return probeAt.getTime() <= now.getTime()
       ? { kind: "resume_work", cause, resolvedBy: "quota_wait_elapsed" }
+      : { kind: "wait" };
+  }
+  if (cause === "provider_unreachable") {
+    return (failedAt ?? now).getTime() + PROVIDER_UNREACHABLE_PROBE_INTERVAL_MS <= now.getTime()
+      ? { kind: "resume_work", cause, resolvedBy: "connectivity_wait_elapsed" }
       : { kind: "wait" };
   }
   // A missing model/credential reproduces until someone changes the seat.

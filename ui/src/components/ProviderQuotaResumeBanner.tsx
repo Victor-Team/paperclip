@@ -39,6 +39,23 @@ export function ProviderQuotaResumeBanner({ companyId }: { companyId: string | n
   });
 
   const count = waits.data?.count ?? 0;
+  // Network (connectivity) and other transient provider-failure waits share the
+  // list and the button (ledger #56); whatever is not tagged is quota.
+  const listed = waits.data?.waits ?? [];
+  const unreachableCount = listed.filter((wait) => wait.reason === "provider_unreachable").length;
+  const retryCount = listed.filter((wait) => wait.reason === "transient_failure").length;
+  const quotaCount = count - unreachableCount - retryCount;
+  const sections = [
+    quotaCount > 0
+      ? { key: "quota", title: t("dashboard.general.providerQuotaWaitingTitle", { count: quotaCount }), body: t("dashboard.general.providerQuotaWaitingBody") }
+      : null,
+    unreachableCount > 0
+      ? { key: "unreachable", title: t("dashboard.general.providerUnreachableWaitingTitle", { count: unreachableCount }), body: t("dashboard.general.providerUnreachableWaitingBody") }
+      : null,
+    retryCount > 0
+      ? { key: "retry", title: t("dashboard.general.providerRetryWaitingTitle", { count: retryCount }), body: t("dashboard.general.providerRetryWaitingBody") }
+      : null,
+  ].filter((section): section is { key: string; title: string; body: string } => section !== null);
   const summary = resume.data ? summarizeProviderQuotaResume(resume.data) : null;
   if (!companyId || (count === 0 && !summary && !resume.error)) return null;
 
@@ -46,11 +63,7 @@ export function ProviderQuotaResumeBanner({ companyId }: { companyId: string | n
     <InlineBanner
       tone="info"
       icon={Hourglass}
-      title={
-        count > 0
-          ? t("dashboard.general.providerQuotaWaitingTitle", { count })
-          : undefined
-      }
+      title={sections[0]?.title}
       actions={
         count > 0 ? (
           <Button
@@ -61,12 +74,19 @@ export function ProviderQuotaResumeBanner({ companyId }: { companyId: string | n
           >
             {resume.isPending
               ? t("dashboard.general.providerQuotaResuming")
-              : t("dashboard.general.providerQuotaResumeNow")}
+              : quotaCount === count
+                ? t("dashboard.general.providerQuotaResumeNow")
+                : t("dashboard.general.providerWaitResumeNow")}
           </Button>
         ) : undefined
       }
     >
-      {count > 0 ? <p>{t("dashboard.general.providerQuotaWaitingBody")}</p> : null}
+      {sections.map((section, index) => (
+        <div key={section.key} data-testid={`dashboard-provider-wait-${section.key}`}>
+          {index > 0 ? <p className="font-medium">{section.title}</p> : null}
+          <p>{section.body}</p>
+        </div>
+      ))}
       {summary ? (
         <p data-testid="dashboard-provider-quota-resume-result">
           {t("dashboard.general.providerQuotaResumeResult", summary)}
