@@ -1,0 +1,561 @@
+[WARN] The "pnpm" field in package.json is no longer read by pnpm. The following keys were ignored: "pnpm.patchedDependencies", "pnpm.overrides". See https://pnpm.io/settings for the new home of each setting.
+
+> paperclip@ test:run /home/yuanjian/dev/ANC-tok-224-ui
+> pnpm run preflight:workspace-links && node scripts/run-vitest-stable.mjs
+
+
+> paperclip@ preflight:workspace-links /home/yuanjian/dev/ANC-tok-224-ui
+> node cli/node_modules/tsx/dist/cli.mjs scripts/ensure-workspace-package-links.ts
+
+
+[test:run] general-server server suites excluding 148 serialized suites
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - `__dirname` (vitest.config.ts:7:25). Use `import.meta.dirname` instead
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+
+ RUN  v4.1.11 /home/yuanjian/dev/ANC-tok-224-ui
+
+[22:10:25] [33mWARN[39m: [36mfailed to wake assignee on issue assignment[39m [90m{"issueId":"9328ea5e-f11a-4b5b-8267-32e30aa2f88a"}[39m
+    err: {
+      "type": "DrizzleQueryError",
+      "message": "Failed query: select \"id\", \"company_id\", \"connection_id\", \"provider\", \"public_id\", \"publication_mode\", \"external_execution_policy\", \"assigned_agent_id\", \"sponsor_user_id\", \"status\", \"deployment_mode\", \"provider_account_id\", \"provider_account_label\", \"bot_external_id\", \"bot_username\", \"bot_display_name\", \"bot_avatar_url\", \"communication_instructions\", \"allow_direct_messages\", \"allow_group_chats\", \"allow_unlinked_people\", \"concurrency_policy\", \"capabilities\", \"setup\", \"health_message\", \"last_event_at\", \"last_publication_at\", \"last_error\", \"activated_at\", \"archived_at\", \"created_at\", \"updated_at\" from \"chat_endpoints\" where (\"chat_endpoints\".\"company_id\" = $1 and \"chat_endpoints\".\"id\" = $2) limit $3 for no key update nowait\nparams: 222c2881-f338-4786-a200-e0f9ed5efb03,ee317e13-b832-4f4b-9450-fe919accc86a,1: could not obtain lock on row in relation \"chat_endpoints\"",
+      "stack":
+          Error: Failed query: select "id", "company_id", "connection_id", "provider", "public_id", "publication_mode", "external_execution_policy", "assigned_agent_id", "sponsor_user_id", "status", "deployment_mode", "provider_account_id", "provider_account_label", "bot_external_id", "bot_username", "bot_display_name", "bot_avatar_url", "communication_instructions", "allow_direct_messages", "allow_group_chats", "allow_unlinked_people", "concurrency_policy", "capabilities", "setup", "health_message", "last_event_at", "last_publication_at", "last_error", "activated_at", "archived_at", "created_at", "updated_at" from "chat_endpoints" where ("chat_endpoints"."company_id" = $1 and "chat_endpoints"."id" = $2) limit $3 for no key update nowait
+          params: 222c2881-f338-4786-a200-e0f9ed5efb03,ee317e13-b832-4f4b-9450-fe919accc86a,1
+              at PostgresJsPreparedQuery.queryWithCache (file:///home/yuanjian/dev/ANC-tok-224-ui/node_modules/.pnpm/drizzle-orm@0.45.2_@opentelemetry+api@1.9.1_kysely@0.29.5_pg@8.18.0_postgres@3.4.9_patch_hash_uil4xuf7icnddjurbgy2qn5oo4/node_modules/drizzle-orm/pg-core/session.js:41:15)
+              at processTicksAndRejections (node:internal/process/task_queues:104:5)
+              at file:///home/yuanjian/dev/ANC-tok-224-ui/node_modules/.pnpm/drizzle-orm@0.45.2_@opentelemetry+api@1.9.1_kysely@0.29.5_pg@8.18.0_postgres@3.4.9_patch_hash_uil4xuf7icnddjurbgy2qn5oo4/node_modules/drizzle-orm/postgres-js/session.js:37:20
+              at authorizeInboundWakeup (/home/yuanjian/dev/ANC-tok-224-ui/server/src/services/chat-channels.ts:11660:22)
+              at Object.authorize (/home/yuanjian/dev/ANC-tok-224-ui/server/src/services/chat-channels.ts:14345:27)
+              at /home/yuanjian/dev/ANC-tok-224-ui/server/src/__tests__/chat-channels.integration.test.ts:1140:11
+              at scope (file:///home/yuanjian/dev/ANC-tok-224-ui/node_modules/.pnpm/postgres@3.4.9_patch_hash=sryle6qd5qfmnxvoebal4gashi/node_modules/postgres/src/index.js:279:18)
+              at Proxy.begin (file:///home/yuanjian/dev/ANC-tok-224-ui/node_modules/.pnpm/postgres@3.4.9_patch_hash=sryle6qd5qfmnxvoebal4gashi/node_modules/postgres/src/index.js:257:14)
+              at Object.wakeup (/home/yuanjian/dev/ANC-tok-224-ui/server/src/__tests__/chat-channels.integration.test.ts:1139:9)
+              at processInboundWakeup (/home/yuanjian/dev/ANC-tok-224-ui/server/src/services/chat-channels.ts:14368:7)
+          caused by: PostgresError: could not obtain lock on row in relation "chat_endpoints"
+              at ErrorResponse (file:///home/yuanjian/dev/ANC-tok-224-ui/node_modules/.pnpm/postgres@3.4.9_patch_hash=sryle6qd5qfmnxvoebal4gashi/node_modules/postgres/src/connection.js:819:30)
+              at handle (file:///home/yuanjian/dev/ANC-tok-224-ui/node_modules/.pnpm/postgres@3.4.9_patch_hash=sryle6qd5qfmnxvoebal4gashi/node_modules/postgres/src/connection.js:493:6)
+              at Socket.data (file:///home/yuanjian/dev/ANC-tok-224-ui/node_modules/.pnpm/postgres@3.4.9_patch_hash=sryle6qd5qfmnxvoebal4gashi/node_modules/postgres/src/connection.js:324:9)
+              at Socket.emit (node:events:514:20)
+              at addChunk (node:internal/streams/readable:568:12)
+              at readableAddChunkPushByteMode (node:internal/streams/readable:519:3)
+              at Socket.Readable.push (node:internal/streams/readable:399:5)
+              at TCP.onStreamRead (node:internal/stream_base_commons:189:23)
+      "query": "select \"id\", \"company_id\", \"connection_id\", \"provider\", \"public_id\", \"publication_mode\", \"external_execution_policy\", \"assigned_agent_id\", \"sponsor_user_id\", \"status\", \"deployment_mode\", \"provider_account_id\", \"provider_account_label\", \"bot_external_id\", \"bot_username\", \"bot_display_name\", \"bot_avatar_url\", \"communication_instructions\", \"allow_direct_messages\", \"allow_group_chats\", \"allow_unlinked_people\", \"concurrency_policy\", \"capabilities\", \"setup\", \"health_message\", \"last_event_at\", \"last_publication_at\", \"last_error\", \"activated_at\", \"archived_at\", \"created_at\", \"updated_at\" from \"chat_endpoints\" where (\"chat_endpoints\".\"company_id\" = $1 and \"chat_endpoints\".\"id\" = $2) limit $3 for no key update nowait",
+      "params": [
+        "222c2881-f338-4786-a200-e0f9ed5efb03",
+        "ee317e13-b832-4f4b-9450-fe919accc86a",
+        1
+      ]
+    }
+[22:10:25] [33mWARN[39m: [36maccepted inbound chat wakeup will retry[39m [90m{"deliveryId":"a3772b7c-b1c2-4524-be59-2d5e7f89bd98"}[39m
+    error: "Failed query: select \"id\", \"company_id\", \"connection_id\", \"provider\", \"public_id\", \"publication_mode\", \"external_execution_policy\", \"assigned_agent_id\", \"sponsor_user_id\", \"status\", \"deployment_mode\", \"provider_account_id\", \"provider_account_label\", \"bot_external_id\", \"bot_username\", \"bot_display_name\", \"bot_avatar_url\", \"communication_instructions\", \"allow_direct_messages\", \"allow_group_chats\", \"allow_unlinked_people\", \"concurrency_policy\", \"capabilities\", \"setup\", \"health_message\", \"last_event_at\", \"last_publication_at\", \"last_error\", \"activated_at\", \"archived_at\", \"created_at\", \"updated_at\" from \"chat_endpoints\" where (\"chat_endpoints\".\"company_id\" = $1 and \"chat_endpoints\".\"id\" = $2) limit $3 for no key update nowait\nparams: 222c2881-f338-4786-a200-e0f9ed5efb03,ee317e13-b832-4f4b-9450-fe919accc86a,1"
+[22:10:27] [33mWARN[39m: [36mGitHub setup secret rotated but completion audit failed[39m [90m{"endpointId":"26779dc5-d4be-45ae-a793-7a10854c5ac4","rotationId":"758f5ead-e1aa-463c-80ca-6d477459c9b6"}[39m
+    error: "simulated setup-secret audit outage"
+[22:10:40] [33mWARN[39m: [36mdurable GitHub webhook processing deferred[39m [90m{"actionId":"82c6f910-2680-467b-8be6-942ea31d284d","endpointId":"48b232ed-c59c-4735-b5b5-755c410a22d2"}[39m
+    error: "GitHub App needs the documented minimum access for: issues"
+[22:10:41] [33mWARN[39m: [36mdurable GitHub webhook processing deferred[39m [90m{"actionId":"64f1ed32-0ff8-45a8-bb45-c22e403cf4e0","endpointId":"cc47291d-e27a-42f2-829a-17b4fb469512"}[39m
+    error: "GitHub inventory failed: the active installation has not granted the required access for: issues. Approve the GitHub App permission update, then retry"
+[22:10:44] [33mWARN[39m: [36mdurable GitHub webhook processing deferred[39m [90m{"actionId":"75ac6c37-d406-48ad-9fec-e0a4748948ec","endpointId":"225a5b71-4fa6-490c-8544-f3a0f861e47d"}[39m
+    error: "GitHub inventory failed: this chat connection requires a dedicated GitHub App with exactly one active installation"
+[22:10:53] [33mWARN[39m: [36mGitHub webhook recovery deferred[39m [90m{"endpointId":"743487ca-fe3b-4054-9fc3-9a0ec1a79ecd"}[39m
+    error: "GitHub webhook recovery could not be confirmed (github_webhook_recovery_transport)."
+[22:10:54] [33mWARN[39m: [36mGitHub webhook recovery deferred[39m [90m{"endpointId":"9580cf50-e9f6-44f6-b54c-68aaf92d90a0"}[39m
+    error: "GitHub recovery history ordering changed"
+[22:10:58] [33mWARN[39m: [36mchat provider lifecycle retry failed[39m [90m{"endpointId":"48b232ed-c59c-4735-b5b5-755c410a22d2","deliveryId":"c4e51b04-6558-4f33-bfef-4eacf55c6d68"}[39m
+    error: "The GitHub App identity changed while reconciling this connection"
+[22:10:59] [33mWARN[39m: [36mchat provider lifecycle retry failed[39m [90m{"endpointId":"cc47291d-e27a-42f2-829a-17b4fb469512","deliveryId":"b3e852ed-0701-4c83-b4d2-369adafc873e"}[39m
+    error: "The GitHub App identity changed while reconciling this connection"
+[22:10:59] [33mWARN[39m: [36mchat provider lifecycle retry failed[39m [90m{"endpointId":"225a5b71-4fa6-490c-8544-f3a0f861e47d","deliveryId":"9ed2341e-b58d-48bb-87f4-820422326996"}[39m
+    error: "The GitHub App identity changed while reconciling this connection"
+[22:11:04] [33mWARN[39m: [36mlost Discord Gateway ownership; stopping the local listener[39m [90m{"endpointId":"89cdb606-d8a0-445e-a9a4-43d82ececfa8"}[39m
+[22:11:06] [33mWARN[39m: [36mDiscord root thread creation will be retried from the durable receipt[39m [90m{"endpointId":"64e34e28-2acb-4a2c-9dea-144c0eb88675","providerEventId":"discord:1457808928258658549:333333333333333333:555555555555555555:555555555555555555"}[39m
+    error: "temporary Discord API failure"
+[22:11:06] [33mWARN[39m: [36mDiscord root thread creation will be retried from the durable receipt[39m [90m{"endpointId":"64e34e28-2acb-4a2c-9dea-144c0eb88675","providerEventId":"discord:1457808928258658549:333333333333333333:555555555555555556:555555555555555556"}[39m
+    error: "provider detail must not escape"
+[22:11:09] [33mWARN[39m: [36mTelegram maintenance was deferred[39m [90m{"endpointId":"41c684cb-95c6-4ed0-9732-a41883e9f2da","operation":"register_commands","retryAt":"2026-09-26T06:11:09.137Z"}[39m
+[22:11:09] [33mWARN[39m: [36mchat provider lifecycle retry failed[39m [90m{"endpointId":"48b232ed-c59c-4735-b5b5-755c410a22d2","deliveryId":"c4e51b04-6558-4f33-bfef-4eacf55c6d68"}[39m
+    error: "Unexpected provider request: https://api.github.com/app"
+[22:11:09] [33mWARN[39m: [36mchat provider lifecycle retry failed[39m [90m{"endpointId":"cc47291d-e27a-42f2-829a-17b4fb469512","deliveryId":"b3e852ed-0701-4c83-b4d2-369adafc873e"}[39m
+    error: "Unexpected provider request: https://api.github.com/app"
+[22:11:09] [33mWARN[39m: [36mchat provider lifecycle retry failed[39m [90m{"endpointId":"225a5b71-4fa6-490c-8544-f3a0f861e47d","deliveryId":"9ed2341e-b58d-48bb-87f4-820422326996"}[39m
+    error: "Unexpected provider request: https://api.github.com/app"
+[22:11:09] [33mWARN[39m: [36mTelegram maintenance was deferred[39m [90m{"endpointId":"41c684cb-95c6-4ed0-9732-a41883e9f2da","operation":"remove_endpoint","retryAt":"2026-09-26T07:11:09.294Z"}[39m
+[22:11:09] [33mWARN[39m: [36mchat provider lifecycle retry failed[39m [90m{"endpointId":"48b232ed-c59c-4735-b5b5-755c410a22d2","deliveryId":"c4e51b04-6558-4f33-bfef-4eacf55c6d68"}[39m
+    error: "Unexpected provider request: https://api.github.com/app"
+[22:11:09] [33mWARN[39m: [36mchat provider lifecycle retry failed[39m [90m{"endpointId":"cc47291d-e27a-42f2-829a-17b4fb469512","deliveryId":"b3e852ed-0701-4c83-b4d2-369adafc873e"}[39m
+    error: "Unexpected provider request: https://api.github.com/app"
+[22:11:09] [33mWARN[39m: [36mchat provider lifecycle retry failed[39m [90m{"endpointId":"225a5b71-4fa6-490c-8544-f3a0f861e47d","deliveryId":"9ed2341e-b58d-48bb-87f4-820422326996"}[39m
+    error: "Unexpected provider request: https://api.github.com/app"
+[22:11:09] [33mWARN[39m: [36mchat provider lifecycle retry failed[39m [90m{"endpointId":"48b232ed-c59c-4735-b5b5-755c410a22d2","deliveryId":"c4e51b04-6558-4f33-bfef-4eacf55c6d68"}[39m
+    error: "Unexpected provider request: https://api.github.com/app"
+[22:11:09] [33mWARN[39m: [36mchat provider lifecycle retry failed[39m [90m{"endpointId":"cc47291d-e27a-42f2-829a-17b4fb469512","deliveryId":"b3e852ed-0701-4c83-b4d2-369adafc873e"}[39m
+    error: "Unexpected provider request: https://api.github.com/app"
+[22:11:09] [33mWARN[39m: [36mchat provider lifecycle retry failed[39m [90m{"endpointId":"225a5b71-4fa6-490c-8544-f3a0f861e47d","deliveryId":"9ed2341e-b58d-48bb-87f4-820422326996"}[39m
+    error: "Unexpected provider request: https://api.github.com/app"
+[22:11:17] [33mWARN[39m: [36mSlack session stop cancellation deferred[39m [90m{"actionId":"33c79f98-f7e4-4afa-a68f-2cfd6f07902f","endpointId":"7d0f36a4-da95-492b-8114-f30c0033e2fd","attempts":1}[39m
+    error: "synthetic cancellation transport failure"
+[22:11:20] [33mWARN[39m: [36mcould not renew external chat conversation lease[39m [90m{"endpointId":"5b14257c-6362-4cd9-b321-4a2b410907eb"}[39m
+    error: "simulated lease-renewal database outage"
+[22:11:28] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"58a5ef9f-2933-429f-a8a1-0c88bb1eb36d","publicationId":"468e4a98-252d-4118-b217-566e7b17c977","disposition":"delivery_unknown"}[39m
+    error: "connection closed after provider acceptance became unknown"
+[22:11:33] [33mWARN[39m: [36mexternal chat delivery will retry in receipt order[39m [90m{"endpointId":"ffbfd4c9-7480-4c67-8041-cc69d6169fd8","deliveryId":"463db104-c02c-4004-abb6-6518db60e686"}[39m
+    error: "This accepted chat message is no longer authorized to start work"
+[22:11:38] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"24b2adf8-dd93-4e0d-90f3-049ef229fea5","publicationId":"781996a9-b6a7-4e96-be50-e6a5c8c902ad","disposition":"delivery_unknown"}[39m
+    error: "older control confirmation response lost"
+[22:11:53] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"c379eaf4-cbd5-476f-bbb0-46d16c7e1fbf","publicationId":"b3ed79b9-4438-456e-b316-8dc44e1a74e8","disposition":"failed"}[39m
+    error: "Chat publication attachment is invalid or outside its authorized task comment"
+[22:11:54] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"d3532d46-e95e-40a8-9669-eee81b2f94c4","publicationId":"144e1a0a-ba55-4b3d-80a4-b46cad6ac398","disposition":"delivery_unknown"}[39m
+    error: "Simulated picture response lost after acceptance"
+[22:11:54] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"34408cf5-3d0b-40ab-af7e-524577b36a0e","publicationId":"37e92eec-d426-463a-9545-5af8228b0176","disposition":"delivery_unknown"}[39m
+    error: "Provider accepted the publication, but Paperclip could not confirm its durable result"
+[22:11:58] [33mWARN[39m: [36mexternal chat attachment was rejected[39m [90m{"endpointId":"84a26f52-eb32-49b1-8872-1ddeba119fe8","issueId":"59472731-8a7d-4079-90a3-9820a77eac7a","attachmentName":"inline.png"}[39m
+    error: "Teams inline image download unavailable"
+[22:12:04] [33mWARN[39m: [36mexternal chat attachment was rejected[39m [90m{"endpointId":"da357859-a802-4f86-b5f6-f9a0afb3a0d9","issueId":"23ed7e7e-a637-443d-a333-8a20f8828d45","deliveryId":"513c148a-07bb-4854-bed5-a4d29eab420e","attachmentDiagnosticCode":"github_attachment_canonical_response_unavailable","attachmentName":"public-proof.txt"}[39m
+    error: "github_attachment_canonical_response_unavailable"
+[22:12:06] [33mWARN[39m: [36mexternal chat attachment was rejected[39m [90m{"endpointId":"4cf57e10-6a18-46d5-b1b8-82758d76970a","issueId":"ab79916f-1980-4e2c-a0c6-0de6cba380d4","deliveryId":"fb1cf1a1-20f7-40dc-8429-363dfb652d95","attachmentDiagnosticCode":"github_attachment_download_failed","attachmentName":"public-proof.txt"}[39m
+    error: "github_attachment_download_failed"
+[22:12:06] [33mWARN[39m: [36mexternal chat attachment was rejected[39m [90m{"endpointId":"4cf57e10-6a18-46d5-b1b8-82758d76970a","issueId":"ab79916f-1980-4e2c-a0c6-0de6cba380d4","deliveryId":"fb1cf1a1-20f7-40dc-8429-363dfb652d95","attachmentDiagnosticCode":"github_attachment_download_failed","attachmentName":"proof-1.txt"}[39m
+    error: "github_attachment_download_failed"
+[22:12:06] [33mWARN[39m: [36mexternal chat attachment was rejected[39m [90m{"endpointId":"4cf57e10-6a18-46d5-b1b8-82758d76970a","issueId":"ab79916f-1980-4e2c-a0c6-0de6cba380d4","deliveryId":"fb1cf1a1-20f7-40dc-8429-363dfb652d95","attachmentDiagnosticCode":"github_attachment_download_failed","attachmentName":"proof-2.txt"}[39m
+    error: "github_attachment_download_failed"
+[22:12:07] [33mWARN[39m: [36mexternal chat delivery will retry in receipt order[39m [90m{"endpointId":"8ae58a5e-9332-4f11-82c6-9533aee94943","deliveryId":"fcc05319-aebd-41ed-870d-4a978718ff39"}[39m
+    error: "This accepted chat message is no longer authorized to start work"
+[22:12:08] [33mWARN[39m: [36mexternal chat delivery will retry in receipt order[39m [90m{"endpointId":"e899ac30-1652-4e3d-a099-15254c4a6abc","deliveryId":"f14b1c92-25ab-4765-8147-ddc097ceadfb"}[39m
+    error: "This accepted chat message is no longer authorized to start work"
+[22:12:08] [33mWARN[39m: [36mexternal chat delivery will retry in receipt order[39m [90m{"endpointId":"1696e199-36fe-4ea8-8aed-798bb6128f66","deliveryId":"8661a198-c913-4f0f-a12a-2a3029a77025"}[39m
+    error: "The attachment's current chat admission is unavailable"
+[22:12:09] [33mWARN[39m: [36mexternal chat delivery will retry in receipt order[39m [90m{"endpointId":"2040f296-5226-4a59-a755-66622e5cb54a","deliveryId":"c29ad118-d4e0-4fc2-b498-f5c9cbc3b090"}[39m
+    error: "The attachment's current chat admission is unavailable"
+[22:12:10] [33mWARN[39m: [36mexternal chat attachment was rejected[39m [90m{"endpointId":"4b2ec65f-e14f-4613-a421-f77b6929ab18","issueId":"9683e1b1-b082-46a9-972d-6ee9b7ff9485","deliveryId":"07878e3a-2534-4d0f-a742-fbfceb89d5a9","attachmentDiagnosticCode":"github_attachment_canonical_mapping_ambiguous","attachmentName":"github-attachment-11111111-2222-3333-4444-555555555555"}[39m
+    error: "github_attachment_canonical_mapping_ambiguous"
+[22:12:11] [33mWARN[39m: [36mfailed to wake assignee on issue assignment[39m [90m{"issueId":"30f0bed0-eb34-4ac1-97b6-a5e4999cb9ea"}[39m
+    err: {
+      "type": "Error",
+      "message": "injected scheduler unavailable",
+      "stack":
+          Error: injected scheduler unavailable
+              at wakeup (/home/yuanjian/dev/ANC-tok-224-ui/server/src/__tests__/chat-channels.integration.test.ts:21267:19)
+              at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    }
+[22:12:11] [33mWARN[39m: [36maccepted inbound chat wakeup will retry[39m [90m{"deliveryId":"1e3ea8b5-08cf-4cd0-892c-214e23d0616b"}[39m
+    error: "injected scheduler unavailable"
+[22:12:11] [33mWARN[39m: [36mfailed to wake assignee on issue assignment[39m [90m{"issueId":"6af46d32-efb2-4535-a31f-f370afc843f1"}[39m
+    err: {
+      "type": "Error",
+      "message": "injected scheduler unavailable",
+      "stack":
+          Error: injected scheduler unavailable
+              at wakeup (/home/yuanjian/dev/ANC-tok-224-ui/server/src/__tests__/chat-channels.integration.test.ts:21369:17)
+              at Mock (file:///home/yuanjian/dev/ANC-tok-224-ui/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+              at Object.wakeup (/home/yuanjian/dev/ANC-tok-224-ui/server/src/__tests__/chat-channels.integration.test.ts:1131:28)
+              at queueIssueAssignmentWakeup (/home/yuanjian/dev/ANC-tok-224-ui/server/src/services/issue-assignment-wakeup.ts:46:6)
+              at processInboundWakeup (/home/yuanjian/dev/ANC-tok-224-ui/server/src/services/chat-channels.ts:14368:13)
+              at processTicksAndRejections (node:internal/process/task_queues:104:5)
+              at processMessage (/home/yuanjian/dev/ANC-tok-224-ui/server/src/services/chat-channels.ts:16494:13)
+              at handleSdkMessage (/home/yuanjian/dev/ANC-tok-224-ui/server/src/services/chat-channels.ts:17561:7)
+              at deliverMessage (/home/yuanjian/dev/ANC-tok-224-ui/server/src/__tests__/chat-channels.integration.test.ts:3475:5)
+              at /home/yuanjian/dev/ANC-tok-224-ui/server/src/__tests__/chat-channels.integration.test.ts:21372:5
+    }
+[22:12:11] [33mWARN[39m: [36maccepted inbound chat wakeup will retry[39m [90m{"deliveryId":"093b4480-6a26-40d5-ac9d-21078911260a"}[39m
+    error: "injected scheduler unavailable"
+[22:12:13] [33mWARN[39m: [36mexternal chat receipt reaction deferred[39m [90m{"endpointId":"ff9b4a10-41ed-4f64-b1db-1d23b017e12d","deliveryId":"e8e369e2-1d45-4cff-84aa-44dce9d2f2ed","attempts":1,"disposition":"failed","operation":"add","retryAt":null}[39m
+[22:12:30] [33mWARN[39m: [36mexternal chat receipt reaction deferred[39m [90m{"endpointId":"d827dfba-ead2-472f-9479-756ddb28e7c9","deliveryId":"f58ce320-ec7f-44bb-897d-86eb78f0a9dd","attempts":1,"disposition":"retry","operation":"remove","retryAt":"2026-09-26T05:13:30.367Z"}[39m
+[22:12:31] [33mWARN[39m: [36mexternal chat receipt reaction deferred[39m [90m{"endpointId":"e552bc78-c59f-4f95-8039-516c8f7bc0b8","deliveryId":"e073f34d-009d-456b-9319-ad9d2b87755c","attempts":1,"disposition":"delivery_unknown","operation":"remove","retryAt":"2026-09-26T05:12:31.248Z"}[39m
+[22:12:31] [33mWARN[39m: [36mexternal chat receipt reaction deferred[39m [90m{"endpointId":"a2067938-198d-4176-9c49-108dd2e25890","deliveryId":"fe35fd2d-21c0-4e93-aed7-ac1d6378dccc","attempts":1,"disposition":"delivery_unknown","operation":"remove","retryAt":"2026-09-26T05:12:32.088Z"}[39m
+[22:12:32] [33mWARN[39m: [36mexternal chat receipt reaction deferred[39m [90m{"endpointId":"a41095e6-c244-431b-9be9-b46b3499edb8","deliveryId":"f2f4a3ea-78c5-4a2d-b51a-46336ca5c57f","attempts":1,"disposition":"delivery_unknown","operation":"remove","retryAt":"2026-09-26T05:12:32.816Z"}[39m
+[22:12:33] [33mWARN[39m: [36mexternal chat receipt reaction deferred[39m [90m{"endpointId":"ba1b4606-d924-4418-b0a3-ddc964511d8a","deliveryId":"7ecd8309-6d94-4890-959f-9fc592d1f1f7","attempts":1,"disposition":"endpoint_attention","operation":"add","retryAt":null}[39m
+[22:12:34] [33mWARN[39m: [36mexternal chat receipt reaction deferred[39m [90m{"endpointId":"5bcac30a-f505-4115-a552-cfecb71243a0","deliveryId":"8bb6000e-86be-4a7e-926f-c7a3d4ae1087","attempts":1,"disposition":"retry","operation":"add","retryAt":"2026-09-26T05:12:34.092Z"}[39m
+[22:12:34] [33mWARN[39m: [36mexternal chat receipt reaction deferred[39m [90m{"endpointId":"81b296c7-0e75-4514-b073-fbfd8e7bf9cd","deliveryId":"99cd417f-2205-4264-91f2-5f758e20b3d7","attempts":1,"disposition":"delivery_unknown","operation":"add","retryAt":"2026-09-26T05:12:34.713Z"}[39m
+[22:12:34] [33mWARN[39m: [36mexternal chat receipt reaction deferred[39m [90m{"endpointId":"81b296c7-0e75-4514-b073-fbfd8e7bf9cd","deliveryId":"99cd417f-2205-4264-91f2-5f758e20b3d7","attempts":2,"disposition":"delivery_unknown","operation":"add","retryAt":"2026-09-26T05:12:34.847Z"}[39m
+[22:12:37] [33mWARN[39m: [36mexternal chat receipt reaction deferred[39m [90m{"endpointId":"89e0f41c-c044-40e2-b97e-131816a4c6ba","deliveryId":"ece5ae3f-2a76-403f-be38-b375ad98a8c4","attempts":1,"disposition":"retry","operation":"add","retryAt":"2026-09-26T05:13:37.155Z"}[39m
+[22:12:37] [33mWARN[39m: [36mexternal chat receipt reaction deferred[39m [90m{"endpointId":"d4dd6bf2-79d4-4258-be12-94de51f52c32","deliveryId":"51f92ec1-5773-4830-9019-e86bd99cf837","attempts":1,"disposition":"delivery_unknown","operation":"add","retryAt":"2026-09-26T05:12:37.580Z"}[39m
+[22:12:39] [33mWARN[39m: [36mexternal chat receipt reaction deferred[39m [90m{"endpointId":"bd452817-35d0-4940-8af8-1b1b8d02f59f","deliveryId":"7d8f1313-6ea7-4a1a-9e85-40f64614920d","attempts":1,"disposition":"delivery_unknown","operation":"add","retryAt":"2026-09-26T05:12:39.911Z"}[39m
+[22:12:40] [33mWARN[39m: [36mexternal chat receipt reaction deferred[39m [90m{"endpointId":"08cc3427-91ac-4258-afc5-a107543371e1","deliveryId":"e0d4b43c-8731-4d9e-b0d9-b9a61f2a756d","attempts":1,"disposition":"delivery_unknown","operation":"add","retryAt":"2026-09-26T05:12:40.322Z"}[39m
+[22:12:45] [33mWARN[39m: [36mruntime connection tools could not be delivered[39m [90m{"companyId":"9c1127a4-b83c-4743-be1a-79e7a44fe93d","agentId":"a1facacb-7845-44ef-9c16-25cb9b81eb8f","runId":"008e9f32-1304-4bb3-9b18-6f6f7397a94a"}[39m
+[22:12:46] [33mWARN[39m: [36mruntime connection tools could not be delivered[39m [90m{"companyId":"9c1127a4-b83c-4743-be1a-79e7a44fe93d","agentId":"a1facacb-7845-44ef-9c16-25cb9b81eb8f","runId":"1e46b8b6-a8f6-4ec8-bce1-e84614ca7f8f"}[39m
+[22:12:47] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"2a486eea-0095-4004-b20c-378620b322c8","publicationId":"c94e8216-ce38-4e7b-a22a-984a84b87f53","disposition":"delivery_unknown"}[39m
+    error: "socket reset after write"
+[22:12:50] [33mWARN[39m: [36mchat provider effect reconciliation failed[39m [90m{"endpointId":"ac3c577e-1b3b-4a10-94b9-097fb69cce85","actionId":"ff8908e7-c40d-45ad-a1b7-26c9ba9bbd78"}[39m
+    error: "Telegram private response acceptance could not be confirmed"
+[22:12:53] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"0b999b75-32cb-46d3-ae42-c92b7242b1e8","publicationId":"2c1e98e6-5c80-4114-9ef4-33365cafeb05","disposition":"delivery_unknown"}[39m
+    error: "Provider accepted the publication, but Paperclip could not confirm its durable result"
+[22:13:03] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"f574f476-597d-44bd-92dc-cb7cb8d9d130","publicationId":"98650c53-fa20-44bd-95f8-b66c56b6ae07","disposition":"delivery_unknown"}[39m
+    error: "Consumer edit receipt lost"
+[22:13:03] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"3e39eccd-e925-4564-af52-b2e752e96110","publicationId":"23db1dda-6ba9-4027-a302-8465d2730c80","disposition":"delivery_unknown"}[39m
+    error: "Consumer edit receipt lost"
+[22:13:07] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"14afd303-0f06-4d41-a9e7-dbe3cee586ce","publicationId":"6dbeaf32-9465-44c4-b7ae-5b83a3c6018e","disposition":"failed"}[39m
+    error: "Rejected close edit"
+[22:13:08] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"fdd06374-b1cc-421b-b19f-171643775d01","publicationId":"facce360-6285-47b6-98b9-dde640ffc2b7","disposition":"delivery_unknown"}[39m
+    error: "Provider accepted the publication, but Paperclip could not confirm its durable result"
+[22:13:17] [33mWARN[39m: [36mSlack session status update did not complete; message delivery is unchanged[39m [90m{"endpointId":"a5a5b271-708b-4b05-83c4-580496adc154","actionId":"a7f41396-6329-46d6-b115-fd0aaf4623a7","retryable":true}[39m
+    error: "Slack session status failed (ratelimited)"
+[22:13:18] [33mWARN[39m: [36mSlack session status update did not complete; message delivery is unchanged[39m [90m{"endpointId":"a5a5b271-708b-4b05-83c4-580496adc154","actionId":"a7f41396-6329-46d6-b115-fd0aaf4623a7","retryable":false}[39m
+    error: "Slack session status failed (missing_scope)"
+[22:13:27] [31mERROR[39m: [36mcould not durably finalize chat publication failure[39m [90m{"endpointId":"62cf4b3f-cdff-4484-a93c-476262f5b542","publicationId":"21d7ae5b-56e5-4a01-a071-6317333feac4"}[39m
+    error: "Chat publication attempt ownership was lost before completion"
+[22:13:48] [31mERROR[39m: [36mcould not durably finalize chat publication failure[39m [90m{"endpointId":"dccffab7-ece1-4055-b4e2-f1fb0054c71c","publicationId":"6fd50cdd-be4f-498e-93e2-f09b0e9e5c86"}[39m
+    error: "Chat publication attempt ownership was lost before completion"
+[22:13:30] [33mWARN[39m: [36mlost chat credential mutation lease ownership[39m [90m{"endpointId":"78d83192-7fa4-4a9a-b983-b3a7639a01e9"}[39m
+    error: "Chat credential mutation lease ownership was lost before the operation completed"
+[22:13:30] [33mWARN[39m: [36mlost chat credential mutation lease ownership[39m [90m{"endpointId":"78d83192-7fa4-4a9a-b983-b3a7639a01e9"}[39m
+    error: "Chat credential mutation lease ownership was lost before the operation completed"
+[22:13:30] [33mWARN[39m: [36mTelegram maintenance was deferred[39m [90m{"endpointId":"78d83192-7fa4-4a9a-b983-b3a7639a01e9","operation":"register_commands","retryAt":"2026-09-26T05:13:32.725Z"}[39m
+[22:13:30] [33mWARN[39m: [36mlost chat credential mutation lease ownership[39m [90m{"endpointId":"94c9f460-dd2c-42a3-b80a-093167717b96"}[39m
+    error: "Chat credential mutation lease ownership was lost before the operation completed"
+[22:13:30] [33mWARN[39m: [36mlost chat credential mutation lease ownership[39m [90m{"endpointId":"94c9f460-dd2c-42a3-b80a-093167717b96"}[39m
+    error: "Chat credential mutation lease ownership was lost before the operation completed"
+[22:13:30] [33mWARN[39m: [36mTelegram maintenance was deferred[39m [90m{"endpointId":"94c9f460-dd2c-42a3-b80a-093167717b96","operation":"remove_endpoint","retryAt":"2026-09-26T05:13:31.905Z"}[39m
+[22:13:31] [33mWARN[39m: [36mlost chat credential mutation lease ownership[39m [90m{"endpointId":"282d35f5-65c7-467c-91ec-f28ea5b127dd"}[39m
+    error: "Chat credential mutation lease ownership was lost before the operation completed"
+[22:13:31] [33mWARN[39m: [36mSlack task start will retry or await explicit resolution[39m [90m{"actionId":"4eb15653-f382-4e58-a7a8-dedb93b6c789"}[39m
+    error: "Chat credential mutation lease ownership was lost before the operation completed"
+[22:13:31] [33mWARN[39m: [36mSlack task start will retry or await explicit resolution[39m [90m{"actionId":"93a2e06a-653f-4d55-8dde-96fd343cf5e2"}[39m
+    error: "Chat credential mutation lease ownership was lost before the operation completed"
+[22:13:31] [33mWARN[39m: [36mSlack task start will retry or await explicit resolution[39m [90m{"actionId":"0570bd9b-b5ba-4b1f-b0a7-d91631b4f8df"}[39m
+    error: "Unauthorized"
+[22:13:32] [31mERROR[39m: [36mcould not durably finalize chat publication failure[39m [90m{"endpointId":"85491358-0c61-4794-b69b-1b8da78c1b7a","publicationId":"3c0c7179-7a14-48f2-938d-fba84d53ba10"}[39m
+    error: "Chat publication attempt ownership was lost before completion"
+[22:13:33] [31mERROR[39m: [36mcould not durably finalize chat publication failure[39m [90m{"endpointId":"39e699c3-ad79-4576-aaf8-58f44a8bb0a9","publicationId":"bb149967-54e2-40e9-b382-78020114e51a"}[39m
+    error: "Chat publication attempt ownership was lost before completion"
+[22:13:36] [33mWARN[39m: [36mexternal chat receipt reaction deferred[39m [90m{"endpointId":"39442940-4e80-48c3-ab10-0924b57c155b","deliveryId":"53dd2ed3-ba33-4a4c-b6ce-0c33fe0b7b27","attempts":1,"disposition":"retry","operation":"add","retryAt":"2026-09-26T05:14:36.357Z"}[39m
+[22:13:36] [33mWARN[39m: [36mexternal chat receipt reaction deferred[39m [90m{"endpointId":"39442940-4e80-48c3-ab10-0924b57c155b","deliveryId":"53dd2ed3-ba33-4a4c-b6ce-0c33fe0b7b27","attempts":1,"disposition":"delivery_unknown","operation":"remove","retryAt":"2026-09-26T05:13:36.597Z"}[39m
+[22:13:37] [33mWARN[39m: [36mexternal chat question resolved but post-commit follow-up failed[39m [90m{"endpointId":"d1124dc9-4eac-4321-b6fe-f1dc6a341d18","interactionId":"5be2ff1d-a5dc-4996-99ca-12e4712ecd43"}[39m
+    error: "Interaction has already been resolved"
+[22:13:38] [33mWARN[39m: [36mDiscord correction draft cleanup will be retried[39m [90m{"endpointId":"07df232b-b28b-4714-9b2c-3b3f5a0708ab","code":"discord_question_correction_cleanup_failed"}[39m
+[22:13:39] [33mWARN[39m: [36mDiscord correction draft cleanup will be retried[39m [90m{"endpointId":"c5f03178-02cd-4895-ad72-5c3349d5c527","code":"discord_question_correction_cleanup_failed"}[39m
+[22:13:41] [33mWARN[39m: [36mcould not reconcile Discord Gateway runtime[39m [90m{"endpointId":"d36ae444-ffe0-45dd-a1e3-516a3d3ff9ca"}[39m
+    error: "synthetic initialization failed"
+[22:13:41] [33mWARN[39m: [36mcould not reconcile Discord Gateway runtime[39m [90m{"endpointId":"07eb5727-c778-4ff6-9198-03fc02b5f2b5"}[39m
+    error: "Chat endpoint runtime changed while it was initializing"
+[22:13:42] [33mWARN[39m: [36mDiscord command registration remains unconfirmed[39m [90m{"endpointId":"e38c4b70-ced7-4cb2-84ec-4175193abd21"}[39m
+[22:13:46] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"947ffd31-a4cf-403a-9e4f-f6b10e3592c9","publicationId":"1528fa5d-4ba5-435c-a458-d0fbb7d34e57","disposition":"retry"}[39m
+    error: "Discord attachment rate limited"
+[22:13:46] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"947ffd31-a4cf-403a-9e4f-f6b10e3592c9","publicationId":"b6107f19-fbe0-4272-8b44-67f9dd9fcc58","disposition":"failed"}[39m
+    error: "Discord rejected the attachment"
+[22:13:46] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"947ffd31-a4cf-403a-9e4f-f6b10e3592c9","publicationId":"c58f5694-e34a-4dd7-a6a3-6d64678133c9","disposition":"delivery_unknown"}[39m
+    error: "Discord attachment response was lost"
+[22:13:47] [33mWARN[39m: [36mchat publication preparation failed[39m [90m{"endpointId":"4d3f6f2b-a4d2-4e48-bf1e-067b748f7706","publicationId":"e11894b1-45cf-4f11-a727-610b30b7a6b5","terminal":true}[39m
+    error: "Durable chat publication payload is malformed"
+[22:13:47] [33mWARN[39m: [36mchat publication preparation failed[39m [90m{"endpointId":"4d3f6f2b-a4d2-4e48-bf1e-067b748f7706","publicationId":"75ee1c90-e7ee-42f2-bd29-084422df9329","terminal":false}[39m
+    error: "temporary preparation outage"
+[22:13:49] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"01cff6a5-1951-46d9-9656-1bd00eea960d","publicationId":"35a6d78b-b2e7-4925-a86a-6289186aa3bd","disposition":"retry"}[39m
+    error: "Telegram part rate limited"
+[22:13:50] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"937ca54a-517f-4137-82c0-b9d114ca90df","publicationId":"f0e1bf4e-2ca9-4c13-8c59-c80f561b1b28","disposition":"retry"}[39m
+    error: "Telegram document rate limited"
+[22:13:51] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"75ae54a2-cd82-46c6-a78d-eedbf9091158","publicationId":"8badc204-84ee-45d9-b284-be57aa392f88","disposition":"retry"}[39m
+    error: "provider rate limit"
+[22:13:52] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"f5f5b8d5-cce9-47fd-b19a-918de02d9b8d","publicationId":"7bbec5a9-d017-4b3c-a582-17b9813fc1ba","disposition":"endpoint_attention"}[39m
+    error: "provider token expired"
+[22:13:53] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"18aa328e-338f-46b1-a37d-21d56ef71c85","publicationId":"c7294ccf-051e-4aa3-bf8a-d4489d26bffe","disposition":"resource_unavailable"}[39m
+    error: "provider destination missing"
+[22:13:54] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"de455b2c-85ad-4b14-b4f3-cfa6714218df","publicationId":"8276cf31-08e8-4ab1-93aa-af0f8ad3df89","disposition":"resource_unavailable"}[39m
+    error: "Discord API error: 403"
+[22:13:54] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"d332ed44-dbf0-4148-8be9-7bb6eab4da6c","publicationId":"0266155a-cb88-4888-a3e6-6e6f748ee67d","disposition":"failed"}[39m
+    error: "untrusted Teams service URL"
+[22:13:55] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"fe73b347-1966-4642-8bad-e932af5bf8b9","publicationId":"8606b060-bcd6-49a3-b729-d6112d50288a","disposition":"failed"}[39m
+    error: "Slack block fallback failed"
+[22:13:56] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"4bfd6ee6-65ad-42c2-9216-87424bbb8e98","publicationId":"544547a0-7174-42d7-9c9c-09ae672a5b0b","disposition":"resource_unavailable"}[39m
+    error: "Permission denied: cannot sendMessage in telegram"
+[22:13:57] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"abb079f4-afc2-41e1-a570-63c4626e020a","publicationId":"4c8e8681-9ec9-43c5-8e0d-b0ed860c3974","disposition":"endpoint_attention"}[39m
+    error: "Unauthorized"
+[22:13:57] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"49a24a0e-93da-419a-8e97-89970f9e59bd","publicationId":"01e3deca-f0c3-4d7e-b3e3-79a0064659de","disposition":"resource_unavailable"}[39m
+    error: "Permission denied: cannot sendMessage in telegram"
+[22:13:58] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"a5433d1b-32b8-4d01-8fef-e247c2ebebbe","publicationId":"1d28d3ff-9990-4ba3-a1f9-2633c8a09a23","disposition":"endpoint_attention"}[39m
+    error: "Unauthorized"
+[22:14:05] [33mWARN[39m: [36mcould not record denied external chat action[39m [90m{"endpointId":"3649acf6-e22f-4ef9-850a-2b71d33b88af","provider":"telegram"}[39m
+    error: "injected denied-action persistence failure"
+[22:14:07] [33mWARN[39m: [36mfailed to queue external interaction continuation wake[39m [90m{"endpointId":"995ce37b-7420-415b-a216-c649a8a01c63","interactionId":"0a97f2b8-50e0-447f-87c2-b2491ceb3e49","attemptCount":1}[39m
+    error: "injected permanent confirmation wake failure"
+[22:14:07] [33mWARN[39m: [36mfailed to queue external interaction continuation wake[39m [90m{"endpointId":"995ce37b-7420-415b-a216-c649a8a01c63","interactionId":"0a97f2b8-50e0-447f-87c2-b2491ceb3e49","attemptCount":2}[39m
+    error: "injected permanent confirmation wake failure"
+[22:14:08] [33mWARN[39m: [36mfailed to queue external interaction continuation wake[39m [90m{"endpointId":"995ce37b-7420-415b-a216-c649a8a01c63","interactionId":"0a97f2b8-50e0-447f-87c2-b2491ceb3e49","attemptCount":3}[39m
+    error: "injected permanent confirmation wake failure"
+[22:14:08] [33mWARN[39m: [36mfailed to queue external interaction continuation wake[39m [90m{"endpointId":"995ce37b-7420-415b-a216-c649a8a01c63","interactionId":"0a97f2b8-50e0-447f-87c2-b2491ceb3e49","attemptCount":4}[39m
+    error: "injected permanent confirmation wake failure"
+[22:14:08] [33mWARN[39m: [36mfailed to queue external interaction continuation wake[39m [90m{"endpointId":"995ce37b-7420-415b-a216-c649a8a01c63","interactionId":"0a97f2b8-50e0-447f-87c2-b2491ceb3e49","attemptCount":5}[39m
+    error: "injected permanent confirmation wake failure"
+[22:14:08] [33mWARN[39m: [36mfailed to queue external interaction continuation wake[39m [90m{"endpointId":"995ce37b-7420-415b-a216-c649a8a01c63","interactionId":"0a97f2b8-50e0-447f-87c2-b2491ceb3e49","attemptCount":6}[39m
+    error: "injected permanent confirmation wake failure"
+[22:14:13] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"1cb55d22-1f4c-458c-a016-20200712fa4e","publicationId":"32b09a13-a35e-4b93-be74-a65a8194ce9f","disposition":"failed"}[39m
+    error: "Slack rejected the PNG upload"
+[22:14:17] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"01d589c5-63b4-4bfa-9bac-d5e9d87624c8","publicationId":"02813f26-d75d-4a52-9aa0-891525e1a3b2","disposition":"delivery_unknown"}[39m
+    error: "socket reset after write"
+[22:14:24] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"b4fa8382-708a-43bc-8906-c0c2baa68eba","publicationId":"6fab86ac-27a2-4cf6-a574-fdebd012150e","disposition":"delivery_unknown"}[39m
+    error: "socket closed after the second upload request was written"
+[22:14:25] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"86a15905-ed04-4c88-b5a1-9c3b38284830","publicationId":"4ef723fe-e338-4d06-b061-200ed31f4f09","disposition":"delivery_unknown"}[39m
+    error: "socket closed after the second upload request was written"
+[22:14:32] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"7a5657c4-7cde-401e-8065-1d4a5543e002","publicationId":"272218fc-1d73-4bd2-971e-8d2585661ffd","disposition":"delivery_unknown"}[39m
+    error: "Provider accepted the publication, but Paperclip could not confirm its durable result"
+[22:14:28] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"0c0c8673-3c6f-4305-b1ce-4e75c995ad4b","publicationId":"4336f44e-d612-4d12-8aae-5b421975fa4f","disposition":"delivery_unknown"}[39m
+    error: "Provider accepted the publication, but Paperclip could not confirm its durable result"
+[22:14:28] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"839bb8dd-db0b-4d83-a415-ce9d8f2f0d6a","publicationId":"77f524a9-5843-4e43-8e6f-a2e40659dd65","disposition":"delivery_unknown"}[39m
+    error: "Provider accepted the publication, but Paperclip could not confirm its durable result"
+[22:14:29] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"7d0b2a81-c63a-4297-be25-5ee5cabfe4c6","publicationId":"3fb553d9-5974-4779-960b-22281c98ccee","disposition":"retry"}[39m
+    error: "Chat publication attachment integrity changed after registration"
+[22:14:30] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"14cc897d-0ea0-4d25-a29e-865f9e07d5f4","publicationId":"0639d66a-31b9-4c0c-8627-1594aefc104b","disposition":"retry"}[39m
+    error: "Attachment storage is unavailable for chat publication"
+[22:14:30] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"14cc897d-0ea0-4d25-a29e-865f9e07d5f4","publicationId":"0639d66a-31b9-4c0c-8627-1594aefc104b","disposition":"failed"}[39m
+    error: "Chat publication attachment is invalid or outside its authorized task comment"
+[22:14:40] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"d210f1ea-075b-4ba3-9097-ccc08123a819","publicationId":"47725671-c46e-4feb-b53c-9ea7a73daa20","disposition":"delivery_unknown"}[39m
+    error: "Network error calling Telegram sendPhoto"
+[22:14:48] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"65a9295f-32be-4a5f-86b7-d6e6e3d9d761","publicationId":"3d1af19e-2ab5-4345-ad15-5cb98d223c51","disposition":"delivery_unknown"}[39m
+    error: "socket reset after write"
+[22:14:50] [33mWARN[39m: [36mDiscord command registration remains unconfirmed[39m [90m{"endpointId":"fcc32120-6111-41d9-877a-280efc4bf12c"}[39m
+[22:14:51] [33mWARN[39m: [36mDiscord command registration remains unconfirmed[39m [90m{"endpointId":"fcc32120-6111-41d9-877a-280efc4bf12c"}[39m
+[22:14:53] [33mWARN[39m: [36mDiscord command registration remains unconfirmed[39m [90m{"endpointId":"fcc32120-6111-41d9-877a-280efc4bf12c"}[39m
+[22:14:54] [33mWARN[39m: [36mDiscord command registration remains unconfirmed[39m [90m{"endpointId":"fcc32120-6111-41d9-877a-280efc4bf12c"}[39m
+[22:14:56] [33mWARN[39m: [36mDiscord command registration remains unconfirmed[39m [90m{"endpointId":"fcc32120-6111-41d9-877a-280efc4bf12c"}[39m
+[22:14:56] [33mWARN[39m: [36mDiscord command registration remains unconfirmed[39m [90m{"endpointId":"fcc32120-6111-41d9-877a-280efc4bf12c"}[39m
+[22:14:58] [33mWARN[39m: [36mDiscord command registration remains unconfirmed[39m [90m{"endpointId":"fcc32120-6111-41d9-877a-280efc4bf12c"}[39m
+[22:14:58] [33mWARN[39m: [36mDiscord command registration remains unconfirmed[39m [90m{"endpointId":"fcc32120-6111-41d9-877a-280efc4bf12c"}[39m
+[22:15:00] [33mWARN[39m: [36mDiscord command registration remains unconfirmed[39m [90m{"endpointId":"fcc32120-6111-41d9-877a-280efc4bf12c"}[39m
+[22:15:01] [33mWARN[39m: [36mDiscord command registration remains unconfirmed[39m [90m{"endpointId":"fcc32120-6111-41d9-877a-280efc4bf12c"}[39m
+[22:15:02] [33mWARN[39m: [36mDiscord command registration remains unconfirmed[39m [90m{"endpointId":"fcc32120-6111-41d9-877a-280efc4bf12c"}[39m
+[22:15:03] [33mWARN[39m: [36mDiscord command registration remains unconfirmed[39m [90m{"endpointId":"fcc32120-6111-41d9-877a-280efc4bf12c"}[39m
+[22:15:05] [33mWARN[39m: [36mDiscord command registration remains unconfirmed[39m [90m{"endpointId":"fcc32120-6111-41d9-877a-280efc4bf12c"}[39m
+[22:15:06] [33mWARN[39m: [36mDiscord command registration remains unconfirmed[39m [90m{"endpointId":"fcc32120-6111-41d9-877a-280efc4bf12c"}[39m
+[22:15:07] [33mWARN[39m: [36mDiscord command registration remains unconfirmed[39m [90m{"endpointId":"fcc32120-6111-41d9-877a-280efc4bf12c"}[39m
+[22:15:08] [33mWARN[39m: [36mDiscord command registration remains unconfirmed[39m [90m{"endpointId":"fcc32120-6111-41d9-877a-280efc4bf12c"}[39m
+[22:15:09] [33mWARN[39m: [36mDiscord command registration remains unconfirmed[39m [90m{"endpointId":"fcc32120-6111-41d9-877a-280efc4bf12c"}[39m
+[22:15:11] [33mWARN[39m: [36mDiscord command registration remains unconfirmed[39m [90m{"endpointId":"fcc32120-6111-41d9-877a-280efc4bf12c"}[39m
+[22:15:12] [33mWARN[39m: [36mDiscord command registration remains unconfirmed[39m [90m{"endpointId":"fcc32120-6111-41d9-877a-280efc4bf12c"}[39m
+[22:15:13] [33mWARN[39m: [36mDiscord command registration remains unconfirmed[39m [90m{"endpointId":"fcc32120-6111-41d9-877a-280efc4bf12c"}[39m
+[22:15:15] [33mWARN[39m: [36mDiscord command registration remains unconfirmed[39m [90m{"endpointId":"fcc32120-6111-41d9-877a-280efc4bf12c"}[39m
+[22:15:15] [33mWARN[39m: [36maccepted inbound chat wakeup will retry[39m [90m{"deliveryId":"28376e6b-daeb-4e3e-b06a-a2fe1609bcad"}[39m
+    error: "Failed query: select \"id\", \"company_id\", \"connection_id\", \"provider\", \"public_id\", \"publication_mode\", \"external_execution_policy\", \"assigned_agent_id\", \"sponsor_user_id\", \"status\", \"deployment_mode\", \"provider_account_id\", \"provider_account_label\", \"bot_external_id\", \"bot_username\", \"bot_display_name\", \"bot_avatar_url\", \"communication_instructions\", \"allow_direct_messages\", \"allow_group_chats\", \"allow_unlinked_people\", \"concurrency_policy\", \"capabilities\", \"setup\", \"health_message\", \"last_event_at\", \"last_publication_at\", \"last_error\", \"activated_at\", \"archived_at\", \"created_at\", \"updated_at\" from \"chat_endpoints\" where (\"chat_endpoints\".\"company_id\" = $1 and \"chat_endpoints\".\"id\" = $2) limit $3 for no key update nowait\nparams: 7bd3d6dc-c58b-49fd-a9e4-c05f46dff14f,57f2b031-d371-4df3-b5bf-33701b170f31,1"
+[22:15:16] [33mWARN[39m: [36mDiscord command registration remains unconfirmed[39m [90m{"endpointId":"fcc32120-6111-41d9-877a-280efc4bf12c"}[39m
+[22:15:17] [33mWARN[39m: [36mDiscord command registration remains unconfirmed[39m [90m{"endpointId":"fcc32120-6111-41d9-877a-280efc4bf12c"}[39m
+[22:15:19] [33mWARN[39m: [36mDiscord command registration remains unconfirmed[39m [90m{"endpointId":"fcc32120-6111-41d9-877a-280efc4bf12c"}[39m
+[22:15:21] [33mWARN[39m: [36mDiscord command registration remains unconfirmed[39m [90m{"endpointId":"fcc32120-6111-41d9-877a-280efc4bf12c"}[39m
+[22:15:23] [33mWARN[39m: [36mDiscord command registration remains unconfirmed[39m [90m{"endpointId":"fcc32120-6111-41d9-877a-280efc4bf12c"}[39m
+[22:15:24] [33mWARN[39m: [36mDiscord command registration remains unconfirmed[39m [90m{"endpointId":"fcc32120-6111-41d9-877a-280efc4bf12c"}[39m
+[22:15:26] [33mWARN[39m: [36mDiscord command registration remains unconfirmed[39m [90m{"endpointId":"fcc32120-6111-41d9-877a-280efc4bf12c"}[39m
+[22:15:28] [33mWARN[39m: [36mDiscord command registration remains unconfirmed[39m [90m{"endpointId":"fcc32120-6111-41d9-877a-280efc4bf12c"}[39m
+[22:15:29] [33mWARN[39m: [36mDiscord command registration remains unconfirmed[39m [90m{"endpointId":"fcc32120-6111-41d9-877a-280efc4bf12c"}[39m
+[22:15:31] [33mWARN[39m: [36mDiscord command registration remains unconfirmed[39m [90m{"endpointId":"fcc32120-6111-41d9-877a-280efc4bf12c"}[39m
+[22:15:32] [33mWARN[39m: [36mDiscord command registration remains unconfirmed[39m [90m{"endpointId":"fcc32120-6111-41d9-877a-280efc4bf12c"}[39m
+[22:15:33] [33mWARN[39m: [36maccepted inbound chat wakeup will retry[39m [90m{"deliveryId":"2319a285-bde1-4ba1-90ba-d5a1ab0311f4"}[39m
+    error: "Failed query: select \"id\", \"company_id\", \"connection_id\", \"provider\", \"public_id\", \"publication_mode\", \"external_execution_policy\", \"assigned_agent_id\", \"sponsor_user_id\", \"status\", \"deployment_mode\", \"provider_account_id\", \"provider_account_label\", \"bot_external_id\", \"bot_username\", \"bot_display_name\", \"bot_avatar_url\", \"communication_instructions\", \"allow_direct_messages\", \"allow_group_chats\", \"allow_unlinked_people\", \"concurrency_policy\", \"capabilities\", \"setup\", \"health_message\", \"last_event_at\", \"last_publication_at\", \"last_error\", \"activated_at\", \"archived_at\", \"created_at\", \"updated_at\" from \"chat_endpoints\" where (\"chat_endpoints\".\"company_id\" = $1 and \"chat_endpoints\".\"id\" = $2) limit $3 for no key update nowait\nparams: 85502752-9328-4fca-bc58-51d1d06cfda7,1bf6511c-e591-4d88-a197-f2899937510a,1"
+[22:15:34] [33mWARN[39m: [36mDiscord command registration remains unconfirmed[39m [90m{"endpointId":"fcc32120-6111-41d9-877a-280efc4bf12c"}[39m
+[22:15:36] [33mWARN[39m: [36mDiscord command registration remains unconfirmed[39m [90m{"endpointId":"fcc32120-6111-41d9-877a-280efc4bf12c"}[39m
+[22:15:37] [33mWARN[39m: [36mDiscord command registration remains unconfirmed[39m [90m{"endpointId":"fcc32120-6111-41d9-877a-280efc4bf12c"}[39m
+[22:15:39] [33mWARN[39m: [36mDiscord command registration remains unconfirmed[39m [90m{"endpointId":"fcc32120-6111-41d9-877a-280efc4bf12c"}[39m
+[22:15:41] [33mWARN[39m: [36mDiscord command registration remains unconfirmed[39m [90m{"endpointId":"fcc32120-6111-41d9-877a-280efc4bf12c"}[39m
+[22:15:42] [33mWARN[39m: [36mDiscord command registration remains unconfirmed[39m [90m{"endpointId":"fcc32120-6111-41d9-877a-280efc4bf12c"}[39m
+[22:15:44] [33mWARN[39m: [36mDiscord command registration remains unconfirmed[39m [90m{"endpointId":"fcc32120-6111-41d9-877a-280efc4bf12c"}[39m
+[22:15:45] [33mWARN[39m: [36mDiscord command registration remains unconfirmed[39m [90m{"endpointId":"fcc32120-6111-41d9-877a-280efc4bf12c"}[39m
+[22:15:47] [33mWARN[39m: [36mDiscord command registration remains unconfirmed[39m [90m{"endpointId":"fcc32120-6111-41d9-877a-280efc4bf12c"}[39m
+[22:15:48] [33mWARN[39m: [36mDiscord command registration remains unconfirmed[39m [90m{"endpointId":"fcc32120-6111-41d9-877a-280efc4bf12c"}[39m
+[22:15:50] [33mWARN[39m: [36mDiscord command registration remains unconfirmed[39m [90m{"endpointId":"fcc32120-6111-41d9-877a-280efc4bf12c"}[39m
+[22:15:52] [33mWARN[39m: [36mDiscord command registration remains unconfirmed[39m [90m{"endpointId":"fcc32120-6111-41d9-877a-280efc4bf12c"}[39m
+[22:15:54] [33mWARN[39m: [36mDiscord command registration remains unconfirmed[39m [90m{"endpointId":"fcc32120-6111-41d9-877a-280efc4bf12c"}[39m
+[22:15:55] [33mWARN[39m: [36mDiscord command registration remains unconfirmed[39m [90m{"endpointId":"fcc32120-6111-41d9-877a-280efc4bf12c"}[39m
+[22:15:57] [33mWARN[39m: [36mDiscord command registration remains unconfirmed[39m [90m{"endpointId":"fcc32120-6111-41d9-877a-280efc4bf12c"}[39m
+[22:15:59] [33mWARN[39m: [36mDiscord command registration remains unconfirmed[39m [90m{"endpointId":"fcc32120-6111-41d9-877a-280efc4bf12c"}[39m
+[22:16:00] [33mWARN[39m: [36mDiscord command registration remains unconfirmed[39m [90m{"endpointId":"fcc32120-6111-41d9-877a-280efc4bf12c"}[39m
+[22:16:02] [33mWARN[39m: [36mDiscord command registration remains unconfirmed[39m [90m{"endpointId":"fcc32120-6111-41d9-877a-280efc4bf12c"}[39m
+[22:16:08] [33mWARN[39m: [36mSlack task start will retry or await explicit resolution[39m [90m{"actionId":"783c0bb9-e2cd-4b79-8b51-d486df6119ce"}[39m
+    error: "Slack rate limited"
+[22:16:08] [31mERROR[39m: [36mdeferred external chat message processing failed[39m
+    error: "socket reset after write"
+[22:16:35] [33mWARN[39m: [36mexternal chat delivery will retry in receipt order[39m [90m{"endpointId":"1927d0ab-cc47-40b4-9eb0-68acdf0fb82a","deliveryId":"a0050ee6-520e-45b2-836d-9ad9c6d6a3d8"}[39m
+    error: "injected lifecycle comment failure"
+[22:16:49] [33mWARN[39m: [36mchat recovery retry dispatch deferred to durable worker[39m [90m{"retryActionId":"5ac254cc-7e4a-45f3-a336-974f4d1803aa"}[39m
+[22:16:49] [33mWARN[39m: [36mchat recovery retry dispatch deferred to durable worker[39m [90m{"retryActionId":"8635661c-1c98-43d1-a7b4-70f4bca8cbe6"}[39m
+[22:17:18] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"490a4bc2-9afb-40aa-9912-af7ce9fd5853","publicationId":"6e977a62-6579-44ba-bda7-f41d27381458","disposition":"retry"}[39m
+    error: "Chat retry publication authorization is temporarily unavailable"
+[22:18:27] [33mWARN[39m: [36mexternal chat attachment was rejected[39m [90m{"endpointId":"3f298ae3-8ace-409a-b654-dc2cbf69d172","issueId":"d765136e-8455-4c97-8b20-f746d83806e4","attachmentName":"unavailable.txt"}[39m
+    error: "injected Telegram download failure"
+[22:18:27] [33mWARN[39m: [36mexternal chat attachment was rejected[39m [90m{"endpointId":"1ef4b35e-869e-4d2b-ae0a-bd5d8c9de4ea","issueId":"d92f2758-9484-4ef9-9b9e-5d3f7652af84","attachmentName":"request.txt"}[39m
+    error: "injected Telegram attachment outage"
+[22:18:32] [33mWARN[39m: [36mexternal chat receipt reaction deferred[39m [90m{"endpointId":"48841ebd-f61c-4ee1-9837-ccbaf5eef35a","deliveryId":"7bd70c18-1321-4a8d-a4d9-9fb0a92941c3","attempts":1,"disposition":"retry","operation":"remove","retryAt":"2026-09-26T05:19:32.822Z"}[39m
+[22:18:33] [33mWARN[39m: [36mexternal chat receipt reaction deferred[39m [90m{"endpointId":"18db0e75-2346-4fd3-a4cd-d1961d160ef2","deliveryId":"af3a72db-447e-42fb-8429-b0d8016ae9af","attempts":1,"disposition":"retry","operation":"add","retryAt":"2026-09-26T06:18:33.170Z"}[39m
+[22:18:34] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"0a83d0e9-bb85-4598-ac57-9436346917f2","publicationId":"49236d01-5ba5-4d1b-9046-967e41860f93","disposition":"retry"}[39m
+    error: "Telegram flood control"
+[22:18:34] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"0a83d0e9-bb85-4598-ac57-9436346917f2","publicationId":"49236d01-5ba5-4d1b-9046-967e41860f93","disposition":"retry"}[39m
+    error: "Telegram flood control"
+[22:18:34] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"cbd21515-8cba-466f-8979-d59e42b7c0af","publicationId":"4691c595-d349-4db9-bb05-61a807641ee3","disposition":"endpoint_attention"}[39m
+    error: "Unauthorized"
+[22:18:43] [33mWARN[39m: [36mexternal chat attachment was rejected[39m [90m{"endpointId":"452ae70a-ad92-4e96-897b-000d5b570de3","issueId":"51f99dce-374c-4eda-b915-d23e0a61287a","deliveryId":"1d35747a-2e6c-44f8-bb00-fdd5443a6904","attachmentDiagnosticCode":"github_attachment_canonical_response_unavailable","attachmentName":"private-current.txt"}[39m
+    error: "github_attachment_canonical_response_unavailable"
+[22:18:43] [33mWARN[39m: [36mexternal chat attachment was rejected[39m [90m{"endpointId":"436b7af9-c837-4867-9aa5-d74f57b3c4e0","issueId":"ba6e98a4-3e6d-42b2-bee8-9e35fe8fadf8","deliveryId":"56333d44-5693-4932-bbb7-cc7c64906af1","attachmentDiagnosticCode":"github_attachment_canonical_response_unavailable","attachmentName":"private-current.txt"}[39m
+    error: "github_attachment_canonical_response_unavailable"
+[22:18:44] [33mWARN[39m: [36mexternal chat attachment was rejected[39m [90m{"endpointId":"4af2dbc2-ca24-4a4d-8531-9184baecdcdb","issueId":"6e41b1d8-f0d1-40e2-9e5c-2f52a353e4ca","deliveryId":"afe41fd0-440f-4880-8af4-03c9b1107fe0","attachmentDiagnosticCode":"github_attachment_canonical_response_unavailable","attachmentName":"private-current.txt"}[39m
+    error: "github_attachment_canonical_response_unavailable"
+[22:18:45] [33mWARN[39m: [36mexternal chat attachment was rejected[39m [90m{"endpointId":"494224da-fb9b-4b1d-af2e-057cc315ace0","issueId":"5bf28949-7978-4c8b-acbb-c95a40fe04a2","deliveryId":"dd069b1c-f1dd-4b0c-aaad-368c8c504d98","attachmentDiagnosticCode":"github_attachment_canonical_response_unavailable","attachmentName":"private-current.txt"}[39m
+    error: "github_attachment_canonical_response_unavailable"
+[22:18:46] [33mWARN[39m: [36mexternal chat attachment was rejected[39m [90m{"endpointId":"bd452953-6786-4fc1-ad14-237f49924777","issueId":"4f0773e1-a8a6-4a9c-8ae4-ba8f1f314393","deliveryId":"54d93290-f97a-47a0-b226-9397d6244e48","attachmentDiagnosticCode":"github_attachment_canonical_response_unavailable","attachmentName":"private-current.txt"}[39m
+    error: "github_attachment_canonical_response_unavailable"
+[22:18:47] [33mWARN[39m: [36mexternal chat attachment was rejected[39m [90m{"endpointId":"0b6e4388-8985-4362-aa51-93f92d96c2ee","issueId":"5307b087-6301-4d51-9637-8f771930a1f9","deliveryId":"6ede1dae-7a8c-4f15-bfe3-ae39fac7f21a","attachmentDiagnosticCode":"github_attachment_canonical_response_unavailable","attachmentName":"private-current.txt"}[39m
+    error: "github_attachment_canonical_response_unavailable"
+[22:18:47] [33mWARN[39m: [36mexternal chat attachment was rejected[39m [90m{"endpointId":"a9463cdd-26f3-4625-b580-6885088bae9c","issueId":"e1cab9ef-4006-44d2-9516-e80d79a35b16","deliveryId":"aba3d2ba-3765-4467-9d60-dae07a98eaf9","attachmentDiagnosticCode":"github_attachment_canonical_response_unavailable","attachmentName":"private-current.txt"}[39m
+    error: "github_attachment_canonical_response_unavailable"
+[22:18:48] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"a9463cdd-26f3-4625-b580-6885088bae9c","publicationId":"7617efaa-c20d-432d-b64b-3863fc6c97c7","disposition":"retry"}[39m
+    error: "Rate limited"
+[22:18:48] [33mWARN[39m: [36mexternal chat attachment was rejected[39m [90m{"endpointId":"876c3675-17f5-4a0f-a0c7-5405a50f0f48","issueId":"0f5b18d7-d3be-4a92-b2ee-520fd5f878c9","deliveryId":"6a1f8f70-ec1b-4be5-acb1-785741e0491c","attachmentDiagnosticCode":"github_attachment_canonical_response_unavailable","attachmentName":"private-current.txt"}[39m
+    error: "github_attachment_canonical_response_unavailable"
+[22:18:49] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"876c3675-17f5-4a0f-a0c7-5405a50f0f48","publicationId":"76fe8976-e106-4e08-bd22-cb8c6fd66fd0","disposition":"retry"}[39m
+    error: "Rate limited"
+[22:18:51] [33mWARN[39m: [36mexternal chat attachment was rejected[39m [90m{"endpointId":"f1347018-17be-4931-bc92-2b469ee97067","issueId":"d0e93abe-a9bd-4c0b-b65a-58dd0fa1eb92","deliveryId":"916f508a-1ef6-417f-98e6-6b1554fb26e9","attachmentDiagnosticCode":"github_attachment_canonical_response_unavailable","attachmentName":"private-current.txt"}[39m
+    error: "github_attachment_canonical_response_unavailable"
+[22:18:52] [33mWARN[39m: [36mexternal chat attachment was rejected[39m [90m{"endpointId":"1d4e4168-d964-49a6-94cf-bc645b8b0113","issueId":"fc2e4f6b-f396-4c0b-9f3b-71536e257648","deliveryId":"3a517c1e-fed7-4221-bdaf-8464f069864f","attachmentDiagnosticCode":"github_attachment_canonical_response_unavailable","attachmentName":"private-current.txt"}[39m
+    error: "github_attachment_canonical_response_unavailable"
+[22:18:52] [33mWARN[39m: [36mexternal chat attachment was rejected[39m [90m{"endpointId":"eea55395-b464-4118-9ddd-b15e32e33aa7","issueId":"75bd8fe7-cfe1-4e84-9bb8-c71754dd230b","deliveryId":"8f62479b-fa84-4324-9dcd-a1ca05d2d88f","attachmentDiagnosticCode":"github_attachment_canonical_response_unavailable","attachmentName":"private-current.txt"}[39m
+    error: "github_attachment_canonical_response_unavailable"
+[22:18:53] [33mWARN[39m: [36mexternal chat attachment was rejected[39m [90m{"endpointId":"de133efa-fc0b-4d53-bebb-7ddd19aaa777","issueId":"06304922-5999-4bd3-9a87-b640c0582c63","deliveryId":"bb1b4776-9b00-42f2-a0a9-177471cb60a1","attachmentDiagnosticCode":"github_attachment_canonical_response_unavailable","attachmentName":"private-current.txt"}[39m
+    error: "github_attachment_canonical_response_unavailable"
+[22:18:54] [33mWARN[39m: [36mexternal chat attachment was rejected[39m [90m{"endpointId":"3464dd26-7788-49e7-bdec-0269dbe4a052","issueId":"0eea68e1-20dd-4cba-9df2-ca4ba40fc8f4","deliveryId":"48bdd096-2a3e-4876-98fc-8fa6dd1a9383","attachmentDiagnosticCode":"github_attachment_canonical_response_unavailable","attachmentName":"private-current.txt"}[39m
+    error: "github_attachment_canonical_response_unavailable"
+[22:18:55] [33mWARN[39m: [36mexternal chat attachment was rejected[39m [90m{"endpointId":"2ddb1e47-9461-4921-a524-453b03c914af","issueId":"ad51172d-d0e6-46bf-a522-215c6bc8567c","deliveryId":"4ae35fd1-8f11-4f5c-8270-5b2a908cc1aa","attachmentDiagnosticCode":"github_attachment_canonical_response_unavailable","attachmentName":"private-current.txt"}[39m
+    error: "github_attachment_canonical_response_unavailable"
+[22:18:56] [33mWARN[39m: [36mexternal chat attachment was rejected[39m [90m{"endpointId":"453276d9-0f11-4f8a-af42-369a183f0ae4","issueId":"9e7029d0-e460-43de-9e57-9cefc7d0c300","deliveryId":"a0eb2a0c-aef1-496b-93f4-74a1a47740b5","attachmentDiagnosticCode":"github_attachment_canonical_response_unavailable","attachmentName":"private-current.txt"}[39m
+    error: "github_attachment_canonical_response_unavailable"
+[22:18:56] [33mWARN[39m: [36mexternal chat attachment was rejected[39m [90m{"endpointId":"16565f01-3a3c-439e-b5b0-668c3e2d34d6","issueId":"ab82a7fc-0a3b-4151-b262-648b19afc8aa","deliveryId":"3587ed98-35b3-414c-bb83-3fe46f29098c","attachmentDiagnosticCode":"github_attachment_canonical_response_unavailable","attachmentName":"private-current.txt"}[39m
+    error: "github_attachment_canonical_response_unavailable"
+[22:18:57] [33mWARN[39m: [36mexternal chat attachment was rejected[39m [90m{"endpointId":"9888725a-3ec3-484d-a9f2-e2be389094bf","issueId":"58ecfb9e-431f-44d5-b78a-3620881323af","deliveryId":"84ed4910-3808-49b3-bf32-a6da34eea61d","attachmentDiagnosticCode":"github_attachment_canonical_response_unavailable","attachmentName":"private-current.txt"}[39m
+    error: "github_attachment_canonical_response_unavailable"
+[22:18:58] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"9888725a-3ec3-484d-a9f2-e2be389094bf","publicationId":"5d856551-2e2b-4f7d-b8e9-56310c9ae614","disposition":"retry"}[39m
+    error: "Rate limited"
+[22:18:58] [33mWARN[39m: [36mexternal chat attachment was rejected[39m [90m{"endpointId":"475395c9-894a-40cb-96e2-9e9ba268edda","issueId":"9490a756-5a6a-46f4-b6b2-10641e23a768","deliveryId":"5a441b1a-6306-4af9-8dd2-78fc151efb06","attachmentDiagnosticCode":"github_attachment_canonical_response_unavailable","attachmentName":"private-current.txt"}[39m
+    error: "github_attachment_canonical_response_unavailable"
+[22:18:59] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"475395c9-894a-40cb-96e2-9e9ba268edda","publicationId":"93e24b11-7454-4168-a57b-723da16e5f4e","disposition":"retry"}[39m
+    error: "Rate limited"
+[22:18:59] [33mWARN[39m: [36mexternal chat attachment was rejected[39m [90m{"endpointId":"b8c98773-6489-427a-8eea-8f8f1c59d796","issueId":"e640c69c-16fa-4685-a132-fec27206f29e","deliveryId":"151b9b72-ccba-4295-a3d4-a4343a572d24","attachmentDiagnosticCode":"github_attachment_canonical_response_unavailable","attachmentName":"private-current.txt"}[39m
+    error: "github_attachment_canonical_response_unavailable"
+[22:18:59] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"b8c98773-6489-427a-8eea-8f8f1c59d796","publicationId":"7730c2e2-6109-4f8a-a6eb-b1306d769a3c","disposition":"retry"}[39m
+    error: "Rate limited"
+[22:19:00] [33mWARN[39m: [36mexternal chat attachment was rejected[39m [90m{"endpointId":"96bdafc5-0f74-4d43-87f5-1dce301a13bd","issueId":"e001308b-6ffa-4553-be48-15220d39ac22","deliveryId":"610dd924-2d30-49c4-a8d3-8bd761e9c4cc","attachmentDiagnosticCode":"github_attachment_canonical_response_unavailable","attachmentName":"private-current.txt"}[39m
+    error: "github_attachment_canonical_response_unavailable"
+[22:19:00] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"96bdafc5-0f74-4d43-87f5-1dce301a13bd","publicationId":"ff7d0071-796b-417e-b1a9-6a75f05980a6","disposition":"retry"}[39m
+    error: "Rate limited"
+[22:19:01] [33mWARN[39m: [36mexternal chat attachment was rejected[39m [90m{"endpointId":"ed686cc6-7578-4793-83aa-6f005700bbff","issueId":"f8837ad3-d928-4bce-8ff4-08bb265b1d0b","deliveryId":"1d3931e6-b00f-432f-b1c2-acf2aeea3f99","attachmentDiagnosticCode":"github_attachment_canonical_response_unavailable","attachmentName":"private-current.txt"}[39m
+    error: "github_attachment_canonical_response_unavailable"
+[22:19:01] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"ed686cc6-7578-4793-83aa-6f005700bbff","publicationId":"e9347c49-1810-4202-acc1-0cedd94571fd","disposition":"retry"}[39m
+    error: "Rate limited"
+[22:19:02] [33mWARN[39m: [36mexternal chat attachment was rejected[39m [90m{"endpointId":"d43a946c-f00a-481c-b9e3-a12fbc45efc8","issueId":"71495e61-4682-41b4-9874-488239cde69d","deliveryId":"131ad627-e674-483e-8b46-9091766d45b0","attachmentDiagnosticCode":"github_attachment_canonical_response_unavailable","attachmentName":"private-current.txt"}[39m
+    error: "github_attachment_canonical_response_unavailable"
+[22:19:02] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"d43a946c-f00a-481c-b9e3-a12fbc45efc8","publicationId":"c4b2ed16-5025-4f01-af0c-5ced59625bd0","disposition":"retry"}[39m
+    error: "Rate limited"
+[22:19:03] [33mWARN[39m: [36mexternal chat attachment was rejected[39m [90m{"endpointId":"fd931830-f25f-4b7a-99b0-f3dcadbc87f6","issueId":"981c6cd6-937d-49ac-bfa5-5c7f3f093b8b","deliveryId":"0a261b21-f479-4bd2-9ef5-81da0cf64105","attachmentDiagnosticCode":"github_attachment_canonical_response_unavailable","attachmentName":"private-current.txt"}[39m
+    error: "github_attachment_canonical_response_unavailable"
+[22:19:03] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"fd931830-f25f-4b7a-99b0-f3dcadbc87f6","publicationId":"aa4d2f37-9f80-4678-a732-65a78fe03878","disposition":"retry"}[39m
+    error: "Rate limited"
+[22:19:03] [33mWARN[39m: [36mexternal chat attachment was rejected[39m [90m{"endpointId":"34e1ae97-dcc0-4646-963d-c496e9d83511","issueId":"40304422-9dc2-4d02-a18c-5d1522f5dc91","deliveryId":"730075b2-1423-4d1f-bc3c-cacc13fd4eda","attachmentDiagnosticCode":"github_attachment_canonical_response_unavailable","attachmentName":"private-current.txt"}[39m
+    error: "github_attachment_canonical_response_unavailable"
+[22:19:04] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"34e1ae97-dcc0-4646-963d-c496e9d83511","publicationId":"c10c4359-4d99-4efc-856e-5773022c0f4d","disposition":"retry"}[39m
+    error: "Rate limited"
+[22:19:13] [33mWARN[39m: [36mCommitted chat response is awaiting presentation retry[39m [90m{"runId":"fd8664d3-7055-4095-923b-de26a6c76138"}[39m
+    error: {
+      "query": "select \"id\", \"company_id\", \"endpoint_id\", \"delivery_id\", \"conversation_id\", \"principal_id\", \"kind\", \"provider_action_id\", \"payload\", \"status\", \"result\", \"created_at\", \"updated_at\" from \"chat_actions\" where \"chat_actions\".\"id\" = $1 for update nowait",
+      "params": [
+        "ff557913-2e26-46a3-95aa-e2f263720733"
+      ],
+      "cause": {
+        "name": "PostgresError",
+        "severity_local": "ERROR",
+        "severity": "ERROR",
+        "code": "55P03",
+        "file": "heapam.c",
+        "line": "5027",
+        "routine": "heap_lock_tuple"
+      }
+    }
+[22:19:16] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"1e6815f1-a379-4f62-85cd-3ff01398d56f","publicationId":"aa8a3b06-a36c-4f73-b1da-2fc96efdf7d6","disposition":"retry"}[39m
+    error: "Chat response authorization is temporarily busy; no provider delivery was attempted"
+[22:19:24] [33mWARN[39m: [36mfailed to wake assignee on issue assignment[39m [90m{"issueId":"a3a57fb2-0e77-4898-bc64-9a94430df83c"}[39m
+    err: {
+      "type": "Error",
+      "message": "PRIVATE admission failure token=do-not-publish",
+      "stack":
+          Error: PRIVATE admission failure token=do-not-publish
+              at wakeup (/home/yuanjian/dev/ANC-tok-224-ui/server/src/__tests__/chat-channels.integration.test.ts:65778:17)
+              at Mock (file:///home/yuanjian/dev/ANC-tok-224-ui/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+              at Object.wakeup (/home/yuanjian/dev/ANC-tok-224-ui/server/src/__tests__/chat-channels.integration.test.ts:1131:28)
+              at queueIssueAssignmentWakeup (/home/yuanjian/dev/ANC-tok-224-ui/server/src/services/issue-assignment-wakeup.ts:46:6)
+              at processInboundWakeup (/home/yuanjian/dev/ANC-tok-224-ui/server/src/services/chat-channels.ts:14368:13)
+              at processTicksAndRejections (node:internal/process/task_queues:104:5)
+              at processMessage (/home/yuanjian/dev/ANC-tok-224-ui/server/src/services/chat-channels.ts:16494:13)
+              at handleSdkMessage (/home/yuanjian/dev/ANC-tok-224-ui/server/src/services/chat-channels.ts:17561:7)
+              at deliverMessage (/home/yuanjian/dev/ANC-tok-224-ui/server/src/__tests__/chat-channels.integration.test.ts:3475:5)
+              at deferredChatQueueFixture (/home/yuanjian/dev/ANC-tok-224-ui/server/src/__tests__/chat-channels.integration.test.ts:65846:5)
+    }
+[22:19:24] [33mWARN[39m: [36maccepted inbound chat wakeup will retry[39m [90m{"deliveryId":"be669102-bacc-4c1d-a06b-dfca8898629b"}[39m
+    error: "PRIVATE admission failure token=***REDACTED***"
+[22:19:26] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"998b2630-ef71-4efb-9c10-64b7ae2b79c5","publicationId":"c5d8c89b-6266-470f-9050-d319c086d54e","disposition":"retry"}[39m
+    error: "Chat response authorization is temporarily busy; no provider delivery was attempted"
+[22:19:33] [33mWARN[39m: [36mexternal chat delivery will retry in receipt order[39m [90m{"endpointId":"240d7cfc-63b0-419d-8adb-ecb5e0df7675","deliveryId":"3a56124d-cdf4-4fc5-ba65-f2b72c57ec5e"}[39m
+    error: "This accepted chat message is no longer authorized to start work"
+[22:19:35] [33mWARN[39m: [36mexternal chat receipt reaction deferred[39m [90m{"endpointId":"2db321e7-239e-40c4-8e8e-30aa7897e10e","deliveryId":"40d0b7cd-05aa-4b98-ace4-651f11cfa8c1","attempts":1,"disposition":"failed","operation":"remove","retryAt":null}[39m
+[22:19:36] [33mWARN[39m: [36mexternal chat receipt reaction deferred[39m [90m{"endpointId":"98f08216-433b-4fe4-b10b-70653981b469","deliveryId":"60f8edfc-43c6-4072-8a92-6c677d8e4242","attempts":1,"disposition":"failed","operation":"remove","retryAt":null}[39m
+[22:19:39] [33mWARN[39m: [36mexternal chat receipt reaction deferred[39m [90m{"endpointId":"20e465ba-d8a4-42e3-8d9f-2f7b2497d788","deliveryId":"1386b730-5834-4051-8ed3-1f5fd8188e47","attempts":1,"disposition":"failed","operation":"remove","retryAt":null}[39m
+[22:19:44] [33mWARN[39m: [36mTelegram maintenance was deferred[39m [90m{"endpointId":"80b2d54e-c57b-466a-ad76-4d005248d419","operation":"stop_subscription","retryAt":null}[39m
+[22:19:45] [33mWARN[39m: [36mTelegram maintenance was deferred[39m [90m{"endpointId":"a0f46363-936e-45a1-bfe0-e43a3cd448ae","operation":"stop_subscription","retryAt":null}[39m
+[22:19:46] [33mWARN[39m: [36mTelegram maintenance was deferred[39m [90m{"endpointId":"a17db371-6696-4652-8d15-27518aa8e691","operation":"stop_subscription","retryAt":null}[39m
+[22:19:47] [33mWARN[39m: [36mTelegram maintenance was deferred[39m [90m{"endpointId":"72b7830f-b31f-4d25-baf3-478f66dada97","operation":"stop_subscription","retryAt":null}[39m
+[22:19:47] [33mWARN[39m: [36mexternal chat receipt reaction deferred[39m [90m{"endpointId":"3aa91d55-f476-4213-a4e6-923a6d94f35e","deliveryId":"3b67e0c2-137c-4be4-a2e6-2561009dda74","attempts":1,"disposition":"failed","operation":"remove","retryAt":null}[39m
+[22:19:47] [33mWARN[39m: [36mTelegram maintenance was deferred[39m [90m{"endpointId":"3aa91d55-f476-4213-a4e6-923a6d94f35e","operation":"stop_subscription","retryAt":null}[39m
+[22:19:48] [33mWARN[39m: [36mTelegram maintenance was deferred[39m [90m{"endpointId":"355c7700-dbaa-4d57-a5ad-c2711c56f1d5","operation":"stop_subscription","retryAt":"2026-09-26T05:19:49.528Z"}[39m
+[22:19:49] [33mWARN[39m: [36mTelegram maintenance was deferred[39m [90m{"endpointId":"48484d23-d576-497c-8457-91ca93e4fa3a","operation":"stop_subscription","retryAt":"2026-09-26T05:19:50.184Z"}[39m
+[22:19:49] [33mWARN[39m: [36mTelegram maintenance was deferred[39m [90m{"endpointId":"be22ed34-6b89-48ef-b5d7-75f896eefa16","operation":"stop_subscription","retryAt":"2026-09-26T05:19:50.862Z"}[39m
+[22:19:50] [33mWARN[39m: [36mTelegram maintenance was deferred[39m [90m{"endpointId":"fd2fa90a-e53a-4edc-884f-adbafeaa46f9","operation":"stop_subscription","retryAt":null}[39m
+[22:19:51] [33mWARN[39m: [36mTelegram maintenance was deferred[39m [90m{"endpointId":"c0a99b84-0226-449a-8420-18cbeefc08b7","operation":"stop_subscription","retryAt":null}[39m
+[22:19:51] [33mWARN[39m: [36mTelegram maintenance was deferred[39m [90m{"endpointId":"de4b9e5f-2303-4837-a7b2-7bcc01945044","operation":"stop_subscription","retryAt":"2026-09-26T05:19:52.919Z"}[39m
+[22:19:53] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"14ff05d4-e494-48b1-9f2c-c3e1f03b8c82","publicationId":"987c89b0-5039-4947-9598-d81555b02ea4","disposition":"delivery_unknown"}[39m
+    error: "Network error calling Telegram sendRichMessage"
+[22:19:54] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"e4f29f88-8ae7-4ea3-a561-a5a8027c5b6d","publicationId":"defe9220-1e7b-4efa-9dd5-baf76d1fb44e","disposition":"delivery_unknown"}[39m
+    error: "Telegram draft endpoint authority changed"
+[22:19:55] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"d494d4e7-6d88-4d89-a3e0-cd67510375e6","publicationId":"b72a8a7c-d308-452a-9a72-60fe41b8a423","disposition":"delivery_unknown"}[39m
+    error: "Telegram draft endpoint authority changed"
+[22:19:55] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"0eeb98b6-5a2a-4469-89a6-e497313ea276","publicationId":"661da17b-8374-48fd-9962-8c2aeafed2bd","disposition":"delivery_unknown"}[39m
+    error: "Telegram draft source authority changed"
+[22:19:56] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"ae28f92e-e03e-4a4a-8e76-ef2a02c0315a","publicationId":"ad2997de-5e7f-4177-ab95-151433a3e6ec","disposition":"delivery_unknown"}[39m
+    error: "Telegram draft credential authority changed"
+[22:20:39] [33mWARN[39m: [36mchat publication failed[39m [90m{"endpointId":"dcfcb4ca-3f0b-4315-a6ce-84496dd24284","publicationId":"93f5cea0-e098-4512-b2e7-333fc0b53147","disposition":"delivery_unknown"}[39m
+    error: "connection closed after request write"
+ ❯ |@paperclipai/server| src/__tests__/chat-channels.integration.test.ts (1024 tests | 43 failed) 636430ms
+       × keeps an ambiguous github text part blocked across restart and retries only that part and its tail 426ms
+       × preserves an accepted native Slack response whose rendered mentions exceed the Markdown cap 6ms
+       × refuses malformed persisted wrappers before provider I/O 0 5ms
+       × refuses malformed persisted wrappers before provider I/O 1 5ms
+       × recovers only ordinary source identity ('received' / command=false / 'zero') 6ms
+       × recovers only ordinary source identity ('retry' / command=false / 'zero') 5ms
+       × recovers only ordinary source identity ('processing' / command=false / 'zero') 8ms
+       × recovers only ordinary source identity ('received' / command=true / 'zero') 5ms
+       × recovers only ordinary source identity ('retry' / command=true / 'zero') 5ms
+       × recovers only ordinary source identity ('processing' / command=true / 'zero') 8ms
+       × recovers only ordinary source identity ('issued' / command=false / 'zero') 5ms
+       × recovers only ordinary source identity ('issued' / command=false / 'zero_sequence') 5ms
+       × recovers only ordinary source identity ('retry' / command=false / 'zero_event') 5ms
+       × recovers only ordinary source identity ('processing' / command=false / 'zero_microseconds') 5ms
+       × recovers only ordinary source identity ('processing' / command=false / 'zero_locked') 5ms
+       × recovers only ordinary source identity ('processing' / command=false / 'zero_replaced') 8ms
+       × recovers only ordinary source identity ('received' / command=false / 'positive') 7ms
+       × recovers only ordinary source identity ('issued' / command=false / 'positive') 5ms
+       × recovers only ordinary source identity ('received' / command=false / 'legacy') 6ms
+       × keeps rich files and omissions scoped through lifecycle recovery (mixed_files) 6ms
+       × keeps rich files and omissions scoped through lifecycle recovery (restart_topic) 4ms
+       × keeps rich files and omissions scoped through lifecycle recovery (revoked) 6ms
+       × keeps rich files and omissions scoped through lifecycle recovery (source_edit) 6ms
+       × keeps rich files and omissions scoped through lifecycle recovery (unknown_document) 5ms
+       × keeps rich files and omissions scoped through lifecycle recovery (unknown_block) 5ms
+       × keeps rich files and omissions scoped through lifecycle recovery (malformed_block) 5ms
+       × retains current rich content through the pinned parser and service (quote) 11ms
+       × retains current rich content through the pinned parser and service (mixed) 5ms
+       × retains current rich content through the pinned parser and service (document) 5ms
+       × retains exact durable media authority across restart (topic_restart) 6ms
+       × retains exact durable media authority across restart (changed_locator) 4ms
+       × retains exact durable media authority across restart (revoked_before_fetch) 11ms
+       × retains exact durable media authority across restart (revoked_during_fetch) 5ms
+       × imports exact permitted bytes or gives accurate recovery advice (video) 5ms
+       × imports exact permitted bytes or gives accurate recovery advice (voice) 4ms
+       × imports exact permitted bytes or gives accurate recovery advice (live_photo) 6ms
+       × imports exact permitted bytes or gives accurate recovery advice (oversize) 5ms
+       × imports exact permitted bytes or gives accurate recovery advice (unknown_document) 5ms
+       × imports exact permitted bytes or gives accurate recovery advice (malformed_video) 5ms
+       × imports exact permitted bytes or gives accurate recovery advice (malformed_live_photo) 6ms
+       × imports exact permitted bytes or gives accurate recovery advice (malformed_bytes) 4ms
+       × imports exact permitted bytes or gives accurate recovery advice (office_named_video) 6ms
+       × imports exact permitted bytes or gives accurate recovery advice (office_named_invalid) 7ms
+Terminated
+ ELIFECYCLE  Command failed with exit code 143.
