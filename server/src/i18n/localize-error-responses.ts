@@ -1,9 +1,9 @@
 import type { Request, Response, NextFunction, RequestHandler } from "express";
 import { DEFAULT_UI_LOCALE, resolveRequestLocale, type UiLocale } from "./locale.js";
-import { translateServerMessage } from "./translate.js";
+import { localizeServerMessage } from "./translate.js";
 
 /**
- * Localize the `error` field of outgoing JSON error responses (TOK-224).
+ * Localize the `error` field of outgoing JSON error responses (TOK-224 / TOK-226).
  *
  * Why wrap `res.json` instead of editing call sites: the server produces
  * `error` strings from ~3.4k `HttpError` helper calls AND ~450 direct
@@ -13,9 +13,14 @@ import { translateServerMessage } from "./translate.js";
  * route, and the /api 404 fallthrough — without touching business code.
  *
  * Behavior contract:
- *   - Only the top-level `error` string is translated. `code`, `reason`,
- *     `details`, `remediation`, and every nested/success payload are
- *     untouched (machine-consumed or lib-generated).
+ *   - Only the top-level `error` string is rewritten for display. `code`,
+ *     `reason`, `details`, `remediation`, and every nested/success payload
+ *     are untouched (machine-consumed or lib-generated).
+ *   - Catalog / template hits become precise Chinese. Uncatalogued English
+ *     prose becomes a status-class Chinese sentence so it cannot render as
+ *     English in the UI; the original is preserved on `errorOriginal`.
+ *   - Technical identifiers and data payloads (paths, URLs, JSON) pass
+ *     through verbatim — they are not user-facing copy.
  *   - Requests that resolve to `"en"` (no headers, CLI/agent callers,
  *     unsupported locales) keep byte-for-byte identical responses.
  *   - Crash reporting and error-context logging keep the original English
@@ -48,9 +53,20 @@ export function localizeErrorResponses(): RequestHandler {
           typeof (payload as { error?: unknown }).error === "string"
         ) {
           const original = (payload as { error: string }).error;
-          const translated = translateServerMessage(original, locale);
-          if (translated !== original) {
-            payload = { ...(payload as object), error: translated };
+          const localized = localizeServerMessage(
+            original,
+            locale,
+            res.statusCode,
+          );
+          if (localized.text !== original) {
+            const nextBody: Record<string, unknown> = {
+              ...(payload as object),
+              error: localized.text,
+            };
+            if (localized.usedFallback && !("errorOriginal" in (payload as object))) {
+              nextBody.errorOriginal = original;
+            }
+            payload = nextBody;
           }
         }
       } catch {

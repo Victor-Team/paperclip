@@ -13,11 +13,11 @@
  *   chat endpoint → 聊天连接          approval → 审批
  *   workspace → 工作区                 vault → 凭据库
  *
- * Coverage policy (see 交付/TOK-224/后端交付.md): only messages that actually
- * render in the Simplified Chinese UI are cataloged here. Long-tail messages
- * and machine-facing credential errors intentionally stay English and are
- * enumerated with reasons in the delivery doc. Adding a new translation is a
- * pure catalog edit — no code change.
+ * Coverage policy (see 交付/TOK-224/后端交付.md): catalog entries are the
+ * quality path (precise Chinese). Uncatalogued English prose is rewritten by
+ * `localizeServerMessage` into a status-class Chinese sentence so it cannot
+ * render as English in the UI; the original is kept on `errorOriginal`.
+ * Adding a more specific translation is a pure catalog edit — no code change.
  *
  * NOT translated anywhere (by design): interface names, technical codes,
  * HTTP status codes, permission strings like `tools:manage_connections`,
