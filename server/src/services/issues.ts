@@ -11019,6 +11019,68 @@ export function issueService(db: Db) {
               });
             }
           }
+          if (updated.status === "done" || updated.status === "cancelled") {
+            // An open approval must not outlive the work it was requested for:
+            // once every issue it is linked to is closed, nobody will resubmit
+            // or decide it, and it would sit in the board inbox forever.
+            const openApprovals = await tx
+              .select({ id: approvals.id })
+              .from(issueApprovals)
+              .innerJoin(approvals, eq(issueApprovals.approvalId, approvals.id))
+              .where(
+                and(
+                  eq(issueApprovals.companyId, updated.companyId),
+                  eq(issueApprovals.issueId, updated.id),
+                  inArray(approvals.status, ["pending", "revision_requested"]),
+                ),
+              );
+            for (const approval of openApprovals) {
+              const [stillOpen] = await tx
+                .select({ id: issues.id })
+                .from(issueApprovals)
+                .innerJoin(issues, eq(issueApprovals.issueId, issues.id))
+                .where(
+                  and(
+                    eq(issueApprovals.approvalId, approval.id),
+                    notInArray(issues.status, ["done", "cancelled"]),
+                  ),
+                )
+                .limit(1);
+              if (stillOpen) continue;
+              const now = new Date();
+              const [cancelledApproval] = await tx
+                .update(approvals)
+                .set({
+                  status: "cancelled",
+                  decisionNote: `Cancelled automatically: linked issue ${updated.identifier ?? updated.id} was closed (${updated.status}).`,
+                  decidedAt: now,
+                  updatedAt: now,
+                })
+                .where(
+                  and(
+                    eq(approvals.id, approval.id),
+                    inArray(approvals.status, ["pending", "revision_requested"]),
+                  ),
+                )
+                .returning();
+              if (!cancelledApproval) continue;
+              await logActivity(tx as unknown as Db, {
+                companyId: updated.companyId,
+                actorType: actorAgentId ? "agent" : actorUserId ? "user" : "system",
+                actorId: actorAgentId ?? actorUserId ?? "issue_service",
+                agentId: actorAgentId ?? null,
+                action: "approval.cancelled",
+                entityType: "approval",
+                entityId: cancelledApproval.id,
+                details: {
+                  issueId: updated.id,
+                  identifier: updated.identifier ?? null,
+                  issueStatus: updated.status,
+                  source: "issue.status_transition.issue_closed",
+                },
+              });
+            }
+          }
           // A status-card generation task that goes done/cancelled/blocked stops
           // making progress; release the card's generation claim so the board tile
           // stops spinning and offers "Run now" again (blocked = stuck on a human).

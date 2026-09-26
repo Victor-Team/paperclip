@@ -5,6 +5,8 @@ import { sql } from "drizzle-orm";
 import {
   activityLog,
   agents,
+  approvals,
+  issueApprovals,
   companies,
   companyMemberships,
   createDb,
@@ -388,6 +390,8 @@ describeEmbeddedPostgres("issueService.list participantAgentId", () => {
   }, 20_000);
 
   afterEach(async () => {
+    await db.delete(issueApprovals);
+    await db.delete(approvals);
     await db.delete(issueComments);
     await db.delete(issueThreadInteractions);
     await db.delete(issueRelations);
@@ -660,6 +664,45 @@ describeEmbeddedPostgres("issueService.list participantAgentId", () => {
         resolvedAt: expect.any(Date),
       })]);
     await expect(db.select().from(toolOauthStates).where(eq(toolOauthStates.state, oauthState))).resolves.toEqual([]);
+  });
+
+  it("cancels open approvals once every linked issue is closed", async () => {
+    const companyId = await seedAssignableAgentCompany();
+    const closing = await svc.create(companyId, { title: "Close me", description: null, status: "todo", priority: "medium" });
+    const other = await svc.create(companyId, { title: "Still open", description: null, status: "todo", priority: "medium" });
+    const [orphan] = await db.insert(approvals).values({
+      companyId, type: "request_board_approval", status: "revision_requested", payload: { title: "stale" },
+    }).returning();
+    const [shared] = await db.insert(approvals).values({
+      companyId, type: "request_board_approval", status: "pending", payload: { title: "shared" },
+    }).returning();
+    const [decided] = await db.insert(approvals).values({
+      companyId, type: "request_board_approval", status: "approved", payload: { title: "decided" },
+    }).returning();
+    await db.insert(issueApprovals).values([
+      { companyId, issueId: closing.id, approvalId: orphan!.id },
+      { companyId, issueId: closing.id, approvalId: shared!.id },
+      { companyId, issueId: other.id, approvalId: shared!.id },
+      { companyId, issueId: closing.id, approvalId: decided!.id },
+    ]);
+
+    const updated = await svc.update(closing.id, { status: "done", actorUserId: "local-board" });
+    expect(updated?.status).toBe("done");
+
+    const byId = async (id: string) =>
+      db.select().from(approvals).where(eq(approvals.id, id)).then((rows) => rows[0] ?? null);
+    const orphanAfter = await byId(orphan!.id);
+    expect(orphanAfter?.status).toBe("cancelled");
+    expect(orphanAfter?.decidedAt).not.toBeNull();
+    expect(orphanAfter?.decisionNote).toContain("was closed");
+    expect((await byId(shared!.id))?.status).toBe("pending");
+    expect((await byId(decided!.id))?.status).toBe("approved");
+    const logged = await db.select().from(activityLog).where(eq(activityLog.action, "approval.cancelled"));
+    expect(logged).toHaveLength(1);
+    expect(logged[0]?.entityId).toBe(orphan!.id);
+
+    await svc.update(other.id, { status: "cancelled", actorUserId: "local-board" });
+    expect((await byId(shared!.id))?.status).toBe("cancelled");
   });
 
   it("expires pending thread interactions on any service-level terminal transition", async () => {
