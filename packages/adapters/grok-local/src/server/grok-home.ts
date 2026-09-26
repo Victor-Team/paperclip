@@ -17,8 +17,8 @@ const AUTH_FILE_NAME = "auth.json";
 /**
  * The allowlist of managed `GROK_HOME` entries that the grok-local adapter
  * stages into the sandbox `home` asset (see {@link stageGrokHomeForSync}).
- * Paperclip writes instructions and skills under the workspace, not under the
- * Grok home, so the credential file is the only entry a sandbox run needs.
+ * Instructions travel on the command line and remote runs get no skills, so
+ * the credential file is the only entry a sandbox run needs.
  */
 export const GROK_SYNC_ALLOWLIST = ["auth.json"] as const;
 

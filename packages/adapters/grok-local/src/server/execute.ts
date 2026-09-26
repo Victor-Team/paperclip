@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -28,7 +29,7 @@ import {
   ensureAbsoluteDirectory,
   ensurePathInEnv,
   joinPromptSections,
-  materializePaperclipSkillCopy,
+  ensurePaperclipSkillSymlink,
   parseObject,
   readPaperclipIssueWorkModeFromContext,
   readPaperclipRuntimeSkillEntries,
@@ -88,106 +89,96 @@ function renderApiAccessNote(env: Record<string, string>): string {
   ].join("\n");
 }
 
-type StageCleanup = {
-  kind: "file" | "dir";
-  path: string;
-};
+// Linux caps a single argv string at MAX_ARG_STRLEN = 32 pages = 131072 bytes
+// including its NUL terminator, so the longest usable `--rules` value is
+// 131071 bytes (measured: 131071 spawns, 131072 fails with E2BIG).
+export const GROK_RULES_ARG_MAX_BYTES = 131_071;
 
-type StagedGrokAssets = {
-  cleanup: () => Promise<void>;
-  stagedSkillsCount: number;
-  stagedInstructionsPath: string | null;
-  rulesFilePath: string | null;
-};
-
-async function pathExists(candidate: string): Promise<boolean> {
-  return fs.access(candidate).then(() => true).catch(() => false);
-}
-
-async function stageGrokProjectAssets(input: {
+/**
+ * Reads the agent instructions file and renders the `--rules` text.
+ *
+ * Grok 1.0.x only loads project files (`Agents.md`, `.claude/skills`) from a
+ * trusted folder, and an unattended `--single` run without `--trust` is not
+ * trusted, so the file content itself must travel on the command line.
+ * `--rules @file` is taken literally and never reads the file. Fails closed:
+ * a configured but unreadable or oversized file stops the run instead of
+ * letting the agent start without its role.
+ */
+export async function readGrokInstructionsRules(input: {
   cwd: string;
   instructionsFilePath: string;
+}): Promise<{ path: string; text: string } | null> {
+  if (!input.instructionsFilePath) return null;
+  const resolvedPath = path.resolve(input.cwd, input.instructionsFilePath);
+  let contents: string;
+  try {
+    contents = await fs.readFile(resolvedPath, "utf8");
+  } catch (err) {
+    const reason = err instanceof Error ? err.message : String(err);
+    throw new Error(
+      `Grok agent instructions file "${resolvedPath}" could not be read (${reason}); refusing to start the agent without its instructions.`,
+    );
+  }
+  const text =
+    `${contents}\n\n` +
+    `The above agent instructions were loaded from ${resolvedPath}. ` +
+    `Resolve any relative file references from ${path.dirname(resolvedPath)}/.`;
+  const bytes = Buffer.byteLength(text, "utf8");
+  if (bytes > GROK_RULES_ARG_MAX_BYTES) {
+    throw new Error(
+      `Grok agent instructions from "${resolvedPath}" are ${bytes} bytes, over the ${GROK_RULES_ARG_MAX_BYTES}-byte single-argument limit for --rules; ` +
+        "shorten the file or move reference material into company skills.",
+    );
+  }
+  return { path: resolvedPath, text };
+}
+
+/**
+ * Links desired Paperclip skills into `<GROK_HOME>/skills`, the user-level skill
+ * root Grok scans without folder trust. Project-level `.claude/skills` in the
+ * workspace is skipped by untrusted unattended runs. Links persist across runs,
+ * like the Codex adapter's `CODEX_HOME/skills`; the company home therefore holds
+ * the union of its agents' desired skills.
+ */
+async function injectGrokHomeSkills(input: {
+  grokHome: string;
   skillEntries: Array<{ key: string; runtimeName: string; source: string }>;
   desiredSkillNames: string[];
   onLog: AdapterExecutionContext["onLog"];
-}): Promise<StagedGrokAssets> {
-  const cleanup: StageCleanup[] = [];
-  const ensureCleanupDir = (candidate: string) => {
-    cleanup.push({ kind: "dir", path: candidate });
-  };
-  const ensureCleanupFile = (candidate: string) => {
-    cleanup.push({ kind: "file", path: candidate });
-  };
-
-  let stagedInstructionsPath: string | null = null;
-  let rulesFilePath: string | null = null;
-  let stagedSkillsCount = 0;
-
-  const instructionsTarget = path.join(input.cwd, "Agents.md");
-  if (input.instructionsFilePath) {
-    if (!await pathExists(instructionsTarget)) {
-      await fs.copyFile(input.instructionsFilePath, instructionsTarget);
-      ensureCleanupFile(instructionsTarget);
-      stagedInstructionsPath = instructionsTarget;
-    } else if (path.resolve(instructionsTarget) !== path.resolve(input.instructionsFilePath)) {
-      rulesFilePath = input.instructionsFilePath;
-      await input.onLog(
-        "stdout",
-        `[paperclip] Grok workspace already contains ${instructionsTarget}; using --rules @${input.instructionsFilePath} instead of overwriting it.\n`,
-      );
-    }
-  } else {
-    const canonicalAgents = path.join(input.cwd, "AGENTS.md");
-    if (!await pathExists(instructionsTarget) && await pathExists(canonicalAgents)) {
-      await fs.copyFile(canonicalAgents, instructionsTarget);
-      ensureCleanupFile(instructionsTarget);
-      stagedInstructionsPath = instructionsTarget;
-    }
-  }
-
+}): Promise<number> {
   const desiredSet = new Set(input.desiredSkillNames);
-  const selectedSkills = input.skillEntries.filter((entry) => desiredSet.has(entry.key));
-  if (selectedSkills.length > 0) {
-    const claudeDir = path.join(input.cwd, ".claude");
-    const skillsRoot = path.join(claudeDir, "skills");
-    if (!await pathExists(claudeDir)) {
-      await fs.mkdir(claudeDir, { recursive: true });
-      ensureCleanupDir(claudeDir);
-    }
-    if (!await pathExists(skillsRoot)) {
-      await fs.mkdir(skillsRoot, { recursive: true });
-      ensureCleanupDir(skillsRoot);
-    }
-
-    for (const skill of selectedSkills) {
-      const target = path.join(skillsRoot, skill.runtimeName);
-      if (await pathExists(target)) {
+  const selected = input.skillEntries.filter((entry) => desiredSet.has(entry.key));
+  if (selected.length === 0) return 0;
+  const skillsHome = path.join(input.grokHome, "skills");
+  try {
+    await fs.mkdir(skillsHome, { recursive: true });
+  } catch (err) {
+    await input.onLog(
+      "stderr",
+      `[paperclip] Failed to create Grok skills directory ${skillsHome}: ${err instanceof Error ? err.message : String(err)}\n`,
+    );
+    return 0;
+  }
+  let available = 0;
+  for (const entry of selected) {
+    const target = path.join(skillsHome, entry.runtimeName);
+    try {
+      const result = await ensurePaperclipSkillSymlink(entry.source, target);
+      if (result !== "skipped") {
         await input.onLog(
           "stdout",
-          `[paperclip] Grok skill target already exists at ${target}; leaving it unchanged.\n`,
+          `[paperclip] ${result === "repaired" ? "Repaired" : "Injected"} Grok skill "${entry.runtimeName}" into ${skillsHome}\n`,
         );
-        continue;
       }
-      await materializePaperclipSkillCopy(skill.source, target);
-      ensureCleanupDir(target);
-      stagedSkillsCount += 1;
+      available += 1;
+    } catch (err) {
+      await input.onLog(
+        "stderr",
+        `[paperclip] Failed to inject Grok skill "${entry.key}" into ${skillsHome}: ${err instanceof Error ? err.message : String(err)}\n`,
+      );
     }
   }
-
-  return {
-    stagedSkillsCount,
-    stagedInstructionsPath,
-    rulesFilePath,
-    cleanup: async () => {
-      for (const entry of [...cleanup].reverse()) {
-        if (entry.kind === "file") {
-          await fs.rm(entry.path, { force: true }).catch(() => undefined);
-          continue;
-        }
-        await fs.rm(entry.path, { recursive: true, force: true }).catch(() => undefined);
-      }
-    },
-  };
+  return available;
 }
 
 function resolveBillingType(env: Record<string, string>): "api" | "subscription" {
@@ -241,13 +232,9 @@ export async function execute(ctx: AdapterExecutionContext): Promise<AdapterExec
 
   const grokSkillEntries = await readPaperclipRuntimeSkillEntries(config, __moduleDir);
   const desiredGrokSkillNames = resolveLegacyPaperclipDesiredSkillNames(config, grokSkillEntries);
-  const instructionsFilePath = asString(config.instructionsFilePath, "").trim();
-  const stagedAssets = await stageGrokProjectAssets({
+  const instructionsRules = await readGrokInstructionsRules({
     cwd,
-    instructionsFilePath,
-    skillEntries: grokSkillEntries,
-    desiredSkillNames: desiredGrokSkillNames,
-    onLog,
+    instructionsFilePath: asString(config.instructionsFilePath, "").trim(),
   });
   let restoreRemoteWorkspace: (() => Promise<void>) | null = null;
   // Declared here (not inside the try) so the outer `finally` can remove it on
@@ -332,6 +319,29 @@ export async function execute(ctx: AdapterExecutionContext): Promise<AdapterExec
       if (pinManagedHome) {
         env.GROK_HOME = hostGrokHome;
       }
+    }
+    // Skills go to the GROK_HOME this local run will use. Without an explicit
+    // or pinned GROK_HOME the child falls back to the operator's own ~/.grok,
+    // which Paperclip must not write into. Remote runs ship a curated home that
+    // carries only auth.json, so they get no skills from here.
+    let injectedSkillsHome: string | null = null;
+    let injectedSkillsCount = 0;
+    const localGrokHome = asString(env.GROK_HOME, "").trim();
+    if (!executionTargetIsRemote && localGrokHome) {
+      injectedSkillsCount = await injectGrokHomeSkills({
+        grokHome: localGrokHome,
+        skillEntries: grokSkillEntries,
+        desiredSkillNames: desiredGrokSkillNames,
+        onLog,
+      });
+      injectedSkillsHome = path.join(localGrokHome, "skills");
+    } else if (desiredGrokSkillNames.length > 0) {
+      await onLog(
+        "stdout",
+        `[paperclip] Grok skills were not injected: ${
+          executionTargetIsRemote ? "remote runs do not carry skills" : "no dedicated GROK_HOME is set for this run"
+        }.\n`,
+      );
     }
 
     const timeoutSec = resolveAdapterExecutionTargetTimeoutSec(
@@ -448,12 +458,26 @@ export async function execute(ctx: AdapterExecutionContext): Promise<AdapterExec
     const runtimeSessionId = asString(runtimeSessionParams.sessionId, runtime.sessionId ?? "");
     const runtimeSessionCwd = asString(runtimeSessionParams.cwd, "");
     const runtimeRemoteExecution = parseObject(runtimeSessionParams.remoteExecution);
+    // Grok fixes the system prompt, including --rules, when a session is
+    // created and ignores --rules on --resume. A session saved under different
+    // (or no) instructions would keep running without the current ones, so it
+    // is not resumed.
+    const instructionsDigest = instructionsRules
+      ? createHash("sha256").update(instructionsRules.text).digest("hex")
+      : "";
+    const instructionsMatch = asString(runtimeSessionParams.instructionsDigest, "") === instructionsDigest;
     const canResumeSession =
       runtimeSessionId.length > 0 &&
       (runtimeSessionCwd.length === 0 || path.resolve(runtimeSessionCwd) === path.resolve(effectiveExecutionCwd)) &&
-      adapterExecutionTargetSessionMatches(runtimeRemoteExecution, runtimeExecutionTarget);
+      adapterExecutionTargetSessionMatches(runtimeRemoteExecution, runtimeExecutionTarget) &&
+      instructionsMatch;
     const sessionId = canResumeSession ? runtimeSessionId : null;
-    if (executionTargetIsRemote && runtimeSessionId && !canResumeSession) {
+    if (runtimeSessionId && !canResumeSession && !instructionsMatch) {
+      await onLog(
+        "stdout",
+        `[paperclip] Grok session "${runtimeSessionId}" was started with different agent instructions and will not be resumed; Grok ignores --rules on resume. Starting a fresh session.\n`,
+      );
+    } else if (executionTargetIsRemote && runtimeSessionId && !canResumeSession) {
       await onLog(
         "stdout",
         `[paperclip] Grok session "${runtimeSessionId}" does not match the current remote execution identity and will not be resumed in "${effectiveExecutionCwd}". Starting a fresh remote session.\n`,
@@ -468,14 +492,13 @@ export async function execute(ctx: AdapterExecutionContext): Promise<AdapterExec
     const commandNotes = (() => {
       const notes: string[] = ["Prompt is passed to Grok via --single in headless mode."];
       if (alwaysApprove) notes.push("Added --always-approve for unattended execution.");
-      if (stagedAssets.stagedInstructionsPath) {
-        notes.push(`Staged project instructions at ${stagedAssets.stagedInstructionsPath} for native Grok discovery.`);
+      if (instructionsRules) {
+        notes.push(
+          `Passed agent instructions from ${instructionsRules.path} via --rules (${instructionsRules.text.length} chars).`,
+        );
       }
-      if (stagedAssets.rulesFilePath) {
-        notes.push(`Applied fallback instructions via --rules @${stagedAssets.rulesFilePath}.`);
-      }
-      if (stagedAssets.stagedSkillsCount > 0) {
-        notes.push(`Staged ${stagedAssets.stagedSkillsCount} Paperclip skill(s) into .claude/skills for native Grok discovery.`);
+      if (injectedSkillsHome && injectedSkillsCount > 0) {
+        notes.push(`Linked ${injectedSkillsCount} Paperclip skill(s) into ${injectedSkillsHome}.`);
       }
       return notes;
     })();
@@ -530,7 +553,7 @@ export async function execute(ctx: AdapterExecutionContext): Promise<AdapterExec
       if (permissionMode) args.push("--permission-mode", permissionMode);
       if (alwaysApprove) args.push("--always-approve");
       if (disableWebSearch) args.push("--disable-web-search");
-      if (stagedAssets.rulesFilePath) args.push("--rules", `@${stagedAssets.rulesFilePath}`);
+      if (instructionsRules) args.push("--rules", instructionsRules.text);
       const extraArgs = (() => {
         const fromExtraArgs = asStringArray(config.extraArgs);
         if (fromExtraArgs.length > 0) return fromExtraArgs;
@@ -553,9 +576,11 @@ export async function execute(ctx: AdapterExecutionContext): Promise<AdapterExec
           command: resolvedCommand,
           cwd: effectiveExecutionCwd,
           commandNotes,
-          commandArgs: args.map((value, index) => (
-            index === args.length - 1 ? `<prompt ${prompt.length} chars>` : value
-          )),
+          commandArgs: args.map((value, index) => {
+            if (index === args.length - 1) return `<prompt ${prompt.length} chars>`;
+            if (index > 0 && args[index - 1] === "--rules") return `<rules ${value.length} chars>`;
+            return value;
+          }),
           env: loggedEnv,
           prompt,
           promptMetrics: { ...promptMetrics, promptChars: prompt.length },
@@ -610,13 +635,14 @@ export async function execute(ctx: AdapterExecutionContext): Promise<AdapterExec
         stderrLine ||
         `Grok exited with code ${attempt.proc.exitCode ?? -1}`;
 
-      const canFallbackToRuntimeSession = !isRetry;
+      const canFallbackToRuntimeSession = !isRetry && instructionsMatch;
       const resolvedSessionId = attempt.parsed.sessionId
         ?? (canFallbackToRuntimeSession ? (runtimeSessionId ?? runtime.sessionId ?? null) : null);
       const resolvedSessionParams = resolvedSessionId
         ? ({
           sessionId: resolvedSessionId,
           cwd: effectiveExecutionCwd,
+          ...(instructionsDigest ? { instructionsDigest } : {}),
           ...(workspaceId ? { workspaceId } : {}),
           ...(workspaceRepoUrl ? { repoUrl: workspaceRepoUrl } : {}),
           ...(workspaceRepoRef ? { repoRef: workspaceRepoRef } : {}),
@@ -680,8 +706,7 @@ export async function execute(ctx: AdapterExecutionContext): Promise<AdapterExec
     return toResult(initial);
   } finally {
     // Remove the staged GROK_HOME allowlist temp dir first, before the
-    // `Promise.all` below. A rejecting member of that `Promise.all` (for
-    // example a failed workspace restore) throws out of this `finally` and
+    // workspace restore below. A rejecting restore throws out of this `finally` and
     // skips every statement after it, so the removal must run before that
     // await to hold on every exit path (teardown AND error), never only the
     // happy path. Cleanup failure is logged, not fatal — a leaked temp dir
@@ -696,9 +721,6 @@ export async function execute(ctx: AdapterExecutionContext): Promise<AdapterExec
         );
       });
     }
-    await Promise.all([
-      restoreRemoteWorkspace?.(),
-      stagedAssets.cleanup(),
-    ]);
+    await restoreRemoteWorkspace?.();
   }
 }
