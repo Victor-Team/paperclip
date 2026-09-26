@@ -52,17 +52,23 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   applyObservabilityHeaders(headers);
   headers.set("X-Paperclip-Locale", i18n.language);
 
-  const res = await fetch(`${BASE}${path}`, {
-    credentials: "include",
-    ...init,
-    headers,
-  });
+  let res: Response;
+  try {
+    res = await fetch(`${BASE}${path}`, {
+      credentials: "include",
+      ...init,
+      headers,
+    });
+  } catch (error) {
+    if (error instanceof TypeError) throw new Error(i18n.t("tok225.networkFailed"), { cause: error });
+    throw error;
+  }
   if (!res.ok) {
     const errorBody = await res.json().catch(() => null);
     const recovery = tenantSessionRecovery.recoverIfNeeded(res.status, errorBody);
     if (recovery) return recovery;
     throw new ApiError(
-      (errorBody as { error?: string } | null)?.error ?? `Request failed: ${res.status}`,
+      (errorBody as { error?: string } | null)?.error ?? i18n.t("tok225.requestFailed", { status: res.status }),
       res.status,
       errorBody,
     );

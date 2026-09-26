@@ -7,6 +7,7 @@ import {
 } from "@paperclipai/shared";
 import { redactUrlSecrets } from "@/lib/redact-url-secrets";
 import { tenantSessionRecovery } from "@/lib/tenant-session-recovery";
+import { i18n } from "@/i18n";
 
 type AuthErrorBody =
   | {
@@ -62,7 +63,7 @@ function extractAuthError(payload: AuthErrorBody, status: number) {
         ? payload.message
         : typeof payload?.error === "string" && payload.error.trim().length > 0
           ? payload.error
-          : `Request failed: ${status}`;
+          : i18n.t("tok225.requestFailed", { status });
 
   return new AuthApiError(message, status, payload, code);
 }

@@ -20,6 +20,7 @@ import { useBreadcrumbs } from "@/context/BreadcrumbContext";
 import { cn } from "@/lib/utils";
 import { AgentInstructions, CopyField } from "./WebhookFields";
 import { WebhookUrlWarning } from "./WebhookUrlWarning";
+import { t, useTranslation } from "@/i18n";
 
 export type TriggerDraft = {
   kind: "choose" | "schedule" | "webhook";
@@ -126,6 +127,7 @@ export function RoutineTriggerWizard({
   onFinish: (draft: TriggerDraft) => void | Promise<void>;
   checkResult?: "waiting" | "received" | "rejected" | "no_event";
 }) {
+  useTranslation();
   const [draft, setDraft] = useState(initialDraft);
   const [busy, setBusy] = useState(false);
   const [saveError, setSaveError] = useState("");
@@ -448,7 +450,7 @@ export function RoutineTriggerWizard({
               />
             )}
             <CopyField
-              label={github ? "Payload URL" : "Webhook URL"}
+              label={github ? t("tok225.payload_url") : t("tok225.webhook_url")}
               value={webhookUrl}
             />
             {!github && draft.signingMode !== "bearer" && (
@@ -462,7 +464,7 @@ export function RoutineTriggerWizard({
             )}
             {webhookSecret ? (
               <CopyField
-                label={github ? "Secret" : draft.signingMode === "bearer" ? "Authorization header value" : "Secret key"}
+                label={github ? t("tok225.secret") : draft.signingMode === "bearer" ? t("tok225.authorization_header_value") : t("tok225.secret_key")}
                 value={!github && draft.signingMode === "bearer" ? `Bearer ${webhookSecret}` : webhookSecret}
               />
             ) : (
@@ -542,7 +544,7 @@ export function RoutineTriggerWizard({
                   Check that the webhook is enabled in your sending app and that
                   its URL matches. Scripts must send POST with a JSON body.
                 </p>
-                <CopyField label="Webhook URL" value={webhookUrl} />
+                <CopyField label={t("tok225.webhook_url")} value={webhookUrl} />
               </div>
             </details>
           </div>

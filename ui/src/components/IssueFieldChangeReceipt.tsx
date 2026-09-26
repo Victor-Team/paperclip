@@ -5,6 +5,7 @@ import {
   readIssueChangeReceipt,
 } from "../lib/issue-change-receipt";
 import { cn } from "../lib/utils";
+import { t, useTranslation } from "@/i18n";
 
 /**
  * Field-level audit receipt under an `issue.updated` row in the activity stream
@@ -30,6 +31,7 @@ export function IssueFieldChangeReceipt({
   resolveUserLabel?: (userId: string) => string | null | undefined;
   className?: string;
 }) {
+  useTranslation();
   const rows = readIssueChangeReceipt(event.details, { resolveAgentLabel, resolveUserLabel });
   const reason = issueAuthorizationReasonLabel(
     typeof event.details?.authorizationReason === "string"
@@ -66,7 +68,7 @@ export function IssueFieldChangeReceipt({
                     rather than implying the whole value is shown. */}
                 {row.truncated ? (
                   <span className="text-(length:--text-nano) uppercase tracking-(--tracking-eyebrow) text-muted-foreground">
-                    preview
+                    {t("tok225.preview")}
                   </span>
                 ) : null}
               </dd>
@@ -85,11 +87,11 @@ export function IssueFieldChangeReceipt({
           />
           {responsibleUserName ? (
             <>
-              for <span className="text-foreground">{responsibleUserName}</span>
+              {t("tok225.for_user")} <span className="text-foreground">{responsibleUserName}</span>
               {" · "}
             </>
           ) : null}
-          authorized by {reason}
+          {t("tok225.authorized_by", { reason })}
         </p>
       ) : null}
     </div>

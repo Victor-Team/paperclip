@@ -1,0 +1,94 @@
+[
+  {
+    "kind": "例程加载权限拒绝",
+    "bp": "桌面",
+    "requests": [
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/companies/2e9657c2-7ff9-41e3-b4f5-2c0c544e4243/routines",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/companies/2e9657c2-7ff9-41e3-b4f5-2c0c544e4243/routines",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/companies/2e9657c2-7ff9-41e3-b4f5-2c0c544e4243/routines",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/companies/2e9657c2-7ff9-41e3-b4f5-2c0c544e4243/routines",
+        "locale": "zh-CN"
+      }
+    ],
+    "visibleText": "跳转到主要内容\n汉\n汉化二次返工测试组织\n新建任务\n搜索\n仪表盘\n收件箱\n1\n工作\n任务\n项目\n例程\n产物\n公司\n智能体\n技能\n连接器\n审计\nBO\nBoard\n例程\n例程\n\n定义定期工作，并生成可审计的执行任务。\n\n查看全部运行\n创建例程\n\n0 个例程\n\n排序\n分组\n新建文件夹\n没有权限查看例程\n\n暂无活跃例程。请创建首个定期工作。\n\n命令面板\n\n搜索要运行的命令...",
+    "screenshot": "例程加载权限拒绝-桌面.png"
+  },
+  {
+    "kind": "例程创建服务端错误",
+    "bp": "桌面",
+    "requests": [
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/companies/2e9657c2-7ff9-41e3-b4f5-2c0c544e4243/routines",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "POST",
+        "url": "http://127.0.0.1:3204/api/companies/2e9657c2-7ff9-41e3-b4f5-2c0c544e4243/routines",
+        "locale": "zh-CN"
+      }
+    ],
+    "visibleText": "跳转到主要内容\n汉\n汉化二次返工测试组织\n新建任务\n搜索\n仪表盘\n收件箱\n1\n工作\n任务\n项目\n例程\n产物\n公司\n智能体\n技能\n连接器\n审计\nBO\nBoard\n例程\n例程\n\n定义定期工作，并生成可审计的执行任务。\n\n查看全部运行\n创建例程\n\n0 个例程\n\n排序\n分组\n新建文件夹\n\n暂无活跃例程。请创建首个定期工作。\n\n命令面板\n\n搜索要运行的命令...\n\n新建例程\n\n先定义定期工作。草稿例程的默认项目和智能体可以稍后设置。\n\n取消\n由\n负责人\n在\n项目\n归入\n未归档\n\n\n\n\n添加说明…\n\n高级交付设置\n\n策略设置放在工作定义之后。\n\n创建后将进入触发器设置。未设置默认智能体前，草稿例程保持暂停。\n创建例程\n\n例程创建暂时失败",
+    "screenshot": "例程创建服务端错误-桌面.png"
+  },
+  {
+    "kind": "例程加载权限拒绝",
+    "bp": "窄屏",
+    "requests": [
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/companies/2e9657c2-7ff9-41e3-b4f5-2c0c544e4243/routines",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/companies/2e9657c2-7ff9-41e3-b4f5-2c0c544e4243/routines",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/companies/2e9657c2-7ff9-41e3-b4f5-2c0c544e4243/routines",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/companies/2e9657c2-7ff9-41e3-b4f5-2c0c544e4243/routines",
+        "locale": "zh-CN"
+      }
+    ],
+    "visibleText": "跳转到主要内容\n汉\n汉化二次返工测试组织\n新建任务\n搜索\n仪表盘\n收件箱\n1\n工作\n任务\n项目\n例程\n产物\n公司\n智能体\n技能\n连接器\n审计\nBO\nBoard\n例程\n例程\n\n定义定期工作，并生成可审计的执行任务。\n\n查看全部运行\n创建例程\n\n0 个例程\n\n新建文件夹\n全部例程\n0\n没有权限查看例程\n\n暂无活跃例程。请创建首个定期工作。\n\n首页\n任务\n新建任务\n智能体\n1\n收件箱\n命令面板\n\n搜索要运行的命令...",
+    "screenshot": "例程加载权限拒绝-窄屏.png"
+  },
+  {
+    "kind": "例程创建服务端错误",
+    "bp": "窄屏",
+    "requests": [
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/companies/2e9657c2-7ff9-41e3-b4f5-2c0c544e4243/routines",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "POST",
+        "url": "http://127.0.0.1:3204/api/companies/2e9657c2-7ff9-41e3-b4f5-2c0c544e4243/routines",
+        "locale": "zh-CN"
+      }
+    ],
+    "visibleText": "跳转到主要内容\n汉\n汉化二次返工测试组织\n新建任务\n搜索\n仪表盘\n收件箱\n1\n工作\n任务\n项目\n例程\n产物\n公司\n智能体\n技能\n连接器\n审计\nBO\nBoard\n例程\n例程\n\n定义定期工作，并生成可审计的执行任务。\n\n查看全部运行\n创建例程\n\n0 个例程\n\n新建文件夹\n全部例程\n0\n\n暂无活跃例程。请创建首个定期工作。\n\n首页\n任务\n新建任务\n智能体\n1\n收件箱\n命令面板\n\n搜索要运行的命令...\n\n新建例程\n\n先定义定期工作。草稿例程的默认项目和智能体可以稍后设置。\n\n取消\n由\n负责人\n在\n项目\n归入\n未归档\n\n\n\n\n添加说明…\n\n高级交付设置\n\n策略设置放在工作定义之后。\n\n创建后将进入触发器设置。未设置默认智能体前，草稿例程保持暂停。\n创建例程\n\n例程创建暂时失败",
+    "screenshot": "例程创建服务端错误-窄屏.png"
+  }
+]

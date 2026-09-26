@@ -1,7 +1,7 @@
 import type { Agent } from "@paperclipai/shared";
 import type { CompanyUserProfile } from "./company-members";
 import { formatReviewPolicyValue } from "./review-policy";
-import { t } from "../i18n";
+import { i18n, t } from "../i18n";
 
 type ActivityDetails = Record<string, unknown> | null | undefined;
 
@@ -241,7 +241,8 @@ function asRecord(value: unknown): Record<string, unknown> | null {
 function humanizeValue(value: unknown): string {
   if (typeof value !== "string") return String(value ?? t("tok224.none"));
   if (["backlog", "todo", "in_progress", "in_review", "done", "cancelled", "blocked", "idle"].includes(value)) {
-    return t(`tok224.status.${value}`);
+    const label = t(`tok224.status.${value}`);
+    return i18n.language.startsWith("en") ? label.toLowerCase() : label;
   }
   return value.replace(/_/g, " ");
 }
