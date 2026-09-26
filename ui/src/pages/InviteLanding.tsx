@@ -14,7 +14,7 @@ import { getAdapterLabel } from "../adapters/adapter-display-registry";
 import { clearPendingInviteToken, rememberPendingInviteToken } from "../lib/invite-memory";
 import { queryKeys } from "../lib/queryKeys";
 import { formatDate } from "../lib/utils";
-import { useTranslation } from "@/i18n";
+import { t as translate, useTranslation } from "@/i18n";
 
 type AuthMode = "sign_in" | "sign_up";
 type AuthFeedback = { tone: "error" | "info"; message: string };
@@ -52,6 +52,9 @@ const modeButtonBaseClassName =
 
 function formatHumanRole(role: string | null | undefined) {
   if (!role) return null;
+  if (["owner", "admin", "operator", "viewer"].includes(role)) {
+    return translate(`invitelanding.general.role${role}`);
+  }
   return role.charAt(0).toUpperCase() + role.slice(1);
 }
 
@@ -74,41 +77,39 @@ function mapInviteAuthFeedback(
 ): AuthFeedback {
   const code = getAuthErrorCode(error);
   const message = getAuthErrorMessage(error);
-  const emailLabel = email.trim().length > 0 ? email.trim() : "that email";
+  const emailLabel = email.trim().length > 0 ? email.trim() : translate("invitelanding.general.thatemail");
 
   if (code === "USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL") {
     return {
       tone: "info",
-      message: `An account already exists for ${emailLabel}. Sign in below to continue with this invite.`,
+      message: translate("invitelanding.general.accountalreadyexists", { email: emailLabel }),
     };
   }
 
   if (code === "INVALID_EMAIL_OR_PASSWORD") {
     return {
       tone: "error",
-      message:
-        "That email and password did not match an existing Paperclip account. Check both fields, or create an account first if you are new here.",
+      message: translate("invitelanding.general.invalidcredentials"),
     };
   }
 
   if (authMode === "sign_in" && message === "Request failed: 401") {
     return {
       tone: "error",
-      message:
-        "That email and password did not match an existing Paperclip account. Check both fields, or create an account first if you are new here.",
+      message: translate("invitelanding.general.invalidcredentials"),
     };
   }
 
   if (authMode === "sign_up" && message === "Request failed: 422") {
     return {
       tone: "info",
-      message: `An account may already exist for ${emailLabel}. Try signing in instead.`,
+      message: translate("invitelanding.general.accountmayexist", { email: emailLabel }),
     };
   }
 
   return {
     tone: "error",
-    message: message ?? "Authentication failed",
+    message: message ?? translate("invitelanding.general.authenticationfailed"),
   };
 }
 
@@ -163,7 +164,7 @@ function AwaitingJoinApprovalPanel({
   onboardingTextUrl = null,
 }: AwaitingJoinApprovalPanelProps) {
   const { t } = useTranslation();
-  const approverLabel = invitedByUserName ?? "An organization admin";
+  const approverLabel = invitedByUserName ?? t("invitelanding.general.organizationadmin");
 
   return (
     <div className="min-h-screen bg-zinc-950 px-6 py-12 text-zinc-100">
@@ -184,7 +185,7 @@ function AwaitingJoinApprovalPanel({
             <p className="text-sm text-zinc-200">{t("invitelanding.general.settingsmembers")}</p>
           </div>
           <p className="text-sm text-zinc-400">
-            {t("invitelanding.general.askthemtovisit")}<span className="text-zinc-200">{t("invitelanding.general.settingsmembers1")}</span> {t("invitelanding.general.toapproveyourrequest")}</p>
+            {t("invitelanding.general.askthemtovisit")}{" "}<span className="text-zinc-200">{t("invitelanding.general.settingsmembers1")}</span> {t("invitelanding.general.toapproveyourrequest")}</p>
           <p className="text-xs text-zinc-500">
             {t("invitelanding.general.refreshthispageafteryouvebeen")}</p>
         </div>
@@ -294,7 +295,7 @@ export function InviteLandingPage() {
     Boolean(invite?.companyId) &&
     companyList.some((company) => company.id === invite?.companyId);
   const companyName = invite?.companyName?.trim() || null;
-  const companyDisplayName = companyName || "this Paperclip company";
+  const companyDisplayName = companyName || t("invitelanding.general.thispaperclipcompany");
   const companyLogoUrl = invite?.companyLogoUrl?.trim() || null;
   const invitedByUserName = invite?.invitedByUserName?.trim() || null;
   const inviteMessage = invite?.inviteMessage?.trim() || null;
@@ -321,7 +322,7 @@ export function InviteLandingPage() {
   const sessionLabel =
     sessionQuery.data?.user.name?.trim() ||
     sessionQuery.data?.user.email?.trim() ||
-    "this account";
+    t("invitelanding.general.thisaccount");
 
   const authCanSubmit =
     email.trim().length > 0 &&
@@ -330,12 +331,12 @@ export function InviteLandingPage() {
 
   const acceptMutation = useMutation({
     mutationFn: async () => {
-      if (!invite) throw new Error("Invite not found");
+      if (!invite) throw new Error(t("invitelanding.general.invitenotfound"));
       if (isCheckingExistingMembership) {
-        throw new Error("Checking your organization access. Try again in a moment.");
+        throw new Error(t("invitelanding.general.checkingaccessretry"));
       }
       if (isCurrentMember) {
-        throw new Error("This account already belongs to the organization.");
+        throw new Error(t("invitelanding.general.alreadymember"));
       }
       if (invite.inviteType === "bootstrap_ceo" || invite.allowedJoinTypes !== "agent") {
         return accessApi.acceptInvite(token, { requestType: "human" });
@@ -361,7 +362,7 @@ export function InviteLandingPage() {
       }
     },
     onError: (err) => {
-      setError(err instanceof Error ? err.message : "Failed to accept invite");
+      setError(err instanceof Error ? err.message : t("invitelanding.general.acceptinvitefailed"));
     },
   });
 
@@ -428,12 +429,12 @@ export function InviteLandingPage() {
   });
 
   const joinButtonLabel = useMemo(() => {
-    if (!invite) return "Continue";
-    if (isCurrentMember) return "Open organization";
-    if (invite.inviteType === "bootstrap_ceo") return "Accept invite";
-    if (showsAgentForm) return "Submit request";
-    return sessionQuery.data ? "Accept invite" : "Continue";
-  }, [invite, isCurrentMember, sessionQuery.data, showsAgentForm]);
+    if (!invite) return t("invitelanding.general.continue");
+    if (isCurrentMember) return t("invitelanding.general.openorganization");
+    if (invite.inviteType === "bootstrap_ceo") return t("invitelanding.general.acceptinvite");
+    if (showsAgentForm) return t("invitelanding.general.submitrequest");
+    return sessionQuery.data ? t("invitelanding.general.acceptinvite") : t("invitelanding.general.continue");
+  }, [invite, isCurrentMember, sessionQuery.data, showsAgentForm, t]);
 
   if (!token) {
     return <div className="mx-auto max-w-xl py-10 text-sm text-destructive">{t("invitelanding.general.invalidinvitetoken")}</div>;
@@ -565,7 +566,7 @@ export function InviteLandingPage() {
                 <p className="text-xs uppercase tracking-(--tracking-caps) text-zinc-500">
                   {t("invitelanding.general.youaposvebeeninvitedtojoin")}</p>
                 <h1 className="mt-2 text-2xl font-semibold">
-                  {invite.inviteType === "bootstrap_ceo" ? t("invitelanding.general.setuppaperclip") : `Join ${companyDisplayName}`}
+                  {invite.inviteType === "bootstrap_ceo" ? t("invitelanding.general.setuppaperclip") : t("invitelanding.general.joincompany", { name: companyDisplayName })}
                 </h1>
                 <p className="mt-2 max-w-2xl text-sm leading-6 text-zinc-300">
                   {showsAgentForm
@@ -711,7 +712,7 @@ export function InviteLandingPage() {
                     event.preventDefault();
                     if (authMutation.isPending) return;
                     if (!authCanSubmit) {
-                      setAuthFeedback({ tone: "error", message: "Please fill in all required fields." });
+                      setAuthFeedback({ tone: "error", message: t("invitelanding.general.requiredfields") });
                       return;
                     }
                     authMutation.mutate();
@@ -823,12 +824,12 @@ export function InviteLandingPage() {
                   </h2>
                   <p className="mt-1 text-sm text-zinc-400">
                     {shouldAutoAcceptHumanInvite
-                      ? `Granting your access to ${companyDisplayName}.`
+                      ? t("invitelanding.general.grantingaccess", { name: companyDisplayName })
                       : isCurrentMember
-                      ? `This account already belongs to ${companyDisplayName}.`
-                      : `This will ${
-                          invite.inviteType === "bootstrap_ceo" ? t("invitelanding.general.finishsettinguppaperclip") : `grant or complete your access to ${companyDisplayName}`
-                        }.`}
+                      ? t("invitelanding.general.alreadymembernamed", { name: companyDisplayName })
+                      : invite.inviteType === "bootstrap_ceo"
+                        ? t("invitelanding.general.willfinishsetup")
+                        : t("invitelanding.general.willgrantaccess", { name: companyDisplayName })}
                   </p>
                 </div>
                 {error ? <p className="text-xs text-red-400">{error}</p> : null}

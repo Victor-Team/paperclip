@@ -100,6 +100,7 @@ function externalObjectRowDisplayKey(group: IssueExternalObjectGroup, t: TFuncti
   const { pill } = group;
   const displayKey = pill.displayKey?.trim();
   if (displayKey) return displayKey;
+  if (pill.providerKey === "url" && pill.objectType === "link") return t("externalobjectrows.general.url");
   if (pill.providerKey === "github") {
     if (pill.objectType === "pull_request") return t("externalobjectrows.general.githubpullrequest");
     if (pill.objectType === "issue") return t("externalobjectrows.general.githubissue");
