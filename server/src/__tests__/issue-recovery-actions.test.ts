@@ -548,7 +548,11 @@ describeEmbeddedPostgres("issue recovery actions", () => {
           eq(issueComments.authorType, "system"),
         ),
       );
-    expect(notices).toHaveLength(0);
+    expect(
+      notices.filter((row) =>
+        noticeMetadataReferencesRecoveryAction(row.metadata, actions[0]!.id),
+      ),
+    ).toHaveLength(1);
   });
 
   it("gives a distinct recovery identity and a new operator notice when the unresolved base ref changes", async () => {
@@ -598,7 +602,16 @@ describeEmbeddedPostgres("issue recovery actions", () => {
           eq(issueComments.authorType, "system"),
         ),
       );
-    expect(systemComments).toHaveLength(0);
+    expect(
+      systemComments.some((row) =>
+        noticeMetadataReferencesRecoveryAction(row.metadata, priorAction!.id),
+      ),
+    ).toBe(true);
+    expect(
+      systemComments.some((row) =>
+        noticeMetadataReferencesRecoveryAction(row.metadata, newAction!.id),
+      ),
+    ).toBe(true);
   });
 
   it.each([
@@ -1163,7 +1176,7 @@ describeEmbeddedPostgres("issue recovery actions", () => {
     expect(result).toMatchObject({ escalated: 1, reviewParticipantRequeued: 0 });
     const [updatedIssue] = await db.select().from(issues).where(eq(issues.id, sourceIssueId));
     expect(updatedIssue).toMatchObject({
-      status: "in_progress",
+      status: "blocked",
       assigneeAgentId: coderId,
     });
     const [updatedRun] = await db.select().from(heartbeatRuns).where(eq(heartbeatRuns.id, runId));
@@ -1171,7 +1184,7 @@ describeEmbeddedPostgres("issue recovery actions", () => {
     const [action] = await db.select().from(issueRecoveryActions);
     expect(action).toMatchObject({
       sourceIssueId,
-      ownerType: "system",
+      ownerType: "board",
       ownerAgentId: null,
       previousOwnerAgentId: coderId,
       cause: "configuration_incomplete",
@@ -1232,7 +1245,7 @@ describeEmbeddedPostgres("issue recovery actions", () => {
 
     expect(result).toMatchObject({ escalated: 1, skipped: 0 });
     const [updatedIssue] = await db.select().from(issues).where(eq(issues.id, sourceIssueId));
-    expect(updatedIssue?.status).toBe("in_progress");
+    expect(updatedIssue?.status).toBe("blocked");
     const [updatedRun] = await db.select().from(heartbeatRuns).where(eq(heartbeatRuns.id, runId));
     expect(updatedRun?.errorCode).toBe("configuration_incomplete");
     const [action] = await db.select().from(issueRecoveryActions);

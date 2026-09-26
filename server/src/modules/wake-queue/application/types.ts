@@ -23,6 +23,12 @@ export type RunSnapshot = {
   configurationIncompletePayload: Record<string, unknown> | null;
   /** The host schedules failed conversation turns with its durable retry budget. */
   conversationContinuation?: boolean;
+  /**
+   * A provider-quota failure. Like a failed conversation turn it is retried by
+   * the host's counted retry scheduler (and then the quota wait), never by an
+   * uncounted immediate successor that would reset the retry budget.
+   */
+  providerQuota?: boolean;
 };
 
 export type IssueSnapshot = {

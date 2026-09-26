@@ -23,6 +23,20 @@ export function legacyExecutionNeedsReconciliation(
   // A fresh conversation turn lets the agent decide what remains. The retry
   // scheduler, not an action-outcome hold, owns the automatic attempt limit.
   if (hasConversationContinuationPolicy(run.resultJson)) return false;
+  // Provider quota and configuration failures have their own recovery owners:
+  // the provider-quota wait (bounded retries, then a <=1h monitor) and the
+  // configuration_incomplete escalation. Holding them for action
+  // reconciliation instead fed the automatic disposition -> recovery-only
+  // continuation loop, which re-ran the seat every ~30s against the same
+  // exhausted quota or missing model (TOK-226, ledger #55).
+  const errorFamily = run.resultJson?.errorFamily;
+  if (run.errorCode === "provider_quota" || errorFamily === "provider_quota") return false;
+  if (
+    run.errorCode === "configuration_incomplete" ||
+    run.errorCode === "model_not_found" ||
+    errorFamily === "configuration_incomplete"
+  )
+    return false;
   // Productive turn-budget continuation is not a failed provider session.
   if (normalizeMaxTurnStopReason(run.resultJson?.stopReason) ?? normalizeMaxTurnStopReason(run.errorCode)) return false;
   const evidence = run.resultJson?.executionRecovery as

@@ -1,10 +1,12 @@
 import { randomUUID } from "node:crypto";
-import { conversationRecoveryActionPredicate, getConversationOwnershipBlocker } from "./conversation-continuation.js";
+import { claimedAdapterType, conversationRecoveryActionPredicate, getConversationOwnershipBlocker } from "./conversation-continuation.js";
 import { persistActivity } from "./activity-log.js";
 import { appendHeartbeatRunEvent } from "./heartbeat-run-events.js";
 import { logger } from "../middleware/logger.js";
-import { and, eq, inArray, isNull, not, or, sql } from "drizzle-orm";
+import { and, eq, gt, inArray, isNull, not, or, sql } from "drizzle-orm";
 import {
+  agentConfigRevisions,
+  agents,
   chatActions,
   environmentLeases,
   heartbeatRuns,
@@ -21,6 +23,62 @@ import {
 } from "@paperclipai/shared";
 import { parseIssueExecutionState } from "./issue-execution-policy.js";
 import { isSupersededConversationRun } from "./agent-conversations.js";
+
+const PROVIDER_QUOTA_PROBE_INTERVAL_MS = 60 * 60 * 1000;
+
+type ResourceFailureRecoveryOnlyDecision =
+  | { kind: "not_resource_failure" }
+  | { kind: "wait" }
+  | { kind: "resume_work"; cause: "provider_quota" | "configuration_incomplete"; resolvedBy: string };
+
+/**
+ * A recovery-only continuation exists for failures whose external action
+ * outcome is unknown. A provider-quota or configuration failure is a resource
+ * condition instead: replaying a "recovery-only" turn against the same
+ * exhausted quota / missing model only loops (TOK-226, ledger #55) and makes
+ * the seat reason about a stale error. Hold it until the condition has
+ * plausibly cleared, then deliver an ordinary "continue the work" wake.
+ */
+function decideResourceFailureRecoveryOnly(input: {
+  run: typeof heartbeatRuns.$inferSelect;
+  agent: typeof agents.$inferSelect | null;
+  /** A recorded seat configuration revision exists after the failure. */
+  configurationChangedSinceFailure: boolean;
+  now: Date;
+}): ResourceFailureRecoveryOnlyDecision {
+  const { run, agent, now } = input;
+  const family = typeof run.resultJson?.errorFamily === "string" ? run.resultJson.errorFamily : null;
+  const cause =
+    run.errorCode === "provider_quota" || family === "provider_quota"
+      ? ("provider_quota" as const)
+      : run.errorCode === "configuration_incomplete" ||
+          run.errorCode === "model_not_found" ||
+          family === "configuration_incomplete"
+        ? ("configuration_incomplete" as const)
+        : null;
+  if (!cause) return { kind: "not_resource_failure" };
+  const failedAt = run.finishedAt ?? run.updatedAt ?? run.createdAt;
+  const runAdapterType = claimedAdapterType(run);
+  if (agent && runAdapterType && agent.adapterType !== runAdapterType)
+    return { kind: "resume_work", cause, resolvedBy: "adapter_changed" };
+  if (input.configurationChangedSinceFailure)
+    return { kind: "resume_work", cause, resolvedBy: "seat_configuration_changed" };
+  if (cause === "provider_quota") {
+    const reset =
+      typeof run.resultJson?.retryNotBefore === "string" ? new Date(run.resultJson.retryNotBefore) : null;
+    const probeAt = new Date(
+      Math.min(
+        reset && !Number.isNaN(reset.getTime()) ? reset.getTime() : Number.POSITIVE_INFINITY,
+        (failedAt ?? now).getTime() + PROVIDER_QUOTA_PROBE_INTERVAL_MS,
+      ),
+    );
+    return probeAt.getTime() <= now.getTime()
+      ? { kind: "resume_work", cause, resolvedBy: "quota_wait_elapsed" }
+      : { kind: "wait" };
+  }
+  // A missing model/credential reproduces until someone changes the seat.
+  return { kind: "wait" };
+}
 
 /** An operator records observed outcomes; this is not permission to blindly retry. */
 export async function validateExecutionReconciliation(input: {
@@ -272,10 +330,48 @@ export async function deliverReconciledExecutions(
           .where(pendingDecision);
         continue;
       }
+      let resourceResume: Extract<ResourceFailureRecoveryOnlyDecision, { kind: "resume_work" }> | null = null;
+      if (recoveryOnly) {
+        const [sourceRun] = await db
+          .select()
+          .from(heartbeatRuns)
+          .where(and(eq(heartbeatRuns.companyId, action.companyId), eq(heartbeatRuns.id, sourceRunId as string)));
+        const [agent] = await db
+          .select()
+          .from(agents)
+          .where(and(eq(agents.companyId, action.companyId), eq(agents.id, action.returnOwnerAgentId)));
+        const failedAt = sourceRun ? (sourceRun.finishedAt ?? sourceRun.updatedAt) : null;
+        const [revision] = failedAt
+          ? await db
+              .select({ id: agentConfigRevisions.id })
+              .from(agentConfigRevisions)
+              .where(
+                and(
+                  eq(agentConfigRevisions.companyId, action.companyId),
+                  eq(agentConfigRevisions.agentId, action.returnOwnerAgentId),
+                  gt(agentConfigRevisions.createdAt, failedAt),
+                ),
+              )
+              .limit(1)
+          : [];
+        const decision = sourceRun
+          ? decideResourceFailureRecoveryOnly({
+              run: sourceRun,
+              agent: agent ?? null,
+              configurationChangedSinceFailure: Boolean(revision),
+              now: new Date(),
+            })
+          : ({ kind: "not_resource_failure" } as const);
+        if (decision.kind === "wait") continue;
+        if (decision.kind === "resume_work") resourceResume = decision;
+      }
+      // After a cleared resource failure the seat simply resumes its work; it
+      // is not asked to audit a stale provider error.
+      const recoveryOnlyWake = recoveryOnly && !resourceResume;
       const run = await wake(action.returnOwnerAgentId, {
         source: "automation",
         triggerDetail: "system",
-        reason: recoveryOnly
+        reason: recoveryOnlyWake
           ? "issue_recovery_only_continuation"
           : "issue_recovery_action_restored",
         idempotencyKey: recoveryOnly
@@ -291,12 +387,21 @@ export async function deliverReconciledExecutions(
           previousRunId: sourceRunId,
           retryOfRunId: sourceRunId,
           forceFreshSession: true,
-          wakeReason: recoveryOnly
+          wakeReason: recoveryOnlyWake
             ? "issue_recovery_only_continuation"
             : "issue_recovery_action_restored",
           source: recoveryOnly
             ? "execution.recovery_only"
             : "execution.reconciled",
+          ...(resourceResume
+            ? {
+                resourceFailureCleared: {
+                  cause: resourceResume.cause,
+                  resolvedBy: resourceResume.resolvedBy,
+                  sourceRunId,
+                },
+              }
+            : {}),
         },
       });
       if (run)

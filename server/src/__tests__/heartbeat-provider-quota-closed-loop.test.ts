@@ -31,6 +31,10 @@ const mockTelemetryClient = vi.hoisted(() => ({ track: vi.fn() }));
 vi.mock("../telemetry.js", () => ({ getTelemetryClient: () => mockTelemetryClient }));
 
 import { heartbeatService } from "../services/heartbeat.ts";
+import { deliverReconciledExecutions, settleUnrecoverableExecutions } from "../services/execution-recovery-resolution.js";
+import { terminalizeLegacyExecution } from "../services/legacy-execution-recovery.js";
+import { agentService } from "../services/agents.js";
+import { recoveryService } from "../services/recovery/service.js";
 import { issueRoutes } from "../routes/issues.js";
 import { routeApp, type BoardActor } from "./helpers/route-test-harness.js";
 import { ensureHumanRoleDefaultGrants } from "../services/principal-access-compatibility.js";
@@ -64,6 +68,10 @@ const ADAPTER = "provider_quota_closed_loop_test";
 // these adapter types (heartbeat.ts mergeRunStopMetadataForAgent), exactly as
 // production does. registerServerAdapter restores the built-in on unregister.
 const CONVERSATION_ADAPTER = "codex_local";
+// An external (plugin) adapter type, as omp_local is in production: not a
+// built-in and not a conversation adapter, so the platform stamps no
+// conversationContinuation marker on its failed runs.
+const EXTERNAL_ADAPTER = "omp_local";
 
 type AdapterMode =
   | {
@@ -79,7 +87,14 @@ type AdapterMode =
   | { kind: "acpx_turn_failed" }
   // TOK-226 (opencode_local): quota reported only as prose in errorMessage,
   // no errorCode, no errorFamily, no retryNotBefore.
-  | { kind: "prose_quota"; message: string };
+  | { kind: "prose_quota"; message: string }
+  // TOK-226 after the switch to the external omp_local adapter: the result
+  // mirrors the production row field by field (EXP-0152) - no errorCode, no
+  // errorFamily, no executionRecovery, tool calls already made, stopReason.
+  | { kind: "omp_failure"; message: string; summary?: string }
+  // A turn that only inspects and hands the issue back (what a recovery-only
+  // continuation is told to do): succeeds, comments, sets the issue status.
+  | { kind: "hand_back"; status: "todo" | "in_progress" };
 
 const adapterState: {
   mode: AdapterMode;
@@ -117,6 +132,38 @@ describe("provider quota closed loop (default production entries)", () => {
         adapterState.inFlight.set(runAgentId, inFlight);
         adapterState.maxInFlight.set(runAgentId, Math.max(adapterState.maxInFlight.get(runAgentId) ?? 0, inFlight));
         try {
+        if (mode.kind === "hand_back") {
+          await db.insert(issueComments).values({
+            companyId: adapterState.companyId!,
+            issueId: runIssueId,
+            authorAgentId: runAgentId,
+            authorType: "agent",
+            createdByRunId: ctx.runId,
+            body: "Recovery check done; handing the issue back without doing the deliverable.",
+          });
+          await db.update(issues).set({ status: mode.status }).where(eq(issues.id, runIssueId));
+          return { exitCode: 0, signal: null, timedOut: false, errorMessage: null, summary: "handed back" };
+        }
+        if (mode.kind === "omp_failure") {
+          return {
+            exitCode: 1,
+            signal: null,
+            timedOut: false,
+            errorMessage: mode.message,
+            summary: mode.summary,
+            resultJson: {
+              errors: [mode.message],
+              stderr: "",
+              stdout: "58:  const message =",
+              ...(mode.summary ? { summary: mode.summary } : {}),
+              toolCalls: [{ args: { path: "/tmp/ws", pattern: "error" }, result: [{ text: "No matches found", type: "text" }],
+                isError: false, toolName: "grep", toolCallId: "call_1" }],
+              stopReason: "adapter_failed",
+              timeoutFired: false,
+              unknownLines: [],
+            },
+          };
+        }
         if (mode.kind === "prose_quota") {
           return { exitCode: 1, signal: null, timedOut: false, errorMessage: mode.message };
         }
@@ -175,7 +222,7 @@ describe("provider quota closed loop (default production entries)", () => {
           adapterState.inFlight.set(runAgentId, (adapterState.inFlight.get(runAgentId) ?? 1) - 1);
         }
     };
-    for (const type of [ADAPTER, CONVERSATION_ADAPTER, "opencode_local"]) {
+    for (const type of [ADAPTER, CONVERSATION_ADAPTER, "opencode_local", EXTERNAL_ADAPTER]) {
       registerServerAdapter({
         type,
         execute: execute as never,
@@ -223,6 +270,7 @@ describe("provider quota closed loop (default production entries)", () => {
     unregisterServerAdapter(ADAPTER);
     unregisterServerAdapter(CONVERSATION_ADAPTER);
     unregisterServerAdapter("opencode_local");
+    unregisterServerAdapter(EXTERNAL_ADAPTER);
     await tempDb?.cleanup();
   });
 
@@ -390,64 +438,38 @@ describe("provider quota closed loop (default production entries)", () => {
     expect(s3.interactions).toEqual([]);
   }, 60_000);
 
-  it("B: after the 3rd consecutive quota failure the issue is handed to the board and never resumes by itself", async () => {
+  it("B: non-conversation adapter, 3rd consecutive quota failure goes to the quota wait (not the board) and resumes by itself", async () => {
     const { companyId, agentId, issueId } = await seed();
     const reset = new Date(Date.now() + 10 * 60_000).toISOString();
     adapterState.mode = { kind: "quota", retryNotBefore: reset, bootstrapEvidence: true };
 
     await wakeAssigned(agentId, issueId);
-    await sweep(new Date(Date.parse(reset) + 60_000));
-    const s2 = await snapshot(companyId, issueId);
-    expect(s2.actions).toEqual([]);
-    expect(pendingRetries(s2)).toHaveLength(1);
-
-    // Third failure = the retry with scheduledRetryAttempt 2.
-    await sweep(new Date(Date.parse(reset) + 2 * 60_000));
+    await sweepNoTick(new Date(Date.parse(reset) + 60_000));
+    await sweepNoTick(new Date(Date.parse(reset) + 2 * 60_000));
     const s3 = await snapshot(companyId, issueId);
     log("B after run 3", s3);
     expect(failedRuns(s3).map((run) => run.scheduledRetryAttempt)).toEqual([0, 1, 2]);
     expect(pendingRetries(s3)).toEqual([]);
-    expect(s3.actions).toEqual([
-      {
-        kind: "active_run_watchdog",
-        ownerType: "board",
-        status: "active",
-        cause: "legacy_execution_requires_reconciliation",
-      },
-    ]);
-    // Not the system-owned provider quota wait, and no quota monitor either.
-    expect(s3.actions.some((action) => action.cause === "provider_quota")).toBe(false);
-    expect(s3.issue.monitorNextCheckAt).toBeNull();
+    // Formerly a board-owned legacy reconciliation action; now the quota wait owns it.
+    expect(s3.actions).toEqual([]);
     expect(s3.issue.status).toBe("in_progress");
-    expect(s3.issue.executionRunId).toBeNull();
+    expect(s3.issue.monitorNextCheckAt).not.toBeNull();
 
-    // Quota recovers (reset passed long ago, or topped up). Nobody touches it.
     adapterState.mode = { kind: "success" };
-    const later = [
-      Date.parse(reset) + 60 * 60_000, // +1h (default quota backoff)
-      Date.parse(reset) + 24 * 60 * 60_000, // +1 day
-      Date.parse(reset) + 8 * 24 * 60 * 60_000, // +8 days (beyond a weekly limit)
-    ];
-    for (const at of later) {
-      const result = await sweep(new Date(at));
-      expect(result.promoted).toBe(0);
-      expect(result.reconciled.providerQuotaMonitored).toBe(0);
-    }
+    for (const offsetMs of [61 * 60_000, 62 * 60_000]) await sweep(new Date(Date.parse(reset) + offsetMs));
     const sEnd = await snapshot(companyId, issueId);
-    log("B after 8 days of sweeps", sEnd);
-    expect(adapterState.calls.map((call) => call.mode)).toEqual(["quota", "quota", "quota"]);
-    expect(sEnd.runs).toHaveLength(3);
-    expect(sEnd.issue.status).toBe("in_progress");
-    expect(sEnd.actions).toEqual(s3.actions);
+    log("B end", sEnd);
+    expect(adapterState.calls.map((call) => call.mode)).toEqual(["quota", "quota", "quota", "success"]);
+    expect(sEnd.issue.status).toBe("done");
+    expect(sEnd.actions).toEqual([]);
   }, 60_000);
 
-  it("C: with no reset time the retries use the 30s transient delay (not the 1h quota backoff) and then hand over to the board", async () => {
+  it("C: non-conversation adapter, no reset time: 30s bounded retries, then the 1h default quota wait (not the board)", async () => {
     const { companyId, agentId, issueId } = await seed();
     adapterState.mode = { kind: "quota", retryNotBefore: null, bootstrapEvidence: true };
 
     await wakeAssigned(agentId, issueId);
     const s1 = await snapshot(companyId, issueId);
-    log("C after run 1", s1);
     const [firstFailed] = await db
       .select({ finishedAt: heartbeatRuns.finishedAt })
       .from(heartbeatRuns)
@@ -457,26 +479,24 @@ describe("provider quota closed loop (default production entries)", () => {
     const delayMs = Date.parse(retry1!.scheduledRetryAt!) - firstFailed!.finishedAt!.getTime();
     expect(delayMs).toBeGreaterThanOrEqual(25_000);
     expect(delayMs).toBeLessThanOrEqual(35_000);
-    expect(s1.issue.monitorNextCheckAt).toBeNull();
 
-    await sweep(new Date(Date.now() + 60_000));
-    await sweep(new Date(Date.now() + 2 * 60_000));
+    await sweepNoTick(new Date(Date.now() + 60_000));
+    const beforeThird = Date.now();
+    await sweepNoTick(new Date(Date.now() + 2 * 60_000));
     const s3 = await snapshot(companyId, issueId);
     log("C after run 3", s3);
     expect(failedRuns(s3)).toHaveLength(3);
     expect(pendingRetries(s3)).toEqual([]);
-    expect(s3.actions).toEqual([
-      expect.objectContaining({ ownerType: "board", cause: "legacy_execution_requires_reconciliation" }),
-    ]);
-    expect(s3.issue.monitorNextCheckAt).toBeNull();
+    expect(s3.actions).toEqual([]);
+    const monitorAt = Date.parse(s3.issue.monitorNextCheckAt!);
+    expect(monitorAt - beforeThird).toBeGreaterThanOrEqual(59 * 60_000);
+    expect(monitorAt - beforeThird).toBeLessThanOrEqual(61 * 60_000);
 
     adapterState.mode = { kind: "success" };
-    for (const hours of [1, 2, 24]) {
-      expect((await sweep(new Date(Date.now() + hours * 60 * 60_000))).promoted).toBe(0);
-    }
+    for (const offsetMs of [60_000, 2 * 60_000]) await sweep(new Date(monitorAt + offsetMs));
     const sEnd = await snapshot(companyId, issueId);
-    expect(adapterState.calls).toHaveLength(3);
-    expect(sEnd.issue.status).toBe("in_progress");
+    expect(adapterState.calls.map((call) => call.mode)).toEqual(["quota", "quota", "quota", "success"]);
+    expect(sEnd.issue.status).toBe("done");
   }, 60_000);
 
   it("D: early top-up (reset 7 days away) is probed within 1 hour and resumes without anyone (quota wait cap)", async () => {
@@ -503,7 +523,7 @@ describe("provider quota closed loop (default production entries)", () => {
     expect(sEnd.actions).toEqual([]);
   }, 60_000);
 
-  it("E: with the real claude/codex ACP quota result shape (no executionRecovery evidence) the FIRST quota failure goes to the board with zero retries", async () => {
+  it("E: claude/codex ACP quota result shape without executionRecovery evidence still gets the bounded quota retry (no board on the first failure)", async () => {
     const { companyId, agentId, issueId } = await seed();
     const reset = new Date(Date.now() + 10 * 60_000).toISOString();
     adapterState.mode = { kind: "quota", retryNotBefore: reset, bootstrapEvidence: false };
@@ -512,28 +532,18 @@ describe("provider quota closed loop (default production entries)", () => {
     const s1 = await snapshot(companyId, issueId);
     log("E after run 1", s1);
     expect(failedRuns(s1)).toHaveLength(1);
-    expect(pendingRetries(s1)).toEqual([]);
-    expect(s1.actions).toEqual([
-      {
-        kind: "active_run_watchdog",
-        ownerType: "board",
-        status: "active",
-        cause: "legacy_execution_requires_reconciliation",
-      },
+    expect(pendingRetries(s1)).toEqual([
+      expect.objectContaining({ scheduledRetryAttempt: 1, scheduledRetryReason: "transient_failure", scheduledRetryAt: reset }),
     ]);
-    expect(s1.issue.monitorNextCheckAt).toBeNull();
+    expect(s1.actions).toEqual([]);
 
     adapterState.mode = { kind: "success" };
-    for (const offsetMs of [60_000, 60 * 60_000, 24 * 60 * 60_000, 8 * 24 * 60 * 60_000]) {
-      const result = await sweep(new Date(Date.parse(reset) + offsetMs));
-      expect(result.promoted).toBe(0);
-      expect(result.reconciled.providerQuotaMonitored).toBe(0);
-    }
+    await sweep(new Date(Date.parse(reset) + 60_000));
     const sEnd = await snapshot(companyId, issueId);
-    expect(adapterState.calls.map((call) => call.mode)).toEqual(["quota"]);
-    expect(sEnd.runs).toHaveLength(1);
-    expect(sEnd.issue.status).toBe("in_progress");
+    expect(adapterState.calls.map((call) => call.mode)).toEqual(["quota", "success"]);
+    expect(sEnd.issue.status).toBe("done");
   }, 60_000);
+
   // ---- F-I: production shape. Conversation adapters get
   // `conversationContinuation: "continue_conversation_v1"` stamped by heartbeat
   // finalize, which exempts them from legacy reconciliation
@@ -1113,4 +1123,405 @@ describe("provider quota closed loop (default production entries)", () => {
     expect(sEnd.actions).toEqual([]);
     expect(sEnd.issue.status).toBe("in_progress");
   }, 120_000);
+  // ---- TOK-226 / ledger #55: external adapter failures loop every ~30s through
+  // legacy reconciliation -> automatic disposition -> recovery-only continuation.
+
+  /** Scheduler pass plus the execution-control sweeps production runs every 15s. */
+  async function fullSweep(now: Date) {
+    const result = await sweep(now);
+    await settleUnrecoverableExecutions(db, now);
+    await deliverReconciledExecutions(db, heartbeat.wakeup);
+    await drainHeartbeatRunsToQuiescence(db, heartbeat);
+    return result;
+  }
+
+  it("M: external adapter (omp_local shape), provider quota: first failure enters the quota wait, no board reconciliation, no 30s recovery-only loop", async () => {
+    const { companyId, agentId, issueId } = await seed(EXTERNAL_ADAPTER);
+    const resetAt = new Date(Math.floor((Date.now() + 3 * 60 * 60_000) / 1000) * 1000);
+    const cst = new Date(resetAt.getTime() + 8 * 60 * 60_000).toISOString().replace("T", " ").slice(0, 19);
+    const message = `429 You have exceeded the 5-hour usage quota. It will reset at ${cst} +0800 CST. We recommend upgrading your plan for more quota, or waiting for the reset.`;
+    adapterState.mode = { kind: "omp_failure", message, summary: "partial work" };
+
+    await wakeAssigned(agentId, issueId);
+    const s1 = await snapshot(companyId, issueId);
+    log("M after run 1", s1);
+    expect(s1.runs[0]).toMatchObject({ status: "failed", errorCode: "adapter_failed", errorFamily: "provider_quota", conversationContinuation: null });
+
+    // 30 minutes of production cadence (scheduler + execution-control sweeps every 30s).
+    const start = Date.now();
+    for (let tick = 1; tick <= 60; tick += 1) await fullSweep(new Date(start + tick * 30_000));
+    const s2 = await snapshot(companyId, issueId);
+    log("M after 30 minutes", s2);
+    expect(adapterState.calls).toHaveLength(1);
+    expect(s2.runs.some((run) => run.wakeReason === "issue_recovery_only_continuation")).toBe(false);
+    expect(s2.actions).toEqual([]);
+    expect(s2.issue.status).toBe("in_progress");
+    const [retry] = pendingRetries(s2);
+    expect(retry).toMatchObject({ scheduledRetryAttempt: 1, scheduledRetryReason: "transient_failure" });
+    expect(Date.parse(retry!.scheduledRetryAt!) - start).toBeLessThanOrEqual(61 * 60_000);
+
+    // Listed for the "quota is back, continue now" button, and released by it.
+    const app = await boardAppFor(companyId);
+    expect((await request(app).get(`/api/companies/${companyId}/provider-quota/waits`)).body.count).toBe(1);
+    adapterState.mode = { kind: "success" };
+    const click = await request(app).post(`/api/companies/${companyId}/provider-quota/resume-now`).send({});
+    expect(click.body.results).toEqual([expect.objectContaining({ issueId, outcome: "released" })]);
+    const deadline = Date.now() + 10_000;
+    while (Date.now() < deadline && (await snapshot(companyId, issueId)).issue.status !== "done") {
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      await drainHeartbeatRunsToQuiescence(db, heartbeat);
+    }
+    expect((await snapshot(companyId, issueId)).issue.status).toBe("done");
+    expect(adapterState.calls.map((call) => call.mode)).toEqual(["omp_failure", "success"]);
+  }, 240_000);
+
+  it("M2: external adapter, quota keeps failing past the bounded retries: quota wait monitor (<=1h), still no board reconciliation", async () => {
+    const { companyId, agentId, issueId } = await seed(EXTERNAL_ADAPTER);
+    const resetAt = new Date(Math.floor((Date.now() + 7 * 24 * 60 * 60_000) / 1000) * 1000);
+    const cst = new Date(resetAt.getTime() + 8 * 60 * 60_000).toISOString().replace("T", " ").slice(0, 19);
+    adapterState.mode = { kind: "omp_failure", message: `429 You have exceeded the 5-hour usage quota. It will reset at ${cst} +0800 CST.` };
+    await wakeAssigned(agentId, issueId);
+    let at = Date.now();
+    for (let step = 1; step <= 2; step += 1) {
+      at += 61 * 60_000;
+      await sweepNoTick(new Date(at));
+      await settleUnrecoverableExecutions(db, new Date(at));
+      await deliverReconciledExecutions(db, heartbeat.wakeup);
+      await drainHeartbeatRunsToQuiescence(db, heartbeat);
+    }
+    const s3 = await snapshot(companyId, issueId);
+    log("M2 after bounded retries", s3);
+    expect(s3.runs.filter((run) => run.status === "failed").map((run) => [run.errorFamily, run.scheduledRetryAttempt]))
+      .toEqual([["provider_quota", 0], ["provider_quota", 1], ["provider_quota", 2]]);
+    expect(s3.actions).toEqual([]);
+    expect(s3.issue.status).toBe("in_progress");
+    expect(s3.issue.monitorNextCheckAt).not.toBeNull();
+    expect(Date.parse(s3.issue.monitorNextCheckAt!) - Date.now()).toBeLessThanOrEqual(60 * 60_000 + 5_000);
+  }, 240_000);
+
+  it("N: external adapter (omp_local shape), configuration error (model not found): stops as configuration_incomplete with a clear board action, no 30s loop", async () => {
+    const { companyId, agentId, issueId } = await seed(EXTERNAL_ADAPTER);
+    adapterState.mode = { kind: "omp_failure", message: 'Model "volcengine-agent/glm-5.3" not found' };
+    await wakeAssigned(agentId, issueId);
+    const start = Date.now();
+    for (let tick = 1; tick <= 60; tick += 1) await fullSweep(new Date(start + tick * 30_000));
+    const s = await snapshot(companyId, issueId);
+    log("N after 30 minutes", s);
+    expect(s.runs.some((run) => run.wakeReason === "issue_recovery_only_continuation")).toBe(false);
+    expect(adapterState.calls.length).toBeLessThanOrEqual(2);
+    expect(s.issue.status).toBe("blocked");
+    expect(s.actions).toEqual([
+      expect.objectContaining({ ownerType: "board", status: "active", cause: "configuration_incomplete" }),
+    ]);
+    const [action] = await db.select().from(issueRecoveryActions).where(eq(issueRecoveryActions.sourceIssueId, issueId));
+    expect(action!.nextAction).toMatch(/secret|credential|model|configur/i);
+    const [row] = await db.select().from(issues).where(eq(issues.id, issueId));
+    expect(JSON.stringify(row!.unblockDescriptor)).toMatch(/configuration is incomplete/);
+    expect(s.runs.filter((run) => ["scheduled_retry", "queued", "running"].includes(run.status))).toEqual([]);
+  }, 240_000);
+  // ---- ledger #55 leftovers: an already-settled legacy hold on a quota / configuration
+  // failure (created before this fix) must not wake the seat as "recovery-only".
+
+  /**
+   * Recreates the production state field by field: a failed legacy run of the
+   * external adapter carrying the failure family, held by the pre-fix legacy
+   * reconciliation (terminalizeLegacyExecution) and then settled by the
+   * automatic disposition sweep (issue blocked, replay "blocked").
+   */
+  async function seedSettledLegacyHoldGeneric() {
+    return seedSettledLegacyHold({ family: null, message: "omp turn failed: stream closed unexpectedly" });
+  }
+
+  async function seedSettledLegacyHold(input: {
+    family: "provider_quota" | "configuration_incomplete" | null;
+    message: string;
+    retryNotBefore?: string;
+  }) {
+    const seeded = await seed(EXTERNAL_ADAPTER);
+    const runId = randomUUID();
+    const finishedAt = new Date();
+    await db.insert(heartbeatRuns).values({
+      id: runId,
+      companyId: seeded.companyId,
+      agentId: seeded.agentId,
+      invocationSource: "automation",
+      triggerDetail: "system",
+      status: "running",
+      runtimeMode: "legacy",
+      startedAt: new Date(finishedAt.getTime() - 4_000),
+      contextSnapshot: { issueId: seeded.issueId, taskId: seeded.issueId, wakeReason: "issue_reopened_via_comment" },
+      runnerProfileJson: { adapterDispatch: { adapterType: EXTERNAL_ADAPTER } },
+    });
+    await db.update(issues).set({ executionRunId: runId }).where(eq(issues.id, seeded.issueId));
+    const [running] = await db.select().from(heartbeatRuns).where(eq(heartbeatRuns.id, runId));
+    await terminalizeLegacyExecution({
+      db,
+      run: running!,
+      status: "failed",
+      fromStatuses: ["running"],
+      patch: {
+        error: input.message,
+        errorCode: "adapter_failed",
+        exitCode: 1,
+        finishedAt,
+        resultJson: {
+          errors: [input.message],
+          stopReason: "adapter_failed",
+          toolCalls: [],
+          ...(input.family ? { errorFamily: input.family } : {}),
+          ...(input.retryNotBefore
+            ? {
+                retryNotBefore: input.retryNotBefore,
+                transientRetryNotBefore: input.retryNotBefore,
+                providerQuotaRetryNotBefore: input.retryNotBefore,
+              }
+            : {}),
+        },
+      },
+    });
+    await settleUnrecoverableExecutions(db, new Date());
+    const [action] = await db.select().from(issueRecoveryActions).where(eq(issueRecoveryActions.sourceIssueId, seeded.issueId));
+    expect(action).toMatchObject({ status: "resolved", cause: "legacy_execution_requires_reconciliation" });
+    expect((action!.evidence as Record<string, any>).automaticRecovery).toMatchObject({ replay: "blocked", runId });
+    const [issue] = await db.select().from(issues).where(eq(issues.id, seeded.issueId));
+    expect(issue!.status).toBe("blocked");
+    return { ...seeded, runId };
+  }
+
+  async function deliverAndDrain() {
+    await deliverReconciledExecutions(db, heartbeat.wakeup);
+    await drainHeartbeatRunsToQuiescence(db, heartbeat);
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    await drainHeartbeatRunsToQuiescence(db, heartbeat);
+  }
+
+  it("O1: settled quota hold on the same seat: no recovery-only wake before the quota wait; after it, an ordinary continuation that does the work", async () => {
+    const reset = new Date(Date.now() + 3 * 60 * 60_000).toISOString();
+    const { companyId, issueId, runId } = await seedSettledLegacyHold({
+      family: "provider_quota",
+      message: "429 You have exceeded the 5-hour usage quota.",
+      retryNotBefore: reset,
+    });
+    adapterState.mode = { kind: "success" };
+    for (let tick = 0; tick < 5; tick += 1) await deliverAndDrain();
+    expect(adapterState.calls).toHaveLength(0);
+
+    // Unrelated agent row writes (status/heartbeat bookkeeping) are not a configuration change.
+    await db.update(agents).set({ updatedAt: new Date() }).where(eq(agents.id, (await snapshot(companyId, issueId)).issue.assigneeAgentId!));
+    await deliverAndDrain();
+    expect(adapterState.calls).toHaveLength(0);
+    // One hour has passed since the failure (cap on the provider's 3h reset).
+    await db.update(heartbeatRuns).set({ finishedAt: new Date(Date.now() - 61 * 60_000) }).where(eq(heartbeatRuns.id, runId));
+    await deliverAndDrain();
+    const end = await snapshot(companyId, issueId);
+    log("O1 end", end);
+    expect(adapterState.calls.map((call) => call.mode)).toEqual(["success"]);
+    const resumed = end.runs.find((run) => run.id !== runId)!;
+    expect(resumed.wakeReason).toBe("issue_recovery_action_restored");
+    expect(end.runs.some((run) => run.wakeReason === "issue_recovery_only_continuation")).toBe(false);
+    const [row] = await db.select().from(heartbeatRuns).where(eq(heartbeatRuns.id, resumed.id));
+    expect((row!.contextSnapshot as Record<string, any>).resourceFailureCleared).toMatchObject({
+      cause: "provider_quota",
+      resolvedBy: "quota_wait_elapsed",
+      sourceRunId: runId,
+    });
+    expect(end.issue.status).toBe("done");
+  }, 120_000);
+
+  it("O2: settled quota hold, seat switched to another terminal (adapter): resumes the work at once as an ordinary continuation", async () => {
+    const { companyId, agentId, issueId, runId } = await seedSettledLegacyHold({
+      family: "provider_quota",
+      message: "429 You have exceeded the 5-hour usage quota.",
+      retryNotBefore: new Date(Date.now() + 3 * 60 * 60_000).toISOString(),
+    });
+    // The board pauses the seat, switches it to another terminal, resumes it.
+    await agentService(db).update(agentId, { adapterType: CONVERSATION_ADAPTER, adapterConfig: {} }, {
+      recordRevision: { createdByUserId: "board-user", source: "patch" },
+    });
+    adapterState.mode = { kind: "success" };
+    await deliverAndDrain();
+    const end = await snapshot(companyId, issueId);
+    log("O2 end", end);
+    const resumed = end.runs.find((run) => run.id !== runId)!;
+    expect(resumed.wakeReason).toBe("issue_recovery_action_restored");
+    const [row] = await db.select().from(heartbeatRuns).where(eq(heartbeatRuns.id, resumed.id));
+    expect((row!.contextSnapshot as Record<string, any>).resourceFailureCleared).toMatchObject({ resolvedBy: "adapter_changed" });
+    expect(adapterState.calls.map((call) => call.mode)).toEqual(["success"]);
+    expect(end.issue.status).toBe("done");
+  }, 120_000);
+
+  it("O3: settled configuration hold: nothing re-runs until the seat is reconfigured, then an ordinary continuation", async () => {
+    const { companyId, agentId, issueId, runId } = await seedSettledLegacyHold({
+      family: "configuration_incomplete",
+      message: 'Model "volcengine-agent/glm-5.3" not found',
+    });
+    adapterState.mode = { kind: "success" };
+    for (let tick = 0; tick < 5; tick += 1) await deliverAndDrain();
+    expect(adapterState.calls).toHaveLength(0);
+    // The board fixes the model through the normal agent update (records a config revision).
+    await agentService(db).update(agentId, { adapterConfig: { model: "fixed-model" } }, {
+      recordRevision: { createdByUserId: "board-user", source: "patch" },
+    });
+    await deliverAndDrain();
+    const end = await snapshot(companyId, issueId);
+    log("O3 end", end);
+    const resumed = end.runs.find((run) => run.id !== runId)!;
+    expect(resumed.wakeReason).toBe("issue_recovery_action_restored");
+    expect(adapterState.calls.map((call) => call.mode)).toEqual(["success"]);
+    expect(end.issue.status).toBe("done");
+  }, 120_000);
+  // ---- ledger #55 (TOK-226 05:39-06:05): a recovery-only continuation succeeds and
+  // hands the issue back to todo; the seat must then get an ordinary work wake.
+
+  it.each(["todo", "in_progress"] as const)(
+    "P: after a successful recovery-only continuation leaves the issue %s with no execution path, the seat gets an ordinary work continuation without anyone acting",
+    async (handBackStatus) => {
+      // Same production shape: an external-adapter failure whose outcome is
+      // unknown (not quota, not configuration) held by legacy reconciliation,
+      // settled, then delivered as a recovery-only continuation.
+      const { companyId, agentId, issueId, runId } = await seedSettledLegacyHoldGeneric();
+      adapterState.mode = { kind: "hand_back", status: handBackStatus };
+      await deliverAndDrain();
+      const afterRecovery = await snapshot(companyId, issueId);
+      log(`P(${handBackStatus}) after recovery-only run`, afterRecovery);
+      const recoveryRun = afterRecovery.runs.find((run) => run.id !== runId)!;
+      expect(recoveryRun).toMatchObject({ status: "succeeded", wakeReason: "issue_recovery_only_continuation" });
+      expect(afterRecovery.issue.status).toBe(handBackStatus);
+      expect(afterRecovery.runs.filter((run) => ["scheduled_retry", "queued", "running"].includes(run.status))).toEqual([]);
+
+      // Quota is fine now; the next scheduler pass must restart the actual work.
+      adapterState.mode = { kind: "success" };
+      await sweep(new Date(Date.now() + 30_000));
+      await sweep(new Date(Date.now() + 60_000));
+      const end = await snapshot(companyId, issueId);
+      log(`P(${handBackStatus}) end`, end);
+      const workRuns = end.runs.filter((run) => run.id !== runId && run.id !== recoveryRun.id);
+      expect(workRuns).toHaveLength(1);
+      expect(workRuns[0]!.wakeReason).not.toBe("issue_recovery_only_continuation");
+      expect(adapterState.calls.map((call) => call.mode)).toEqual(["hand_back", "success"]);
+      expect(end.issue.status).toBe("done");
+      void agentId;
+    },
+    120_000,
+  );
+  // ---- ledger #55 / TOK-226: a configuration_incomplete stop resumes by itself once
+  // the board fixes the seat (config revision or another adapter type).
+
+  async function blockOnModelNotFound() {
+    const seeded = await seed(EXTERNAL_ADAPTER);
+    // Production row shape: omp_local, no errorCode (-> adapter_failed), prose error.
+    adapterState.mode = { kind: "omp_failure", message: 'Model "volcengine-agent/glm-5.3" not found' };
+    await wakeAssigned(seeded.agentId, seeded.issueId);
+    const start = Date.now();
+    for (let tick = 1; tick <= 4; tick += 1) await fullSweep(new Date(start + tick * 30_000));
+    const s = await snapshot(seeded.companyId, seeded.issueId);
+    expect(s.issue.status).toBe("blocked");
+    expect(s.actions).toEqual([expect.objectContaining({ status: "active", cause: "configuration_incomplete" })]);
+    const failedRunIds = s.runs.filter((run) => run.status === "failed").map((run) => run.id);
+    return { ...seeded, failedCalls: adapterState.calls.length, failedRunIds };
+  }
+
+  async function reconfigureSeat(agentId: string) {
+    await agentService(db).update(agentId, { adapterConfig: { model: "glm-5.2" } }, {
+      recordRevision: { createdByUserId: "board-user", source: "patch" },
+    });
+  }
+
+  it("Q1: configuration stop: nothing wakes until the seat is fixed; after the fix the task resumes and completes with no one pressing retry", async () => {
+    const { companyId, agentId, issueId, failedCalls } = await blockOnModelNotFound();
+    const start = Date.now() + 5 * 60_000;
+    for (let tick = 1; tick <= 8; tick += 1) await fullSweep(new Date(start + tick * 30_000));
+    expect(adapterState.calls).toHaveLength(failedCalls);
+    expect((await snapshot(companyId, issueId)).issue.status).toBe("blocked");
+
+    await reconfigureSeat(agentId);
+    adapterState.mode = { kind: "success" };
+    await fullSweep(new Date(start + 9 * 30_000));
+    await fullSweep(new Date(start + 10 * 30_000));
+    const end = await snapshot(companyId, issueId);
+    log("Q1 end", end);
+    expect(end.issue.status).toBe("done");
+    expect(adapterState.calls.slice(failedCalls).map((call) => call.mode)).toEqual(["success"]);
+    const resumed = end.runs.at(-1)!;
+    expect(resumed).toMatchObject({ status: "succeeded", wakeReason: "issue_recovery_action_restored" });
+    const [action] = await db.select().from(issueRecoveryActions).where(eq(issueRecoveryActions.sourceIssueId, issueId));
+    expect(action).toMatchObject({ status: "resolved", outcome: "restored", cause: "configuration_incomplete" });
+    expect(action!.resolutionNote).toContain("席位配置已修改");
+    // Idempotent: further passes add nothing.
+    for (let tick = 11; tick <= 14; tick += 1) await fullSweep(new Date(start + tick * 30_000));
+    expect(adapterState.calls.slice(failedCalls)).toHaveLength(1);
+  }, 240_000);
+
+  it("Q2: configuration stop, then the task is reassigned: fixing the old seat does not restore it", async () => {
+    const { companyId, agentId, issueId, failedCalls } = await blockOnModelNotFound();
+    const { agentId: otherAgentId } = await addSeatWithIssues(companyId, "OtherSeat", 0, 90);
+    await db.update(issues).set({ assigneeAgentId: otherAgentId }).where(eq(issues.id, issueId));
+    await reconfigureSeat(agentId);
+    adapterState.mode = { kind: "success" };
+    const start = Date.now() + 5 * 60_000;
+    for (let tick = 1; tick <= 4; tick += 1) await fullSweep(new Date(start + tick * 30_000));
+    const end = await snapshot(companyId, issueId);
+    expect(end.issue.status).toBe("blocked");
+    expect(adapterState.calls).toHaveLength(failedCalls);
+    expect(end.actions.filter((action) => action.cause === "configuration_incomplete"))
+      .toEqual([expect.objectContaining({ status: "active" })]);
+  }, 240_000);
+
+  it("Q3: a manual block without a configuration_incomplete recovery action is not restored by a seat fix", async () => {
+    const { companyId, agentId, issueId } = await seed(EXTERNAL_ADAPTER);
+    const runId = randomUUID();
+    await db.insert(heartbeatRuns).values({
+      id: runId, companyId, agentId, invocationSource: "automation", triggerDetail: "system",
+      status: "failed", runtimeMode: "legacy", errorCode: "adapter_failed",
+      error: 'Model "volcengine-agent/glm-5.3" not found', finishedAt: new Date(Date.now() - 60_000),
+      contextSnapshot: { issueId, taskId: issueId, wakeReason: "issue_assigned" },
+      runnerProfileJson: { adapterDispatch: { adapterType: EXTERNAL_ADAPTER } },
+      resultJson: { errors: ['Model "volcengine-agent/glm-5.3" not found'], stopReason: "adapter_failed", errorFamily: "configuration_incomplete" },
+    });
+    // The board blocks it by hand (no recovery action).
+    await db.update(issues).set({ status: "blocked" }).where(eq(issues.id, issueId));
+    await reconfigureSeat(agentId);
+    adapterState.mode = { kind: "success" };
+    const start = Date.now();
+    for (let tick = 1; tick <= 4; tick += 1) await fullSweep(new Date(start + tick * 30_000));
+    const end = await snapshot(companyId, issueId);
+    expect(end.issue.status).toBe("blocked");
+    expect(adapterState.calls).toHaveLength(0);
+  }, 240_000);
+
+  it("Q4: a newer failure after the recorded one is not restored by a seat fix", async () => {
+    const { companyId, agentId, issueId, failedCalls } = await blockOnModelNotFound();
+    await db.insert(heartbeatRuns).values({
+      id: randomUUID(), companyId, agentId, invocationSource: "automation", triggerDetail: "system",
+      status: "failed", runtimeMode: "legacy", errorCode: "adapter_failed", error: "a different, newer failure",
+      finishedAt: new Date(), contextSnapshot: { issueId, taskId: issueId, wakeReason: "issue_commented" },
+      runnerProfileJson: { adapterDispatch: { adapterType: EXTERNAL_ADAPTER } },
+    });
+    await reconfigureSeat(agentId);
+    adapterState.mode = { kind: "success" };
+    const start = Date.now() + 5 * 60_000;
+    for (let tick = 1; tick <= 3; tick += 1) await fullSweep(new Date(start + tick * 30_000));
+    const [action] = await db.select().from(issueRecoveryActions)
+      .where(and(eq(issueRecoveryActions.sourceIssueId, issueId), eq(issueRecoveryActions.cause, "configuration_incomplete")));
+    expect(action).toMatchObject({ status: "active" });
+    expect(adapterState.calls).toHaveLength(failedCalls);
+  }, 240_000);
+
+  it("Q5: a crash between restoring the task and waking the seat is completed by the next sweep", async () => {
+    const { companyId, agentId, issueId, failedCalls } = await blockOnModelNotFound();
+    await reconfigureSeat(agentId);
+    const crashing = recoveryService(db, { enqueueWakeup: async () => { throw new Error("process died before the wake"); } });
+    await expect(crashing.restoreReconfiguredConfigurationBlocks()).rejects.toThrow("process died");
+    const mid = await snapshot(companyId, issueId);
+    expect(mid.issue.status).toBe("in_progress");
+    expect(adapterState.calls).toHaveLength(failedCalls);
+
+    adapterState.mode = { kind: "success" };
+    await fullSweep(new Date(Date.now() + 30_000));
+    await fullSweep(new Date(Date.now() + 60_000));
+    const end = await snapshot(companyId, issueId);
+    log("Q5 end", end);
+    expect(end.issue.status).toBe("done");
+    expect(adapterState.calls.slice(failedCalls).map((call) => call.mode)).toEqual(["success"]);
+  }, 240_000);
 });

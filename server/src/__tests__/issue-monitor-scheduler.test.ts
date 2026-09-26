@@ -273,7 +273,16 @@ describeEmbeddedPostgres("issue monitor scheduler", () => {
     expect(activity).toContain("issue.monitor_triggered");
   });
 
-  it.each(["unknown", "exhausted"] as const)("does not replay a quota monitor with %s execution evidence", async (kind) => {
+  // Deliberate divergence from upstream (ledger #55, TOK-226, board ruling
+  // 2026-09-26): upstream held a provider-quota failure for manual action
+  // reconciliation when its execution evidence was unknown or its retries were
+  // spent, and this monitor then did nothing. In production that hold fed the
+  // automatic disposition -> recovery-only continuation loop (~30s re-runs
+  // against the same exhausted quota), and the recovery-only turn itself also
+  // re-runs in a fresh session. A quota failure is a resource wait: the due
+  // quota monitor starts one fresh, immediately due retry of the original
+  // assignee and no board reconciliation is recorded.
+  it.each(["unknown", "exhausted"] as const)("replays a due quota monitor with %s execution evidence as one fresh retry (no board reconciliation)", async (kind) => {
     const sourceRunId = randomUUID();
     const { companyId, issueId, agentId } = await seedFixture({
       monitor: { serviceName: PROVIDER_QUOTA_MONITOR_SERVICE_NAME, externalRef: sourceRunId },
@@ -284,10 +293,20 @@ describeEmbeddedPostgres("issue monitor scheduler", () => {
       scheduledRetryAttempt: kind === "exhausted" ? 2 : 0,
       resultJson: kind === "exhausted" ? { executionRecovery: { kind: "bootstrap", providerWorkStarted: false } } : null,
     });
-    await heartbeatService(db).tickTimers(new Date("2026-04-11T12:31:00.000Z"));
-    expect(await db.select().from(agentWakeupRequests)).toHaveLength(0);
-    expect(await db.select().from(heartbeatRuns)).toHaveLength(1);
-    expect(await db.select().from(issueRecoveryActions)).toMatchObject([{ ownerType: "board", evidence: { runId: sourceRunId } }]);
+    const tickAt = new Date("2026-04-11T12:31:00.000Z");
+    await heartbeatService(db).tickTimers(tickAt);
+    expect(await db.select().from(agentWakeupRequests)).toHaveLength(1);
+    const retries = await db.select().from(heartbeatRuns).where(eq(heartbeatRuns.retryOfRunId, sourceRunId));
+    expect(retries).toMatchObject([{
+      status: "scheduled_retry",
+      scheduledRetryReason: "transient_failure",
+      scheduledRetryAttempt: kind === "exhausted" ? 3 : 1,
+    }]);
+    // Immediately due: no second wait on top of the monitor's own wait.
+    expect(retries[0]!.scheduledRetryAt?.toISOString()).toBe(tickAt.toISOString());
+    expect(await db.select().from(issueRecoveryActions)).toHaveLength(0);
+    // Leave the scheduler idle for the shared cleanup.
+    await db.update(heartbeatRuns).set({ status: "cancelled" }).where(eq(heartbeatRuns.id, retries[0]!.id));
   });
 
   it("wakes a cross-agent review participant for provider quota monitors", async () => {

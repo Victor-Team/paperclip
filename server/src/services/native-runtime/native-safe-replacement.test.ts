@@ -357,7 +357,15 @@ const support = externalDatabaseUrl
       const [settled] = await db.select().from(issueRecoveryActions).where(eq(issueRecoveryActions.id, actions[0]!.id));
       expect(settled).toMatchObject({ status: "resolved", outcome: "blocked", evidence: { automaticRecovery: { replay: "blocked" } } });
 
-      expect(legacyExecutionNeedsReconciliation({ ...run, status: "failed", resultJson: { errorFamily: "provider_quota" } })).toBe(true);
+      // Deliberate divergence from upstream (ledger #55, TOK-226, board ruling
+      // 2026-09-26): a provider-quota failure is a resource wait owned by the
+      // bounded retry and the quota monitor, not an action-reconciliation hold.
+      // Upstream's hold looped through recovery-only continuations every ~30s
+      // in production. The error family now exempts it (errorCode alone too).
+      expect(legacyExecutionNeedsReconciliation({ ...run, status: "failed", resultJson: { errorFamily: "provider_quota" } })).toBe(false);
+      expect(legacyExecutionNeedsReconciliation({ ...run, status: "failed", errorCode: "provider_quota", resultJson: {} })).toBe(false);
+      // Unknown outcomes that are not a resource wait keep upstream's hold.
+      expect(legacyExecutionNeedsReconciliation({ ...run, status: "failed", errorCode: "adapter_failed", resultJson: {} })).toBe(true);
       expect(legacyExecutionNeedsReconciliation({ ...run, status: "failed", resultJson: { executionRecovery: { kind: "bootstrap", providerWorkStarted: false } } })).toBe(false);
       expect(legacyExecutionNeedsReconciliation({ ...run, status: "failed", scheduledRetryAttempt: 2, resultJson: { executionRecovery: { kind: "bootstrap", providerWorkStarted: false } } })).toBe(true);
     });

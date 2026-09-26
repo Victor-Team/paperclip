@@ -32,6 +32,7 @@ import {
   type IssueCommentPresentation,
 } from "@paperclipai/shared";
 import {
+  agentConfigRevisions,
   agents,
   agentTaskSessions,
   agentWakeupRequests,
@@ -68,6 +69,7 @@ import {
 } from "../local-service-supervisor.js";
 import { redactSensitiveText } from "../../redaction.js";
 import { isUniqueViolation } from "../../db-errors.js";
+import { claimedAdapterType } from "../conversation-continuation.js";
 import {
   logActivity,
   publishActivity,
@@ -384,12 +386,29 @@ function isProviderQuotaRecovery(latestRun: LatestIssueRun) {
   return isProviderQuotaFailureMessage(latestRun.error);
 }
 
+/**
+ * A missing model / credential / engine is deterministic: re-running the same
+ * seat reproduces it. Heartbeat records `errorFamily: configuration_incomplete`
+ * for adapters (external ones included) that only report it as prose.
+ */
+function isConfigurationIncompleteRecovery(latestRun: LatestIssueRun) {
+  if (!latestRun) return false;
+  if (
+    latestRun.errorCode === "configuration_incomplete" ||
+    latestRun.errorCode === "model_not_found" ||
+    latestRun.errorCode === "adapter_engine_unavailable"
+  )
+    return true;
+  return readRecoveryRunErrorFamily(latestRun) === "configuration_incomplete";
+}
+
 function resolveStrandedRecoveryCause(
   latestRun: LatestIssueRun,
   explicitCause?: StrandedRecoveryCause,
 ): StrandedRecoveryCause {
   if (explicitCause) return explicitCause;
   if (isProviderQuotaRecovery(latestRun)) return "provider_quota";
+  if (isConfigurationIncompleteRecovery(latestRun)) return "configuration_incomplete";
   if (latestRun?.errorCode === "process_lost") return "process_lost";
   if (latestRun?.errorCode === "codex_output_inactivity_monitor") {
     return "codex_output_inactivity_monitor";
@@ -573,6 +592,11 @@ export function parseProviderQuotaResetFromMessage(
 }
 const CONFIGURATION_INCOMPLETE_ERROR_RE =
   /(?:model_not_found|model [^\n]{0,120} not found|missing (?:api )?(?:key|credentials?)|credentials? (?:are |is )?missing|no (?:api )?(?:key|credentials?) (?:was |were )?(?:found|configured|provided)|api key (?:is )?(?:not set|unavailable))/i;
+
+/** Whether an adapter-reported failure message describes missing configuration (model, credentials). */
+export function isConfigurationIncompleteFailureMessage(value: string | null | undefined) {
+  return typeof value === "string" && CONFIGURATION_INCOMPLETE_ERROR_RE.test(value);
+}
 
 export type AdapterFailureRecoveryClassification =
   | { kind: "provider_quota"; retryAt: Date; parsedResetTime: boolean }
@@ -1846,6 +1870,16 @@ export function recoveryService(
   ) {
     if (issue.status !== "todo" || latestRun?.status !== "succeeded")
       return false;
+    // A recovery-only continuation is told to inspect and hand the issue back
+    // without doing the deliverable; its todo is a hand-back, not a deliberate
+    // wait. Without this the issue sat in todo with no execution path until
+    // someone woke the seat by hand (TOK-226 05:48-06:05, ledger #55).
+    const context = parseObject(latestRun.contextSnapshot);
+    if (
+      context.source === "execution.recovery_only" ||
+      context.wakeReason === "issue_recovery_only_continuation"
+    )
+      return true;
     const runBeganAt = latestRun.startedAt ?? latestRun.createdAt;
 
     return db
@@ -4088,7 +4122,11 @@ export function recoveryService(
     );
     const hasExistingMonitor = Boolean(input.issue.monitorNextCheckAt);
     const retryAgentId = recoveryAction.returnOwnerAgentId;
-    if (blockerIds.length === 0 && !hasExistingMonitor) {
+    // A configuration failure reproduces on every retry; a liveness retry
+    // would only re-run the seat against the same missing model/credential.
+    // Stop and leave it to the board (fall through to the blocked branch).
+    const isConfigurationStop = recoveryCause === "configuration_incomplete";
+    if (blockerIds.length === 0 && !hasExistingMonitor && !isConfigurationStop) {
       // A recovery action or a board descriptor is evidence of an escalation,
       // not an execution path. Keep the source runnable only after the retry
       // row has been durably scheduled; otherwise leave its current state
@@ -4120,6 +4158,8 @@ export function recoveryService(
             action:
               recoveryCause === "provider_quota"
                 ? `Provider usage quota was exhausted. Retry the original assignee after the quota reset, or record a manual resolution. Source run: ${input.latestRun?.id ?? "unknown"}.`
+                : isConfigurationStop
+                ? `The seat's configuration is incomplete (for example a model that does not exist, missing credentials, or a missing command). Fix the configuration named in the run failure, then retry the original assignee or reassign. Source run: ${input.latestRun?.id ?? "unknown"}.`
                 : `Automatic recovery could not restore a live execution path. Inspect the run evidence, then retry the original assignee, reassign, or record a manual resolution. Source run: ${input.latestRun?.id ?? "unknown"}.`,
           }
         : undefined;
@@ -4521,6 +4561,230 @@ export function recoveryService(
         PROVIDER_QUOTA_MONITOR_SERVICE_NAME &&
       readNonEmptyString(monitor.externalRef) === latestRun.id
     );
+  }
+
+  const CONFIGURATION_RESTORED_WAKE_SOURCE = "issue.configuration_restored";
+  const CONFIGURATION_RESTORED_NOTE =
+    "席位配置已修改：the seat's configuration changed after the failed run, so the task resumes automatically.";
+
+  function configurationRestoredWakeKey(actionId: string) {
+    return `configuration-restored:${actionId}`;
+  }
+
+  async function enqueueConfigurationRestoredWake(input: {
+    companyId: string;
+    issueId: string;
+    agentId: string;
+    actionId: string;
+    sourceRunId: string;
+  }) {
+    return deps.enqueueWakeup(input.agentId, {
+      source: "automation",
+      triggerDetail: "system",
+      reason: "issue_recovery_action_restored",
+      issueStateGuard: { statuses: ["in_progress"], assigneeAgentId: input.agentId },
+      payload: { issueId: input.issueId, recoveryActionId: input.actionId },
+      idempotencyKey: configurationRestoredWakeKey(input.actionId),
+      requestedByActorType: "system",
+      requestedByActorId: null,
+      contextSnapshot: {
+        issueId: input.issueId,
+        taskId: input.issueId,
+        wakeReason: "issue_recovery_action_restored",
+        source: CONFIGURATION_RESTORED_WAKE_SOURCE,
+        previousRunId: input.sourceRunId,
+        configurationRestored: { recoveryActionId: input.actionId, sourceRunId: input.sourceRunId },
+      },
+    });
+  }
+
+  /**
+   * A configuration_incomplete stop (missing model, credential, command) ends
+   * when the board fixes the seat. Nobody should have to press "retry" as
+   * well: once the seat has a configuration revision newer than the failed
+   * run, or runs on another adapter type, restore the task and wake the seat
+   * to continue its work (ledger #55, TOK-226). Runs from the periodic sweep
+   * so a crash between restore and wake is completed by the next pass.
+   */
+  async function restoreReconfiguredConfigurationBlocks() {
+    const result = { restored: 0, wakesDelivered: 0 };
+    const candidates = await db
+      .select({ action: issueRecoveryActions, issue: issues })
+      .from(issueRecoveryActions)
+      .innerJoin(
+        issues,
+        and(
+          eq(issues.companyId, issueRecoveryActions.companyId),
+          eq(issues.id, issueRecoveryActions.sourceIssueId),
+        ),
+      )
+      .where(
+        and(
+          inArray(issueRecoveryActions.status, ["active", "escalated"]),
+          eq(issueRecoveryActions.cause, "configuration_incomplete"),
+          eq(issues.status, "blocked"),
+          isNull(issues.assigneeUserId),
+          sql`${issues.assigneeAgentId} is not null`,
+        ),
+      )
+      .limit(50);
+
+    for (const { action, issue } of candidates) {
+      const sourceRunId = readNonEmptyString(action.evidence.latestRunId);
+      const agentId = issue.assigneeAgentId;
+      if (!sourceRunId || !agentId) continue;
+      if (action.returnOwnerAgentId && action.returnOwnerAgentId !== agentId) continue;
+      const [sourceRun] = await db
+        .select()
+        .from(heartbeatRuns)
+        .where(and(eq(heartbeatRuns.companyId, issue.companyId), eq(heartbeatRuns.id, sourceRunId)));
+      const agent = await getAgent(agentId);
+      if (!sourceRun || !agent || agent.companyId !== issue.companyId || sourceRun.agentId !== agentId) continue;
+      const failedAt = sourceRun.finishedAt ?? sourceRun.updatedAt;
+      const runAdapterType = claimedAdapterType(sourceRun);
+      const adapterChanged = Boolean(runAdapterType && runAdapterType !== agent.adapterType);
+      const [revision] = adapterChanged
+        ? [{ id: "adapter-type" }]
+        : await db
+            .select({ id: agentConfigRevisions.id })
+            .from(agentConfigRevisions)
+            .where(
+              and(
+                eq(agentConfigRevisions.companyId, issue.companyId),
+                eq(agentConfigRevisions.agentId, agentId),
+                gt(agentConfigRevisions.createdAt, failedAt),
+              ),
+            )
+            .limit(1);
+      if (!revision) continue;
+
+      const restored = await db.transaction(async (tx) => {
+        const [locked] = await tx
+          .select()
+          .from(issues)
+          .where(and(eq(issues.companyId, issue.companyId), eq(issues.id, issue.id)))
+          .for("update");
+        // Only the stop this action recorded: still blocked, same seat, and the
+        // failed run is still the latest one (no newer failure or work since).
+        if (
+          !locked ||
+          locked.status !== "blocked" ||
+          locked.assigneeAgentId !== agentId ||
+          locked.assigneeUserId
+        )
+          return null;
+        const [latest] = await tx
+          .select({ id: heartbeatRuns.id })
+          .from(heartbeatRuns)
+          .where(
+            and(
+              eq(heartbeatRuns.companyId, issue.companyId),
+              sql`coalesce(${heartbeatRuns.contextSnapshot}->>'issueId', ${heartbeatRuns.contextSnapshot}->>'taskId') = ${issue.id}`,
+            ),
+          )
+          .orderBy(desc(heartbeatRuns.createdAt))
+          .limit(1);
+        if (latest?.id !== sourceRunId) return null;
+        const active = await recoveryActionsSvc.getActiveForIssue(issue.companyId, issue.id, tx as unknown as Db);
+        if (
+          !active ||
+          active.id !== action.id ||
+          active.cause !== "configuration_incomplete" ||
+          readNonEmptyString(active.evidence.latestRunId) !== sourceRunId
+        )
+          return null;
+        const updated = await issuesSvc.update(
+          issue.id,
+          { status: "in_progress", companyGuard: issue.companyId, unblockDescriptor: null },
+          tx,
+        );
+        await recoveryActionsSvc.resolveActiveForIssue(
+          {
+            companyId: issue.companyId,
+            sourceIssueId: issue.id,
+            actionId: action.id,
+            status: "resolved",
+            outcome: "restored",
+            resolutionNote: CONFIGURATION_RESTORED_NOTE,
+          },
+          tx as unknown as Db,
+        );
+        return updated;
+      });
+      if (!restored) continue;
+      result.restored += 1;
+      await logActivity(db, {
+        companyId: issue.companyId,
+        actorType: "system",
+        actorId: "recovery",
+        agentId: null,
+        action: "issue.updated",
+        entityType: "issue",
+        entityId: issue.id,
+        details: {
+          status: "in_progress",
+          _previous: { status: "blocked" },
+          source: "configuration_restored",
+          recoveryActionId: action.id,
+          sourceRunId,
+          adapterChanged,
+        },
+      });
+    }
+
+    // Deliver (or re-deliver after a crash) the continuation of every
+    // restored stop. The wake is idempotent on the recovery action.
+    const restoredActions = await db
+      .select({ action: issueRecoveryActions, issue: issues })
+      .from(issueRecoveryActions)
+      .innerJoin(
+        issues,
+        and(
+          eq(issues.companyId, issueRecoveryActions.companyId),
+          eq(issues.id, issueRecoveryActions.sourceIssueId),
+        ),
+      )
+      .where(
+        and(
+          eq(issueRecoveryActions.status, "resolved"),
+          eq(issueRecoveryActions.outcome, "restored"),
+          eq(issueRecoveryActions.cause, "configuration_incomplete"),
+          eq(issueRecoveryActions.resolutionNote, CONFIGURATION_RESTORED_NOTE),
+          eq(issues.status, "in_progress"),
+          sql`${issues.assigneeAgentId} is not null`,
+          sql`not exists (
+            select 1 from ${agentWakeupRequests}
+            where ${agentWakeupRequests.companyId} = ${issueRecoveryActions.companyId}
+              and ${agentWakeupRequests.idempotencyKey} = 'configuration-restored:' || ${issueRecoveryActions.id}::text
+          )`,
+        ),
+      )
+      .limit(50);
+    for (const { action, issue } of restoredActions) {
+      const sourceRunId = readNonEmptyString(action.evidence.latestRunId);
+      if (!sourceRunId || !issue.assigneeAgentId) continue;
+      const [latest] = await db
+        .select({ id: heartbeatRuns.id })
+        .from(heartbeatRuns)
+        .where(
+          and(
+            eq(heartbeatRuns.companyId, issue.companyId),
+            sql`coalesce(${heartbeatRuns.contextSnapshot}->>'issueId', ${heartbeatRuns.contextSnapshot}->>'taskId') = ${issue.id}`,
+          ),
+        )
+        .orderBy(desc(heartbeatRuns.createdAt))
+        .limit(1);
+      if (latest?.id !== sourceRunId) continue;
+      await enqueueConfigurationRestoredWake({
+        companyId: issue.companyId,
+        issueId: issue.id,
+        agentId: issue.assigneeAgentId,
+        actionId: action.id,
+        sourceRunId,
+      });
+      result.wakesDelivered += 1;
+    }
+    return result;
   }
 
   async function reconcileStrandedAssignedIssues(opts?: {
@@ -6306,6 +6570,7 @@ export function recoveryService(
     recordWatchdogDecision,
     scanSilentActiveRuns,
     reconcileStrandedAssignedIssues,
+    restoreReconfiguredConfigurationBlocks,
     sweepStaleIssueLocks,
     reconcileResolvedDependencyWakeBackstop,
     readRecoveryTimerIntervalMs,

@@ -500,6 +500,7 @@ import { withRecoveryContext } from "./recovery/status-only-context.js";
 import {
   ACTIVE_RUN_OUTPUT_SUSPICION_THRESHOLD_MS as RECOVERY_ACTIVE_RUN_OUTPUT_SUSPICION_THRESHOLD_MS,
   capProviderQuotaWait,
+  isConfigurationIncompleteFailureMessage,
   isProviderQuotaFailureMessage,
   parseProviderQuotaResetFromMessage,
   recoveryService,
@@ -19838,6 +19839,11 @@ export function heartbeatService(
   }
 
   async function reconcileStrandedAssignedIssues() {
+    // Restore configuration stops whose seat was fixed first, so the stranded
+    // pass below sees the resumed task and its queued continuation.
+    await recovery.restoreReconfiguredConfigurationBlocks().catch((err) => {
+      logger.warn({ err }, "configuration-restored recovery sweep failed");
+    });
     return recovery.reconcileStrandedAssignedIssues({
       issueCreatedAtGte: await getWorktreeExecutionCutoff(),
     });
@@ -24975,9 +24981,19 @@ export function heartbeatService(
                 (message) => isProviderQuotaFailureMessage(message),
               ) ?? null
             : null;
+        // Same for a missing model / credentials: record the family so the run
+        // is routed to the configuration_incomplete escalation, not replayed.
+        const configurationFailureMessage =
+          outcome === "failed" && !adapterResult.errorFamily && !providerQuotaMessage
+            ? [adapterResult.errorMessage, structuredFinalFailure?.message].find(
+                (message) => isConfigurationIncompleteFailureMessage(message),
+              ) ?? null
+            : null;
         const structuredFailureErrorFamily = providerQuotaMessage
           ? ("provider_quota" as const)
-          : null;
+          : configurationFailureMessage
+            ? ("configuration_incomplete" as const)
+            : null;
         const derivedProviderQuotaRetryNotBefore = providerQuotaMessage
           ? (parseProviderQuotaResetFromMessage(providerQuotaMessage)?.toISOString() ?? null)
           : null;
@@ -27190,9 +27206,12 @@ export function heartbeatService(
               source !== "automation" ||
               triggerDetail !== "system" ||
               reason !==
-                (executionRecoveryOnlyWake
+                (executionRecoveryOnlyWake &&
+                !enrichedContextSnapshot.resourceFailureCleared
                   ? "issue_recovery_only_continuation"
-                  : "issue_recovery_action_restored") ||
+                  : // A cleared quota/configuration failure resumes the work
+                    // as an ordinary restored continuation (TOK-226).
+                    "issue_recovery_action_restored") ||
               opts.requestedByActorType !== "system" ||
               opts.requestedByActorId !== "execution-recovery" ||
               opts.idempotencyKey !==
