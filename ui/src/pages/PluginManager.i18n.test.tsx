@@ -76,7 +76,7 @@ describe("PluginManager i18n wiring", () => {
   });
 
   it("reads only keys that exist in both English and Chinese", async () => {
-    expect(usedKeys.length).toBe(60);
+    expect(usedKeys.length).toBe(62);
     for (const lng of ["en", "zh-CN"]) {
       await i18n.changeLanguage(lng);
       for (const key of usedKeys) expect(i18n.exists(key), `${lng} is missing ${key}`).toBe(true);
