@@ -74,7 +74,7 @@ import type { ActionCommandOption } from "@/context/EditorAutocompleteContext";
 import { TaskChatComposerTakeoverActionsContext } from "./TaskChatComposerTakeoverContext";
 
 import { TaskChatPausedTakeover, type TaskComposerPause } from "./TaskChatPausedTakeover";
-import { useTranslation } from "@/i18n";
+import { t, useTranslation } from "@/i18n";
 
 /** Structurally identical to IssueChatThread's module-private CommentReassignment. */
 export interface CommentReassignment {
@@ -296,26 +296,24 @@ function AssigneeIdentityAvatar({
   return null;
 }
 
-const MODE_DESCRIPTION: Partial<Record<IssueWorkMode, string>> = {
-  standard: "Make changes and run work",
-  planning: "Draft a plan before acting",
-  ask: "Answer questions only, no changes",
-};
+function modeDescription(mode: IssueWorkMode): string {
+  return t(`tok224.modeDescription.${mode}`);
+}
 
 /** v7 per-mode placeholder copy; `{agent}` is the pending assignee's name. */
 function modePlaceholder(mode: IssueWorkMode, agentName: string, mobile: boolean): string {
   if (mobile) {
-    if (mode === "planning") return `Plan with ${agentName}…`;
-    if (mode === "ask") return `Ask ${agentName}…`;
-    return `Message ${agentName}…`;
+    if (mode === "planning") return t("tok224.planWithAgentMobile", { name: agentName });
+    if (mode === "ask") return t("tok224.askAgentMobile", { name: agentName });
+    return t("tok224.messageAgentMobile", { name: agentName });
   }
   switch (mode) {
     case "planning":
-      return `Plan with ${agentName} — shapes the plan doc, no code changes…`;
+      return t("tok224.planWithAgent", { name: agentName });
     case "ask":
-      return `Ask ${agentName} a question — read-only, nothing runs…`;
+      return t("tok224.askAgent", { name: agentName });
     default:
-      return `Message ${agentName} — describe what you want done…`;
+      return t("tok224.messageAgent", { name: agentName });
   }
 }
 
@@ -632,12 +630,11 @@ export function TaskChatComposer({
     enableReassign && reassignOptions && reassignOptions.length > 0,
   );
   const assigneeValue = pendingAssignee ?? currentAssigneeValue;
-  const assigneeLabel =
-    reassignOptions?.find((o) => o.id === assigneeValue)?.label ?? "Unassigned";
-  const assigneeName =
-    assigneeLabel === "Unassigned" ? "the agent" : assigneeLabel;
+  const rawAssigneeLabel = reassignOptions?.find((o) => o.id === assigneeValue)?.label ?? "Unassigned";
+  const assigneeLabel = rawAssigneeLabel === "Unassigned" ? t("tok224.unassigned") : rawAssigneeLabel;
+  const assigneeName = rawAssigneeLabel === "Unassigned" ? t("tok224.agent") : rawAssigneeLabel;
   const effectivePlaceholder = queuedEdit
-    ? "Edit queued message…"
+    ? t("tok224.editQueuedMessage")
     : (placeholder ?? modePlaceholder(pendingMode, assigneeName, mobile));
   const goalUnavailable = runnerGoalCapability?.availability !== "available";
   const goalCommandOption: ActionCommandOption = {
@@ -1304,7 +1301,7 @@ export function TaskChatComposer({
               onChange={changeBody}
               placeholder={
                 disabled
-                  ? (disabledReason ?? "Composer disabled")
+                  ? (disabledReason ?? t("tok224.composerDisabled"))
                   : effectivePlaceholder
               }
               readOnly={disabled || !!uncertainSubmission}
@@ -1482,7 +1479,7 @@ export function TaskChatComposer({
                         <span className="flex min-w-0 flex-1 flex-col">
                           <span className="font-medium">{m.label}</span>
                           <span className="whitespace-nowrap text-xs text-muted-foreground">
-                            {MODE_DESCRIPTION[m.value] ?? ""}
+                            {modeDescription(m.value)}
                           </span>
                         </span>
                         {selected ? (
@@ -1500,11 +1497,14 @@ export function TaskChatComposer({
             {showAssignee && !queuedEdit ? (
               <InlineEntitySelector
                 value={assigneeValue}
-                options={reassignOptions ?? []}
+                options={(reassignOptions ?? []).map((option) => ({
+                  ...option,
+                  label: option.label === "Unassigned" ? t("tok224.unassigned") : option.label,
+                }))}
                 placeholder={t("taskchatcomposer.general.assignee")}
-                noneLabel="No assignee"
-                searchPlaceholder="Search assignees…"
-                emptyMessage="No matches."
+                noneLabel={t("tok224.noAssignee")}
+                searchPlaceholder={t("tok224.searchAssignees")}
+                emptyMessage={t("tok224.noMatches")}
                 onChange={updatePendingAssignee}
                 disabled={disabled}
                 triggerTestId="task-chat-composer-assignee"
@@ -1571,28 +1571,28 @@ export function TaskChatComposer({
               title={
                 showStop
                   ? stopControl.stopping
-                    ? "Stopping…"
-                    : "Stop response"
+                    ? t("tok224.stopping")
+                    : t("tok224.stopResponse")
                   : queuedEdit
                     ? queuedEdit.stale
-                      ? "Queue as new message"
-                      : "Save queued message"
+                      ? t("tok224.queueAsNew")
+                      : t("tok224.saveQueued")
                     : uploadPending
-                      ? "Waiting for upload to finish"
+                      ? t("tok224.waitUpload")
                       : uploadFailed
-                        ? "Remove the failed attachment to send"
-                        : "Send (⌘+Enter)"
+                        ? t("tok224.removeFailed")
+                        : t("tok224.sendShortcut")
               }
               aria-label={
                 showStop
                   ? stopControl.stopping
-                    ? "Stopping…"
-                    : "Stop"
+                    ? t("tok224.stopping")
+                    : t("tok224.stop")
                   : queuedEdit
                     ? queuedEdit.stale
-                      ? "Queue as new message"
-                      : "Save queued message"
-                    : "Send"
+                      ? t("tok224.queueAsNew")
+                      : t("tok224.saveQueued")
+                    : t("tok224.send")
               }
               className={cn(
                 "flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-transform hover:scale-105 disabled:scale-100",

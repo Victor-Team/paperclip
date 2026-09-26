@@ -7,6 +7,7 @@ import { Dialog as DialogPrimitive } from "radix-ui"
 
 import { cn } from "@/lib/utils"
 import { useTranslation } from "@/i18n"
+import { t as translate } from "@/i18n"
 import {
   Dialog,
   DialogContent,
@@ -32,8 +33,8 @@ function Command({
 }
 
 function CommandDialog({
-  title = "Command Palette",
-  description = "Search for a command to run...",
+  title = translate("tok224.commandPalette"),
+  description = translate("tok224.searchCommand"),
   children,
   className,
   showCloseButton = true,

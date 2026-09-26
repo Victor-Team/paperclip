@@ -1,6 +1,7 @@
 import type { Agent } from "@paperclipai/shared";
 import type { CompanyUserProfile } from "./company-members";
 import { formatReviewPolicyValue } from "./review-policy";
+import { t } from "../i18n";
 
 type ActivityDetails = Record<string, unknown> | null | undefined;
 
@@ -238,7 +239,10 @@ function asRecord(value: unknown): Record<string, unknown> | null {
 }
 
 function humanizeValue(value: unknown): string {
-  if (typeof value !== "string") return String(value ?? "none");
+  if (typeof value !== "string") return String(value ?? t("tok224.none"));
+  if (["backlog", "todo", "in_progress", "in_review", "done", "cancelled", "blocked", "idle"].includes(value)) {
+    return t(`tok224.status.${value}`);
+  }
   return value.replace(/_/g, " ");
 }
 
@@ -265,8 +269,8 @@ function readIssueReferences(details: ActivityDetails, key: string): ActivityIss
 }
 
 function formatUserLabel(userId: string | null | undefined, options: ActivityFormatOptions = {}): string {
-  if (!userId || userId === "local-board") return "Board";
-  if (options.currentUserId && userId === options.currentUserId) return "You";
+  if (!userId || userId === "local-board") return t("tok224.board");
+  if (options.currentUserId && userId === options.currentUserId) return t("tok224.you");
   const profile = options.userProfileMap?.get(userId);
   if (profile) return profile.label;
   return `user ${userId.slice(0, 5)}`;
@@ -275,7 +279,7 @@ function formatUserLabel(userId: string | null | undefined, options: ActivityFor
 function formatParticipantLabel(participant: ActivityParticipant, options: ActivityFormatOptions): string {
   if (participant.type === "agent") {
     const agentId = participant.agentId ?? "";
-    return options.agentMap?.get(agentId)?.name ?? "agent";
+    return options.agentMap?.get(agentId)?.name ?? t("tok224.agent");
   }
   return formatUserLabel(participant.userId, options);
 }
@@ -284,7 +288,7 @@ function formatIssueReferenceLabel(reference: ActivityIssueReference): string {
   if (reference.identifier) return reference.identifier;
   if (reference.title) return reference.title;
   if (reference.id) return reference.id.slice(0, 8);
-  return "task";
+  return t("tok224.task");
 }
 
 function formatChangedEntityLabel(
@@ -332,14 +336,14 @@ function formatIssueUpdatedVerb(details: ActivityDetails): string | null {
     const from = previous.status;
     const to = humanizeValue(details.status === "in_review" && details.externalConversationState === "waiting" ? "idle" : details.status);
     return from
-      ? `changed status from ${humanizeValue(from)} to ${to} on`
-      : `changed status to ${to} on`;
+      ? t("tok224.statusChangedFrom", { from: humanizeValue(from), to })
+      : t("tok224.statusChangedTo", { to });
   }
   if (details.priority !== undefined) {
     const from = previous.priority;
     return from
-      ? `changed priority from ${humanizeValue(from)} to ${humanizeValue(details.priority)} on`
-      : `changed priority to ${humanizeValue(details.priority)} on`;
+      ? t("tok224.priorityChangedFrom", { from: humanizeValue(from), to: humanizeValue(details.priority) })
+      : t("tok224.priorityChangedTo", { to: humanizeValue(details.priority) });
   }
   return null;
 }
@@ -367,29 +371,29 @@ function formatIssueUpdatedAction(details: ActivityDetails, options: ActivityFor
     const to = humanizeValue(details.status === "in_review" && details.externalConversationState === "waiting" ? "idle" : details.status);
     parts.push(
       from
-        ? `changed the status from ${humanizeValue(from)} to ${to}`
-        : `changed the status to ${to}`,
+        ? t("tok224.issueStatusChangedFrom", { from: humanizeValue(from), to })
+        : t("tok224.issueStatusChangedTo", { to }),
     );
   }
   if (details.priority !== undefined) {
     const from = previous.priority;
     parts.push(
       from
-        ? `changed the priority from ${humanizeValue(from)} to ${humanizeValue(details.priority)}`
-        : `changed the priority to ${humanizeValue(details.priority)}`,
+        ? t("tok224.issuePriorityChangedFrom", { from: humanizeValue(from), to: humanizeValue(details.priority) })
+        : t("tok224.issuePriorityChangedTo", { to: humanizeValue(details.priority) }),
     );
   }
   if (details.assigneeAgentId !== undefined || details.assigneeUserId !== undefined) {
     const assigneeName = formatAssigneeName(details, options);
-    parts.push(assigneeName ? `made ${assigneeName} responsible for the task` : "cleared the responsible");
+    parts.push(assigneeName ? t("tok224.assigneeChanged", { name: assigneeName }) : t("tok224.assigneeCleared"));
   }
   if (details.reviewPolicy !== undefined) {
     // `null` is the default ("anyone can approve"), so it must not read as
     // "changed the review policy to none" (PAP-16506).
-    parts.push(`changed who can approve to ${formatReviewPolicyValue(details.reviewPolicy)}`);
+    parts.push(t("tok224.approverPolicyChanged", { value: formatReviewPolicyValue(details.reviewPolicy) }));
   }
-  if (details.title !== undefined) parts.push("updated the title");
-  if (details.description !== undefined) parts.push("updated the description");
+  if (details.title !== undefined) parts.push(t("tok224.titleUpdated"));
+  if (details.description !== undefined) parts.push(t("tok224.descriptionUpdated"));
 
   return parts.length > 0 ? parts.join(", ") : null;
 }
@@ -480,7 +484,8 @@ export function formatActivityVerb(
   });
   if (structuredChange) return structuredChange;
 
-  return ACTIVITY_ROW_VERBS[action] ?? action.replace(/[._]/g, " ");
+  const fallback = ACTIVITY_ROW_VERBS[action] ?? action.replace(/[._]/g, " ");
+  return t(`tok224.activityVerb.${action.replaceAll(".", "_")}`, { defaultValue: fallback });
 }
 
 export function formatIssueActivityAction(
@@ -538,5 +543,6 @@ export function formatIssueActivityAction(
     return `${ISSUE_ACTIVITY_LABELS[action] ?? action} ${key}${title}`;
   }
 
-  return ISSUE_ACTIVITY_LABELS[action] ?? action.replace(/[._]/g, " ");
+  const fallback = ISSUE_ACTIVITY_LABELS[action] ?? action.replace(/[._]/g, " ");
+  return t(`tok224.issueActivity.${action.replaceAll(".", "_")}`, { defaultValue: fallback });
 }

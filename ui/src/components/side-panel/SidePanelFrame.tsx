@@ -109,7 +109,8 @@ export function SidePanelToggleButton({
   shortcut?: string;
   className?: string;
 }) {
-  const label = "Toggle side panel";
+  const { t } = useTranslation();
+  const label = t("tok224.toggleSidePanel");
   return (
     <Tooltip>
       <TooltipTrigger asChild>

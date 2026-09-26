@@ -69,7 +69,7 @@ const ISSUE_STATUS_LABEL_KEYS: Record<string, string> = {
   done: "statusbadge.general.issueDone",
   blocked: "statusbadge.general.issueBlocked",
   cancelled: "statusbadge.general.issueCancelled",
-  idle: "statusbadge.general.idle",
+  idle: "tok224.status.idle",
 };
 
 /** Agent chips. `active` keeps the idle display alias and only the label is translated. */

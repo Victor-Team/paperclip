@@ -525,7 +525,7 @@ export function IssueProperties({
   };
 
   const projectName = (id: string | null) => {
-    if (!id) return id?.slice(0, 8) ?? "None";
+    if (!id) return id?.slice(0, 8) ?? t("tok224.none");
     const project = orderedProjects.find((p) => p.id === id);
     return project?.name ?? id.slice(0, 8);
   };
@@ -576,10 +576,10 @@ export function IssueProperties({
     (workspace) => workspace.id === issue.executionWorkspaceId,
   ) ?? issue.currentExecutionWorkspace ?? null;
   const workspaceTriggerLabel = activeWorkspacePickerMode === "isolated"
-    ? "New isolated workspace"
+    ? t("issueproperties.general.newisolatedworkspace")
     : activeWorkspacePickerMode === "reuse"
-      ? boundWorkspace?.name ?? "Reuse existing workspace"
-      : "Default";
+      ? boundWorkspace?.name ?? t("issueproperties.general.reuseexistingworkspace")
+      : t("tok224.default");
   const workspaceTriggerTitle = activeWorkspacePickerMode === "reuse"
     ? boundWorkspace?.branchName ?? undefined
     : undefined;
@@ -880,9 +880,9 @@ export function IssueProperties({
               options={modelOverrideOptions}
               placeholder={t("issueproperties.general.defaultmodel")}
               disablePortal
-              noneLabel="Default model"
-              searchPlaceholder="Search models..."
-              emptyMessage="No models found."
+              noneLabel={t("tok224.defaultModel")}
+              searchPlaceholder={t("tok224.searchModels")}
+              emptyMessage={t("tok224.noModels")}
               onChange={updateAssigneeOverrideModel}
             />
           </div>
@@ -898,7 +898,7 @@ export function IssueProperties({
                   )}
                   onClick={() => updateAssigneeOverrideThinkingEffort(option.value)}
                 >
-                  {option.label}
+                  {t(`tok224.effort.${option.value || "default"}`)}
                 </button>
               ))}
             </div>
@@ -1178,7 +1178,7 @@ export function IssueProperties({
           value={watchdogAgentInput}
           options={watchdogAgentOptions}
           placeholder={t("issueproperties.general.selectagent")}
-          noneLabel="No watchdog agent"
+          noneLabel={t("tok224.noWatchdogAgent")}
           searchPlaceholder="Search agents..."
           emptyMessage="No agents found."
           onChange={setWatchdogAgentInput}
@@ -1306,7 +1306,7 @@ export function IssueProperties({
     ? formatMonitorEtaLabel(monitorNextCheckAt, monitorNow)
     : monitorState?.status === "cleared"
       ? "Cleared"
-      : "None";
+      : t("tok224.none");
   const monitorSecondary = monitorNextCheckAt
     ? monitorIsDueNow
       ? "checking momentarily…"
@@ -2317,7 +2317,7 @@ export function IssueProperties({
   const propertiesBody = (
     <div className={cn(streamlinedPropertiesEnabled && "task-detail-properties pl-4")}>
       <PropertySection
-        title={streamlinedPropertiesEnabled ? "Work" : "Triage"}
+        title={streamlinedPropertiesEnabled ? t("tok224.work") : t("tok224.triage")}
         first
         streamlined={streamlinedPropertiesEnabled}
       >
@@ -2556,7 +2556,7 @@ export function IssueProperties({
         ) : null}
 
         {(!streamlinedPropertiesEnabled || !taskChatShellEnabled) && relatedTasks.length > 0 ? (
-          <PropertyRow label={streamlinedPropertiesEnabled ? "Referenced" : "Related tasks"} wrap>
+          <PropertyRow label={streamlinedPropertiesEnabled ? t("tok224.referenced") : t("tok224.relatedTasks")} wrap>
             <div className="flex flex-col items-start gap-1.5">
               {visibleRelatedTasks.map((related) => (
                 <IssueReferencePill key={related.id} issue={related} />
@@ -2980,7 +2980,7 @@ export function IssueProperties({
   const hasReferencesTab = streamlinedPropertiesEnabled
     && (panelReferencedTasks.length > 0 || panelMentionedInTasks.length > 0);
   const availablePaneTabs: IssuePaneTabDescriptor[] = [
-    { value: "properties", label: "Properties", closable: false },
+    { value: "properties", label: t("tok224.properties"), closable: false },
     ...(hasSubtasksTab
       ? [{ value: "subtasks" as const, label: "Subtasks", count: childIssues.length, closable: true }]
       : []),
@@ -3134,7 +3134,7 @@ export function IssueProperties({
               <button
                 type="button"
                 className="absolute right-2.5 top-1/2 z-20 inline-flex size-5 -translate-y-1/2 items-center justify-center rounded-sm text-muted-foreground opacity-0 transition-opacity hover:bg-accent hover:text-foreground focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-(length:--rad-3) focus-visible:ring-ring group-hover/pane-tab:opacity-100 group-focus-within/pane-tab:opacity-100"
-                aria-label={`Close ${tab.label} tab`}
+                aria-label={t("tok224.closeTab", { label: tab.label })}
                 onPointerDown={(event) => {
                   event.preventDefault();
                   event.stopPropagation();
