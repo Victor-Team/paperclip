@@ -1,7 +1,7 @@
 import { usePageVisibility } from "../../lib/page-visibility";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { readTranscriptRequest } from "./read-transcript-request";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient, type QueryClient } from "@tanstack/react-query";
 import type { LiveEvent } from "@paperclipai/shared";
 import { ApiError } from "../../api/client";
 import { instanceSettingsApi } from "../../api/instanceSettings";
@@ -44,6 +44,26 @@ const TASK_VIEW_MAX_BYTES_PER_RUN = 2_000_000;
 // and silently drops already-rendered scrollback (PAP-462 B3). A run that is
 // genuinely gone stays absent past this window and is then pruned as before.
 const RUN_ABSENCE_PRUNE_GRACE_MS = 20_000;
+
+// A settled run's log never changes once it has been read to the end, so the
+// merged chunks are kept in the query cache (collected after the client's
+// gcTime once nothing reads them). Returning to a task — which remounts the
+// thread — then reuses them instead of downloading every log again.
+// Kept well past the client's default five minutes so returning to a task
+// later in a session still skips the downloads, but not forever: a tab left
+// open for days would otherwise hold every log it ever showed.
+export const SETTLED_RUN_LOG_GC_MS = 30 * 60_000;
+function settledRunLogKey(runId: string, budgetKey: string) {
+  return ["run-log-settled", runId, budgetKey] as const;
+}
+
+function readSettledRunLog(
+  queryClient: QueryClient,
+  runId: string,
+  budgetKey: string,
+): RunLogChunk[] | undefined {
+  return queryClient.getQueryData<RunLogChunk[]>(settledRunLogKey(runId, budgetKey));
+}
 
 export interface RunTranscriptSource {
   id: string;
@@ -107,6 +127,9 @@ export function useLiveRunTranscripts({
   // Ticker consumers opt into the silent chunk-count cap; full task views use a
   // byte budget that collapses (not discards) the oldest output when exceeded.
   const { visible } = usePageVisibility();
+  const queryClient = useQueryClient();
+  const settledBudgetKey =
+    typeof maxChunksPerRun === "number" ? `chunks:${maxChunksPerRun}` : `bytes:${maxBytesPerRun}`;
   const retentionBudget: ChunkRetentionBudget = useMemo(
     () =>
       typeof maxChunksPerRun === "number"
@@ -127,8 +150,37 @@ export function useLiveRunTranscripts({
     [runs],
   );
   const normalizedRuns = useMemo(() => runs.map((run) => ({ ...run })), [runsKey]);
-  const [chunksByRun, setChunksByRun] = useState<Map<string, RunLogChunk[]>>(new Map());
-  const [hydratedRunIds, setHydratedRunIds] = useState<Set<string>>(new Set());
+  // Log reads only need to restart when a run appears, disappears, or changes
+  // status — not whenever a live run's byte counters tick on the parent's
+  // poll. Restarting on every tick aborted in-flight history reads and fired
+  // a fresh read for every run each time.
+  const readKey = useMemo(
+    () =>
+      normalizedRuns
+        .map((run) => `${run.id}:${run.status}:${run.adapterType}:${run.hasStoredOutput === true ? "1" : "0"}`)
+        .sort((a, b) => a.localeCompare(b))
+        .join(","),
+    [normalizedRuns],
+  );
+  const normalizedRunsRef = useRef(normalizedRuns);
+  normalizedRunsRef.current = normalizedRuns;
+  // Settled runs already read to the end in an earlier mount start hydrated.
+  const [initialSettled] = useState(() => {
+    const chunks = new Map<string, RunLogChunk[]>();
+    for (const run of runs) {
+      if (!isTerminalStatus(run.status)) continue;
+      const cached = readSettledRunLog(queryClient, run.id, settledBudgetKey);
+      if (cached) chunks.set(run.id, cached);
+    }
+    return chunks;
+  });
+  const [chunksByRun, setChunksByRun] = useState<Map<string, RunLogChunk[]>>(() => new Map(initialSettled));
+  const [hydratedRunIds, setHydratedRunIds] = useState<Set<string>>(() => new Set(initialSettled.keys()));
+  // Settled runs whose log has been read to the end; they are never read again.
+  const completedSettledRunIdsRef = useRef<Set<string> | null>(null);
+  if (completedSettledRunIdsRef.current === null) {
+    completedSettledRunIdsRef.current = new Set(initialSettled.keys());
+  }
   const [errorsByRun, setErrorsByRun] = useState<ReadonlyMap<string, Error>>(new Map());
   const [retryGeneration, setRetryGeneration] = useState(0);
   const retry = useCallback(() => {
@@ -285,6 +337,11 @@ export function useLiveRunTranscripts({
         transcriptCacheRef.current.delete(runId);
       }
     }
+    for (const runId of completedSettledRunIdsRef.current!) {
+      if (!retainedRunIds.has(runId)) {
+        completedSettledRunIdsRef.current!.delete(runId);
+      }
+    }
 
     // Re-run once the nearest grace window elapses so a run that stays gone is
     // pruned even if `normalizedRuns` never changes again.
@@ -299,7 +356,10 @@ export function useLiveRunTranscripts({
 
   useEffect(() => {
     if (!visible) return;
-    const readableRuns = normalizedRuns.filter(canReadPersistedLog);
+    const completedSettledRunIds = completedSettledRunIdsRef.current!;
+    const readableRuns = normalizedRunsRef.current.filter(
+      (run) => canReadPersistedLog(run) && !(isTerminalStatus(run.status) && completedSettledRunIds.has(run.id)),
+    );
     if (readableRuns.length === 0) return;
 
     let cancelled = false;
@@ -310,7 +370,28 @@ export function useLiveRunTranscripts({
       if (missingTerminalLogRunIdsRef.current.has(run.id) || inFlightRunIds.has(run.id)) {
         return;
       }
+      if (isTerminalStatus(run.status)) {
+        if (completedSettledRunIds.has(run.id)) return;
+        const cached = readSettledRunLog(queryClient, run.id, settledBudgetKey);
+        if (cached) {
+          completedSettledRunIds.add(run.id);
+          setChunksByRun((prev) => {
+            if (prev.get(run.id) === cached) return prev;
+            const next = new Map(prev);
+            next.set(run.id, cached);
+            return next;
+          });
+          setHydratedRunIds((prev) => {
+            if (prev.has(run.id)) return prev;
+            const next = new Set(prev);
+            next.add(run.id);
+            return next;
+          });
+          return;
+        }
+      }
       inFlightRunIds.add(run.id);
+      let readNextPage = false;
       const offset = logOffsetByRunRef.current.get(run.id) ?? resolveInitialLogOffset(run, logReadLimitBytes);
       try {
         const result = await readTranscriptRequest(
@@ -327,13 +408,21 @@ export function useLiveRunTranscripts({
         });
         appendChunks(run.id, parsePersistedLogContent(run.id, result.content, pendingLogRowsByRunRef.current));
 
-        if (result.nextOffset !== undefined) {
+        if (result.nextOffset !== undefined && result.nextOffset !== null) {
           logOffsetByRunRef.current.set(run.id, result.nextOffset);
+          // The log holds more than this page. Read on to its current end right
+          // away: a settled run gets no other prompt, and a running run would
+          // otherwise wait for the slow fallback poll (byte-counter ticks no
+          // longer restart reads). The server reports no next offset at the
+          // end, so this stops there; later output arrives over the socket.
+          readNextPage = result.nextOffset > offset;
           return;
         }
         if (result.content.length > 0) {
           logOffsetByRunRef.current.set(run.id, offset + result.content.length);
         }
+        // A settled run read to its end has nothing more to deliver.
+        if (isTerminalStatus(run.status)) completedSettledRunIds.add(run.id);
       } catch (error) {
         if (cancelled) return;
         if (error instanceof ApiError && error.status === 404) {
@@ -355,6 +444,7 @@ export function useLiveRunTranscripts({
         }
       } finally {
         inFlightRunIds.delete(run.id);
+        if (readNextPage && !cancelled) void readRunLog(run);
         if (!cancelled) {
           setHydratedRunIds((prev) => {
             if (prev.has(run.id)) return prev;
@@ -389,7 +479,19 @@ export function useLiveRunTranscripts({
       controller.abort();
       if (interval !== null) window.clearInterval(interval);
     };
-  }, [visible, enableRealtimeUpdates, logPollIntervalMs, logReadLimitBytes, normalizedRuns, runIdsKey, retryGeneration]);
+  }, [visible, enableRealtimeUpdates, logPollIntervalMs, logReadLimitBytes, readKey, retryGeneration]);
+
+  // Publish settled runs' complete logs for later mounts of the same task.
+  useEffect(() => {
+    const completed = completedSettledRunIdsRef.current!;
+    for (const runId of completed) {
+      const chunks = chunksByRun.get(runId);
+      if (!chunks || chunks.length === 0) continue;
+      if (readSettledRunLog(queryClient, runId, settledBudgetKey) === chunks) continue;
+      queryClient.setQueryDefaults(["run-log-settled"], { gcTime: SETTLED_RUN_LOG_GC_MS });
+      queryClient.setQueryData(settledRunLogKey(runId, settledBudgetKey), chunks);
+    }
+  }, [chunksByRun, queryClient, settledBudgetKey]);
 
   useEffect(() => {
     if (!visible || !enableRealtimeUpdates) return;

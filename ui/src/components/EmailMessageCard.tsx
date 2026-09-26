@@ -7,6 +7,7 @@ import type {
   EmailThreadSummary,
 } from "@paperclipai/shared";
 import { emailApi } from "@/api/email";
+import { emailThreadRefetchInterval } from "@/lib/issueDetailPolling";
 import { issuesApi } from "@/api/issues";
 import { useChatConnectorsEnabled } from "@/hooks/useChatConnectorsEnabled";
 import { useTranslation } from "@/i18n";
@@ -25,7 +26,7 @@ export function EmailThreadProvider({
     queryKey: ["email-thread", companyId, issueId],
     queryFn: () => emailApi.thread(companyId, issueId),
     enabled,
-    refetchInterval: enabled ? 3000 : false,
+    refetchInterval: (query) => (enabled ? emailThreadRefetchInterval(query.state.data) : false),
   });
   return (
     <EmailContext.Provider value={thread.data ?? null}>

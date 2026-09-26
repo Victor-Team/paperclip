@@ -1421,6 +1421,164 @@ describe("IssueDetail", () => {
     vi.restoreAllMocks();
   });
 
+  it("renders only the newest comments and reveals loaded earlier ones before fetching another page", async () => {
+    const at = (index: number) => new Date(Date.UTC(2026, 3, 21, 0, index));
+    mockIssuesApi.get.mockResolvedValue(createIssue({ status: "done" }));
+    mockIssuesApi.listComments.mockResolvedValue(
+      Array.from({ length: 45 }, (_, index) =>
+        createIssueComment({ id: `comment-${index}`, createdAt: at(index), updatedAt: at(index) }),
+      ).reverse(),
+    );
+    const run = (runId: string, index: number) => ({
+      runId,
+      agentId: "agent-1",
+      agentName: "Coder",
+      adapterType: "codex_local",
+      status: "succeeded",
+      createdAt: at(index).toISOString(),
+      startedAt: at(index).toISOString(),
+      finishedAt: at(index).toISOString(),
+      contextIssueId: "issue-1",
+      logBytes: 10,
+    });
+    mockActivityApi.runsForIssue.mockResolvedValue([run("run-old", 2), run("run-recent", 40)]);
+    const answered = (id: string, index: number) => ({
+      id,
+      companyId: "company-1",
+      issueId: "issue-1",
+      kind: "ask_user_questions",
+      status: "answered",
+      continuationPolicy: "wake_assignee",
+      resolverPolicy: "anyone",
+      requestedResolverPolicy: "anyone",
+      effectiveResolverPolicy: "anyone",
+      resolverPolicyProvenance: "inherited",
+      effectiveResolverPolicySource: "requested",
+      legacyResolverPolicyAliases: { requested: null, effective: null },
+      sourceRunId: null,
+      resolvedByUserId: "user-1",
+      createdAt: at(index).toISOString(),
+      updatedAt: at(index).toISOString(),
+      resolvedAt: at(index).toISOString(),
+      payload: {
+        version: 1,
+        questions: [{ id: "q", prompt: "Which?", selectionMode: "single", options: [{ id: "a", label: "A" }] }],
+      },
+      result: { version: 1, answers: [{ questionId: "q", optionIds: ["a"] }] },
+    });
+    mockIssuesApi.listInteractions.mockResolvedValue([answered("answered-old", 3), answered("answered-recent", 41)]);
+    await act(async () => {
+      root.render(
+        <QueryClientProvider client={queryClient}>
+          <IssueDetail />
+        </QueryClientProvider>,
+      );
+    });
+    await flushReact();
+    await flushReact();
+
+    type ThreadProps = {
+      comments?: Array<{ id: string }>;
+      linkedRuns?: Array<{ runId: string }>;
+      hasEarlierHistory?: boolean;
+    };
+    const initial = mockIssueChatThreadRender.mock.calls.at(-1)?.[0] as ThreadProps;
+    expect(initial.comments?.map((comment) => comment.id).sort()).toEqual(
+      [
+        ...Array.from({ length: 30 }, (_, index) => `comment-${index + 15}`),
+        "interaction-response:answered-recent",
+      ].sort(),
+    );
+    expect(initial.hasEarlierHistory).toBe(true);
+    expect(initial.linkedRuns?.map((linkedRun) => linkedRun.runId)).toEqual(["run-recent"]);
+    const commentPageRequests = mockIssuesApi.listComments.mock.calls.length;
+
+    const loadEarlier = Array.from(container.querySelectorAll("button")).find(
+      (button) => button.textContent === "Load earlier comments",
+    );
+    expect(loadEarlier).toBeTruthy();
+    await act(async () => {
+      loadEarlier!.click();
+    });
+    await flushReact();
+
+    const expanded = mockIssueChatThreadRender.mock.calls.at(-1)?.[0] as ThreadProps;
+    expect(expanded.comments).toHaveLength(47);
+    expect(expanded.hasEarlierHistory).toBe(false);
+    expect(expanded.linkedRuns?.map((linkedRun) => linkedRun.runId).sort()).toEqual(["run-old", "run-recent"]);
+    expect(mockIssuesApi.listComments.mock.calls.length).toBe(commentPageRequests);
+  });
+
+  it("starts the thread's runs and activity from the route ref while the issue loads, without refetching them by id", async () => {
+    let resolveIssue!: (issue: Issue) => void;
+    mockIssuesApi.get.mockReturnValue(new Promise<Issue>((resolve) => { resolveIssue = resolve; }));
+    const run = {
+      runId: "run-1",
+      agentId: "agent-1",
+      agentName: "Coder",
+      adapterType: "codex_local",
+      status: "succeeded",
+      createdAt: new Date(Date.UTC(2026, 3, 21)).toISOString(),
+      startedAt: new Date(Date.UTC(2026, 3, 21)).toISOString(),
+      finishedAt: new Date(Date.UTC(2026, 3, 21)).toISOString(),
+      contextIssueId: "issue-1",
+      logBytes: 10,
+    };
+    mockActivityApi.runsForIssue.mockClear().mockResolvedValue([run]);
+    mockActivityApi.forIssue.mockClear();
+    await act(async () => {
+      root.render(
+        <QueryClientProvider client={queryClient}>
+          <IssueDetail />
+        </QueryClientProvider>,
+      );
+    });
+    await flushReact();
+
+    // Issue still loading: the thread's slow inputs are already on their way.
+    expect(mockActivityApi.runsForIssue.mock.calls.map(([ref]) => ref)).toEqual(["PAP-1"]);
+    expect(mockActivityApi.forIssue.mock.calls.map(([ref]) => ref)).toEqual(["PAP-1"]);
+
+    await act(async () => { resolveIssue(createIssue({ status: "done" })); });
+    await flushReact();
+    await flushReact();
+
+    // The chat tab's first canonical-id fetch reused them.
+    expect(mockActivityApi.runsForIssue.mock.calls.map(([ref]) => ref)).toEqual(["PAP-1"]);
+    expect(mockActivityApi.forIssue.mock.calls.map(([ref]) => ref)).toEqual(["PAP-1"]);
+    const props = mockIssueChatThreadRender.mock.calls.at(-1)?.[0] as { linkedRuns?: Array<{ runId: string }> };
+    expect(props.linkedRuns?.map((linkedRun) => linkedRun.runId)).toEqual(["run-1"]);
+
+    // Later refreshes go to the server by id as before.
+    await act(async () => { await queryClient.invalidateQueries({ queryKey: ["issues", "runs", "issue-1"] }); });
+    await flushReact();
+    expect(mockActivityApi.runsForIssue.mock.calls.map(([ref]) => ref)).toEqual(["PAP-1", "issue-1"]);
+  });
+
+  it("polls a finished task's live runs from one shared query at the idle interval", async () => {
+    mockIssuesApi.get.mockResolvedValue(createIssue({ status: "done" }));
+    mockHeartbeatsApi.liveRunsForIssue.mockClear();
+    await act(async () => {
+      root.render(
+        <QueryClientProvider client={queryClient}>
+          <IssueDetail />
+        </QueryClientProvider>,
+      );
+    });
+    await flushReact();
+    await flushReact();
+
+    const liveRuns = queryClient.getQueryCache().find({ queryKey: queryKeys.issues.liveRuns("issue-1"), exact: true });
+    // Header and chat thread share the canonical-id query; the route-ref key is never fetched.
+    expect(mockHeartbeatsApi.liveRunsForIssue.mock.calls).toEqual([["issue-1"]]);
+    expect(liveRuns!.observers.length).toBeGreaterThanOrEqual(2);
+    const intervals = liveRuns!.observers.map((observer) => {
+      const interval = observer.options.refetchInterval;
+      return typeof interval === "function" ? interval(liveRuns as never) : interval;
+    });
+    expect(new Set(intervals)).toEqual(new Set([30_000]));
+  });
+
   it("keeps an existing conversation on its agent-addressed route", async () => {
     const agent = createAgent();
     const canonical = createIssue({ conversationAgentId: agent.id, conversationUserId: "user-1", conversationState: "waiting", status: "in_review" });

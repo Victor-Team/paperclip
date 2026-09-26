@@ -3,6 +3,7 @@ import type { TranscriptEntry } from "@/adapters";
 import type { HeartbeatRunEvent } from "@paperclipai/shared";
 import {
   assembleThreadItems,
+  dropBackboneEntriesBefore,
   attachSettledTurns,
   buildActivityPhases,
   buildTurnTimelineRows,
@@ -2834,5 +2835,33 @@ describe("prependIssueBrief (PAP-375)", () => {
     expect(prependIssueBrief([], true).map((i) => i.kind)).toEqual(["brief"]);
     const items = [entry("u1", 1_000).item];
     expect(prependIssueBrief(items, false)).toBe(items);
+  });
+});
+
+describe("dropBackboneEntriesBefore", () => {
+  const marker = (id: string, ms: number) => ({
+    ms,
+    id,
+    item: { id, kind: "marker", variant: "interrupted", tone: "neutral", label: id } as TaskChatItem,
+  });
+  const interaction = (id: string, ms: number, status: string) => ({
+    ms,
+    id,
+    item: { id, kind: "interaction", interaction: { id, status } } as unknown as TaskChatItem,
+  });
+
+  it("drops entries before the cutoff but keeps pending interactions", () => {
+    const entries = [
+      marker("old", 1),
+      interaction("old-pending", 2, "pending"),
+      interaction("old-answered", 3, "accepted"),
+      marker("new", 10),
+    ];
+    expect(dropBackboneEntriesBefore(entries, 5).map((entry) => entry.id)).toEqual(["old-pending", "new"]);
+  });
+
+  it("keeps everything without a cutoff", () => {
+    const entries = [marker("a", 1), marker("b", 2)];
+    expect(dropBackboneEntriesBefore(entries, null).map((entry) => entry.id)).toEqual(["a", "b"]);
   });
 });

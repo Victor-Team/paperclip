@@ -2,6 +2,7 @@ import { EmailMessageCard } from "./EmailMessageCard";
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { emailApi } from "@/api/email";
+import { emailThreadRefetchInterval } from "@/lib/issueDetailPolling";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { EmailPublicationSummary } from "@paperclipai/shared";
@@ -23,7 +24,7 @@ export function EmailTaskActivity({
     queryKey: threadKey,
     queryFn: () => emailApi.thread(companyId, issueId),
     enabled: queryEnabled,
-    refetchInterval: 3000,
+    refetchInterval: (query) => emailThreadRefetchInterval(query.state.data),
   });
   if (!queryEnabled) return null;
   const data = thread.data;

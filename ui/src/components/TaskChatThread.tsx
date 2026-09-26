@@ -31,6 +31,7 @@ import {
 import { commentsToTaskChatItems } from "@/components/task-chat/task-chat-adapter";
 import {
   assembleThreadItems,
+  dropBackboneEntriesBefore,
   attachSettledTurns,
   buildTurnSummary,
   coalesceSettledTurns,
@@ -399,6 +400,12 @@ function resolvedWithoutUserFacingResponse(value: unknown): boolean {
 
 export type TaskChatThreadProps = ComponentProps<typeof IssueChatThread> & {
   conversationMode?: boolean;
+  /**
+   * The host shows only its newest comments; older ones exist but are not
+   * passed in. Entries older than the oldest passed comment are then left out
+   * too, so the rendered thread stays one bounded window.
+   */
+  hasEarlierHistory?: boolean;
   creationActivity?: ActivityEvent[];
   initialHistoryPending?: boolean;
   initialHistoryError?: boolean;
@@ -475,6 +482,7 @@ export function TaskChatThread(props: TaskChatThreadProps) {
     initialHistoryPending = false,
     initialHistoryError = false,
     onRetryInitialHistory,
+    hasEarlierHistory = false,
     comments,
     interactions,
     documents = [],
@@ -1407,6 +1415,10 @@ export function TaskChatThread(props: TaskChatThreadProps) {
   // Boolean gate (stable across the host's per-render brief objects) so the
   // heavy assembly memo doesn't recompute on every parent render.
   const hasBrief = Boolean(issueBrief);
+  const historyCutoffMs = useMemo(() => {
+    if (!hasEarlierHistory || comments.length === 0) return null;
+    return Math.min(...comments.map((comment) => toMs(comment.createdAt)));
+  }, [comments, hasEarlierHistory]);
 
   const { items, settledRunIds, settledReplyRunIds } = useMemo<{
     items: TaskChatItem[];
@@ -2014,7 +2026,7 @@ export function TaskChatThread(props: TaskChatThreadProps) {
       (a, b) => a.ms - b.ms || a.order - b.order || a.id.localeCompare(b.id),
     );
     const out = assembleThreadItems(
-      entriesWithFailures,
+      dropBackboneEntriesBefore(entriesWithFailures, historyCutoffMs),
       turnsByAnchor,
       unanchored,
     );
@@ -2040,6 +2052,7 @@ export function TaskChatThread(props: TaskChatThreadProps) {
     };
   }, [
     orderedEntries,
+    historyCutoffMs,
     canRetryFailedRun,
     interactions,
     runs,

@@ -488,8 +488,10 @@ function invalidateVisibleIssueRunQueries(
 
   const runId = readString(payload.runId);
   const agentId = readString(payload.agentId);
+  const payloadIssueId = readString(payload.issueId);
   const matchesVisibleIssue =
     (runId !== null && context.runIds.has(runId)) ||
+    (payloadIssueId !== null && context.issueRefs.has(payloadIssueId)) ||
     (!!agentId &&
       !!context.assigneeAgentId &&
       agentId === context.assigneeAgentId);
@@ -1349,6 +1351,12 @@ function invalidateActivityQueries(
         queryClient.invalidateQueries({ queryKey: queryKeys.issues.activity(ref), ...invalidationOptions });
         if (action === "issue.comment_added" || action === "issue.conversation_session_started") {
           queryClient.invalidateQueries({ queryKey: queryKeys.issues.comments(ref), ...invalidationOptions });
+        }
+        if (action === "issue.comment_added" || action?.startsWith("issue.queued_comment")) {
+          // The queued-message strip has no event of its own; delivery, steering
+          // and interrupts all log issue activity, so refresh it from there
+          // instead of polling it every second.
+          queryClient.invalidateQueries({ queryKey: queryKeys.issues.queuedComments(ref) });
         }
         if (action?.startsWith("issue.attachment_") || action?.startsWith("issue.work_product_")) {
           // These cards are durable API objects, not streamed text. Refresh the

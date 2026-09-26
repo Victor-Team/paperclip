@@ -1609,3 +1609,46 @@ describe("task subtree notification context", () => {
     expect(__liveUpdatesTestUtils.shouldSuppressRunStatusToastForVisibleIssue(queryClient as never, "/PAP/agents/alex/runs/child-run", { runId: "child-run" }, { isForegrounded: true })).toBe(true);
   });
 });
+
+describe("open-task refresh without fast polling", () => {
+  it.each(["issue.comment_added", "issue.queued_comment_steered", "issue.queued_comments_interrupted"])(
+    "refreshes the queued-message strip after %s",
+    (action) => {
+      const client = new QueryClient();
+      client.setQueryData(queryKeys.issues.detail("issue-1"), { id: "issue-1", companyId: "company-1", identifier: "PAP-1" });
+      const invalidate = vi.spyOn(client, "invalidateQueries");
+      __liveUpdatesTestUtils.invalidateActivityQueries(client, "company-1", {
+        entityType: "issue", entityId: "issue-1", actorType: "agent", actorId: "agent-1", action,
+      }, { userId: "user-1", agentId: null }, { pathname: "/PAP/issues/PAP-1", isForegrounded: true });
+      expect(invalidate).toHaveBeenCalledWith({ queryKey: queryKeys.issues.queuedComments("issue-1") });
+      client.clear();
+    },
+  );
+
+  it("does not refresh the queued-message strip for unrelated issue activity", () => {
+    const client = new QueryClient();
+    client.setQueryData(queryKeys.issues.detail("issue-1"), { id: "issue-1", companyId: "company-1", identifier: "PAP-1" });
+    const invalidate = vi.spyOn(client, "invalidateQueries");
+    __liveUpdatesTestUtils.invalidateActivityQueries(client, "company-1", {
+      entityType: "issue", entityId: "issue-1", actorType: "agent", actorId: "agent-1", action: "issue.document_updated",
+    }, { userId: "user-1", agentId: null }, { pathname: "/PAP/issues/PAP-1", isForegrounded: true });
+    expect(invalidate).not.toHaveBeenCalledWith({ queryKey: queryKeys.issues.queuedComments("issue-1") });
+    client.clear();
+  });
+
+  it("refreshes the visible task's runs when a run event names the task, whoever runs it", () => {
+    const client = new QueryClient();
+    client.setQueryData(queryKeys.issues.detail("PAP-1"), { id: "issue-1", companyId: "company-1", identifier: "PAP-1", assigneeAgentId: "agent-1" });
+    const invalidate = vi.spyOn(client, "invalidateQueries");
+    const matched = __liveUpdatesTestUtils.invalidateVisibleIssueRunQueries(
+      client, "/PAP/issues/PAP-1", { agentId: "reviewer-agent", runId: "run-new", issueId: "issue-1", status: "running" }, { isForegrounded: true },
+    );
+    expect(matched).toBe(true);
+    expect(invalidate).toHaveBeenCalledWith({ queryKey: queryKeys.issues.liveRuns("issue-1") });
+    const unrelated = __liveUpdatesTestUtils.invalidateVisibleIssueRunQueries(
+      client, "/PAP/issues/PAP-1", { agentId: "reviewer-agent", runId: "run-other", issueId: "issue-2", status: "running" }, { isForegrounded: true },
+    );
+    expect(unrelated).toBe(false);
+    client.clear();
+  });
+});
