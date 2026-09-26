@@ -3951,3 +3951,51 @@ describe("TaskChatThread composer execution controls", () => {
     expect(container.querySelector('[data-testid="task-chat-composer-stop"]')).toBeNull();
   });
 });
+
+describe("TaskChatThread rendered history window", () => {
+  const documentAt = (id: string, title: string, iso: string) => ({
+    ...planDocument({ id, key: id, title, latestRevisionId: `${id}-rev` }),
+    updatedAt: new Date(iso),
+    createdAt: new Date(iso),
+  });
+  const documents = [
+    documentAt("doc-before-window", "Report written before the window", "2026-08-15T11:00:00.000Z"),
+    documentAt("doc-inside-window", "Report written inside the window", "2026-08-15T12:02:30.000Z"),
+  ];
+
+  it("leaves out entries older than the oldest shown comment while earlier history is hidden", () => {
+    render(
+      <TaskChatThread
+        issueId="issue-1"
+        comments={createLongThreadComments()}
+        documents={documents}
+        onAdd={async () => {}}
+        hasEarlierHistory
+        issueBrief={{
+          description: "Brief written when the task was created",
+          author: "human",
+          createdAt: new Date("2026-08-01T00:00:00.000Z"),
+          onSave: () => Promise.resolve(),
+        }}
+      />,
+    );
+    // The task description stays on top even though it predates the window.
+    expect(container.textContent).toContain("Brief written when the task was created");
+    expect(container.textContent).toContain("Thread message 1");
+    expect(container.textContent).toContain("Report written inside the window");
+    expect(container.textContent).not.toContain("Report written before the window");
+  });
+
+  it("keeps every entry once the whole history is shown", () => {
+    render(
+      <TaskChatThread
+        issueId="issue-1"
+        comments={createLongThreadComments()}
+        documents={documents}
+        onAdd={async () => {}}
+      />,
+    );
+    expect(container.textContent).toContain("Report written inside the window");
+    expect(container.textContent).toContain("Report written before the window");
+  });
+});

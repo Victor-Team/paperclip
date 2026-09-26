@@ -3,9 +3,15 @@ import { resolveAgentAppearance, type CharacterState } from "@paperclipai/shared
 import { cn } from "@/lib/utils";
 import { characterSlot } from "@/lib/agent-character-slot";
 import { AgentAvatar, avatarSizeClasses, type AgentAvatarProps } from "./AgentAvatar";
+import { whenInputIdle } from "@/lib/whenInputIdle";
 import type { createCharacter } from "@paperclipai/shared/cliplab/runtime";
 
 type Player = ReturnType<typeof createCharacter>;
+// A character scrolled briefly out of view keeps its renderer (the runtime
+// already stops drawing offscreen); only a longer absence hands the live slot
+// on. Tearing down on every exit rebuilt the WebGL context and shaders each
+// time the header scrolled back in.
+export const CHARACTER_OFFSCREEN_RELEASE_MS = 3000;
 export interface AgentCharacterProps extends Omit<AgentAvatarProps, "pose"> {
   state?: CharacterState;
   motion?: "auto" | "still";
@@ -25,9 +31,14 @@ export function AgentCharacter({ agent, appearance, size = 256, state = "idle", 
     if (typeof matchMedia !== "function" || typeof IntersectionObserver !== "function") return;
     const media = matchMedia("(prefers-reduced-motion: reduce)");
     const change = () => setReduced(media.matches); change(); media.addEventListener("change", change);
-    const observer = new IntersectionObserver(entries => setVisible(entries[0]?.isIntersecting ?? false));
+    let hideTimer: ReturnType<typeof setTimeout> | undefined;
+    const observer = new IntersectionObserver(entries => {
+      clearTimeout(hideTimer);
+      if (entries[0]?.isIntersecting) setVisible(true);
+      else hideTimer = setTimeout(() => setVisible(false), CHARACTER_OFFSCREEN_RELEASE_MS);
+    });
     if (root.current) observer.observe(root.current);
-    return () => { observer.disconnect(); media.removeEventListener("change", change); };
+    return () => { clearTimeout(hideTimer); observer.disconnect(); media.removeEventListener("change", change); };
   }, []);
   useEffect(() => {
     if (active && owner === null) characterSlot.acquire(slotId.current);
@@ -38,15 +49,17 @@ export function AgentCharacter({ agent, appearance, size = 256, state = "idle", 
     if (!active || owner !== slotId.current) return;
     let disposed = false;
     setReady(false);
-    void Promise.all([import("@paperclipai/shared/cliplab/runtime"), import("@paperclipai/shared/cliplab/definition")]).then(([runtime, library]) => {
+    // Built only once scrolling/typing pauses, so opening a page and scrolling
+    // right away is not held back by the renderer set-up.
+    const cancelStart = whenInputIdle(() => void Promise.all([import("@paperclipai/shared/cliplab/runtime"), import("@paperclipai/shared/cliplab/definition")]).then(([runtime, library]) => {
       if (disposed || !host.current) return;
       player.current = runtime.createCharacter(host.current, library.characterDefinition(identity, muted), {
         animation: library.animationId(state), trackingRegion: trackingRegion?.current ?? root.current ?? undefined,
         followCursor, followRotation, trackingScope, displaySize: size, onError: () => setFailed(true),
       });
       setReady(true);
-    }).catch(() => { if (!disposed) setFailed(true); });
-    return () => { disposed = true; player.current?.destroy(); player.current = null; setReady(false); };
+    }).catch(() => { if (!disposed) setFailed(true); }));
+    return () => { disposed = true; cancelStart(); player.current?.destroy(); player.current = null; setReady(false); };
   }, [active, owner, trackingRegion, trackingScope, size, followCursor, followRotation]);
   useEffect(() => {
     if (!player.current) return;

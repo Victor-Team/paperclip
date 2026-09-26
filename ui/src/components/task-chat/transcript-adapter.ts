@@ -1895,6 +1895,25 @@ export function assembleThreadItems(
   return out;
 }
 
+/**
+ * Drops backbone entries older than the rendered comment window. A long task
+ * keeps hundreds of documents, deliverables, attachments and status markers;
+ * while earlier comments are not shown, their surrounding entries are not
+ * shown either, so the thread renders one bounded window. Pending
+ * interactions always stay: they are open calls to action wherever they sit.
+ */
+export function dropBackboneEntriesBefore<T extends ThreadBackboneEntry>(
+  entries: readonly T[],
+  cutoffMs: number | null,
+): T[] {
+  if (cutoffMs === null || !Number.isFinite(cutoffMs)) return [...entries];
+  return entries.filter(
+    (entry) =>
+      entry.ms >= cutoffMs ||
+      (entry.item.kind === "interaction" && entry.item.interaction.status === "pending"),
+  );
+}
+
 /** Stable id of the description-as-first-bubble item (PAP-375). */
 export const ISSUE_BRIEF_ITEM_ID = "issue-brief";
 

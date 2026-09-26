@@ -89,12 +89,24 @@ import {
 } from "../lib/issue-timeline-events";
 import { queryKeys } from "../lib/queryKeys";
 import { keepPreviousDataForSameQueryTail } from "../lib/query-placeholder-data";
+import { fetchSeededByRouteRef, prefetchByRouteRef } from "../lib/issueRouteRefSeed";
 import {
   mergePendingIssueQueuedComments,
   normalizeIssueQueuedCommentQueue,
 } from "../lib/issue-queued-comment-queue";
 import { collectLiveIssueIds } from "../lib/liveIssueIds";
 import { filterRunsToLoadedCommentWindow } from "../lib/issueChatTranscriptRuns";
+import {
+  ISSUE_ACTIVE_RUN_POLL_MS,
+  ISSUE_QUEUED_COMMENTS_POLL_MS,
+  ISSUE_RUNS_FALLBACK_POLL_MS,
+  issueLiveRunsRefetchInterval,
+} from "../lib/issueDetailPolling";
+import {
+  selectRenderedComments,
+  TASK_CHAT_RENDER_WINDOW,
+  TASK_CHAT_RENDER_WINDOW_STEP,
+} from "../lib/taskChatRenderWindow";
 import {
   hasLegacyIssueDetailQuery,
   createIssueDetailPath,
@@ -439,7 +451,6 @@ const ISSUE_COMMENT_AUTOLOAD_LIMIT = ISSUE_COMMENT_PAGE_SIZE * 3;
 // runs query (LiveUpdatesProvider `invalidateVisibleIssueRunQueries`), so this
 // poll is only a safety net. At 1s it re-ran the full run history back to back
 // on long issues, where one fetch takes about a second.
-const ISSUE_RUNS_FALLBACK_POLL_MS = 5000;
 const JUMP_TO_LATEST_MAX_COMMENT_PAGES = 10;
 function treeControlPreviewErrorCopy(error: unknown): string {
   if (error instanceof ApiError) {
@@ -1221,6 +1232,8 @@ type IssueDetailChatTabProps = {
     title?: string | null;
   } | null;
   comments: IssueDetailComment[];
+  /** The issue ref in the route (identifier or id); its early runs/activity requests seed this tab. */
+  routeIssueRef?: string | null;
   commentsInitialLoading?: boolean;
   initialHistoryPending?: boolean;
   initialHistoryError?: boolean;
@@ -1360,7 +1373,8 @@ const IssueDetailChatTab = memo(function IssueDetailChatTab({
   reconcileRecoveryActionPending,
   canFalsePositiveRecoveryAction,
   legacyRecoverySourceIssue,
-  comments,
+  comments: loadedComments,
+  routeIssueRef = null,
   commentsInitialLoading = false,
   initialHistoryPending = false,
   initialHistoryError = false,
@@ -1441,6 +1455,41 @@ const IssueDetailChatTab = memo(function IssueDetailChatTab({
   const queryClient = useQueryClient();
   const scrollLocation = useLocation();
   const scrollNavigationType = useNavigationType();
+  // The chat-style thread renders only the newest comments; the window widens
+  // through "Load earlier comments" before another page is fetched. It resets
+  // per task. The classic thread keeps its own cap and gets every comment.
+  const [renderWindow, setRenderWindow] = useState(() => ({
+    issueId,
+    size: TASK_CHAT_RENDER_WINDOW,
+  }));
+  const renderWindowSize =
+    renderWindow.issueId === issueId ? renderWindow.size : TASK_CHAT_RENDER_WINDOW;
+  const linkedThreadCommentId = scrollLocation.hash.startsWith("#comment-")
+    ? scrollLocation.hash.slice("#comment-".length)
+    : null;
+  const { rendered: comments, hiddenCount: hiddenLoadedCommentCount } = useMemo(
+    () =>
+      classicTaskInterfaceEnabled
+        ? { rendered: loadedComments, hiddenCount: 0 }
+        : selectRenderedComments(loadedComments, renderWindowSize, linkedThreadCommentId),
+    [classicTaskInterfaceEnabled, linkedThreadCommentId, loadedComments, renderWindowSize],
+  );
+  const hasEarlierHistory = hasOlderComments || hiddenLoadedCommentCount > 0;
+  // Oldest moment the rendered window covers; synthetic thread entries built
+  // here (answered-interaction replies) stay inside it like everything else.
+  const renderWindowStartMs = useMemo(() => {
+    if (!hasEarlierHistory || comments.length === 0) return null;
+    return Math.min(...comments.map((comment) => new Date(comment.createdAt).getTime()));
+  }, [comments, hasEarlierHistory]);
+  const showEarlierComments = useCallback(() => {
+    setRenderWindow((current) => ({
+      issueId,
+      size:
+        (current.issueId === issueId ? current.size : TASK_CHAT_RENDER_WINDOW) +
+        TASK_CHAT_RENDER_WINDOW_STEP,
+    }));
+    if (hiddenLoadedCommentCount === 0) onLoadOlderComments();
+  }, [hiddenLoadedCommentCount, issueId, onLoadOlderComments]);
   const { pushToast } = useToastActions();
   const {
     data: activity,
@@ -1449,7 +1498,13 @@ const IssueDetailChatTab = memo(function IssueDetailChatTab({
     refetch: refetchActivity,
   } = useQuery({
     queryKey: queryKeys.issues.activity(issueId),
-    queryFn: () => activityApi.forIssue(issueId),
+    queryFn: () =>
+      fetchSeededByRouteRef(
+        queryClient,
+        queryKeys.issues.activity(issueId),
+        routeIssueRef && routeIssueRef !== issueId ? queryKeys.issues.activity(routeIssueRef) : null,
+        () => activityApi.forIssue(issueId),
+      ),
     enabled: !!issueId,
     placeholderData: keepPreviousDataForSameQueryTail<ActivityEvent[]>(issueId),
   });
@@ -1462,7 +1517,7 @@ const IssueDetailChatTab = memo(function IssueDetailChatTab({
     queryKey: queryKeys.issues.liveRuns(issueId),
     queryFn: () => heartbeatsApi.liveRunsForIssue(issueId),
     enabled: !!issueId,
-    refetchInterval: 1000,
+    refetchInterval: (query) => issueLiveRunsRefetchInterval(query.state.data),
     placeholderData:
       keepPreviousDataForSameQueryTail<LiveRunForIssue[]>(issueId),
   });
@@ -1479,7 +1534,7 @@ const IssueDetailChatTab = memo(function IssueDetailChatTab({
     queryKey: queryKeys.issues.activeRun(issueId),
     queryFn: () => heartbeatsApi.activeRunForIssue(issueId),
     enabled: activeRunQueryEnabled,
-    refetchInterval: liveRunCount > 0 ? false : 1000,
+    refetchInterval: liveRunCount > 0 ? false : ISSUE_ACTIVE_RUN_POLL_MS,
     placeholderData: keepPreviousDataForSameQueryTail<ActiveRunForIssue | null>(
       issueId,
     ),
@@ -1518,7 +1573,9 @@ const IssueDetailChatTab = memo(function IssueDetailChatTab({
       ),
     enabled: queuedCommentQueueEnabled,
     refetchInterval: (query) => queuedCommentQueueEnabled &&
-      (liveRuntimeRun || query.state.data?.entries.length) ? 1000 : false,
+      (liveRuntimeRun || query.state.data?.entries.length)
+      ? ISSUE_QUEUED_COMMENTS_POLL_MS
+      : false,
   });
   const [consumedQueuedCommentIds, setConsumedQueuedCommentIds] = useState<
     ReadonlySet<string>
@@ -1547,7 +1604,13 @@ const IssueDetailChatTab = memo(function IssueDetailChatTab({
     refetch: refetchLinkedRuns,
   } = useQuery({
     queryKey: queryKeys.issues.runs(issueId),
-    queryFn: () => activityApi.runsForIssue(issueId),
+    queryFn: () =>
+      fetchSeededByRouteRef(
+        queryClient,
+        queryKeys.issues.runs(issueId),
+        routeIssueRef && routeIssueRef !== issueId ? queryKeys.issues.runs(routeIssueRef) : null,
+        () => activityApi.runsForIssue(issueId),
+      ),
     enabled: !!issueId,
     refetchInterval:
       hasLiveRuns || issueStatus === "in_progress"
@@ -1617,13 +1680,13 @@ const IssueDetailChatTab = memo(function IssueDetailChatTab({
     return filterRunsToLoadedCommentWindow(
       historicalRuns,
       comments,
-      hasOlderComments || commentsInitialLoading,
+      hasEarlierHistory || commentsInitialLoading,
     ).map((run) => ({
       ...run,
       adapterType: run.adapterType,
       hasStoredOutput: (run.logBytes ?? 0) > 0,
     }));
-  }, [comments, commentsInitialLoading, hasOlderComments, liveRunIds, resolvedLinkedRuns]);
+  }, [comments, commentsInitialLoading, hasEarlierHistory, liveRunIds, resolvedLinkedRuns]);
   const commentsWithRunMeta = useMemo<IssueDetailComment[]>(() => {
     const activeRunStartedAt =
       interruptibleIssueRun?.startedAt ??
@@ -1935,6 +1998,7 @@ const IssueDetailChatTab = memo(function IssueDetailChatTab({
               ? interaction.resolvedAt
               : new Date(interaction.resolvedAt);
           if (Number.isNaN(resolvedAt.getTime())) return [];
+          if (renderWindowStartMs !== null && resolvedAt.getTime() < renderWindowStartMs) return [];
           const delivery = answeredQuestions
             ? (questionDeliveryByInteractionId.get(interaction.id) ?? null)
             : null;
@@ -1983,6 +2047,7 @@ const IssueDetailChatTab = memo(function IssueDetailChatTab({
     return [...projectedComments, ...responseComments];
   }, [
     comments,
+    renderWindowStartMs,
     classicTaskInterfaceEnabled,
     interactions,
     liveRunIds,
@@ -2290,14 +2355,14 @@ const IssueDetailChatTab = memo(function IssueDetailChatTab({
     [resolvedActivity],
   );
 
-  const loadOlderButton = hasOlderComments ? (
+  const loadOlderButton = hasEarlierHistory ? (
     <div className="flex justify-center">
       <Button
         type="button"
         variant="outline"
         size="sm"
         disabled={commentsLoadingOlder}
-        onClick={onLoadOlderComments}
+        onClick={classicTaskInterfaceEnabled ? onLoadOlderComments : showEarlierComments}
       >
         {commentsLoadingOlder
           ? "Loading earlier comments..."
@@ -2333,7 +2398,9 @@ const IssueDetailChatTab = memo(function IssueDetailChatTab({
           <EmailThreadProvider companyId={companyId} issueId={issueId}>
           <ThreadComponent
             key={conversationMode ? draftKey : issueId}
-            {...(!classicTaskInterfaceEnabled ? { creationActivity: resolvedActivity } : {})}
+            {...(!classicTaskInterfaceEnabled
+              ? { creationActivity: resolvedActivity, hasEarlierHistory }
+              : {})}
             onOpenSkill={onOpenSkill}
             initialHistoryPending={!!issueId && (
               initialHistoryPending ||
@@ -3021,6 +3088,15 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
     enabled: !!issueId,
   });
   const issue = queriedIssue ?? conversation?.issue ?? draftIssue;
+  // Start the thread's runs and activity under the route ref while the issue
+  // loads; the chat tab's first canonical-id fetch reuses these requests.
+  const canonicalIssueIdKnown = Boolean(queriedIssue?.id);
+  useEffect(() => {
+    if (conversation || !issueId || canonicalIssueIdKnown) return;
+    prefetchByRouteRef(queryClient, queryKeys.issues.runs(issueId), () => activityApi.runsForIssue(issueId));
+    prefetchByRouteRef(queryClient, queryKeys.issues.activity(issueId), () => activityApi.forIssue(issueId));
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- once per opened ref, before the issue arrives
+  }, [issueId]);
   const resolveWritableIssueId = async () => {
     if (!conversation) return issueId!;
     const resolved = await conversation.ensureIssue();
@@ -3210,15 +3286,18 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
     void refetchWorkProducts();
   }, [issueId, workProducts, refetchWorkProducts]);
 
+  // Keyed by the canonical id so the header and the chat thread share one
+  // live-runs/active-run query instead of polling the route key alongside it.
+  const issueRunStateKey = issue?.id ?? issueId;
   const { data: liveRunCount = 0 } = useQuery<LiveRunForIssue[], Error, number>(
     {
-      queryKey: queryKeys.issues.liveRuns(issueId!),
-      queryFn: () => heartbeatsApi.liveRunsForIssue(issueId!),
-      enabled: !!issueId,
-      refetchInterval: 3000,
+      queryKey: queryKeys.issues.liveRuns(issueRunStateKey!),
+      queryFn: () => heartbeatsApi.liveRunsForIssue(issueRunStateKey!),
+      enabled: !!issue?.id,
+      refetchInterval: (query) => issueLiveRunsRefetchInterval(query.state.data),
       select: (runs) => runs.length,
       placeholderData: keepPreviousDataForSameQueryTail<LiveRunForIssue[]>(
-        issueId ?? "pending",
+        issueRunStateKey ?? "pending",
       ),
     },
   );
@@ -3228,14 +3307,14 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
     Error,
     boolean
   >({
-    queryKey: queryKeys.issues.activeRun(issueId!),
-    queryFn: () => heartbeatsApi.activeRunForIssue(issueId!),
+    queryKey: queryKeys.issues.activeRun(issueRunStateKey!),
+    queryFn: () => heartbeatsApi.activeRunForIssue(issueRunStateKey!),
     enabled:
-      !!issueId && (!!issue?.executionRunId || issue?.status === "in_progress"),
-    refetchInterval: liveRunCount > 0 ? false : 3000,
+      !!issue?.id && (!!issue?.executionRunId || issue?.status === "in_progress"),
+    refetchInterval: liveRunCount > 0 ? false : ISSUE_ACTIVE_RUN_POLL_MS,
     select: (run) => !!run,
     placeholderData: keepPreviousDataForSameQueryTail<ActiveRunForIssue | null>(
-      issueId ?? "pending",
+      issueRunStateKey ?? "pending",
     ),
   });
   const resolvedHasActiveRun = issue
@@ -4511,7 +4590,7 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
         queryKeys.issues.detail(issueId!),
       );
       const queuedComment = !interrupt
-        ? readIssueRunStateFromCache(queryClient, issueId!, issue)
+        ? readIssueRunStateFromCache(queryClient, issue?.id ?? issueId!, issue)
             .interruptibleIssueRun
         : null;
       const optimisticComment = issue
@@ -4900,7 +4979,7 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
         queryKeys.issues.detail(issueId!),
       );
       const queuedComment = !interrupt
-        ? readIssueRunStateFromCache(queryClient, issueId!, issue)
+        ? readIssueRunStateFromCache(queryClient, issue?.id ?? issueId!, issue)
             .interruptibleIssueRun
         : null;
       const optimisticComment = issue
@@ -7750,6 +7829,7 @@ export function TaskDetailSurface({ conversation, tasksTab }: { tasksTab?: TaskS
                       : undefined
                   }
                   issueId={conversation && !conversation.issue ? "" : issue.id}
+                  routeIssueRef={conversation ? null : issueId}
                   companyId={issue.companyId}
                   projectId={issue.projectId ?? null}
                   issueStatus={issue.status}

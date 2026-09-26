@@ -4,7 +4,8 @@ import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { appearanceForPalette } from "@paperclipai/shared";
 import { AgentAvatar } from "./AgentAvatar";
-import { AgentCharacter } from "./AgentCharacter";
+import { AgentCharacter, CHARACTER_OFFSCREEN_RELEASE_MS } from "./AgentCharacter";
+import { INPUT_QUIET_MS } from "../lib/whenInputIdle";
 import { useAgentAppearanceDraft } from "../hooks/useAgentAppearanceDraft";
 
 const renderer = vi.hoisted(() => ({ destroy: vi.fn(), setDefinition: vi.fn(), setAnimation: vi.fn() }));
@@ -45,16 +46,50 @@ describe("agent persona presentation", () => {
     expect(host.textContent).toBe("CS");
     expect(host.querySelector('[role="img"]')?.getAttribute("aria-label")).toBe("Chief of Staff");
   });
-  it("allows only one live character, releases it offscreen and disposes on unmount", async () => {
-    await act(async () => root.render(<><AgentCharacter appearance={appearance} /><AgentCharacter appearance={appearance} /></>));
-    expect(createCharacter).not.toHaveBeenCalled();
-    await show();
-    expect(createCharacter).toHaveBeenCalledTimes(1);
-    await act(async () => { observers[0]([{ isIntersecting: false }]); });
-    expect(renderer.destroy).toHaveBeenCalledTimes(1);
-    expect(createCharacter).toHaveBeenCalledTimes(2);
-    await act(async () => root.render(null));
-    expect(renderer.destroy).toHaveBeenCalledTimes(2);
+  it("allows only one live character, keeps it through a brief offscreen trip, releases it after a longer one and disposes on unmount", async () => {
+    vi.useFakeTimers();
+    try {
+      const settle = (ms: number) => act(async () => { await vi.advanceTimersByTimeAsync(ms); });
+      await act(async () => root.render(<><AgentCharacter appearance={appearance} /><AgentCharacter appearance={appearance} /></>));
+      expect(createCharacter).not.toHaveBeenCalled();
+      await show();
+      // The renderer is built only after input has been quiet for a moment.
+      expect(createCharacter).not.toHaveBeenCalled();
+      await settle(INPUT_QUIET_MS + 50);
+      expect(createCharacter).toHaveBeenCalledTimes(1);
+      // Scrolled out and back in quickly: the same renderer stays.
+      await act(async () => { observers[0]([{ isIntersecting: false }]); });
+      await settle(CHARACTER_OFFSCREEN_RELEASE_MS - 500);
+      await act(async () => { observers[0]([{ isIntersecting: true }]); });
+      await settle(CHARACTER_OFFSCREEN_RELEASE_MS + INPUT_QUIET_MS);
+      expect(renderer.destroy).not.toHaveBeenCalled();
+      expect(createCharacter).toHaveBeenCalledTimes(1);
+      // Gone for longer: the slot passes to the other visible character.
+      await act(async () => { observers[0]([{ isIntersecting: false }]); });
+      await settle(CHARACTER_OFFSCREEN_RELEASE_MS + 50);
+      expect(renderer.destroy).toHaveBeenCalledTimes(1);
+      await settle(INPUT_QUIET_MS + 50);
+      expect(createCharacter).toHaveBeenCalledTimes(2);
+      await act(async () => root.render(null));
+      expect(renderer.destroy).toHaveBeenCalledTimes(2);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+  it("does not build the live renderer while the page keeps scrolling", async () => {
+    vi.useFakeTimers();
+    try {
+      await act(async () => root.render(<AgentCharacter appearance={appearance} />));
+      await show();
+      for (let i = 0; i < 10; i += 1) {
+        await act(async () => { window.dispatchEvent(new Event("wheel")); await vi.advanceTimersByTimeAsync(INPUT_QUIET_MS / 2); });
+      }
+      expect(createCharacter).not.toHaveBeenCalled();
+      await act(async () => { await vi.advanceTimersByTimeAsync(INPUT_QUIET_MS + 50); });
+      expect(createCharacter).toHaveBeenCalledTimes(1);
+    } finally {
+      vi.useRealTimers();
+    }
   });
   it("uses only static images for reduced motion and an explicit still policy", async () => {
     reduced = true;
