@@ -32,9 +32,6 @@ import { useTranslation } from "@/i18n";
 
 const DEFAULT_RESERVED_PREFIXES = ["PAPERCLIP_"];
 
-const DEFAULT_HINT =
-  "Set the KEY to the env var name the process expects, for example GH_TOKEN. Choose a secret to resolve a stored value at run start. PAPERCLIP_* variables are injected automatically.";
-
 // Canonical entries for dirty comparison. Must mirror the emit semantics of
 // valueFromRows (trimmed names, incomplete refs dropped, last-writer-wins on
 // trimmed duplicates) — otherwise a saved value that round-trips lossily shows
@@ -432,7 +429,7 @@ export const EnvironmentVariablesEditor = forwardRef<EnvironmentVariablesEditorH
   }, [recentlyUsedSecrets, rows]);
 
   const hasRows = rows.length > 0;
-  const hint = footerHint === undefined ? DEFAULT_HINT : footerHint;
+  const hint = footerHint === undefined ? t("environmentVariablesEditor.defaultHint") : footerHint;
   const committedRowsById = useMemo(
     () => new Map(committedRows.map((row) => [row.id, row])),
     [committedRows],

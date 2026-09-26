@@ -4,6 +4,7 @@ import { Copy, Check, Loader2 } from "lucide-react";
 
 import { Button } from "./ui/button";
 import { copyTextToClipboard } from "../lib/clipboard";
+import { useTranslation } from "@/i18n";
 import {
   CARD_REVEAL_FIELD,
   CARD_REVEAL_INSTRUCTION,
@@ -457,11 +458,12 @@ export function ProviderApiKeyCard({
 }: Omit<Parameters<typeof OnboardingCardField>[0], "masked" | "label"> & {
   providerName: string;
 }) {
+  const { t } = useTranslation();
   return (
     <OnboardingLoginCard
-      instruction={`Provide your ${providerName} API key to connect`}
+      instruction={t("adapterLogin.provideKey", { name: providerName })}
     >
-      <OnboardingCardField {...field} label="API key" masked />
+      <OnboardingCardField {...field} label={t("adapterLogin.apiKey")} masked />
     </OnboardingLoginCard>
   );
 }
@@ -471,25 +473,26 @@ export function LocalProviderLoginInstructions({ adapterType, login }: {
   adapterType: string;
   login?: { isolated?: boolean; command?: string; preparing: boolean; status?: "ready" | "sign_in_required" | "expired" | null; error: string | null; retry: () => void };
 }) {
+  const { t } = useTranslation();
   const [showCommand, setShowCommand] = useState(false);
   const provider = adapterType === "claude_local" ? "Claude Code" : adapterType === "grok_local" ? "Grok CLI" : "Codex CLI";
   const isolated = login?.isolated ?? (adapterType === "codex_local" || adapterType === "grok_local");
   const command = isolated ? login?.command : "claude auth login";
-  if (login?.preparing) return <p role="status" className="flex items-center gap-2 text-sm text-muted-foreground"><Loader2 className="size-4 animate-spin" />Checking local {provider} sign-in…</p>;
+  if (login?.preparing) return <p role="status" className="flex items-center gap-2 text-sm text-muted-foreground"><Loader2 className="size-4 animate-spin" />{t("adapterLogin.checkingLocal", { name: provider })}</p>;
   const ready = login?.status === "ready";
   return <div className="min-w-0 max-w-full space-y-3 text-sm text-muted-foreground">
     {ready ? <>
-      <p role="status" className="flex items-center gap-2 text-foreground"><Check className="size-4 shrink-0 text-(--status-task-icon-done)" />{provider} is signed in. Click Connect to use this account.</p>
-      {!showCommand && <button type="button" className="underline underline-offset-4" onClick={() => setShowCommand(true)}>Use a different account</button>}
-    </> : <p>{isolated ? `Sign in to ${provider} for this connection on the machine running Paperclip. Your existing terminal login stays separate.` : `Connect uses your local ${provider} account on the machine running Paperclip.`}</p>}
+      <p role="status" className="flex items-center gap-2 text-foreground"><Check className="size-4 shrink-0 text-(--status-task-icon-done)" />{t("adapterLogin.signedIn", { name: provider })}</p>
+      {!showCommand && <button type="button" className="underline underline-offset-4" onClick={() => setShowCommand(true)}>{t("adapterLogin.differentAccount")}</button>}
+    </> : <p>{isolated ? t("adapterLogin.signInIsolated", { name: provider }) : t("adapterLogin.signInLocal", { name: provider })}</p>}
     {(!ready || showCommand) && !login?.error && <>
-      <p>Run this in a terminal on that machine and finish signing in in your browser. We’ll check automatically when you return.</p>
+      <p>{t("adapterLogin.runCommand")}</p>
       {command && <div className="flex min-w-0 max-w-full items-start gap-2 rounded-md border bg-muted p-3 text-foreground">
         <pre className="min-w-0 flex-1 whitespace-pre-wrap break-all font-mono text-xs"><code>{command}</code></pre>
-        <LoginCardCopyButton value={command} label="Copy sign-in command" />
+        <LoginCardCopyButton value={command} label={t("adapterLogin.copyCommand")} />
       </div>}
     </>}
     {login?.error && <p role="alert">{login.error}</p>}
-    {login && !login.preparing && (isolated || login.error) && <button type="button" className="underline underline-offset-4" onClick={login.retry}>{isolated ? "Start sign-in again" : "Check again"}</button>}
+    {login && !login.preparing && (isolated || login.error) && <button type="button" className="underline underline-offset-4" onClick={login.retry}>{isolated ? t("adapterLogin.restart") : t("adapterLogin.checkAgain")}</button>}
   </div>;
 }

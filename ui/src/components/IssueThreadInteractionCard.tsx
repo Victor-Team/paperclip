@@ -44,6 +44,7 @@ import { ProposalJustification } from "../pages/secrets/proposal-review";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import { AppLogo } from "@/pages/apps/AppLogo";
 import { ConnectionIntentInteractionBody } from "@/features/connections/ConnectionIntentInteractionBody";
+import { t as translate, useTranslation } from "@/i18n";
 
 const OTHER_ANSWER_ID = "__paperclip_other__";
 
@@ -173,19 +174,19 @@ function getAdministrativeReason(interaction: IssueThreadInteraction): string | 
 function statusLabel(status: IssueThreadInteraction["status"]) {
   switch (status) {
     case "pending":
-      return "Pending";
+      return translate("interactionCard.status.pending");
     case "accepted":
-      return "Accepted";
+      return translate("interactionCard.status.accepted");
     case "rejected":
-      return "Rejected";
+      return translate("interactionCard.status.rejected");
     case "answered":
-      return "Answered";
+      return translate("interactionCard.status.answered");
     case "cancelled":
-      return "Cancelled";
+      return translate("interactionCard.status.cancelled");
     case "expired":
-      return "Expired";
+      return translate("interactionCard.status.expired");
     case "failed":
-      return "Failed";
+      return translate("interactionCard.status.failed");
     default:
       return status;
   }
@@ -194,17 +195,17 @@ function statusLabel(status: IssueThreadInteraction["status"]) {
 function interactionKindLabel(kind: IssueThreadInteraction["kind"]) {
   switch (kind) {
     case "suggest_tasks":
-      return "Suggested tasks";
+      return translate("interactionCard.kind.suggestTasks");
     case "ask_user_questions":
-      return "Ask user questions";
+      return translate("interactionCard.kind.askQuestions");
     case "request_confirmation":
-      return "Confirmation";
+      return translate("interactionCard.kind.confirmation");
     case "request_checkbox_confirmation":
-      return "Checkbox confirmation";
+      return translate("interactionCard.kind.checkbox");
     case "request_item_verdicts":
-      return "Item verdicts";
+      return translate("interactionCard.kind.verdicts");
     case "connection_intent":
-      return "Connection request";
+      return translate("interactionCard.kind.connectionRequest");
     default:
       return kind;
   }
@@ -3564,6 +3565,7 @@ export function IssueThreadInteractionCard({
   onUploadImage,
   externalReferences,
 }: IssueThreadInteractionCardProps) {
+  const { t } = useTranslation();
   // Single enforcement point (PAP-424, plan from PAP-420; extended by PAP-437):
   // a card that should never be drawn — a degenerate `ask_user_questions`
   // (placeholder junk like the onboarding `Test / A` card, no genuine question)
@@ -3691,9 +3693,9 @@ export function IssueThreadInteractionCard({
   }
   const statusText =
     adminOutcome === "withdrawn"
-      ? "Withdrawn"
+      ? t("interactionCard.status.withdrawn")
       : adminOutcome === "issue_closed"
-        ? "Expired · issue closed"
+        ? t("interactionCard.status.issueClosed")
         : activeStyles
           ? activeStyles.label
           : statusLabel(interaction.status);
@@ -3716,7 +3718,7 @@ export function IssueThreadInteractionCard({
                 <StatusIcon className={cn("h-3.5 w-3.5", iconSpin && "animate-spin")} />
                 {isSecretProposal ? (
                   <span className="flex flex-col sm:flex-row sm:items-center sm:gap-1">
-                    <span>Secret binding</span>
+                    <span>{t("interactionCard.kind.secretBinding")}</span>
                     <span className="hidden text-current/60 sm:inline">/</span>
                     <span>{statusText}</span>
                   </span>
@@ -3727,7 +3729,7 @@ export function IssueThreadInteractionCard({
                   <span>{statusText}</span>
                 ) : (
                   <>
-                    {isPlan ? "Plan" : interactionKindLabel(interaction.kind)}
+                    {isPlan ? t("interactionCard.kind.plan") : interactionKindLabel(interaction.kind)}
                     <span className="text-current/60">/</span>
                     {statusText}
                   </>
@@ -3742,11 +3744,11 @@ export function IssueThreadInteractionCard({
                       data-testid="interaction-addressee-badge"
                     >
                       <Bot className="h-3 w-3" />
-                      For {addresseeLabel}
+                      {t("interactionCard.for", { name: addresseeLabel })}
                     </Badge>
                   </TooltipTrigger>
                   <TooltipContent side="bottom" className="max-w-xs text-xs">
-                    Directed to {addresseeLabel}. Agent-addressed interactions are owned by that agent and are kept out of the open organization attention feed.
+                    {t("interactionCard.directed", { name: addresseeLabel })}
                   </TooltipContent>
                 </Tooltip>
               ) : null}
@@ -3795,11 +3797,11 @@ export function IssueThreadInteractionCard({
             <TooltipTrigger asChild>
               <div className="rounded-sm border border-border/70 bg-transparent px-3 py-2 text-right text-xs text-muted-foreground">
                 <div className="font-medium text-foreground">{formatShortDate(interaction.createdAt)}</div>
-                <div>proposed by {createdByLabel}</div>
+                <div>{t("interactionCard.proposedBy", { name: createdByLabel })}</div>
               </div>
             </TooltipTrigger>
             <TooltipContent side="bottom" className="text-xs">
-              Created {formatDateTime(interaction.createdAt)}
+              {t("interactionCard.createdAt", { time: formatDateTime(interaction.createdAt) })}
             </TooltipContent>
           </Tooltip>
         </div>
@@ -3908,7 +3910,7 @@ export function IssueThreadInteractionCard({
             className="mt-4 flex flex-wrap items-center gap-x-1 gap-y-0.5 border-t border-border/60 pt-3 text-xs text-muted-foreground"
             data-testid="interaction-resolved-footer"
           >
-            Resolved by <span className="font-medium text-foreground">{resolvedByLabel}</span>
+            {t("interactionCard.resolvedBy")} <span className="font-medium text-foreground">{resolvedByLabel}</span>
             {resolvedByAgent ? <ResolvedByAgentChip /> : null}
             {interaction.resolvedAt ? ` on ${formatShortDate(interaction.resolvedAt)}` : ""}
           </div>
@@ -3923,6 +3925,7 @@ export function IssueThreadInteractionCard({
  * than a human board member) — governed agent resolution introduced in P2.
  */
 function ResolvedByAgentChip() {
+  const { t } = useTranslation();
   return (
     <Tooltip>
       <TooltipTrigger asChild>
@@ -3932,11 +3935,11 @@ function ResolvedByAgentChip() {
           data-testid="interaction-resolved-by-agent-chip"
         >
           <Bot className="h-3 w-3" />
-          Agent
+          {t("interactionCard.agent")}
         </Badge>
       </TooltipTrigger>
       <TooltipContent side="bottom" className="max-w-xs text-xs">
-        Resolved by an agent under the organization's interaction governance policy — audit-distinct from a human board resolution.
+        {t("interactionCard.agentResolution")}
       </TooltipContent>
     </Tooltip>
   );
