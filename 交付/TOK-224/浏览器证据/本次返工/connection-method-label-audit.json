@@ -1,0 +1,353 @@
+{
+  "connectableDefinitions": 72,
+  "signInWithProvider": {
+    "count": 34,
+    "apps": [
+      "posthog",
+      "jira",
+      "airtable",
+      "beehiiv",
+      "bitly",
+      "candid",
+      "cloudflare",
+      "cloudinary",
+      "coda",
+      "hugging-face",
+      "kernel",
+      "local-falcon",
+      "make",
+      "manufact",
+      "miro",
+      "netlify",
+      "oreilly",
+      "resend",
+      "ticktick",
+      "todoist",
+      "webflow",
+      "wix",
+      "brex",
+      "clickhouse",
+      "egnyte",
+      "embat",
+      "mixpanel",
+      "razorpay",
+      "sanity",
+      "stripe",
+      "supabase",
+      "ticket-tailor",
+      "youcom",
+      "fireflies"
+    ]
+  },
+  "personalApiKey": {
+    "count": 1,
+    "apps": [
+      "posthog"
+    ]
+  },
+  "genericApiKey": {
+    "count": 13,
+    "apps": [
+      "bitly",
+      "cloudflare",
+      "coda",
+      "kernel",
+      "oreilly",
+      "razorpay",
+      "sanity",
+      "stripe",
+      "supabase",
+      "mem0",
+      "similarweb",
+      "youcom",
+      "fireflies"
+    ]
+  },
+  "otherCatalogLabels": [
+    {
+      "app": "agentmail",
+      "label": "Email with an agent"
+    },
+    {
+      "app": "zapier",
+      "label": "Paste generated MCP URL"
+    },
+    {
+      "app": "arcade",
+      "label": "Connect MCP server"
+    },
+    {
+      "app": "executor",
+      "label": "Connect MCP server"
+    },
+    {
+      "app": "railway",
+      "label": "Connect Railway"
+    },
+    {
+      "app": "github",
+      "label": "Use this connection as an agent tool"
+    },
+    {
+      "app": "github",
+      "label": "Personal access token (advanced)"
+    },
+    {
+      "app": "github",
+      "label": "Chat with an agent"
+    },
+    {
+      "app": "slack",
+      "label": "Use this connection as an agent tool"
+    },
+    {
+      "app": "slack",
+      "label": "Chat with an agent"
+    },
+    {
+      "app": "microsoft-teams",
+      "label": "Chat with an agent"
+    },
+    {
+      "app": "imessage-photon",
+      "label": "Chat with an agent"
+    },
+    {
+      "app": "telegram",
+      "label": "Chat with an agent"
+    },
+    {
+      "app": "discord",
+      "label": "Chat with an agent"
+    },
+    {
+      "app": "shopify",
+      "label": "Shopify UCP commerce"
+    },
+    {
+      "app": "shopify",
+      "label": "Storefront policies and compatibility tools"
+    },
+    {
+      "app": "composio",
+      "label": "Composio Connect"
+    },
+    {
+      "app": "anthropic",
+      "label": "Claude subscription"
+    },
+    {
+      "app": "anthropic",
+      "label": "Claude API key"
+    },
+    {
+      "app": "planetscale",
+      "label": "Database access"
+    },
+    {
+      "app": "planetscale",
+      "label": "Insights only"
+    },
+    {
+      "app": "postman",
+      "label": "US · Browser sign-in"
+    },
+    {
+      "app": "postman",
+      "label": "US · Browser sign-in"
+    },
+    {
+      "app": "postman",
+      "label": "US · Browser sign-in"
+    },
+    {
+      "app": "postman",
+      "label": "EU · API key"
+    },
+    {
+      "app": "postman",
+      "label": "EU · API key"
+    },
+    {
+      "app": "postman",
+      "label": "EU · API key"
+    },
+    {
+      "app": "asana",
+      "label": "Use your own OAuth app"
+    },
+    {
+      "app": "box",
+      "label": "Use your own OAuth app"
+    },
+    {
+      "app": "pagerduty",
+      "label": "US service region"
+    },
+    {
+      "app": "pagerduty",
+      "label": "EU service region"
+    },
+    {
+      "app": "xero",
+      "label": "Use your own OAuth app"
+    },
+    {
+      "app": "youcom",
+      "label": "Use the free profile"
+    },
+    {
+      "app": "gmail",
+      "label": "Connect with Paperclip"
+    },
+    {
+      "app": "gmail",
+      "label": "Use your own Google OAuth app"
+    },
+    {
+      "app": "gmail",
+      "label": "Connect with Paperclip"
+    },
+    {
+      "app": "gmail",
+      "label": "Use your own Google OAuth app"
+    },
+    {
+      "app": "google-drive",
+      "label": "Connect with Paperclip"
+    },
+    {
+      "app": "google-drive",
+      "label": "Use your own Google OAuth app"
+    },
+    {
+      "app": "google-drive",
+      "label": "Connect with Paperclip"
+    },
+    {
+      "app": "google-drive",
+      "label": "Use your own Google OAuth app"
+    },
+    {
+      "app": "google-docs",
+      "label": "Connect with Paperclip"
+    },
+    {
+      "app": "google-docs",
+      "label": "Use your own Google OAuth app"
+    },
+    {
+      "app": "google-docs",
+      "label": "Connect with Paperclip"
+    },
+    {
+      "app": "google-docs",
+      "label": "Use your own Google OAuth app"
+    },
+    {
+      "app": "google-sheets",
+      "label": "Connect with Paperclip"
+    },
+    {
+      "app": "google-sheets",
+      "label": "Use your own Google OAuth app"
+    },
+    {
+      "app": "google-sheets",
+      "label": "Connect with Paperclip"
+    },
+    {
+      "app": "google-sheets",
+      "label": "Use your own Google OAuth app"
+    },
+    {
+      "app": "google-sheets",
+      "label": "Use the Paperclip robot account"
+    },
+    {
+      "app": "google-slides",
+      "label": "Connect with Paperclip"
+    },
+    {
+      "app": "google-slides",
+      "label": "Use your own Google OAuth app"
+    },
+    {
+      "app": "google-slides",
+      "label": "Connect with Paperclip"
+    },
+    {
+      "app": "google-slides",
+      "label": "Use your own Google OAuth app"
+    },
+    {
+      "app": "google-calendar",
+      "label": "Connect with Paperclip"
+    },
+    {
+      "app": "google-calendar",
+      "label": "Use your own Google OAuth app"
+    },
+    {
+      "app": "google-calendar",
+      "label": "Connect with Paperclip"
+    },
+    {
+      "app": "google-calendar",
+      "label": "Use your own Google OAuth app"
+    },
+    {
+      "app": "google-chat",
+      "label": "Connect with Paperclip"
+    },
+    {
+      "app": "google-chat",
+      "label": "Use your own Google OAuth app"
+    },
+    {
+      "app": "google-chat",
+      "label": "Connect with Paperclip"
+    },
+    {
+      "app": "google-chat",
+      "label": "Use your own Google OAuth app"
+    },
+    {
+      "app": "google-people",
+      "label": "Connect with Paperclip"
+    },
+    {
+      "app": "google-people",
+      "label": "Use your own Google OAuth app"
+    },
+    {
+      "app": "google-workspace-search",
+      "label": "Connect with Paperclip"
+    },
+    {
+      "app": "google-workspace-search",
+      "label": "Use your own Google OAuth app"
+    },
+    {
+      "app": "openai",
+      "label": "OpenAI subscription"
+    },
+    {
+      "app": "openai",
+      "label": "OpenAI API key"
+    },
+    {
+      "app": "openrouter",
+      "label": "OpenRouter API key"
+    },
+    {
+      "app": "xai",
+      "label": "Grok subscription"
+    },
+    {
+      "app": "xai",
+      "label": "Grok API key"
+    }
+  ],
+  "displayHandling": "Localized only known user-facing sign-in and API-key labels; original definitions and selected method keys remain unchanged."
+}

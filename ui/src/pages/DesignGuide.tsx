@@ -6,7 +6,6 @@ import { AgentChatPicker } from "@/components/AgentChatPicker";
 import { TaskChatProjectCreatedCard } from "@/components/task-chat/TaskChatProjectCreatedCard";
 import { AnnouncementCard } from "@/components/AnnouncementCard";
 import { announcementPreview, announcementAnimationPreview, localizedAnnouncementAnimationPreviewSrc } from "@/lib/announcement-preview";
-import announcementArtwork from "../../public/announcement-preview.svg?raw";
 import { TaskDetailTasksPanel } from "@/components/task-detail/TaskDetailTasksPanel";
 import { AiConnectionDesignExamples } from "@/components/ai-connections/AiConnectionDesignExamples";
 import { SavedProviderKeySelect } from "../components/onboarding/SavedProviderKeySelect";
@@ -493,9 +492,22 @@ export function DesignGuide() {
   const [allowUnpinned, setAllowUnpinned] = useState(false);
   const [allowLocalPath, setAllowLocalPath] = useState(false);
   const isChinesePreview = i18n.language.toLowerCase().startsWith("zh");
-  const localizedAnnouncementImageSrc = isChinesePreview
-    ? `data:image/svg+xml;charset=utf-8,${encodeURIComponent(announcementArtwork.replace("Ideas become work.", t("designGuide.artworkTagline")))}`
-    : "/announcement-preview.svg";
+  const [localizedAnnouncementImageSrc, setLocalizedAnnouncementImageSrc] = useState("/announcement-preview.svg");
+  useEffect(() => {
+    let active = true;
+    if (!isChinesePreview) {
+      setLocalizedAnnouncementImageSrc("/announcement-preview.svg");
+      return () => { active = false; };
+    }
+    void fetch("/announcement-preview.svg")
+      .then((response) => response.text())
+      .then((svg) => {
+        if (active) {
+          setLocalizedAnnouncementImageSrc("data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg.replace("Ideas become work.", t("designGuide.artworkTagline"))));
+        }
+      });
+    return () => { active = false; };
+  }, [isChinesePreview, t]);
   const localizedAnnouncementAnimationSrc = localizedAnnouncementAnimationPreviewSrc(i18n.language, t);
   const localizedAnnouncement = {
     ...announcementPreview,

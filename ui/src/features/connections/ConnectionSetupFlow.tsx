@@ -3528,10 +3528,17 @@ function KeyStep({
           const nextMethod = capabilityMethods.find((candidate) => candidate.key === nextKey);
           if (nextMethod) onMethodChange(nextMethod);
         }}
-        options={capabilityMethods.map((candidate) => ({
-          value: candidate.key,
-          title: candidate.label ?? (candidate.auth === "oauth" ? t("connectionSetup.signInWithProvider", { name: entry.name }) : t("connectionSetup.useApiKey")),
-        }))}
+        options={capabilityMethods.map((candidate) => {
+          const signInLabel = candidate.label?.match(/^Sign in with (.+)$/i);
+          const title = signInLabel
+            ? t("connectionSetup.signInWithProvider", { name: signInLabel[1] })
+            : candidate.label === "Use a personal API key"
+              ? t("connectionSetup.useApiKey")
+              : candidate.label === "Use an API key"
+                ? t("connectionSetup.useGenericApiKey")
+                : candidate.label ?? (candidate.auth === "oauth" ? t("connectionSetup.signInWithProvider", { name: entry.name }) : t("connectionSetup.useApiKey"));
+          return { value: candidate.key, title };
+        })}
       />
       {!method && <p className="mt-2 text-xs text-muted-foreground">{t("connectionSetup.chooseConnectionMethod")}</p>}
     </div>
@@ -3645,7 +3652,7 @@ function KeyStep({
                 value={vercelConnector}
                 onChange={(event) => onVercelConnectorChange(event.target.value)}
                 autoComplete="off"
-                placeholder="service/my-connector or scl_…"
+                placeholder={t("connectionSetup.connectorUidPlaceholder")}
                 className="mt-2 h-11 font-mono"
               />
               <p className="mt-2 text-xs text-muted-foreground">
