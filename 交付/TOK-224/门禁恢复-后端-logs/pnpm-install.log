@@ -1,0 +1,82 @@
+(node:2188128) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[43m[33m[[39m[49m[43m[30mWARN[39m[49m[43m[33m][39m[49m The "pnpm" field in package.json is no longer read by pnpm. The following keys were ignored: "pnpm.patchedDependencies", "pnpm.overrides". See https://pnpm.io/settings for the new home of each setting.
+(node:2188241) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Scope: all 36 workspace projects
+Recreating /tmp/tok235-gate/work/node_modules
+Lockfile is up to date, resolution step is skipped
+Progress: resolved [96m1[39m, reused [96m0[39m, downloaded [96m0[39m, added [96m0[39m
+Packages: [32m+1312[39m
+[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m[32m+[39m
+(node:2188241) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2188241) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2188241) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2188241) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2188241) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2188241) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2188241) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2188241) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2188241) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2188241) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2188241) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2188241) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2188241) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2188241) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2188241) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2188241) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2188241) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2188241) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2188241) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2188241) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2188241) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2188241) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2188241) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Progress: resolved [96m1312[39m, reused [96m1312[39m, downloaded [96m0[39m, added [96m1312[39m, done
+[43m[30m WARN [39m[49m Failed to create bin at /tmp/tok235-gate/work/server/node_modules/.bin/paperclip-runner-eval-session. ENOENT: no such file or directory, open '/tmp/tok235-gate/work/packages/paperclip-runner/dist/cli/eval-session.js'
+[43m[30m WARN [39m[49m Failed to create bin at /tmp/tok235-gate/work/server/node_modules/.bin/paperclip-runner-opencode-proxy. ENOENT: no such file or directory, open '/tmp/tok235-gate/work/packages/paperclip-runner/dist/cli/opencode-app-server-proxy.js'
+[43m[30m WARN [39m[49m Failed to create bin at /tmp/tok235-gate/work/server/node_modules/.bin/paperclip-runner-acpx-sidecar. ENOENT: no such file or directory, open '/tmp/tok235-gate/work/packages/paperclip-runner/dist/cli/acpx-runtime-sidecar.js'
+[43m[30m WARN [39m[49m Failed to create bin at /tmp/tok235-gate/work/server/node_modules/.bin/paperclip-runner-codex-proxy. ENOENT: no such file or directory, open '/tmp/tok235-gate/work/packages/paperclip-runner/dist/cli/codex-app-server-unix-proxy.js'
+
+[96mdevDependencies:[39m
+[32m+[39m @playwright/test [90m1.62.1[39m
+[32m+[39m agentmail [90m0.5.20[39m
+[32m+[39m cross-env [90m10.1.0[39m
+[32m+[39m esbuild [90m0.28.2[39m
+[32m+[39m typescript [90m7.0.2[39m
+[32m+[39m vitest [90m4.1.11[39m
+
+[36m.[39m [96mpostinstall[39m$ node scripts/link-plugin-dev-sdk.mjs
+[36m.[39m [96mpostinstall[39m: [90m(node:2188357) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.[39m
+[36m.[39m [96mpostinstall[39m: [90m(Use `node --trace-warnings ...` to show where the warning was created)[39m
+[36m.[39m [96mpostinstall[39m:   ✓ Linked @paperclipai/plugin-sdk into 0 excluded plugin(s) (skipped 9)
+[36m.[39m [96mpostinstall[39m: Done
+[43m[30m WARN [39m[49m Failed to create bin at /tmp/tok235-gate/work/server/node_modules/.bin/paperclip-runner-codex-proxy. ENOENT: no such file or directory, open '/tmp/tok235-gate/work/server/node_modules/@paperclipai/paperclip-runner/dist/cli/codex-app-server-unix-proxy.js'
+[43m[30m WARN [39m[49m Failed to create bin at /tmp/tok235-gate/work/server/node_modules/.bin/paperclip-runner-eval-session. ENOENT: no such file or directory, open '/tmp/tok235-gate/work/server/node_modules/@paperclipai/paperclip-runner/dist/cli/eval-session.js'
+[43m[30m WARN [39m[49m Failed to create bin at /tmp/tok235-gate/work/server/node_modules/.bin/paperclip-runner-opencode-proxy. ENOENT: no such file or directory, open '/tmp/tok235-gate/work/server/node_modules/@paperclipai/paperclip-runner/dist/cli/opencode-app-server-proxy.js'
+[43m[30m WARN [39m[49m Failed to create bin at /tmp/tok235-gate/work/server/node_modules/.bin/paperclip-runner-acpx-sidecar. ENOENT: no such file or directory, open '/tmp/tok235-gate/work/server/node_modules/@paperclipai/paperclip-runner/dist/cli/acpx-runtime-sidecar.js'
+Done in 5.6s
+EXIT:0

@@ -1,0 +1,23 @@
+(node:2140622) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[43m[33m[[39m[49m[43m[30mWARN[39m[49m[43m[33m][39m[49m The "pnpm" field in package.json is no longer read by pnpm. The following keys were ignored: "pnpm.patchedDependencies", "pnpm.overrides". See https://pnpm.io/settings for the new home of each setting.
+(node:2142975) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2142992) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - `__dirname` (vitest.config.ts:7:25). Use `import.meta.dirname` instead
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+
+ RUN  v4.1.11 /tmp/tok235-gate/work
+
+(node:2143082) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ |@paperclipai/server| src/__tests__/cli-invocation-safety.test.ts (39 tests) 616ms
+     ✓ allows only exact-allowlist pnpm paperclipai commands on every guidance surface  415ms
+
+ Test Files  1 passed (1)
+      Tests  39 passed (39)
+   Start at  06:30:57
+   Duration  825ms (transform 41ms, setup 58ms, import 35ms, tests 616ms, environment 0ms)
+
