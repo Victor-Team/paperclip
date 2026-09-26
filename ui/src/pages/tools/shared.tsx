@@ -21,7 +21,7 @@ export function RiskBadge({ risk }: { risk: ToolRiskLevel | null | undefined }) 
       : risk === "medium"
         ? "secondary"
         : "outline";
-  return <Badge variant={variant}>{risk}</Badge>;
+  return <Badge variant={variant}>{t(`shared.risk.${risk}`)}</Badge>;
 }
 
 /** Read/Write/Destructive capability chips. */
@@ -112,9 +112,10 @@ function decisionToStatusKey(decision: string): { key: string; label: string } {
 
 /** Policy/gateway decision badge — canonical status colors. */
 export function DecisionBadge({ decision }: { decision: ToolPolicyDecision | string | null | undefined }) {
+  const { t } = useTranslation();
   if (!decision) return <Badge variant="outline">—</Badge>;
   const { key, label } = decisionToStatusKey(decision.toString());
-  return <StatusBadge status={key} label={label} />;
+  return <StatusBadge status={key} label={t(`shared.decision.${key}`, { defaultValue: label })} />;
 }
 
 /** Compact relative time, falling back to absolute. */

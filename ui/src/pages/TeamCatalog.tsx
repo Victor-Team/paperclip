@@ -342,14 +342,14 @@ function RiskBanner({ team }: { team: CatalogTeam }) {
     >
       <div className="flex items-center gap-2 text-sm font-medium">
         <AlertTriangle className="h-4 w-4" />
-        {t("teamcatalog.general.thisteamreferences")} {unsafe.length} {t("teamcatalog.general.externalsource")}        {unsafe.length === 1 ? "" : t("teamcatalog.general.s")}
+        {t("teamcatalog.designGuide.riskExternal", { count: unsafe.length })}
       </div>
       <ul className="mt-1.5 space-y-0.5 text-xs">
         {unsafe.map((s) => (
           <li key={`${s.type}:${s.ref}`} className="font-mono">
             {s.ref}{" "}
             <span className="not-italic font-sans opacity-80">
-              ({sourceWarningCode(s) === "unsupported_in_ui" ? "unsupported in browser install" : "unpinned"})
+              ({sourceWarningCode(s) === "unsupported_in_ui" ? t("teamcatalog.designGuide.notInstallable") : t("teamcatalog.general.unpinned")})
             </span>
           </li>
         ))}
@@ -610,7 +610,7 @@ export function EnvInputsList({ inputs }: { inputs: CatalogTeamEnvInputSummary[]
                   : "text-muted-foreground",
               )}
             >
-              {input.kind}
+              {input.kind === "secret" ? t("teamcatalog.designGuide.secret") : t("teamcatalog.designGuide.plain")}
             </Badge>
             {input.requirement === "required" && (
               <Badge variant="outline" className="text-(length:--text-nano)">{t("teamcatalog.general.required")}</Badge>
@@ -1559,7 +1559,7 @@ export function StepSourcePolicy({
   return (
     <div className="space-y-4">
       <div role="alert" className="rounded-md border border-amber-500/30 bg-amber-500/10 px-3 py-2.5 text-sm text-amber-700 dark:text-amber-300">
-        {t("teamcatalog.general.thisteamreferences4")} {external.length} {t("teamcatalog.general.externalsource5")}{external.length === 1 ? "" : t("teamcatalog.general.s6")}{t("teamcatalog.general.revieweachoneanddecidewhatto")}</div>
+        {t("teamcatalog.designGuide.sourcePolicyRisk", { count: external.length })}</div>
 
       <ul className="divide-y divide-border rounded-md border border-border">
         {external.map((source) => {
@@ -1571,9 +1571,9 @@ export function StepSourcePolicy({
               <div className="min-w-0">
                 <p className="font-mono text-xs truncate">{source.ref}</p>
                 <p className="text-(length:--text-micro) text-muted-foreground">
-                  {code === "ok" && "pinned"}
-                  {code === "unpinned" && "unpinned reference"}
-                  {code === "unsupported_in_ui" && "not installable from the browser"}
+                  {code === "ok" && t("teamcatalog.general.pinned")}
+                  {code === "unpinned" && t("teamcatalog.designGuide.unpinnedReference")}
+                  {code === "unsupported_in_ui" && t("teamcatalog.designGuide.notInstallable")}
                 </p>
               </div>
               <Badge
@@ -1597,19 +1597,19 @@ export function StepSourcePolicy({
       <div className="space-y-2.5 rounded-md border border-border p-3">
         <PolicyToggle
           label={t("teamcatalog.general.allowexternalsources")}
-          description="Resolve github/url skill and team sources at install time."
+          description={t("teamcatalog.designGuide.resolveSources")}
           checked={allowExternalSources}
           onChange={(v) => onChange("external", v)}
         />
         <PolicyToggle
           label={t("teamcatalog.general.allowunpinnedoptionalsources")}
-          description="Permit optional sources that are not pinned to a ref or checksum."
+          description={t("teamcatalog.designGuide.permitUnpinned")}
           checked={allowUnpinnedOptionalSources}
           onChange={(v) => onChange("unpinned", v)}
         />
         <PolicyToggle
           label={t("teamcatalog.general.allowlocalpathsources")}
-          description="Required for local_path / agent_package sources. Development use only."
+          description={t("teamcatalog.designGuide.localPathNote")}
           checked={allowLocalPathSources}
           onChange={(v) => onChange("localPath", v)}
         />
@@ -1681,7 +1681,7 @@ export function StepSkillPlan({
                 {prep.reason && <p className="text-(length:--text-micro) text-muted-foreground">{prep.reason}</p>}
               </div>
               <Badge variant="outline" className={cn("ml-auto text-(length:--text-nano)", meta.tone)}>
-                {meta.label}
+                {t(`teamcatalog.designGuide.skillAction.${prep.action}`)}
               </Badge>
             </li>
           );

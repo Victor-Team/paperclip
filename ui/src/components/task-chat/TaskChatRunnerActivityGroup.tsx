@@ -27,6 +27,12 @@ import { useTranslation } from "@/i18n";
 
 type Activity = TaskChatActivityPhaseItem["items"][number];
 
+function localizedActivityLabel(label: string, t: (key: string, options?: Record<string, unknown>) => string): string {
+  if (label === "Running a command") return t("taskChatRunnerActivity.runningCommand");
+  if (label === "Read files, ran commands") return t("taskChatRunnerActivity.readAndRan");
+  return label;
+}
+
 function presentation(item: Activity, active: boolean) {
   if (item.kind === "tool") {
     const tool = toolActivityPresentation({
@@ -110,6 +116,7 @@ function ActivityContent({
   item: Activity;
   active: boolean;
 }) {
+  const { t } = useTranslation();
   const row = presentation(item, active);
   if (!row) return null;
   const Icon = row.icon;
@@ -138,7 +145,7 @@ function ActivityContent({
             row.running && "text-foreground",
           )}
         >
-          {row.label}
+          {localizedActivityLabel(row.label, t)}
         </span>
         {row.target ? (
           <span
@@ -326,7 +333,7 @@ export function TaskChatRunnerActivityGroup({
   const latest = activities.at(-1);
   const summary = completedActivitySummary(activities);
   const SummaryIcon = summary.icon;
-  const countLabel = `${activities.length} ${activities.length === 1 ? "activity" : "activities"}`;
+  const countLabel = t("taskChatRunnerActivity.activityCount", { count: activities.length });
   return (
     <section
       className="flex min-w-0 flex-col gap-2"
@@ -353,7 +360,7 @@ export function TaskChatRunnerActivityGroup({
             onClick={() => setExpanded(!expanded)}
             aria-expanded={expanded}
             aria-controls={expanded ? historyId : undefined}
-            aria-label={`${expanded ? "Collapse" : "Expand"} ${item.active ? countLabel : `${summary.fullLabel.toLowerCase()} (${countLabel})`}`}
+            aria-label={`${expanded ? t("taskChatRunnerActivity.collapse") : t("taskChatRunnerActivity.expand")} ${item.active ? countLabel : `${localizedActivityLabel(summary.fullLabel, t)} (${countLabel})`}`}
           >
             {!item.active ? (
               <span
@@ -363,8 +370,8 @@ export function TaskChatRunnerActivityGroup({
                 <span className="flex size-5 shrink-0 items-center justify-center">
                   <SummaryIcon className="size-3.5" aria-hidden="true" />
                 </span>
-                <span className="truncate" title={summary.fullLabel}>
-                  {summary.label}
+                <span className="truncate" title={localizedActivityLabel(summary.fullLabel, t)}>
+                  {localizedActivityLabel(summary.label, t)}
                 </span>
               </span>
             ) : expanded ? (

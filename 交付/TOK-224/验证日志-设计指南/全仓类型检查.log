@@ -1,0 +1,49 @@
+[WARN] The "pnpm" field in package.json is no longer read by pnpm. The following keys were ignored: "pnpm.patchedDependencies", "pnpm.overrides". See https://pnpm.io/settings for the new home of each setting.
+Scope: 35 of 36 workspace projects
+packages/shared typecheck$ tsc --noEmit
+packages/google-sheets-mcp-server typecheck$ tsc --noEmit
+packages/paperclip-eval-kernel typecheck$ tsc -p tsconfig.json --noEmit
+packages/kv-demo-mcp-server typecheck$ tsc --noEmit
+packages/paperclip-eval-kernel typecheck: Done
+packages/tailscale-https-broker typecheck$ tsc --noEmit
+packages/kv-demo-mcp-server typecheck: Done
+packages/teams-catalog typecheck$ tsc -p tsconfig.json --noEmit
+packages/tailscale-https-broker typecheck: Done
+packages/teams-catalog typecheck: Done
+packages/google-sheets-mcp-server typecheck: Done
+packages/shared typecheck: Done
+packages/adapter-utils typecheck$ tsc --noEmit
+packages/db typecheck$ pnpm run check:migrations && tsc --noEmit
+packages/mcp-server typecheck$ tsc --noEmit
+packages/paperclip-runner typecheck$ pnpm run typecheck:typescript && pnpm run typecheck:rust
+packages/db typecheck: > @paperclipai/db@0.3.1 check:migrations /home/yuanjian/dev/ANC-tok-224-ui/packages/db
+packages/db typecheck: > tsx src/check-migration-numbering.ts && tsx src/check-migration-safety.ts
+packages/paperclip-runner typecheck: > @paperclipai/paperclip-runner@0.0.0 typecheck:typescript /home/yuanjian/dev/ANC-tok-224-ui/packages/paperclip-runner
+packages/paperclip-runner typecheck: > pnpm run ensure:eval-build-deps && node --check scripts/protocol-contract.mjs && node --check scripts/generate-protocol-manifest.mjs && node --check scripts/generate-protocol-schema-module.mjs && node --check scripts/generate-acpx-sidecar-contract.mjs && node --check scripts/generate-replay-goldens.mjs && node --check scripts/generate-semantic-action-catalog.mjs && pnpm run check:protocol-types && node ./node_modules/typescript/bin/tsc --version && node ./node_modules/typescript/bin/tsc -p tsconfig.json --noEmit && node ./node_modules/typescript/bin/tsc -p tsconfig.surfaces.json --noEmit
+packages/mcp-server typecheck: Done
+packages/plugins/sdk typecheck$ pnpm --filter @paperclipai/shared build && tsc --noEmit
+packages/paperclip-runner typecheck: > @paperclipai/paperclip-runner@0.0.0 ensure:eval-build-deps /home/yuanjian/dev/ANC-tok-224-ui/packages/paperclip-runner
+packages/paperclip-runner typecheck: > pnpm --filter @paperclipai/paperclip-eval-kernel build
+packages/adapter-utils typecheck: Done
+packages/skills-catalog typecheck$ tsc -p tsconfig.json --noEmit
+packages/plugins/sdk typecheck: > @paperclipai/shared@0.3.1 build /home/yuanjian/dev/ANC-tok-224-ui/packages/shared
+packages/plugins/sdk typecheck: > tsc && mkdir -p dist/cliplab && cp src/cliplab/LICENSE src/cliplab/PROVENANCE.md dist/cliplab/
+packages/db typecheck: Migration safety check passed: 20 historical finding(s) covered by baseline (1 stale baseline id(s) ignored).
+packages/paperclip-runner typecheck: > @paperclipai/paperclip-eval-kernel@0.1.0 build /home/yuanjian/dev/ANC-tok-224-ui/packages/paperclip-eval-kernel
+packages/paperclip-runner typecheck: > tsc -p tsconfig.json
+packages/skills-catalog typecheck: Done
+packages/paperclip-runner typecheck: > @paperclipai/paperclip-runner@0.0.0 check:protocol-types /home/yuanjian/dev/ANC-tok-224-ui/packages/paperclip-runner
+packages/paperclip-runner typecheck: > node scripts/generate-protocol-schema-module.mjs --check && node scripts/generate-acpx-sidecar-contract.mjs --check
+packages/plugins/sdk typecheck: Done
+packages/paperclip-runner typecheck: Generated PRP schema modules match the JSON Schema sources.
+packages/paperclip-runner typecheck: Generated TypeScript/Rust ACPX sidecar contracts match the schema.
+packages/paperclip-runner typecheck: Version 7.0.2
+packages/db typecheck: Done
+packages/paperclip-runner typecheck: > @paperclipai/paperclip-runner@0.0.0 typecheck:rust /home/yuanjian/dev/ANC-tok-224-ui/packages/paperclip-runner
+packages/paperclip-runner typecheck: > cargo fmt --manifest-path runner/Cargo.toml --all -- --check && cargo check --manifest-path runner/Cargo.toml --locked --workspace
+packages/paperclip-runner typecheck: sh: 1: cargo: not found
+packages/paperclip-runner typecheck:  ELIFECYCLE  Command failed.
+packages/paperclip-runner typecheck: Failed
+/home/yuanjian/dev/ANC-tok-224-ui/packages/paperclip-runner:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @paperclipai/paperclip-runner@0.0.0 typecheck: `pnpm run typecheck:typescript && pnpm run typecheck:rust`
+Exit status 1
