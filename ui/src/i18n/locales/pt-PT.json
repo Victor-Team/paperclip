@@ -9027,7 +9027,9 @@
     "pickApp": "Pick app",
     "copied": "Copied",
     "copyFailed": "Copy failed",
-    "copy": "Copy"
+    "copy": "Copy",
+    "connectorUidPlaceholder": "service/my-connector or scl_…",
+    "useGenericApiKey": "Use an API key"
   },
   "remoteMcp": {
     "helpWith": "Help with {{label}}",
