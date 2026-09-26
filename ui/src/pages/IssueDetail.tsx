@@ -94,6 +94,7 @@ import {
   normalizeIssueQueuedCommentQueue,
 } from "../lib/issue-queued-comment-queue";
 import { collectLiveIssueIds } from "../lib/liveIssueIds";
+import { filterRunsToLoadedCommentWindow } from "../lib/issueChatTranscriptRuns";
 import {
   hasLegacyIssueDetailQuery,
   createIssueDetailPath,
@@ -1603,12 +1604,19 @@ const IssueDetailChatTab = memo(function IssueDetailChatTab({
       liveRunIds.size === 0
         ? resolvedLinkedRuns
         : resolvedLinkedRuns.filter((run) => !liveRunIds.has(run.runId));
-    return historicalRuns.map((run) => ({
+    // Only runs inside the loaded comment pages are read and rendered; older
+    // history follows "Load earlier comments" instead of loading all at once.
+    // Until the first page arrives the window is empty, not unbounded.
+    return filterRunsToLoadedCommentWindow(
+      historicalRuns,
+      comments,
+      hasOlderComments || commentsInitialLoading,
+    ).map((run) => ({
       ...run,
       adapterType: run.adapterType,
       hasStoredOutput: (run.logBytes ?? 0) > 0,
     }));
-  }, [liveRunIds, resolvedLinkedRuns]);
+  }, [comments, commentsInitialLoading, hasOlderComments, liveRunIds, resolvedLinkedRuns]);
   const commentsWithRunMeta = useMemo<IssueDetailComment[]>(() => {
     const activeRunStartedAt =
       interruptibleIssueRun?.startedAt ??

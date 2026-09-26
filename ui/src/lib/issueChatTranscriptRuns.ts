@@ -70,3 +70,67 @@ export function resolveIssueChatTranscriptRuns(args: {
 
   return [...combined.values()];
 }
+
+const TERMINAL_RUN_STATUSES = new Set(["failed", "timed_out", "cancelled", "interrupted", "succeeded"]);
+
+interface WindowedRun {
+  runId: string;
+  status: string;
+  createdAt: Date | string;
+  startedAt?: Date | string | null;
+  finishedAt?: Date | string | null;
+  wakeCommentIds?: readonly string[] | null;
+  wakeCommentId?: string | null;
+  contextCommentId?: string | null;
+}
+
+interface WindowedComment {
+  id: string;
+  createdAt: Date | string;
+  runId?: string | null;
+  createdByRunId?: string | null;
+  derivedCreatedByRunId?: string | null;
+}
+
+/**
+ * Keeps a thread's historical runs in step with its loaded comment pages.
+ *
+ * The thread only shows the newest comment page until "Load earlier comments"
+ * is used, but every linked run used to be handed to the thread — which reads
+ * each run's log and renders its settled turn. A long-lived issue (hundreds of
+ * runs) therefore downloaded and rendered its whole history on open. While
+ * older comments remain unloaded, keep only runs that are not finished, runs
+ * tied to a loaded comment, and runs that ended inside the loaded window; the
+ * window widens as older pages load. While the first page is still loading
+ * (no comments yet) only unfinished runs are kept. With everything loaded, runs
+ * pass through unchanged.
+ */
+export function filterRunsToLoadedCommentWindow<T extends WindowedRun>(
+  runs: readonly T[],
+  comments: readonly WindowedComment[],
+  hasOlderComments: boolean,
+): readonly T[] {
+  if (!hasOlderComments) return runs;
+  let oldestLoadedAt = Number.POSITIVE_INFINITY;
+  const loadedCommentIds = new Set<string>();
+  const commentRunIds = new Set<string>();
+  for (const comment of comments) {
+    const at = toTimestamp(comment.createdAt);
+    if (at > 0) oldestLoadedAt = Math.min(oldestLoadedAt, at);
+    loadedCommentIds.add(comment.id);
+    for (const runId of [comment.runId, comment.createdByRunId, comment.derivedCreatedByRunId]) {
+      if (runId) commentRunIds.add(runId);
+    }
+  }
+  return runs.filter((run) => {
+    if (!TERMINAL_RUN_STATUSES.has(run.status) || commentRunIds.has(run.runId)) return true;
+    if (
+      (run.wakeCommentId && loadedCommentIds.has(run.wakeCommentId)) ||
+      (run.contextCommentId && loadedCommentIds.has(run.contextCommentId)) ||
+      run.wakeCommentIds?.some((id) => loadedCommentIds.has(id))
+    ) {
+      return true;
+    }
+    return toTimestamp(run.finishedAt ?? run.startedAt ?? run.createdAt) >= oldestLoadedAt;
+  });
+}

@@ -23,7 +23,10 @@ if (!(DEFAULT_LOCALE in localeMessages)) {
   throw new Error(`Missing default locale messages for ${DEFAULT_LOCALE}`);
 }
 
-for (const [locale, messages] of Object.entries(localeMessages)) {
+// Locale files are bundled at build time and every one of them is validated by
+// locale-validation.test.ts. Re-validating ~40 full catalogs on every page load
+// blocked the main thread for ~0.7s in production, so only dev builds repeat it.
+for (const [locale, messages] of import.meta.env.DEV ? Object.entries(localeMessages) : []) {
   try {
     assertValidLocaleMessages(messages);
   } catch (error) {

@@ -1,7 +1,11 @@
 import { describe, expect, it } from "vitest";
 import type { LiveRunForIssue } from "../api/heartbeats";
 import type { IssueChatLinkedRun } from "./issue-chat-messages";
-import { MAX_ISSUE_CHAT_TRANSCRIPT_RUNS, resolveIssueChatTranscriptRuns } from "./issueChatTranscriptRuns";
+import {
+  filterRunsToLoadedCommentWindow,
+  MAX_ISSUE_CHAT_TRANSCRIPT_RUNS,
+  resolveIssueChatTranscriptRuns,
+} from "./issueChatTranscriptRuns";
 
 function linkedRun(n: number, isoDate: string): IssueChatLinkedRun {
   return {
@@ -83,5 +87,52 @@ describe("resolveIssueChatTranscriptRuns", () => {
     // The live run is always present; linked runs fill the remaining slots.
     expect(ids).toContain("live-1");
     expect(runs.length).toBe(5);
+  });
+});
+
+describe("filterRunsToLoadedCommentWindow", () => {
+  const minute = (n: number) => new Date(Date.UTC(2026, 8, 25, 0, n)).toISOString();
+  // 400 finished runs, one per minute; the loaded page holds the newest 50 comments.
+  const history = Array.from({ length: 400 }, (_, n) => ({ ...linkedRun(n, minute(n)) }));
+  const loadedComments = Array.from({ length: 50 }, (_, n) => ({
+    id: `comment-${n}`,
+    createdAt: minute(350 + n),
+  }));
+
+  it("keeps only runs inside the loaded comment window while older comments remain", () => {
+    const kept = filterRunsToLoadedCommentWindow(history, loadedComments, true);
+    expect(kept.map((run) => run.runId)).toEqual(
+      Array.from({ length: 50 }, (_, n) => `run-${350 + n}`),
+    );
+  });
+
+  it("passes every run through once all comments are loaded", () => {
+    expect(filterRunsToLoadedCommentWindow(history, loadedComments, false)).toBe(history);
+  });
+
+  it("keeps older runs that are unfinished or tied to a loaded comment", () => {
+    const older = [
+      { ...linkedRun(1, minute(1)), status: "running" },
+      { ...linkedRun(2, minute(2)) },
+      { ...linkedRun(3, minute(3)), wakeCommentIds: ["comment-0"] },
+      { ...linkedRun(4, minute(4)) },
+    ];
+    const comments = [
+      { ...loadedComments[0] },
+      { id: "comment-x", createdAt: minute(360), createdByRunId: "run-2" },
+    ];
+    expect(
+      filterRunsToLoadedCommentWindow(older, comments, true).map((run) => run.runId),
+    ).toEqual(["run-1", "run-2", "run-3"]);
+  });
+});
+
+describe("filterRunsToLoadedCommentWindow before the first comment page arrives", () => {
+  it("keeps only unfinished runs while comments are still loading", () => {
+    const runs = [
+      { ...linkedRun(1, "2026-09-25T00:01:00.000Z") },
+      { ...linkedRun(2, "2026-09-25T00:02:00.000Z"), status: "queued" },
+    ];
+    expect(filterRunsToLoadedCommentWindow(runs, [], true).map((run) => run.runId)).toEqual(["run-2"]);
   });
 });
