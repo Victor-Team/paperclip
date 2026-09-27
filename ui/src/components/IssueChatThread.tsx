@@ -190,6 +190,7 @@ import {
   mapCommentMetadataToSystemNoticeSections,
   systemNoticeLabelForTone,
 } from "../lib/system-notice-comment";
+import { localizeRecoveryNoticeBody } from "../lib/system-notice-recovery";
 import type {
   IssueCommentMetadata,
   IssueCommentPresentation,
@@ -3519,7 +3520,7 @@ function SystemNoticeCommentContent({
     .join("\n\n");
   const displayBodyText = bodyText === "Paperclip needs a disposition before this issue can continue."
     ? t("tok225review.noticeDispositionBody", { defaultValue: bodyText })
-    : bodyText;
+    : localizeRecoveryNoticeBody(bodyText);
   const staleSuccessfulRunHandoffNotice = isStaleSuccessfulRunHandoffNotice({
     bodyText,
     issueStatus,
@@ -3565,6 +3566,7 @@ function SystemNoticeCommentContent({
     timestamp: toValidIsoString(message.createdAt),
     source,
     runAgentId,
+    bodyText,
   });
 
   const handleCopy = () => {
@@ -3616,7 +3618,7 @@ function SystemNoticeCommentContent({
   // without `density` (old comments / old data) keep today's full card.
   if (presentation?.density === "compact") {
     const tone = presentation.tone ?? "neutral";
-    const title = systemNoticeLabelForTone(tone, presentation.title);
+    const title = systemNoticeLabelForTone(tone, presentation.title, bodyText);
     return (
       <CompactSystemNoticeRow
         anchorId={anchorId}
