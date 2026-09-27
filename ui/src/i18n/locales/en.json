@@ -9185,6 +9185,7 @@
   "taskChatRunnerActivity": {
     "runningCommand": "Running a command",
     "readAndRan": "Read files, ran commands",
+    "ranCommands": "Ran commands",
     "activityCount_one": "{{count}} activity",
     "activityCount_other": "{{count}} activities",
     "collapse": "Collapse",
