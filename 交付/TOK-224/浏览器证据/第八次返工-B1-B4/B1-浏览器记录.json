@@ -1,8 +1,14 @@
 {
   "desktop": {
-    "titleZh": "Review Agent • Agents • TOK-225 UI Review • Paperclip",
-    "errors": [],
-    "textZh": "captured prior locale on screenshot"
+    "route": "/TOKAAAAA/agents/review-agent/overview",
+    "zhTitle": "Review Agent • 智能体 • TOK-225 UI Review • Paperclip",
+    "englishTitle": "Review Agent • Agents • TOK-225 UI Review • Paperclip",
+    "accountLanguageSwitch": "en-US → account menu Language zh-CN → English",
+    "viewports": [
+      "1440×900",
+      "390×844"
+    ],
+    "errors": []
   },
   "errors": []
 }
