@@ -1,0 +1,18 @@
+{
+  "route": "/activity?mode=agents",
+  "viewports": [
+    "1440×900",
+    "390×844"
+  ],
+  "accountLanguageSwitch": "en-US → account menu Language → zh-CN; restored English",
+  "fixture": "One synthetic environment.lease_acquired event with entityType=agent; record and code are synthetic, no persisted audit data changed.",
+  "assertions": {
+    "actionZh": true,
+    "entityTypeZh": true,
+    "actionEn": true,
+    "dateInputPlaceholder": "YYYY-MM-DD, locale-neutral text date input; native en-US mm/dd/yyyy is absent"
+  },
+  "apiRequests": 1,
+  "http404Paths": [],
+  "errors": []
+}

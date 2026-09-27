@@ -1,9 +1,11 @@
 // @vitest-environment jsdom
 
 import { flushSync } from "react-dom";
+import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ThemeProvider } from "@/context/ThemeContext";
+import { i18n } from "@/i18n";
 import { TaskChatSystemNotice } from "./TaskChatSystemNotice";
 import type { TaskChatMessageItem } from "./task-chat-model";
 
@@ -67,6 +69,29 @@ describe("TaskChatSystemNotice (PAP-443)", () => {
     expect(
       container.querySelector('[data-testid="task-chat-system-notice-details"]'),
     ).toBeNull();
+  });
+
+  it("localizes the known disposition notice in the folded and expanded views, then restores English", async () => {
+    const body = "Paperclip needs a disposition before this issue can continue.";
+    const presentation = {
+      kind: "system_notice" as const,
+      tone: "warning" as const,
+      title: "Missing issue disposition",
+      detailsDefaultOpen: false,
+    };
+    await act(async () => { await i18n.changeLanguage("zh-CN"); });
+    renderNotice({ text: body, presentation });
+
+    expect(toggleButton().textContent).toContain("缺少工单处置状态");
+    expect(container.textContent).not.toContain("Missing issue disposition");
+    expect(container.textContent).not.toContain(body);
+    flushSync(() => toggleButton().click());
+    expect(container.textContent).toContain("此工单需要设置处置状态后才能继续。");
+    expect(container.textContent).not.toContain(body);
+
+    await act(async () => { await i18n.changeLanguage("en"); });
+    expect(toggleButton().textContent).toContain("Missing issue disposition");
+    expect(container.textContent).toContain(body);
   });
 
   it("expands on click to the full markdown body and metadata sections", () => {

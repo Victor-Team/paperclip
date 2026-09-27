@@ -1,12 +1,20 @@
 import type { Agent } from "@paperclipai/shared";
 import { describe, expect, it } from "vitest";
 import { formatActivityVerb, formatIssueActivityAction } from "./activity-format";
+import { i18n } from "@/i18n";
 
 describe("activity formatting", () => {
   const agentMap = new Map<string, Agent>([
     ["agent-reviewer", { id: "agent-reviewer", name: "Reviewer Bot" } as Agent],
     ["agent-approver", { id: "agent-approver", name: "Approver Bot" } as Agent],
   ]);
+
+  it("localizes the environment lease event in the audit verb while preserving the event code", async () => {
+    await i18n.changeLanguage("zh-CN");
+    expect(formatActivityVerb("environment.lease_acquired")).toBe("已获取环境租约");
+    expect(formatActivityVerb("environment_lease_acquired")).toBe("已获取环境租约");
+    await i18n.changeLanguage("en");
+  });
 
   it("labels a Slack settlement as idle while retaining actual review wording", () => {
     const details = { status: "in_review", externalConversationState: "waiting" };

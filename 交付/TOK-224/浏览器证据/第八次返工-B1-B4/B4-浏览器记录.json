@@ -1,0 +1,24 @@
+{
+  "instance": "http://127.0.0.1:3218",
+  "browser": "Chrome en-US",
+  "languageSwitch": "Account menu → Language; verified localStorage paperclip.locale",
+  "viewports": [
+    "1440×900",
+    "390×844"
+  ],
+  "pages": [
+    "/TOKAAAAA/apps/connect?source=github&resume=<nonexistent UUID>",
+    "/TOKAAAAA/apps/connect?source=github&reconnect=<nonexistent UUID>",
+    "/TOKAAAAA/apps/connect?source=asana (actual local catalog; access step advanced to customer-owned OAuth form)",
+    "/TOKAAAAA/apps/connect?source=asana&applicationId=app-asana&new=1&reconnect=<synthetic missing UUID>&identity=organization (injected HTTP 500 on retained application/connection lookups)"
+  ],
+  "screenshots": 12,
+  "assertions": [
+    "简中续设失效标题/说明为中文；切回英文标题恢复",
+    "简中重连失效标题/说明为中文",
+    "自有 OAuth 表单在简中为中文，切回英文显示原英文",
+    "连接设置加载失败：中文标题与说明、重试/返回按钮；English restores title; desktop/narrow screenshots"
+  ],
+  "errors": [],
+  "responses": []
+}

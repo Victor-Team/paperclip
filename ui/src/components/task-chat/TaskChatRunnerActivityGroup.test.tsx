@@ -124,6 +124,13 @@ describe("TaskChatRunnerActivityGroup", () => {
     expect(container.querySelector(".runner-activity-roll-in")).toBeNull();
   });
 
+  it("localizes completed activity summaries and their accessible names", async () => {
+    await i18n.changeLanguage("zh-CN");
+    render([tool("one", "completed"), tool("two", "completed")], "history", false);
+    expect(toggle().textContent).toBe("已运行命令");
+    expect(toggle().getAttribute("aria-label")).toBe("展开 已运行命令 (2 项活动)");
+  });
+
   it("preserves expanded history and item detail across appends and live-to-history remount", () => {
     render([tool("one", "completed")]);
     act(() => toggle().click());

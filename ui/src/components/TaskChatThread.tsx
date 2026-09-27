@@ -1,4 +1,5 @@
 import type { ActivityEvent } from "@paperclipai/shared";
+import { t, useTranslation } from "@/i18n";
 import { useProjectCreatedItems } from "@/hooks/useProjectCreatedItems";
 import { skillCreatedItems } from "@/components/task-chat/skill-created-items";
 import { requiresExecutionReconciliation } from "@paperclipai/shared";
@@ -468,6 +469,9 @@ function durableInputLabel(
  * folded row. flag-OFF remains byte-for-byte IssueChatThread.
  */
 export function TaskChatThread(props: TaskChatThreadProps) {
+  // Run/marker copy is assembled in memoized thread items. Subscribe here so a
+  // language switch rebuilds those fixed labels without changing run data.
+  const { i18n: currentI18n } = useTranslation();
   const { enabled: streamlinedUiEnabled } = useStreamlinedUiEnabled();
   const {
     initialHistoryPending = false,
@@ -809,9 +813,13 @@ export function TaskChatThread(props: TaskChatThreadProps) {
           return [];
         }
         const summary = acceptedSemanticResultSummary(resultJson);
-        return [summary ? { ...comment, body: summary } : comment];
+        return [
+          summary
+            ? { ...comment, body: summary }
+            : { ...comment, body: t("tok225review.runLegacyWithheld") },
+        ];
       }),
-    [comments, interactions, linkedRunMetaById],
+    [comments, interactions, linkedRunMetaById, currentI18n.language],
   );
 
   const commentItems = useMemo(
@@ -1567,36 +1575,36 @@ export function TaskChatThread(props: TaskChatThreadProps) {
             : "native_runner_process_exited");
         const label =
           code === "native_provider_approval_required" && source.status === "failed"
-            ? "Approval required"
+            ? t("tok225review.runApprovalRequired")
             : code === "native_provider_usage_limit" && source.status === "failed"
-            ? "Usage limit reached"
+            ? t("tok225review.runUsageLimitReached")
             : source.status === "cancelled"
-              ? "Run cancelled"
+              ? t("tok225review.runCancelled")
               : source.status === "interrupted"
-                ? "Run interrupted"
+                ? t("tok225review.runInterrupted")
                 : source.status === "timed_out"
-                  ? "Run timed out"
-                  : "Run failed";
+                  ? t("tok225review.runTimedOut")
+                  : t("tok225review.runFailed");
         const responseBoundary = sourceHasNativeResponse
-          ? "after returning a final response"
-          : "before returning an answer";
+          ? t("tok225review.runAfterFinalResponse")
+          : t("tok225review.runBeforeAnswer");
         const detail =
           source.status === "cancelled"
-            ? `The run was cancelled ${responseBoundary}.`
+            ? t("tok225review.runCancelledDetail", { responseBoundary })
             : source.status === "interrupted"
-              ? `The run was interrupted ${responseBoundary}.`
-              : code === "native_provider_approval_required"
-                ? "This operation requires approval, but this runner has no interactive approval handler. Review the operation and update the agent's permission setting before retrying."
+              ? t("tok225review.runInterruptedDetail", { responseBoundary })
+            : code === "native_provider_approval_required"
+                ? t("tok225review.runApprovalRequiredDetail")
                 : code === "native_provider_model_rejected"
-                ? "The provider rejected the selected model. Check the model ID and your account's access, save the agent configuration, then retry. View the run for the provider's full error."
+                ? t("tok225review.runModelRejectedDetail")
                 : code === "native_provider_usage_limit" &&
                     source.status === "failed"
-                  ? "The model provider has reached its current usage limit. Try again after the limit resets."
+                  ? t("tok225review.runUsageLimitDetail")
                   : code === "provider_frame_too_large"
-                    ? "Provider output exceeded the safe limit."
+                    ? t("tok225review.runProviderOutputTooLarge")
                     : source.status === "timed_out"
-                      ? `The runner timed out ${responseBoundary} (${code}).`
-                      : `The runner stopped ${responseBoundary} (${code}).`;
+                      ? t("tok225review.runTimedOutDetail", { responseBoundary, code })
+                      : t("tok225review.runStoppedDetail", { responseBoundary, code });
         const id = `${source.id}:failure`;
         const runAgent = meta?.agentId
           ? agentMap?.get(meta.agentId)
@@ -1636,24 +1644,24 @@ export function TaskChatThread(props: TaskChatThreadProps) {
         settledRunIds.add(source.id);
         const code = meta?.errorCode ?? "native_runner_process_exited";
         const retryDetail = meta?.scheduledRetryAt
-          ? "Retry scheduled automatically."
+          ? t("tok225review.runRetryScheduled")
           : canRetryFailedRun
-            ? "You can retry this message now."
-            : "Your message is preserved.";
+            ? t("tok225review.runRetryAvailable")
+            : t("tok225review.runMessagePreserved");
         const aiRequest = interactions?.find((interaction) => interaction.kind === "connection_intent" && interaction.payload.purpose === "ai" && interaction.sourceRunId === source.id);
         const detail = aiRequest
-          ? aiRequest.status === "pending"
-            ? "The selected AI account is unavailable. Fix it in the connection card."
-            : "This run stopped because its AI account was unavailable."
-          : source.status === "cancelled"
+            ? aiRequest.status === "pending"
+            ? t("tok225review.runAiAccountUnavailablePending")
+            : t("tok225review.runAiAccountUnavailableStopped")
+            : source.status === "cancelled"
             ? code === "execution_reconciliation_required"
-              ? "The previous execution must be checked before this task can continue. Your message is preserved. View the stopped run for details."
-              : "Execution was stopped before returning an answer."
+              ? t("tok225review.runReconciliationRequired")
+              : t("tok225review.runStoppedBeforeAnswer")
             : code === "provider_frame_too_large"
-            ? `Provider output exceeded the safe limit. ${retryDetail}`
+            ? `${t("tok225review.runProviderOutputTooLarge")} ${retryDetail}`
             : code.startsWith("workspace_git_scan_")
-            ? `Workspace setup failed before the agent started. ${retryDetail}`
-            : `The runner stopped before returning an answer (${code}). ${retryDetail}`;
+            ? `${t("tok225review.runWorkspaceSetupFailed")} ${retryDetail}`
+            : `${t("tok225review.runStoppedBeforeAnswerWithCode", { code })} ${retryDetail}`;
         const id = `${source.id}:failure`;
         entriesWithFailures.push({
           ms: toMs(meta?.finishedAt ?? meta?.startedAt ?? meta?.createdAt),
@@ -1663,7 +1671,7 @@ export function TaskChatThread(props: TaskChatThreadProps) {
             id,
             kind: "marker",
             variant: "interrupted",
-            label: source.status === "cancelled" ? (meta?.startedAt ? "Stopped" : "Couldn't start") : "Run failed",
+            label: source.status === "cancelled" ? (meta?.startedAt ? t("tok225review.runStopped") : t("tok225review.runCouldntStart")) : t("tok225review.runFailed"),
             runId: source.status === "cancelled" ? undefined : source.id,
             tone: source.status === "cancelled" ? "neutral" : "error",
             detail,
@@ -1731,8 +1739,8 @@ export function TaskChatThread(props: TaskChatThreadProps) {
               id,
               kind: "marker",
               variant: "turn_boundary",
-              label: source.status === "cancelled" ? "Stopped" : "Run completed",
-              detail: source.status === "cancelled" ? "This turn was cancelled before it returned a response." : "The runner returned no user-facing response.",
+              label: source.status === "cancelled" ? t("tok225review.runStopped") : t("tok225review.runCompleted"),
+              detail: source.status === "cancelled" ? t("tok225review.runTurnCancelledNoResponse") : t("tok225review.runNoUserFacingResponse"),
             },
           });
         }
@@ -1763,8 +1771,8 @@ export function TaskChatThread(props: TaskChatThreadProps) {
             id,
             kind: "marker",
             variant: "turn_boundary",
-            label: "Run completed",
-            detail: "The runner returned no user-facing response.",
+            label: t("tok225review.runCompleted"),
+            detail: t("tok225review.runNoUserFacingResponse"),
           },
         });
       }
@@ -2052,6 +2060,7 @@ export function TaskChatThread(props: TaskChatThreadProps) {
     planDocumentSourceRunId,
     planTurnItem,
     agentMap,
+    currentI18n.language,
   ]);
 
   // Hand off once the settled turn or its reply comment is in the thread; a
@@ -2934,15 +2943,15 @@ export function TaskChatThread(props: TaskChatThreadProps) {
                                     items={tailItems}
                                     emptyMessage={
                                       tailStatus === "queued"
-                                        ? "Waiting to start..."
+                                        ? t("tok225review.runWaitingStart")
                                         : (liveRun && liveRun.id === tailRunId
                                             ? liveRun.currentStatusMessage
                                             : null) ||
                                           (tailStatus === "failed"
-                                            ? linkedRunMetaById.get(tailRunId ?? "")?.errorCode?.startsWith("workspace_git_scan_")
-                                              ? "Workspace setup failed before the agent started."
-                                              : "This run stopped before a response was available. Review the task’s connection or recovery action below."
-                                            : "Waiting for transcript...")
+                                              ? linkedRunMetaById.get(tailRunId ?? "")?.errorCode?.startsWith("workspace_git_scan_")
+                                              ? t("tok225review.runWorkspaceSetupFailed")
+                                              : t("tok225review.runNoResponse")
+                                            : t("tok225review.runWaitingTranscript"))
                                     }
                                   />
                                 </>
@@ -3082,7 +3091,12 @@ export function TaskChatThread(props: TaskChatThreadProps) {
                         pendingComposerInputs.length > 0
                           ? {
                               count: pendingComposerInputs.length,
-                              label: `${pendingComposerInputs.length} pending input${pendingComposerInputs.length === 1 ? "" : "s"}`,
+                              label: t(
+                                pendingComposerInputs.length === 1
+                                  ? "tok225review.pendingInputOne"
+                                  : "tok225review.pendingInputMany",
+                                { count: pendingComposerInputs.length },
+                              ),
                               onOpen: openPendingTakeover,
                             }
                           : null

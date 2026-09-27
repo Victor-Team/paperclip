@@ -9,6 +9,7 @@ import type {
   SystemNoticeProps,
   SystemNoticeTone,
 } from "../components/SystemNotice";
+import { t } from "@/i18n";
 
 const TONE_LABEL: Record<SystemNoticeTone, string> = {
   neutral: "System notice",
@@ -95,6 +96,9 @@ export function systemNoticeLabelForTone(
   presentationTitle?: string | null,
 ): string {
   const trimmed = presentationTitle?.trim();
+  if (trimmed === "Missing issue disposition") {
+    return t("tok225review.noticeMissingDisposition", { defaultValue: trimmed });
+  }
   if (trimmed && trimmed.length > 0) return trimmed;
   return TONE_LABEL[tone];
 }

@@ -1,0 +1,30 @@
+{
+  "instance": "127.0.0.1:3218",
+  "route": "/issues/TOKAAAAA-1",
+  "viewport": [
+    "1440×900",
+    "390×844"
+  ],
+  "accountLanguageSwitch": "en-US browser → account menu → Language zh-CN; then restore English",
+  "browserFixtures": [
+    "GET issue comments replaced with a purpose-built system_notice sample containing the exact disposition copy",
+    "queued comments replaced by an empty queue to exclude unrelated test data from evidence",
+    "test agent pause state injected in API response only; no persisted status mutation",
+    "one local recovery prompt dismissed in the browser to reveal the notice row"
+  ],
+  "assertions": {
+    "noticeTitleZh": true,
+    "noticeBodyZh": true,
+    "pauseBannerZh": true,
+    "noticeTitleEn": true,
+    "rawNoticeEnglishAbsentInZh": true
+  },
+  "routeCounters": {
+    "comments": 1,
+    "queue": 1,
+    "agents": 2
+  },
+  "errors": [
+    "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  ]
+}

@@ -59,8 +59,11 @@ export function TaskChatSystemNotice({
   const streamlined = useStreamlinedTaskChatPresentation();
   const [open, setOpen] = useState(Boolean(item.presentation?.detailsDefaultOpen));
   const detailsId = useId();
+  const displayText = item.text === "Paperclip needs a disposition before this issue can continue."
+    ? t("tok225review.noticeDispositionBody", { defaultValue: item.text })
+    : item.text;
   const { title, tone, detail } = humanizeSystemNotice({
-    body: item.text,
+    body: displayText,
     presentation: item.presentation,
   });
   const sections = mapCommentMetadataToSystemNoticeSections(item.metadata, {
@@ -135,7 +138,7 @@ export function TaskChatSystemNotice({
           {showBody ? (
             <div className="px-3 py-2.5 text-foreground/90">
               <MarkdownBody softBreaks linkIssueReferences>
-                {item.text}
+              {displayText}
               </MarkdownBody>
             </div>
           ) : null}

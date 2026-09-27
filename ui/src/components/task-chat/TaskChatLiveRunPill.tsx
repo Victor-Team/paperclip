@@ -3,9 +3,11 @@ import { Loader2 } from "lucide-react";
 import type { TranscriptEntry } from "../../adapters";
 import { cn } from "@/lib/utils";
 import { useSecondTick } from "@/hooks/useSecondTick";
-import { formatDurationWords } from "@/lib/issue-chat-messages";
 import { isCommandTool } from "@/lib/transcriptPresentation";
 import { isTerminalRunStatus } from "@/components/task-chat/transcript-adapter";
+import { useTranslation } from "@/i18n";
+import { i18n } from "@/i18n";
+import { formatDurationWords } from "@/lib/issue-chat-messages";
 
 /**
  * "ran N commands, called M tools" for the live tail's status pill, counted off
@@ -57,6 +59,7 @@ export function TaskChatLiveRunPill({
   finishedAtMs?: number | null;
   toolSummary: string | null;
 }) {
+  const { t } = useTranslation();
   const active = !isTerminalRunStatus(status);
   // One shared page-wide ticker drives the live elapsed readout, matching the
   // default view's `useLiveElapsed`.
@@ -65,11 +68,20 @@ export function TaskChatLiveRunPill({
   const elapsedMs =
     startedAtMs == null ? null : (active ? Date.now() : finishedAtMs ?? Date.now()) - startedAtMs;
   const elapsed = elapsedMs != null
-    ? formatDurationWords(elapsedMs)
+    ? i18n.resolvedLanguage === "zh-CN"
+      ? localizedDuration(elapsedMs, t)
+      : formatDurationWords(elapsedMs)
     : null;
   const failed = ["failed", "timed_out", "cancelled", "interrupted"].includes(status);
-  const verb = active ? "Working" : failed ? "Stopped" : "Worked";
-  const suffix = elapsed ? `for ${elapsed}` : null;
+  const verb = active
+    ? t("tok225review.runWorking")
+    : failed
+      ? t("tok225review.runStopped")
+      : t("tok225review.runWorked");
+  const suffix = elapsed ? `${t("tok225review.runFor")} ${elapsed}` : null;
+  const localizedToolSummary = i18n.resolvedLanguage === "zh-CN"
+    ? localizeToolSummary(toolSummary, t)
+    : toolSummary;
 
   return (
     <div
@@ -89,7 +101,39 @@ export function TaskChatLiveRunPill({
         {active ? <span className={cn("shimmer-text")}>{verb}</span> : verb}
       </span>
       {suffix ? <span className="text-xs text-muted-foreground/60">{suffix}</span> : null}
-      {toolSummary ? <span className="text-xs text-muted-foreground/40">· {toolSummary}</span> : null}
+      {localizedToolSummary ? <span className="text-xs text-muted-foreground/40">· {localizedToolSummary}</span> : null}
     </div>
   );
+}
+
+function localizedDuration(
+  milliseconds: number,
+  t: (key: string, options?: Record<string, unknown>) => string,
+): string | null {
+  if (!Number.isFinite(milliseconds) || milliseconds <= 0) return null;
+  const totalSeconds = Math.max(1, Math.round(milliseconds / 1000));
+  if (totalSeconds < 60) return t("tok225review.durationSeconds", { count: totalSeconds });
+  const totalMinutes = Math.round(totalSeconds / 60);
+  if (totalMinutes < 60) return t("tok225review.durationMinutes", { count: totalMinutes });
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  const hourText = t("tok225review.durationHours", { count: hours });
+  return minutes > 0
+    ? `${hourText} ${t("tok225review.durationMinutes", { count: minutes })}`
+    : hourText;
+}
+
+function localizeToolSummary(
+  summary: string | null,
+  t: (key: string, options?: Record<string, unknown>) => string,
+): string | null {
+  if (!summary) return null;
+  const parts = summary.split(", ").map((part) => {
+    const command = part.match(/^ran (\d+) commands?$/i);
+    if (command) return t("tok225review.runCommandCount", { count: Number(command[1]) });
+    const tool = part.match(/^called (\d+) tools?$/i);
+    if (tool) return t("tok225review.runToolCount", { count: Number(tool[1]) });
+    return part;
+  });
+  return parts.join("，");
 }

@@ -90,15 +90,19 @@ export interface AuditFeedProps {
 }
 
 function toStartIso(value: string): string | undefined {
-  if (!value) return undefined;
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return undefined;
   const date = new Date(`${value}T00:00:00.000Z`);
-  return Number.isNaN(date.getTime()) ? undefined : date.toISOString();
+  return Number.isNaN(date.getTime()) || date.toISOString().slice(0, 10) !== value
+    ? undefined
+    : date.toISOString();
 }
 
 function toEndIso(value: string): string | undefined {
-  if (!value) return undefined;
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return undefined;
   const date = new Date(`${value}T23:59:59.999Z`);
-  return Number.isNaN(date.getTime()) ? undefined : date.toISOString();
+  return Number.isNaN(date.getTime()) || date.toISOString().slice(0, 10) !== value
+    ? undefined
+    : date.toISOString();
 }
 
 /** Actor avatar + name — agents render their icon glyph, humans their avatar. */
@@ -188,7 +192,11 @@ function AuditEntityNode({ record }: { record: AuditActionRecord }) {
     );
   }
   // Non-linkable entities (company, agent, goal, …) — show a plain descriptor.
-  return <span className="text-muted-foreground">{record.entityType}</span>;
+  const entityTypeLabels: Record<string, string> = {
+    agent: t("tok225review.auditEntityAgent"),
+    company: t("tok225review.auditEntityCompany"),
+  };
+  return <span className="text-muted-foreground">{entityTypeLabels[record.entityType] ?? record.entityType}</span>;
 }
 
 function AuditRow({
@@ -611,7 +619,10 @@ export function AuditFeed({
         <label className="grid gap-1 text-(length:--text-micro) font-medium text-muted-foreground">
           <span>{t("auditfeed.general.from")}</span>
           <Input
-            type="date"
+            type="text"
+            inputMode="numeric"
+            pattern="\d{4}-\d{2}-\d{2}"
+            placeholder="YYYY-MM-DD"
             aria-label={t("auditfeed.general.fromdate")}
             value={dateFrom}
             max={dateTo || undefined}
@@ -622,7 +633,10 @@ export function AuditFeed({
         <label className="grid gap-1 text-(length:--text-micro) font-medium text-muted-foreground">
           <span>{t("auditfeed.general.to")}</span>
           <Input
-            type="date"
+            type="text"
+            inputMode="numeric"
+            pattern="\d{4}-\d{2}-\d{2}"
+            placeholder="YYYY-MM-DD"
             aria-label={t("auditfeed.general.todate")}
             value={dateTo}
             min={dateFrom || undefined}

@@ -78,7 +78,12 @@ export const adapterLabels: Record<string, string> = new Proxy({} as Record<stri
   get: (_target, prop: string) => getAdapterLabels()[prop],
 });
 
-export const roleLabels = AGENT_ROLE_LABELS as Record<string, string>;
+export const roleLabels: Record<string, string> = new Proxy({} as Record<string, string>, {
+  get: (_target, prop: string) => {
+    const roleKey = prop.replace(/(^|-)([a-z])/g, (_match, _sep, letter: string) => letter.toUpperCase());
+    return t(`tok225review.role${roleKey}`, { defaultValue: AGENT_ROLE_LABELS[prop as keyof typeof AGENT_ROLE_LABELS] ?? prop });
+  },
+});
 
 /* ---- Primitive components ---- */
 

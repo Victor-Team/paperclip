@@ -552,6 +552,13 @@ describe("AuditFeed", () => {
     expect(container.textContent).toContain("Entity");
   });
 
+  it("uses locale-neutral ISO date text fields instead of browser-language date placeholders", async () => {
+    await render();
+    const dateFields = container.querySelectorAll<HTMLInputElement>('input[placeholder="YYYY-MM-DD"]');
+    expect(dateFields).toHaveLength(2);
+    expect([...dateFields].every((field) => field.type === "text" && field.inputMode === "numeric")).toBe(true);
+  });
+
   it("pins run and entity scopes into distinct audit requests", async () => {
     await render({ lockedRunId: "run-42" });
     expect(listAgentActionsMock.mock.calls[0]?.[1]).toEqual(
