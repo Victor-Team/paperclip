@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { issueCommentPresentationSchema } from "@paperclipai/shared";
+import {
+  issueCommentPresentationSchema,
+  type IssueCommentMetadata,
+} from "@paperclipai/shared";
 import {
   ENVIRONMENT_LEASE_ACQUIRED_ACTION,
   ENVIRONMENT_LEASE_RELEASED_ACTION,
@@ -40,7 +43,7 @@ const AGENT = {
   name: "CodexCoder",
 } as const;
 
-function keyValue(metadata: { sections: Array<{ rows: Array<Record<string, unknown>> }> }, label: string) {
+function keyValue(metadata: IssueCommentMetadata, label: string): string | undefined {
   for (const section of metadata.sections) {
     for (const row of section.rows) {
       if (row.type === "key_value" && row.label === label) return row.value;
