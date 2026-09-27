@@ -1,0 +1,80 @@
+{
+  "localInstance": "http://127.0.0.1:3221",
+  "browser": "Google Chrome",
+  "browserLocale": "en-US",
+  "organization": "B3 Recovery UI Test（本地测试数据）",
+  "issue": "BREAAAA-1（本地测试数据）",
+  "agent": "恢复测试智能体（手动暂停，未运行）",
+  "trigger": "本机恢复检查器因原分派对象手动暂停而生成自动恢复阻塞 notice；服务端真实生成，非浏览器注入",
+  "captures": [
+    {
+      "file": "B3-桌面-EN-折叠.png",
+      "locale": "en-US",
+      "viewport": "1440×900",
+      "state": "折叠",
+      "region": "任务详情活动流的系统恢复提示标题与相对时间"
+    },
+    {
+      "file": "B3-桌面-EN-展开.png",
+      "locale": "en-US",
+      "viewport": "1440×900",
+      "state": "展开",
+      "region": "恢复 notice 原始正文、metadata 分组/字段/值/下一步建议"
+    },
+    {
+      "file": "B3-桌面-简中-折叠.png",
+      "locale": "zh-CN（en-US 浏览器经账户菜单选择）",
+      "viewport": "1440×900",
+      "state": "折叠",
+      "region": "任务详情活动流的系统恢复提示标题与相对时间"
+    },
+    {
+      "file": "B3-桌面-简中-展开.png",
+      "locale": "zh-CN（en-US 浏览器经账户菜单选择）",
+      "viewport": "1440×900",
+      "state": "展开",
+      "region": "简中正文、metadata 分组/字段/面向人值；UUID 保持原值"
+    },
+    {
+      "viewport": "桌面",
+      "englishNoticeText": "Automatic recovery blocked\n· 17m ago\n\nPaperclip cannot safely continue automatic recovery because the original assignee is not invokable. The source assignment is unchanged and the board must choose the next action.\n\nRECOVERY\nRECOVERY ACTION\n19b8c55c-0eca-4023-a9ae-d56cfec2e095\nRECOVERY OWNER\nBoard decision required\nNEXT ACTION\nInspect the evidence, then retry the original owner, explicitly reassign, repair the execution path, or record an intentional resolution",
+      "chineseNoticeText": "自动恢复已阻止\n· 17 分钟前\n\nPaperclip 无法安全地继续自动恢复，因为原分派对象当前不可调用。原分派关系保持不变，董事会需要决定下一步操作。\n\n恢复处置\n恢复操作\n19b8c55c-0eca-4023-a9ae-d56cfec2e095\n恢复负责人\n需要董事会决定\n下一步操作\n检查证据，然后重试原负责人、明确改派、修复执行路径，或记录有意作出的处置。",
+      "forbiddenEnglishMatches": []
+    },
+    {
+      "file": "B3-窄屏-EN-折叠.png",
+      "locale": "en-US",
+      "viewport": "390×844",
+      "state": "折叠",
+      "region": "任务详情活动流的系统恢复提示标题与相对时间"
+    },
+    {
+      "file": "B3-窄屏-EN-展开.png",
+      "locale": "en-US",
+      "viewport": "390×844",
+      "state": "展开",
+      "region": "恢复 notice 原始正文、metadata 分组/字段/值/下一步建议"
+    },
+    {
+      "file": "B3-窄屏-简中-折叠.png",
+      "locale": "zh-CN（en-US 浏览器经账户菜单选择）",
+      "viewport": "390×844",
+      "state": "折叠",
+      "region": "任务详情活动流的系统恢复提示标题与相对时间"
+    },
+    {
+      "file": "B3-窄屏-简中-展开.png",
+      "locale": "zh-CN（en-US 浏览器经账户菜单选择）",
+      "viewport": "390×844",
+      "state": "展开",
+      "region": "简中正文、metadata 分组/字段/面向人值；UUID 保持原值"
+    },
+    {
+      "viewport": "窄屏",
+      "englishNoticeText": "Automatic recovery blocked\n· 17m ago\n\nPaperclip cannot safely continue automatic recovery because the original assignee is not invokable. The source assignment is unchanged and the board must choose the next action.\n\nRECOVERY\nRECOVERY ACTION\n19b8c55c-0eca-4023-a9ae-d56cfec2e095\nRECOVERY OWNER\nBoard decision required\nNEXT ACTION\nInspect the evidence, then retry the original owner, explicitly reassign, repair the execution path, or record an intentional resolution",
+      "chineseNoticeText": "自动恢复已阻止\n· 17 分钟前\n\nPaperclip 无法安全地继续自动恢复，因为原分派对象当前不可调用。原分派关系保持不变，董事会需要决定下一步操作。\n\n恢复处置\n恢复操作\n19b8c55c-0eca-4023-a9ae-d56cfec2e095\n恢复负责人\n需要董事会决定\n下一步操作\n检查证据，然后重试原负责人、明确改派、修复执行路径，或记录有意作出的处置。",
+      "forbiddenEnglishMatches": []
+    }
+  ],
+  "errors": []
+}
