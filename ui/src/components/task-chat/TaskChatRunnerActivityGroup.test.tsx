@@ -7,6 +7,7 @@ import { ThemeProvider } from "@/context/ThemeContext";
 import { MemoryRouter } from "@/lib/router";
 import { TaskChatRunnerActivityGroup } from "./TaskChatRunnerActivityGroup";
 import { TaskChatExpansionState } from "./expansion-state";
+import { i18n } from "@/i18n";
 import type {
   TaskChatActivityPhaseItem,
   TaskChatToolItem,
@@ -41,9 +42,10 @@ describe("TaskChatRunnerActivityGroup", () => {
     memory = new Map();
     motion.reduced = false;
   });
-  afterEach(() => {
+  afterEach(async () => {
     act(() => root.unmount());
     container.remove();
+    await i18n.changeLanguage("en");
   });
   const render = (
     items: TaskChatActivityPhaseItem["items"],
@@ -280,7 +282,7 @@ describe("TaskChatRunnerActivityGroup", () => {
     ).toBeNull();
   });
 
-  it("settles to a summary and can resume without losing the current activity", () => {
+  it("settles to an accessible English summary and can resume without losing the current activity", () => {
     const items = [tool("one", "failed"), tool("two", "completed")];
     render(items);
     expect(viewport().textContent).toContain("command-two");
@@ -289,7 +291,9 @@ describe("TaskChatRunnerActivityGroup", () => {
       container.querySelector('[data-testid="task-chat-activity-viewport"]'),
     ).toBeNull();
     expect(toggle().textContent).toBe("Ran commands");
-    expect(toggle().getAttribute("aria-label")).toContain("ran commands");
+    expect(toggle().getAttribute("aria-label")).toBe(
+      "Expand Ran commands (2 activities)",
+    );
     expect(container.textContent).not.toContain("command-two");
     act(() => toggle().click());
     expect(container.querySelectorAll("li")).toHaveLength(2);
@@ -297,6 +301,15 @@ describe("TaskChatRunnerActivityGroup", () => {
     act(() => toggle().click());
     render([...items, tool("three")]);
     expect(viewport().textContent).toContain("command-three");
+  });
+
+  it("localizes the completed command summary in Simplified Chinese", async () => {
+    await i18n.changeLanguage("zh-CN");
+    render([tool("one", "failed"), tool("two", "completed")], "history", false);
+    expect(toggle().textContent).toBe("已运行命令");
+    expect(toggle().getAttribute("aria-label")).toBe(
+      "展开 已运行命令 (2 项活动)",
+    );
   });
 
   it("replaces immediately with reduced motion", () => {

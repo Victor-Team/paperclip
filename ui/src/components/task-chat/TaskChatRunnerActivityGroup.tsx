@@ -30,6 +30,7 @@ type Activity = TaskChatActivityPhaseItem["items"][number];
 function localizedActivityLabel(label: string, t: (key: string, options?: Record<string, unknown>) => string): string {
   if (label === "Running a command") return t("taskChatRunnerActivity.runningCommand");
   if (label === "Read files, ran commands") return t("taskChatRunnerActivity.readAndRan");
+  if (label === "Ran commands") return t("taskChatRunnerActivity.ranCommands");
   return label;
 }
 

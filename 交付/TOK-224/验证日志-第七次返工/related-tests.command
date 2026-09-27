@@ -1,0 +1,1 @@
+pnpm exec vitest run --project @paperclipai/ui ui/src/components/task-chat/TaskChatRunnerActivityGroup.test.tsx ui/src/components/task-chat/TaskChatActivityPhase.test.tsx ui/src/components/task-chat/TaskChatProtocolActivityRow.test.tsx
