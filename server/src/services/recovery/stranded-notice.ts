@@ -28,32 +28,109 @@ export const DEFAULT_STRANDED_RECOVERY_NOTICE_BODY =
   "Paperclip could not restore a live execution path for this issue automatically. " +
   "Moving it to `blocked` so it is visible for intervention.";
 
-const DEFAULT_STRANDED_RECOVERY_NOTICE_TITLE = "Automatic recovery blocked";
+/** Default collapsed-card title. Locale mapping keys off this exact string. */
+export const DEFAULT_STRANDED_RECOVERY_NOTICE_TITLE = "Automatic recovery blocked";
 
-const STRANDED_RECOVERY_NOTICE_TITLES_BY_CAUSE: Record<string, string> = {
-  workspace_validation_failed: "Workspace validation failed",
-  configuration_incomplete: "Configuration incomplete",
-  execution_review_participant_recovery: "Review recovery stalled",
-};
+export const STRANDED_RECOVERY_TITLE_NO_LIVE_EXECUTION_PATH = "No live execution path";
+export const STRANDED_RECOVERY_TITLE_WORKSPACE_VALIDATION_FAILED = "Workspace validation failed";
+export const STRANDED_RECOVERY_TITLE_CONFIGURATION_INCOMPLETE = "Configuration incomplete";
+export const STRANDED_RECOVERY_TITLE_AI_CONNECTION_NEEDS_ATTENTION = "AI connection needs attention";
+export const STRANDED_RECOVERY_TITLE_REVIEW_RECOVERY_STALLED = "Review recovery stalled";
+export const STRANDED_RECOVERY_TITLE_PROVIDER_QUOTA = "Error: usage limit reached";
+export const STRANDED_RECOVERY_TITLE_CLAUDE_AUTH_REQUIRED = "Error: not logged in to Claude";
+export const STRANDED_RECOVERY_TITLE_ACPX_AUTH_REQUIRED = "Error: agent login required";
+
+export const STRANDED_RECOVERY_SECTION_RECOVERY = "Recovery";
+export const STRANDED_RECOVERY_SECTION_RUN_EVIDENCE = "Run evidence";
+
+export const STRANDED_RECOVERY_LABEL_RECOVERY_ACTION = "Recovery action";
+export const STRANDED_RECOVERY_LABEL_RECOVERY_OWNER = "Recovery owner";
+export const STRANDED_RECOVERY_LABEL_NEXT_ACTION = "Next action";
+export const STRANDED_RECOVERY_LABEL_SOURCE_RUN = "Source run";
+export const STRANDED_RECOVERY_LABEL_FAILURE_CODE = "Failure code";
+export const STRANDED_RECOVERY_LABEL_FAILURE_SUMMARY = "Failure summary";
+
+/** Sentinel value on Recovery owner when there is no invokable agent. */
+export const STRANDED_RECOVERY_BOARD_DECISION_REQUIRED = "Board decision required";
+
+export const STRANDED_RECOVERY_NEXT_ACTION_WHEN_OWNER_PRESENT =
+  "The recovery owner should either restore a live execution path or record the manual resolution on the source issue";
+export const STRANDED_RECOVERY_NEXT_ACTION_WHEN_BOARD_REQUIRED =
+  "Inspect the evidence, then retry the original owner, explicitly reassign, repair the execution path, or record an intentional resolution";
+
+export const STRANDED_RECOVERY_AI_CONNECTION_UNAVAILABLE_REASON = "ai_connection_unavailable";
+export const STRANDED_RECOVERY_AI_CONNECTION_NEXT_ACTION =
+  "Reconnect the selected AI account or choose an available connection, then continue the task.";
+export const STRANDED_RECOVERY_AI_CONNECTION_NOTICE_BODY =
+  "This task paused because its selected AI account is unavailable. Reconnect the account or choose an available connection to continue.";
+
+export const STRANDED_RECOVERY_NOTICE_TITLES_BY_CAUSE = {
+  workspace_validation_failed: STRANDED_RECOVERY_TITLE_WORKSPACE_VALIDATION_FAILED,
+  configuration_incomplete: STRANDED_RECOVERY_TITLE_CONFIGURATION_INCOMPLETE,
+  execution_review_participant_recovery: STRANDED_RECOVERY_TITLE_REVIEW_RECOVERY_STALLED,
+} as const;
 
 // Titles keyed by the source run's classified error code. The raw failure text
 // never reaches the issue thread (summarizeRunFailureForIssueComment withholds
 // it), so the classified code is the only safe, specific cause the collapsed
 // notice row can lead with. A mapped code outranks the seed titles because the
 // seeds describe the recovery family ("No live execution path"), not the cause.
-const STRANDED_RECOVERY_NOTICE_TITLES_BY_RUN_ERROR_CODE: Record<string, string> = {
-  provider_quota: "Error: usage limit reached",
-  claude_auth_required: "Error: not logged in to Claude",
-  acpx_auth_required: "Error: agent login required",
-};
+export const STRANDED_RECOVERY_NOTICE_TITLES_BY_RUN_ERROR_CODE = {
+  provider_quota: STRANDED_RECOVERY_TITLE_PROVIDER_QUOTA,
+  claude_auth_required: STRANDED_RECOVERY_TITLE_CLAUDE_AUTH_REQUIRED,
+  acpx_auth_required: STRANDED_RECOVERY_TITLE_ACPX_AUTH_REQUIRED,
+} as const;
 
-const WORKSPACE_SCAN_NOTICES: Record<string, { title: string; nextAction: string }> = {
-  workspace_git_scan_timeout: { title: "Workspace scan timed out", nextAction: "Check repository access and server load, then retry the task." },
-  workspace_git_scan_saturated: { title: "Workspace scan queue is full", nextAction: "Check server load and the workspace scan queue, then retry the task." },
-  workspace_git_scan_output_limit: { title: "Workspace scan exceeded its limit", nextAction: "Check the repository size and workspace scan output limit before retrying the task." },
-  workspace_git_scan_failed: { title: "Workspace scan failed", nextAction: "Inspect the failed run and check repository access and integrity before retrying the task." },
-  workspace_git_scan_cancelled: { title: "Workspace scan was cancelled", nextAction: "Inspect why workspace preparation was cancelled before retrying the task." },
-};
+export const WORKSPACE_SCAN_NOTICES = {
+  workspace_git_scan_timeout: {
+    title: "Workspace scan timed out",
+    nextAction: "Check repository access and server load, then retry the task.",
+  },
+  workspace_git_scan_saturated: {
+    title: "Workspace scan queue is full",
+    nextAction: "Check server load and the workspace scan queue, then retry the task.",
+  },
+  workspace_git_scan_output_limit: {
+    title: "Workspace scan exceeded its limit",
+    nextAction: "Check the repository size and workspace scan output limit before retrying the task.",
+  },
+  workspace_git_scan_failed: {
+    title: "Workspace scan failed",
+    nextAction: "Inspect the failed run and check repository access and integrity before retrying the task.",
+  },
+  workspace_git_scan_cancelled: {
+    title: "Workspace scan was cancelled",
+    nextAction: "Inspect why workspace preparation was cancelled before retrying the task.",
+  },
+} as const;
+
+export type WorkspaceScanErrorCode = keyof typeof WORKSPACE_SCAN_NOTICES;
+export type StrandedRecoveryCauseTitleKey = keyof typeof STRANDED_RECOVERY_NOTICE_TITLES_BY_CAUSE;
+export type StrandedRecoveryRunErrorTitleKey = keyof typeof STRANDED_RECOVERY_NOTICE_TITLES_BY_RUN_ERROR_CODE;
+
+export function workspaceScanNoticeForErrorCode(errorCode: string | null | undefined) {
+  if (!errorCode) return undefined;
+  if (errorCode in WORKSPACE_SCAN_NOTICES) {
+    return WORKSPACE_SCAN_NOTICES[errorCode as WorkspaceScanErrorCode];
+  }
+  return undefined;
+}
+
+function titleForRunErrorCode(errorCode: string | null | undefined) {
+  const code = errorCode?.trim() ?? "";
+  if (code in STRANDED_RECOVERY_NOTICE_TITLES_BY_RUN_ERROR_CODE) {
+    return STRANDED_RECOVERY_NOTICE_TITLES_BY_RUN_ERROR_CODE[code as StrandedRecoveryRunErrorTitleKey];
+  }
+  return undefined;
+}
+
+function titleForRecoveryCause(recoveryCause: string | null | undefined) {
+  if (!recoveryCause) return undefined;
+  if (recoveryCause in STRANDED_RECOVERY_NOTICE_TITLES_BY_CAUSE) {
+    return STRANDED_RECOVERY_NOTICE_TITLES_BY_CAUSE[recoveryCause as StrandedRecoveryCauseTitleKey];
+  }
+  return undefined;
+}
 
 export function buildImmediateExecutionPathRecoveryNoticeSeed(input: {
   status: "todo" | "in_progress";
@@ -65,7 +142,7 @@ export function buildImmediateExecutionPathRecoveryNoticeSeed(input: {
     body:
       `${retryDescription}, but it still has no live execution path. ` +
       "Moving it to `blocked` so it is visible for intervention.",
-    title: "No live execution path",
+    title: STRANDED_RECOVERY_TITLE_NO_LIVE_EXECUTION_PATH,
     tone: "danger",
   };
 }
@@ -75,7 +152,7 @@ export function buildWorkspaceValidationRecoveryNoticeSeed(): StrandedRecoveryNo
     body:
       "Paperclip stopped before launching the local adapter because the issue workspace failed validation. " +
       "Moving it to `blocked` so the workspace link, cwd, or git checkout can be repaired before resuming.",
-    title: "Workspace validation failed",
+    title: STRANDED_RECOVERY_TITLE_WORKSPACE_VALIDATION_FAILED,
     tone: "danger",
   };
 }
@@ -113,11 +190,11 @@ export function sandboxProviderPluginRemedy(pluginStatus: string): string {
 export function buildConfigurationIncompleteRecoveryNoticeSeed(
   configurationIncomplete?: Record<string, unknown> | null,
 ): StrandedRecoveryNoticeSeed {
-  if (readNonEmptyStringField(configurationIncomplete, "reason") === "ai_connection_unavailable") {
+  if (readNonEmptyStringField(configurationIncomplete, "reason") === STRANDED_RECOVERY_AI_CONNECTION_UNAVAILABLE_REASON) {
     return {
-      title: "AI connection needs attention",
-      body: "This task paused because its selected AI account is unavailable. Reconnect the account or choose an available connection to continue.",
-      nextAction: "Reconnect the selected AI account or choose an available connection, then continue the task.",
+      title: STRANDED_RECOVERY_TITLE_AI_CONNECTION_NEEDS_ATTENTION,
+      body: STRANDED_RECOVERY_AI_CONNECTION_NOTICE_BODY,
+      nextAction: STRANDED_RECOVERY_AI_CONNECTION_NEXT_ACTION,
       tone: "danger",
     };
   }
@@ -130,7 +207,7 @@ export function buildConfigurationIncompleteRecoveryNoticeSeed(
         `is in status \`${pluginStatus}\` and cannot lease a sandbox. Runs will keep failing the same way until the ` +
         `plugin is \`ready\` again. Moving it to \`blocked\` so an operator can ${sandboxProviderPluginRemedy(pluginStatus)} ` +
         "before resuming.",
-      title: "Configuration incomplete",
+      title: STRANDED_RECOVERY_TITLE_CONFIGURATION_INCOMPLETE,
       tone: "danger",
     };
   }
@@ -138,7 +215,7 @@ export function buildConfigurationIncompleteRecoveryNoticeSeed(
     body:
       "Paperclip stopped before dispatching the adapter because required secret/env bindings are missing. " +
       "Moving it to `blocked` so an operator can bind the missing secret(s) before resuming.",
-    title: "Configuration incomplete",
+    title: STRANDED_RECOVERY_TITLE_CONFIGURATION_INCOMPLETE,
     tone: "danger",
   };
 }
@@ -149,7 +226,7 @@ export function buildExecutionReviewParticipantRecoveryNoticeSeed(): StrandedRec
       "Paperclip retried the pending execution-review participant once, but the review stage still has no " +
       "completed decision or live reviewer run. Moving it to `blocked` so the board can inspect the evidence, repair the " +
       "reviewer runtime, restore the review stage, or record an intentional manual resolution.",
-    title: "Review recovery stalled",
+    title: STRANDED_RECOVERY_TITLE_REVIEW_RECOVERY_STALLED,
     tone: "danger",
   };
 }
@@ -161,7 +238,7 @@ export function buildExecutionReviewParticipantUnavailableNoticeSeed(): Stranded
       "invokable and the review stage has no completed decision or live reviewer run. Moving it to `blocked` " +
       "so the board can inspect the evidence, repair the reviewer runtime, restore the review stage, or record an " +
       "intentional manual resolution.",
-    title: "Review recovery stalled",
+    title: STRANDED_RECOVERY_TITLE_REVIEW_RECOVERY_STALLED,
     tone: "danger",
   };
 }
@@ -183,7 +260,7 @@ export function buildStrandedRecoveryEscalationNotice(input: {
     errorSummary?: string | null;
   } | null | undefined;
 }): StrandedRecoveryEscalationNotice {
-  const workspaceScan = WORKSPACE_SCAN_NOTICES[input.sourceRun?.errorCode ?? ""];
+  const workspaceScan = workspaceScanNoticeForErrorCode(input.sourceRun?.errorCode);
   const seed = workspaceScan ? {
     ...workspaceScan,
     body: `Paperclip could not prepare the workspace before the agent started. Automatic recovery could not continue. ${workspaceScan.nextAction}`,
@@ -192,39 +269,39 @@ export function buildStrandedRecoveryEscalationNotice(input: {
   const fallbackBody = input.fallbackBody?.trim();
   const body = seed?.body ?? (fallbackBody || DEFAULT_STRANDED_RECOVERY_NOTICE_BODY);
   const title =
-    STRANDED_RECOVERY_NOTICE_TITLES_BY_RUN_ERROR_CODE[input.sourceRun?.errorCode?.trim() ?? ""] ??
+    titleForRunErrorCode(input.sourceRun?.errorCode) ??
     seed?.title ??
-    STRANDED_RECOVERY_NOTICE_TITLES_BY_CAUSE[input.recoveryCause ?? ""] ??
+    titleForRecoveryCause(input.recoveryCause) ??
     DEFAULT_STRANDED_RECOVERY_NOTICE_TITLE;
 
   const recoveryRows: NoticeMetadataRow[] = [
-    keyValueRow("Recovery action", input.recoveryActionId),
+    keyValueRow(STRANDED_RECOVERY_LABEL_RECOVERY_ACTION, input.recoveryActionId),
     input.recoveryOwner
-      ? agentLinkRow("Recovery owner", input.recoveryOwner)
+      ? agentLinkRow(STRANDED_RECOVERY_LABEL_RECOVERY_OWNER, input.recoveryOwner)
       : keyValueRow(
-          "Recovery owner",
-          "Board decision required",
+          STRANDED_RECOVERY_LABEL_RECOVERY_OWNER,
+          STRANDED_RECOVERY_BOARD_DECISION_REQUIRED,
         ),
     keyValueRow(
-      "Next action",
+      STRANDED_RECOVERY_LABEL_NEXT_ACTION,
       seed?.nextAction ?? (input.recoveryOwner
-        ? "The recovery owner should either restore a live execution path or record the manual resolution on the source issue"
-        : "Inspect the evidence, then retry the original owner, explicitly reassign, repair the execution path, or record an intentional resolution"),
+        ? STRANDED_RECOVERY_NEXT_ACTION_WHEN_OWNER_PRESENT
+        : STRANDED_RECOVERY_NEXT_ACTION_WHEN_BOARD_REQUIRED),
     ),
   ];
 
   const runRows: NoticeMetadataRow[] = [];
   if (input.sourceRun) {
-    runRows.push(runLinkRow("Source run", input.sourceRun));
+    runRows.push(runLinkRow(STRANDED_RECOVERY_LABEL_SOURCE_RUN, input.sourceRun));
     const failureCode = input.sourceRun.errorCode?.trim();
-    if (failureCode) runRows.push(keyValueRow("Failure code", failureCode));
+    if (failureCode) runRows.push(keyValueRow(STRANDED_RECOVERY_LABEL_FAILURE_CODE, failureCode));
     const failureSummary = input.sourceRun.errorSummary?.trim();
-    if (failureSummary) runRows.push(keyValueRow("Failure summary", failureSummary));
+    if (failureSummary) runRows.push(keyValueRow(STRANDED_RECOVERY_LABEL_FAILURE_SUMMARY, failureSummary));
   }
 
   const sections: NoticeMetadataSection[] = [
-    { title: "Recovery", rows: recoveryRows },
-    ...(runRows.length > 0 ? [{ title: "Run evidence", rows: runRows }] : []),
+    { title: STRANDED_RECOVERY_SECTION_RECOVERY, rows: recoveryRows },
+    ...(runRows.length > 0 ? [{ title: STRANDED_RECOVERY_SECTION_RUN_EVIDENCE, rows: runRows }] : []),
   ];
 
   return {
