@@ -516,7 +516,7 @@ function renderRecoveryChip(
   const tone = RECOVERY_CHIP_DEFAULT_TONE[state];
   const Icon = tone.icon;
   const lineage = readRecoveryRetryLineage(action, liveness);
-  const label = recoveryChipLabel(state, action.kind, lineage);
+  const label = recoveryChipLabel(state, action.kind, lineage, (key, values) => t(key, values));
   const detail = lineage ? formatRecoveryLineageSummary(lineage) : null;
   return (
     <Badge variant="outline"

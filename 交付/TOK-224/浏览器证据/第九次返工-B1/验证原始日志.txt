@@ -1,0 +1,48 @@
+$ pnpm --filter @paperclipai/ui exec vitest run src/pages/agent-detail-presentation.test.ts src/lib/recovery-display.test.ts src/pages/agent-detail-navigation.test.ts
+[WARN] The "pnpm" field in package.json is no longer read by pnpm. The following keys were ignored: "pnpm.patchedDependencies", "pnpm.overrides". See https://pnpm.io/settings for the new home of each setting.
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - `__dirname` (vitest.config.ts:7:25). Use `import.meta.dirname` instead
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+
+ RUN  v4.1.11 /home/yuanjian/dev/ANC-tok-224-ui/ui
+
+(node:3483838) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:3483837) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:3483836) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+ Test Files  3 passed (3)
+      Tests  42 passed (42)
+   Start at  21:43:48
+   Duration  1.15s (transform 788ms, setup 55ms, import 1.16s, tests 13ms, environment 0ms)
+
+EXIT_CODE=0
+
+$ pnpm --filter @paperclipai/ui typecheck
+[WARN] The "pnpm" field in package.json is no longer read by pnpm. The following keys were ignored: "pnpm.patchedDependencies", "pnpm.overrides". See https://pnpm.io/settings for the new home of each setting.
+
+> @paperclipai/ui@0.3.1 typecheck /home/yuanjian/dev/ANC-tok-224-ui/ui
+> tsc -b
+
+EXIT_CODE=0
+
+$ 40-locale JSON leaf-key shape check
+{"files":40,"leaves":8305,"mismatches":[]}
+EXIT_CODE=0
+
+$ git diff --check
+EXIT_CODE=0
+
+$ pnpm --filter @paperclipai/ui build
+✓ built in 3.23s
+EXIT_CODE=0
+
+$ browser: node "$PAPERCLIP_RUN_SCRATCH_DIR/b1-browser/capture-b1.mjs"
+{"localStorageLocale":"zh-CN","chinese":{"latestRun":true,"succeeded":true,"recoveryNeeded":true,"noLatestRunEnglish":true,"noSucceededEnglish":true,"noRecoveryEnglish":true,"invocationSource":true},"englishModeRestored":{"latestRun":true,"succeeded":true,"recoveryNeeded":true},"errors":[],"failedResponses":[]}
+EXIT_CODE=0
+交付/TOK-224/浏览器证据/第九次返工-B1/B1-智能体详情-桌面-简中.png: PNG image data, 1440 x 900, 8-bit/color RGB, non-interlaced
+交付/TOK-224/浏览器证据/第九次返工-B1/B1-智能体详情-桌面-英文.png: PNG image data, 1440 x 900, 8-bit/color RGB, non-interlaced
+交付/TOK-224/浏览器证据/第九次返工-B1/B1-智能体详情-窄屏-简中.png: PNG image data, 390 x 1499, 8-bit/color RGB, non-interlaced
+交付/TOK-224/浏览器证据/第九次返工-B1/B1-智能体详情-窄屏-英文.png: PNG image data, 390 x 1499, 8-bit/color RGB, non-interlaced
