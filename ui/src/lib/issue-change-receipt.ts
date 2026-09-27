@@ -1,5 +1,6 @@
 import type { IssueChangeReceiptEntry } from "@paperclipai/shared";
 import { formatReviewPolicyValue } from "./review-policy";
+import { t } from "@/i18n";
 
 /**
  * Read + format the field-level change receipts carried on an `issue.updated`
@@ -17,6 +18,7 @@ import { formatReviewPolicyValue } from "./review-policy";
 
 /** Field names whose raw ids carry no meaning in a scannable summary. */
 const FIELD_LABELS: Record<string, string> = {
+  status: "Status",
   assigneeAgentId: "Assignee",
   assigneeUserId: "Assignee (user)",
   responsibleUserId: "Responsible user",
@@ -39,12 +41,13 @@ const FIELD_LABELS: Record<string, string> = {
   executionPolicy: "Execution policy",
   executionWorkspaceId: "Execution workspace",
   projectWorkspaceId: "Project workspace",
+  statusVersion: "Status version",
 };
 
 /** Human label for a changed field, e.g. `assigneeAgentId` → "Assignee". */
 export function issueChangeFieldLabel(field: string): string {
   const known = FIELD_LABELS[field];
-  if (known) return known;
+  if (known) return t(`tok225.field_${field}`, { defaultValue: known });
   // camelCase / snake_case → "Sentence case".
   const spaced = field
     .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
@@ -69,24 +72,24 @@ export function formatIssueChangeValue(
   // `reviewPolicy` is nullable-by-default: a cleared column means "anyone can
   // approve", not "no value" (PAP-16506), so it resolves before the null branch.
   if (options.field === "reviewPolicy") return formatReviewPolicyValue(value);
-  if (value === null || value === undefined || value === "") return "none";
-  if (typeof value === "boolean") return value ? "yes" : "no";
+  if (value === null || value === undefined || value === "") return t("tok225.none");
+  if (typeof value === "boolean") return value ? t("tok225.yes") : t("tok225.no");
   if (typeof value === "number") return String(value);
 
   if (Array.isArray(value)) {
-    if (value.length === 0) return "none";
+    if (value.length === 0) return t("tok225.none");
     const strings = value.filter((entry): entry is string => typeof entry === "string");
-    if (strings.length !== value.length) return `${value.length} items`;
+    if (strings.length !== value.length) return t("tok225.item_count", { count: value.length });
     return strings.length <= 3
       ? strings.map((id) => shortenId(id)).join(", ")
-      : `${strings.length} items`;
+      : t("tok225.item_count", { count: strings.length });
   }
 
   if (value instanceof Date) return value.toLocaleString();
 
   if (typeof value === "string") {
     const trimmed = value.trim();
-    if (!trimmed) return "none";
+    if (!trimmed) return t("tok225.none");
     // Ids resolve to names when the directory is loaded; otherwise they shorten.
     const resolved = options.field?.toLowerCase().includes("agent")
       ? options.resolveAgentLabel?.(trimmed)
@@ -96,13 +99,15 @@ export function formatIssueChangeValue(
     if (resolved) return resolved;
     if (isIsoTimestamp(trimmed)) return new Date(trimmed).toLocaleString();
     if (looksLikeId(trimmed)) return shortenId(trimmed);
-    const humanized = trimmed.includes(" ") ? trimmed : trimmed.replace(/_/g, " ");
+    const humanized = ["backlog", "todo", "in_progress", "in_review", "blocked", "done", "cancelled"].includes(trimmed)
+      ? t(`tok225.status_${trimmed}`)
+      : trimmed.includes(" ") ? trimmed : trimmed.replace(/_/g, " ");
     return truncate(humanized);
   }
 
   // Objects (execution policy, workspace settings) are structural — the receipt
   // records that they moved, and the audit log holds the full value.
-  return "updated";
+  return t("tok225.updated");
 }
 
 function truncate(value: string): string {
@@ -186,5 +191,6 @@ const AUTHORIZATION_REASON_LABELS: Record<string, string> = {
 export function issueAuthorizationReasonLabel(reason: string | null | undefined): string | null {
   const trimmed = reason?.trim();
   if (!trimmed) return null;
-  return AUTHORIZATION_REASON_LABELS[trimmed] ?? trimmed.replace(/_/g, " ");
+  const known = AUTHORIZATION_REASON_LABELS[trimmed];
+  return known ? t(`tok225.authorization_${trimmed}`, { defaultValue: known }) : trimmed.replace(/_/g, " ");
 }

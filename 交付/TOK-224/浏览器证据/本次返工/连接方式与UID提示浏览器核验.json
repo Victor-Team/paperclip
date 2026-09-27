@@ -1,0 +1,72 @@
+{
+  "browser": "Google Chrome headless, browser language en-US",
+  "viewports": [
+    "1440x900",
+    "390x844"
+  ],
+  "languageSwitch": "Selected Simplified Chinese and English from account menu Language selector",
+  "routes": {
+    "connectionMethods": "/CMP/apps/connect?source=posthog&method=mcp-api-key&stage=setup",
+    "vercelSetup": "/CMP/apps/vercel-connect?source=posthog&method=mcp-api-key&stage=setup"
+  },
+  "localizedMethodLabels": {
+    "sourceValues": [
+      "Sign in with PostHog",
+      "Use a personal API key"
+    ],
+    "zhRendered": [
+      "使用 PostHog 登录",
+      "使用个人 API 密钥"
+    ],
+    "englishRetained": true
+  },
+  "vercelPlaceholder": {
+    "zh": "service/my-connector 或 scl_…",
+    "en": "service/my-connector or scl_…"
+  },
+  "fixtureInjection": [
+    {
+      "url": "http://127.0.0.1:3207/api/companies/f69d1eb3-ab42-4358-938c-2fb594a04db7/tools/gallery",
+      "status": 200,
+      "field": "credentialSources.vercelConnect",
+      "values": {
+        "available": true,
+        "enabled": true,
+        "authentication": "workload_oidc",
+        "manageUrl": "https://vercel.com/connect"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:3207/api/companies/f69d1eb3-ab42-4358-938c-2fb594a04db7/tools/gallery",
+      "status": 200,
+      "field": "credentialSources.vercelConnect",
+      "values": {
+        "available": true,
+        "enabled": true,
+        "authentication": "workload_oidc",
+        "manageUrl": "https://vercel.com/connect"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:3207/api/companies/f69d1eb3-ab42-4358-938c-2fb594a04db7/tools/gallery",
+      "status": 200,
+      "field": "credentialSources.vercelConnect",
+      "values": {
+        "available": true,
+        "enabled": true,
+        "authentication": "workload_oidc",
+        "manageUrl": "https://vercel.com/connect"
+      }
+    }
+  ],
+  "firstRunOverlay": "No overlay was present after creating a local test company; no model credentials were configured or used.",
+  "pageErrors": [],
+  "consoleErrors": [],
+  "catalogMethodAudit": {
+    "connectableDefinitions": 72,
+    "signInWithProviderLabels": 34,
+    "personalApiKeyLabels": 1,
+    "genericApiKeyLabels": 13,
+    "displayMappedLabels": "sign-in-with-provider and both API key label families"
+  }
+}

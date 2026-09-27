@@ -15,6 +15,7 @@ import type {
   TaskChatTurnChildItem,
   TaskChatTurnItem,
 } from "./task-chat-model";
+import { i18n } from "@/i18n";
 
 const tool = (
   id: string,
@@ -141,7 +142,8 @@ describe("TaskChatTurn", () => {
     root = createRoot(container);
   });
 
-  afterEach(() => {
+  afterEach(async () => {
+    await i18n.changeLanguage("en");
     flushSync(() => root.unmount());
     container.remove();
   });
@@ -212,6 +214,21 @@ describe("TaskChatTurn", () => {
     expect(summaryBtn()?.compareDocumentPosition(timeline!)).toBe(
       Node.DOCUMENT_POSITION_FOLLOWING,
     );
+  });
+
+  it("localizes settled status, duration, tools, and token usage in Simplified Chinese", async () => {
+    await i18n.changeLanguage("zh-CN");
+    renderTurn({
+      ...SETTLED,
+      standaloneHeader: true,
+    });
+    expect(summaryBtn()?.textContent).toContain("已处理 用时 38 秒");
+    flushSync(() => root.unmount());
+    root = createRoot(container);
+    renderTurn(SETTLED);
+    expect(summaryBtn()?.textContent).toContain("3 个工具");
+    expect(summaryBtn()?.textContent).toContain("12.3k 个令牌");
+    await i18n.changeLanguage("en");
   });
 
   it("labels a later segment as a continuation of the steered run", () => {

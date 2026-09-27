@@ -1,5 +1,6 @@
 import { getPageVisibility, getVisibilityHeaderValue } from "@/lib/page-visibility";
 import { tenantSessionRecovery } from "@/lib/tenant-session-recovery";
+import { i18n } from "@/i18n";
 
 const BASE = "/api";
 
@@ -49,18 +50,25 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     headers.set("Content-Type", "application/json");
   }
   applyObservabilityHeaders(headers);
+  headers.set("X-Paperclip-Locale", i18n.language);
 
-  const res = await fetch(`${BASE}${path}`, {
-    headers,
-    credentials: "include",
-    ...init,
-  });
+  let res: Response;
+  try {
+    res = await fetch(`${BASE}${path}`, {
+      credentials: "include",
+      ...init,
+      headers,
+    });
+  } catch (error) {
+    if (error instanceof TypeError) throw new Error(i18n.t("tok225.networkFailed"), { cause: error });
+    throw error;
+  }
   if (!res.ok) {
     const errorBody = await res.json().catch(() => null);
     const recovery = tenantSessionRecovery.recoverIfNeeded(res.status, errorBody);
     if (recovery) return recovery;
     throw new ApiError(
-      (errorBody as { error?: string } | null)?.error ?? `Request failed: ${res.status}`,
+      (errorBody as { error?: string } | null)?.error ?? i18n.t("tok225.requestFailed", { status: res.status }),
       res.status,
       errorBody,
     );
@@ -84,11 +92,16 @@ interface InflightGet {
 
 const inflightGets = new Map<string, InflightGet>();
 
+function getCoalescingKey(path: string): string {
+  return JSON.stringify([path, i18n.language]);
+}
+
 function coalescedGet<T>(path: string, options?: RequestOptions): Promise<T> {
   const signal = options?.signal;
   if (signal?.aborted) return Promise.reject(abortError());
 
-  let entry = inflightGets.get(path);
+  const key = getCoalescingKey(path);
+  let entry = inflightGets.get(key);
   if (!entry) {
     const controller = new AbortController();
     const promise = request<T>(path, {
@@ -100,13 +113,13 @@ function coalescedGet<T>(path: string, options?: RequestOptions): Promise<T> {
     // Clear the shared entry once settled so later calls issue a fresh request.
     promise.then(
       () => {
-        if (inflightGets.get(path) === created) inflightGets.delete(path);
+        if (inflightGets.get(key) === created) inflightGets.delete(key);
       },
       () => {
-        if (inflightGets.get(path) === created) inflightGets.delete(path);
+        if (inflightGets.get(key) === created) inflightGets.delete(key);
       },
     );
-    inflightGets.set(path, created);
+    inflightGets.set(key, created);
     entry = created;
   }
 
@@ -117,8 +130,8 @@ function coalescedGet<T>(path: string, options?: RequestOptions): Promise<T> {
   const releaseRef = () => {
     if (!activeEntry.refs.delete(ref)) return;
     // Last caller gone before the fetch settled → abort the shared request.
-    if (activeEntry.refs.size === 0 && inflightGets.get(path) === activeEntry) {
-      inflightGets.delete(path);
+    if (activeEntry.refs.size === 0 && inflightGets.get(key) === activeEntry) {
+      inflightGets.delete(key);
       activeEntry.controller.abort();
     }
   };
@@ -149,14 +162,16 @@ function coalescedGet<T>(path: string, options?: RequestOptions): Promise<T> {
 /**
  * Stop later callers from joining the in-flight GET for `path`.
  *
- * Coalescing keys on the path alone, so a GET issued under one account's session
+ * Coalescing keys on the path and locale, so a GET issued under one account's session
  * can be joined by a caller that runs after the account changed — and handed the
  * previous account's response. Detaching leaves that request to settle for the
  * callers that asked for it, and makes the next call issue a fresh one. It does
  * not abort, because those callers still want what they asked for.
  */
 export function detachInflightGet(path: string): void {
-  inflightGets.delete(path);
+  for (const key of inflightGets.keys()) {
+    if (JSON.parse(key)[0] === path) inflightGets.delete(key);
+  }
 }
 
 /** Test-only: number of in-flight coalesced GET keys. */

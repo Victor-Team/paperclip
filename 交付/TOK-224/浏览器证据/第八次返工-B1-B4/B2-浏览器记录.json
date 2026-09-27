@@ -1,0 +1,17 @@
+{
+  "route": "/issues/TOKAAAAA-1",
+  "viewports": [
+    "1440×900",
+    "390×844"
+  ],
+  "browserLanguage": "en-US",
+  "accountLanguageSwitch": "account menu → Language zh-CN; restored English",
+  "fixture": "A synthetic heartbeat run held at status=running in browser responses only; no database mutation or run started.",
+  "assertions": {
+    "runningZh": true,
+    "runningEnglishRestore": true
+  },
+  "runResponses": 6,
+  "errors": [],
+  "completedAndStoppedEvidence": "Stopped state is recorded in B2-停止态浏览器记录.json; completed work summary is visible in B3 system notice screenshots. No separate completed run fixture was claimed."
+}

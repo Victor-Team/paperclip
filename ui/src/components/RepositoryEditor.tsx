@@ -5,7 +5,7 @@ import { GithubIcon } from "./icons/github-icon";
 import { SearchableSelect } from "./SearchableSelect";
 import { Button } from "./ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-import { useTranslation } from "@/i18n";
+import { t, useTranslation } from "@/i18n";
 
 function RepoRow({ repo, onRemove }: { repo: ProjectRepository; onRemove: () => void }) {
   const { t } = useTranslation();
@@ -19,7 +19,7 @@ function RepoRow({ repo, onRemove }: { repo: ProjectRepository; onRemove: () => 
         </span>}
       </div>
       {repo.private && <LockKeyhole className="size-3 shrink-0 text-muted-foreground" aria-label={t("repositoryeditor.general.privaterepository")} />}
-      <Button type="button" variant="ghost" size="icon-sm" aria-label={`Remove ${repo.fullName}`} onClick={onRemove}><X className="size-4" /></Button>
+      <Button type="button" variant="ghost" size="icon-sm" aria-label={t("repositoryEditor.remove", { name: repo.fullName })} onClick={onRemove}><X className="size-4" /></Button>
     </div>
   );
 }
@@ -45,7 +45,7 @@ export function RepositoryEditor({ selected, onChange, state = "ready", availabl
     searchText: repo.connections.join(" "), repo,
   }));
   const addClassName = selected.length ? "self-start" : "h-24 w-full flex-col gap-2";
-  const addLabel = selected.length ? "Add another repo" : "Add GitHub repo";
+  const addLabel = selected.length ? t("repositoryEditor.addAnother") : t("repositoryEditor.addGithub");
   return (
     <fieldset disabled={disabled} className="flex min-w-0 flex-col gap-3">
       <div className="flex items-baseline gap-2"><span className="text-sm font-medium">{t("repositoryeditor.general.sourcerepos")}</span><span className="text-xs text-muted-foreground">{t("repositoryeditor.general.optional")}</span></div>
@@ -64,11 +64,11 @@ export function RepositoryEditor({ selected, onChange, state = "ready", availabl
       ) : showPicker ? (
         <div ref={picker} className="flex flex-col gap-2">
           <SearchableSelect<string, (typeof options)[number]>
-            value="" groups={[{ id: "available", label: "Available GitHub repos", options }]}
-            placeholder={addLabel} searchPlaceholder="Search GitHub repos…"
+            value="" groups={[{ id: "available", label: t("repositoryEditor.available"), options }]}
+            placeholder={addLabel} searchPlaceholder={t("repositoryEditor.search")}
             contentClassName="max-h-(--radix-popover-content-available-height) overflow-hidden [&_[data-slot=command]]:max-h-(--radix-popover-content-available-height) [&_[data-slot=command-list]]:min-h-0 [&_[data-slot=command-list]]:flex-1 [&_[data-slot=command-input-wrapper]]:shrink-0"
-            loading={state === "loading"} loadingMessage="Loading GitHub repos…"
-            emptyMessage={state === "error" ? "Couldn’t load GitHub repos. Try again." : state === "empty" ? "No repos available. Connect an account with repo access." : "No matching repos. Try another search or connection."}
+            loading={state === "loading"} loadingMessage={t("repositoryEditor.loading")}
+            emptyMessage={state === "error" ? "Couldn’t load GitHub repos. Try again." : state === "empty" ? t("repositoryEditor.none") : t("repositoryEditor.noMatch")}
             renderValue={() => <span className="flex items-center gap-2 text-foreground"><GithubIcon className="size-4" />{addLabel}</span>}
             renderOption={({ repo }) => <><GitBranch className="size-4 shrink-0 text-muted-foreground" /><span className="flex min-w-0 flex-1 flex-col gap-1"><span className="truncate">{repo.fullName}</span><span className="truncate text-xs text-muted-foreground">{repo.connections.join(" · ")}</span></span>{repo.private && <LockKeyhole className="size-3 shrink-0 text-muted-foreground" />}</>}
             onValueChange={(_, option) => { onChange([...selected, option.repo]); setShowPicker(false); }}

@@ -332,7 +332,7 @@ export function CommandPalette() {
               }}
             >
               <FileCode2 className="mr-2 h-4 w-4" />
-              {t("commandpalette.general.openfileinthisissue")}<span className="ml-auto text-xs text-muted-foreground">{t("commandpalette.general.gf")}</span>
+              {t("tok224.openFileInTask")}<span className="ml-auto text-xs text-muted-foreground">{t("commandpalette.general.gf")}</span>
             </CommandItem>
           )}
           <CommandItem

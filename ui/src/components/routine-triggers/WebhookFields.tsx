@@ -3,7 +3,7 @@ import { Check, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { copyTextToClipboard } from "@/lib/clipboard";
-import { useTranslation } from "@/i18n";
+import { t, useTranslation } from "@/i18n";
 
 export function CopyField({
   label,
@@ -27,7 +27,7 @@ export function CopyField({
         <Button
           variant="ghost"
           size="sm"
-          aria-label={`Copy ${label}`}
+          aria-label={t("tok225.copy_named_field", { label: label })}
           onClick={async () => {
             try {
               await copyTextToClipboard(value);

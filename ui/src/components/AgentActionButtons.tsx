@@ -48,12 +48,12 @@ import type {
   AgentInstructionsFileSummary,
   HeartbeatRun,
 } from "@paperclipai/shared";
-import { useTranslation } from "@/i18n";
+import { t, useTranslation } from "@/i18n";
 
 export function RunButton({
   onClick,
   disabled,
-  label = "Run now",
+  label = t("tok225review.agentRunNow"),
   size = "sm",
 }: {
   onClick: () => void;
@@ -162,8 +162,8 @@ export function AgentActionButtons({
   agent,
   companyId,
   size = "sm",
-  assignLabel = "Assign Task",
-  runLabel = "Run now",
+  assignLabel = t("tok225review.agentAssignTask"),
+  runLabel = t("tok225review.agentRunNow"),
   showStatus = true,
   showRun = true,
   actionsDisabled = false,

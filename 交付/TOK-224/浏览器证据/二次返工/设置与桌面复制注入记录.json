@@ -1,0 +1,506 @@
+[
+  {
+    "kind": "设置正常",
+    "breakpoint": "桌面",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "url": "http://127.0.0.1:3204/CMP/company/settings/instance/experimental",
+    "requests": [
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      }
+    ],
+    "pageErrors": [],
+    "visibleText": "跳转到主要内容\n返回应用\n常规\n个人资料\n成员\n机密\n环境\n访问权限\n导出\n导入\n实验性功能\n插件\n适配器\nBO\nBoard\n设置\n实验设置\n实验设置\n\n选择启用仍在评估中的功能。\n\n实验功能可能随时失效。\n\n这些功能需要手动启用，且不保证兼容性。它们可能随时更改、失效或移除。请勿用于关键或生产流程。\n\n实验功能\n\n仍在评估中的可选产品功能。\n\n智能体聊天\n\n与每位智能体持续对话，明确目标并创建执行任务。\n\n关闭后保留对话并允许当前运行完成，但不能发送新消息。\n\n测试版技能\n\n允许智能体固定使用 Paperclip 核心技能的测试版。关闭后恢复默认正式版，但保留已保存的固定版本。\n\n内置智能体\n\n显示 Paperclip 管理的内置智能体界面，包括名单标记、内置智能体页签和配置控件。\n\n案例\n\n任务创建并持续修改的可留存产物，如博客文章。启用案例页签和智能体案例接口。\n\n关闭后隐藏案例页签并停用案例接口，现有数据保留。\n\n聊天连接器\n\n将智能体连接到 Slack、GitHub、Discord、Microsoft Teams 和 Telegram 对话。\n\n关闭后隐藏聊天配置、频道和关联任务控件。现有聊天连接继续运行，GitHub 等工具连接器仍可用。\n\n待决事项\n\n在主侧栏显示待决事项，集中列出等待您输入的任务。\n\n启用环境\n\n在公司设置中显示环境管理，并允许为项目和智能体分配环境。\n\n启用外部对象\n\n识别任务中的外部链接，并显示拉取请求、工单等关联对象的处理状态。\n\n启用隔离工作区\n\n在项目配置中显示执行工作区控件，允许新旧任务运行使用隔离工作区。\n\n实验性文件查看器\n\n在任务详情中显示工作区文件浏览和预览控件。\n\n首个任务：先提交方案文档\n\n当用户的首次请求是单个任务时，幕僚长提交简短方案文档和勾选卡，而非单张确认卡。仅适用于启用后创建的组织。\n\nMCP 聚合器\n\n通过 MCP 服务器连接 Zapier、Arcade、Composio Connect 和 Executor。\n\n关闭后隐藏这些连接器的配置，现有 MCP 连接继续运行。\n\nPaperclip Runner\n\n允许新的 Codex 智能体选择实验性 Rust 版 Paperclip Runner；沙箱需要时使用已认证的运行入口。引导流程仍使用旧适配器。关闭后仅隐藏选项，不影响现有原生运行。\n\n简明英语互动\n\n要求智能体按 ASD-STE100 简明技术英语编写面向用户的方案确认、提问、任务建议和勾选提示，并简述决策所需信息及各选项后果。\n\n状态卡\n\n启用实验性的共享状态卡看板及受控接口。关闭后保留现有卡片数据。\n\n启用状态卡时也会启用摘要。\n\n精简界面\n\n使用精简的主侧栏、统一的任务与收件箱展示、聚焦任务详情布局，以及智能体、例程、技能和设置间的关联导航。\n\n关闭后恢复旧版外壳与导航，任务和页面数据不变。\n\n摘要\n\n在项目和工作区页面显示摘要器生成的状态摘要，并支持按需刷新和版本历史。关闭后保留现有摘要数据。\n\n状态卡需要摘要。关闭摘要也会关闭状态卡。\n\nPaperclip 开发者模式\n\n用于开发、测试和调试 Paperclip 的内部工具。\n\n空闲时自动重启开发服务器\n\n在 pnpm dev:once 模式下，等待排队和运行中的本地智能体结束；后端更改或迁移使当前服务过期时自动重启。\n\n仅使用托管环境\n\n隐藏本地环境，所有智能体均在平台托管环境中运行。\n\nPaperclip 开发者模式\n\n显示 Paperclip 维护工具和可观测性链接，包括运行页面的 Honeycomb 追踪查询。\n\n服务器信息调试视图\n\n在账户抽屉中显示服务器信息，包括最近重启时间和当前提交。\n\n冒烟实验室\n\n在应用的开发者区添加冒烟实验室页签，并在仪表盘添加集成冒烟卡，用固定本地数据验证各集成路径。仅供非公开部署使用。\n\n任务方案拆解\n\n在任务详情中显示已接受方案的拆解历史，用于调试和验证子任务创建。\n\n旧版功能\n\n这些功能将被移除。\n\n经典任务界面\n\n恢复旧版任务详情：页头、行内描述编辑、普通评论串和固定属性栏。聊天专属的活动折叠、行内方案与问题卡、三模式输入框在经典界面不可用。\n\n切换立即生效，不影响任务数据。\n\n目标侧栏入口\n\n在目标功能评估期间恢复主侧栏的目标入口。\n\n命令面板\n\n搜索要运行的命令...",
+    "screenshot": "设置正常-桌面.png"
+  },
+  {
+    "kind": "设置权限拒绝",
+    "breakpoint": "桌面",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "url": "http://127.0.0.1:3204/CMP/company/settings/instance/experimental",
+    "requests": [
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      }
+    ],
+    "pageErrors": [],
+    "visibleText": "跳转到主要内容\n返回应用\n常规\n个人资料\n成员\n机密\n环境\n访问权限\n导出\n导入\n实验性功能\n插件\n适配器\nBO\nBoard\n设置\n实验设置\n没有权限查看实验设置\n命令面板\n\n搜索要运行的命令...",
+    "screenshot": "设置权限拒绝-桌面.png"
+  },
+  {
+    "kind": "设置服务端错误",
+    "breakpoint": "桌面",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "url": "http://127.0.0.1:3204/CMP/company/settings/instance/experimental",
+    "requests": [
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      }
+    ],
+    "pageErrors": [],
+    "visibleText": "跳转到主要内容\n返回应用\n常规\n个人资料\n成员\n机密\n环境\n访问权限\n导出\n导入\n实验性功能\n插件\n适配器\nBO\nBoard\n设置\n实验设置\n服务暂时不可用\n命令面板\n\n搜索要运行的命令...",
+    "screenshot": "设置服务端错误-桌面.png"
+  },
+  {
+    "kind": "设置非JSON错误",
+    "breakpoint": "桌面",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "url": "http://127.0.0.1:3204/CMP/company/settings/instance/experimental",
+    "requests": [
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      }
+    ],
+    "pageErrors": [],
+    "visibleText": "跳转到主要内容\n返回应用\n常规\n个人资料\n成员\n机密\n环境\n访问权限\n导出\n导入\n实验性功能\n插件\n适配器\nBO\nBoard\n设置\n实验设置\n请求失败：502\n命令面板\n\n搜索要运行的命令...",
+    "screenshot": "设置非JSON错误-桌面.png"
+  },
+  {
+    "kind": "设置网络错误",
+    "breakpoint": "桌面",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "url": "http://127.0.0.1:3204/CMP/company/settings/instance/experimental",
+    "requests": [
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      }
+    ],
+    "pageErrors": [],
+    "visibleText": "跳转到主要内容\n返回应用\n常规\n个人资料\n成员\n机密\n环境\n访问权限\n导出\n导入\n实验性功能\n插件\n适配器\nBO\nBoard\n设置\n实验设置\n网络请求失败，请检查连接后重试。\n命令面板\n\n搜索要运行的命令...",
+    "screenshot": "设置网络错误-桌面.png"
+  },
+  {
+    "kind": "任务复制成功",
+    "breakpoint": "桌面",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "url": "http://127.0.0.1:3204/CMP/issues/CMP-1",
+    "requests": [
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      }
+    ],
+    "pageErrors": [],
+    "visibleText": "跳转到主要内容\n汉\n汉化二次返工测试组织\n新建任务\n搜索\n仪表盘\n收件箱\n工作\n任务\n项目\n例程\n产物\n公司\n智能体\n技能\n连接器\n审计\n最近任务\n汉化错误态测试任务\nBO\nBoard\n任务\n汉化错误态测试任务\nCMP-1\n汉化错误态测试任务\nCMP-1\n无项目\nBO\n\n仅用于本机浏览器验证。\n\n1:06\n\n\n\n\n给智能体发消息，说明要完成的工作…\n\n自动模式\n未分配\n属性\n工作\n状态\n待处理\n指派人\n未分配\n项目\n无\n标签\n无\n关联关系\n父级\n无\n被阻塞于\n无\n阻塞项\n无\n子任务\n无\n执行\n审核人\n无\n批准人\n无\n监控\n无\n看门狗\n无\n关于\n来源\nBO\nBoard\n已创建\n2026年9月26日 1:06\n已更新\n9 分钟前\n命令面板\n\n搜索要运行的命令...\n\n已复制到剪贴板",
+    "screenshot": "任务复制成功-桌面.png"
+  },
+  {
+    "kind": "设置正常",
+    "breakpoint": "窄屏",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "url": "http://127.0.0.1:3204/CMP/company/settings/instance/experimental",
+    "requests": [
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      }
+    ],
+    "pageErrors": [],
+    "visibleText": "跳转到主要内容\n返回应用\n常规\n个人资料\n成员\n机密\n环境\n访问权限\n导出\n导入\n实验性功能\n插件\n适配器\nBO\nBoard\n设置\n实验设置\n常规\n导出\n导入\n成员\n机密\n个人资料\n环境\n访问权限\n实验性功能\n插件\n适配器\n实验设置\n\n选择启用仍在评估中的功能。\n\n实验功能可能随时失效。\n\n这些功能需要手动启用，且不保证兼容性。它们可能随时更改、失效或移除。请勿用于关键或生产流程。\n\n实验功能\n\n仍在评估中的可选产品功能。\n\n智能体聊天\n\n与每位智能体持续对话，明确目标并创建执行任务。\n\n关闭后保留对话并允许当前运行完成，但不能发送新消息。\n\n测试版技能\n\n允许智能体固定使用 Paperclip 核心技能的测试版。关闭后恢复默认正式版，但保留已保存的固定版本。\n\n内置智能体\n\n显示 Paperclip 管理的内置智能体界面，包括名单标记、内置智能体页签和配置控件。\n\n案例\n\n任务创建并持续修改的可留存产物，如博客文章。启用案例页签和智能体案例接口。\n\n关闭后隐藏案例页签并停用案例接口，现有数据保留。\n\n聊天连接器\n\n将智能体连接到 Slack、GitHub、Discord、Microsoft Teams 和 Telegram 对话。\n\n关闭后隐藏聊天配置、频道和关联任务控件。现有聊天连接继续运行，GitHub 等工具连接器仍可用。\n\n待决事项\n\n在主侧栏显示待决事项，集中列出等待您输入的任务。\n\n启用环境\n\n在公司设置中显示环境管理，并允许为项目和智能体分配环境。\n\n启用外部对象\n\n识别任务中的外部链接，并显示拉取请求、工单等关联对象的处理状态。\n\n启用隔离工作区\n\n在项目配置中显示执行工作区控件，允许新旧任务运行使用隔离工作区。\n\n实验性文件查看器\n\n在任务详情中显示工作区文件浏览和预览控件。\n\n首个任务：先提交方案文档\n\n当用户的首次请求是单个任务时，幕僚长提交简短方案文档和勾选卡，而非单张确认卡。仅适用于启用后创建的组织。\n\nMCP 聚合器\n\n通过 MCP 服务器连接 Zapier、Arcade、Composio Connect 和 Executor。\n\n关闭后隐藏这些连接器的配置，现有 MCP 连接继续运行。\n\nPaperclip Runner\n\n允许新的 Codex 智能体选择实验性 Rust 版 Paperclip Runner；沙箱需要时使用已认证的运行入口。引导流程仍使用旧适配器。关闭后仅隐藏选项，不影响现有原生运行。\n\n简明英语互动\n\n要求智能体按 ASD-STE100 简明技术英语编写面向用户的方案确认、提问、任务建议和勾选提示，并简述决策所需信息及各选项后果。\n\n状态卡\n\n启用实验性的共享状态卡看板及受控接口。关闭后保留现有卡片数据。\n\n启用状态卡时也会启用摘要。\n\n精简界面\n\n使用精简的主侧栏、统一的任务与收件箱展示、聚焦任务详情布局，以及智能体、例程、技能和设置间的关联导航。\n\n关闭后恢复旧版外壳与导航，任务和页面数据不变。\n\n摘要\n\n在项目和工作区页面显示摘要器生成的状态摘要，并支持按需刷新和版本历史。关闭后保留现有摘要数据。\n\n状态卡需要摘要。关闭摘要也会关闭状态卡。\n\nPaperclip 开发者模式\n\n用于开发、测试和调试 Paperclip 的内部工具。\n\n空闲时自动重启开发服务器\n\n在 pnpm dev:once 模式下，等待排队和运行中的本地智能体结束；后端更改或迁移使当前服务过期时自动重启。\n\n仅使用托管环境\n\n隐藏本地环境，所有智能体均在平台托管环境中运行。\n\nPaperclip 开发者模式\n\n显示 Paperclip 维护工具和可观测性链接，包括运行页面的 Honeycomb 追踪查询。\n\n服务器信息调试视图\n\n在账户抽屉中显示服务器信息，包括最近重启时间和当前提交。\n\n冒烟实验室\n\n在应用的开发者区添加冒烟实验室页签，并在仪表盘添加集成冒烟卡，用固定本地数据验证各集成路径。仅供非公开部署使用。\n\n任务方案拆解\n\n在任务详情中显示已接受方案的拆解历史，用于调试和验证子任务创建。\n\n旧版功能\n\n这些功能将被移除。\n\n经典任务界面\n\n恢复旧版任务详情：页头、行内描述编辑、普通评论串和固定属性栏。聊天专属的活动折叠、行内方案与问题卡、三模式输入框在经典界面不可用。\n\n切换立即生效，不影响任务数据。\n\n目标侧栏入口\n\n在目标功能评估期间恢复主侧栏的目标入口。\n\n首页\n任务\n新建任务\n智能体\n收件箱\n命令面板\n\n搜索要运行的命令...",
+    "screenshot": "设置正常-窄屏.png"
+  },
+  {
+    "kind": "设置权限拒绝",
+    "breakpoint": "窄屏",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "url": "http://127.0.0.1:3204/CMP/company/settings/instance/experimental",
+    "requests": [
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      }
+    ],
+    "pageErrors": [],
+    "visibleText": "跳转到主要内容\n返回应用\n常规\n个人资料\n成员\n机密\n环境\n访问权限\n导出\n导入\n实验性功能\n插件\n适配器\nBO\nBoard\n设置\n实验设置\n常规\n导出\n导入\n成员\n机密\n个人资料\n环境\n访问权限\n实验性功能\n插件\n适配器\n没有权限查看实验设置\n首页\n任务\n新建任务\n智能体\n收件箱\n命令面板\n\n搜索要运行的命令...",
+    "screenshot": "设置权限拒绝-窄屏.png"
+  },
+  {
+    "kind": "设置服务端错误",
+    "breakpoint": "窄屏",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "url": "http://127.0.0.1:3204/CMP/company/settings/instance/experimental",
+    "requests": [
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      }
+    ],
+    "pageErrors": [],
+    "visibleText": "跳转到主要内容\n返回应用\n常规\n个人资料\n成员\n机密\n环境\n访问权限\n导出\n导入\n实验性功能\n插件\n适配器\nBO\nBoard\n设置\n实验设置\n常规\n导出\n导入\n成员\n机密\n个人资料\n环境\n访问权限\n实验性功能\n插件\n适配器\n服务暂时不可用\n首页\n任务\n新建任务\n智能体\n收件箱\n命令面板\n\n搜索要运行的命令...",
+    "screenshot": "设置服务端错误-窄屏.png"
+  },
+  {
+    "kind": "设置非JSON错误",
+    "breakpoint": "窄屏",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "url": "http://127.0.0.1:3204/CMP/company/settings/instance/experimental",
+    "requests": [
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      }
+    ],
+    "pageErrors": [],
+    "visibleText": "跳转到主要内容\n返回应用\n常规\n个人资料\n成员\n机密\n环境\n访问权限\n导出\n导入\n实验性功能\n插件\n适配器\nBO\nBoard\n设置\n实验设置\n常规\n导出\n导入\n成员\n机密\n个人资料\n环境\n访问权限\n实验性功能\n插件\n适配器\n请求失败：502\n首页\n任务\n新建任务\n智能体\n收件箱\n命令面板\n\n搜索要运行的命令...",
+    "screenshot": "设置非JSON错误-窄屏.png"
+  },
+  {
+    "kind": "设置网络错误",
+    "breakpoint": "窄屏",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "url": "http://127.0.0.1:3204/CMP/company/settings/instance/experimental",
+    "requests": [
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:3204/api/instance/settings/experimental",
+        "locale": "zh-CN"
+      }
+    ],
+    "pageErrors": [],
+    "visibleText": "跳转到主要内容\n返回应用\n常规\n个人资料\n成员\n机密\n环境\n访问权限\n导出\n导入\n实验性功能\n插件\n适配器\nBO\nBoard\n设置\n实验设置\n常规\n导出\n导入\n成员\n机密\n个人资料\n环境\n访问权限\n实验性功能\n插件\n适配器\n网络请求失败，请检查连接后重试。\n首页\n任务\n新建任务\n智能体\n收件箱\n命令面板\n\n搜索要运行的命令...",
+    "screenshot": "设置网络错误-窄屏.png"
+  }
+]

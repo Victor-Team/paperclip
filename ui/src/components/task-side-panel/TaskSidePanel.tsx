@@ -489,7 +489,7 @@ export function TaskSidePanel({
     return {
       id: tab.id,
       type: tab.type,
-      label: tab.payload.kind === "subtasks" && tasksTab ? t("tasksidepanel.general.tasks") : document ? documentDisplayTitle(document) : tab.label,
+      label: tab.payload.kind === "properties" ? t("tok224.properties") : tab.payload.kind === "subtasks" && tasksTab ? t("tasksidepanel.general.tasks") : document ? documentDisplayTitle(document) : tab.label,
       ariaLabel: tab.payload.kind === "subtasks" ? taskLabel : tab.ariaLabel,
       closable: true,
       contentMode: tab.contentMode,

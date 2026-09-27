@@ -9,6 +9,7 @@
  */
 import type { Agent } from "@paperclipai/shared";
 import type { IssueChatComment } from "@/lib/issue-chat-messages";
+import { i18n } from "@/i18n";
 import { resolveCommentAttribution } from "@/lib/comment-attribution";
 import type { TaskChatAuthorKind, TaskChatItem, TaskChatMessageItem } from "./task-chat-model";
 
@@ -51,7 +52,7 @@ export function formatTaskChatTimestamp(value: unknown): string | undefined {
   if (!value) return undefined;
   const d = value instanceof Date ? value : new Date(value as string);
   if (Number.isNaN(d.getTime())) return undefined;
-  return d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+  return d.toLocaleTimeString(i18n.resolvedLanguage === "zh-CN" ? "zh-CN" : "en-US", { hour: "numeric", minute: "2-digit" });
 }
 
 /** Keep every comment footer on the same compact, user-visible timestamp. */

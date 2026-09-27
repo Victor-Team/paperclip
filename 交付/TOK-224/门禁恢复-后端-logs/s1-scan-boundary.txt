@@ -1,0 +1,9 @@
+repo /tmp/tok235-gate/work
+SKIP_PATH_PREFIXES ['doc/logs/', 'doc/plans/', 'scripts/', '交付/', 'tests/runner-e2e/results/']
+scanned_guidance_files 4266
+skipped_by_prefix 1010 {'doc/logs/': 1, 'doc/plans/': 110, 'scripts/': 192, '交付/': 707, 'tests/runner-e2e/results/': 0}
+skipped_test_files 2212
+交付_files_skipped 707
+交付_files_still_scanned 0
+whitelist_unchanged True
+other_prefixes_retained ['doc/logs/', 'doc/plans/', 'scripts/', 'tests/runner-e2e/results/']

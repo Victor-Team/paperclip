@@ -1,0 +1,19 @@
+{
+  "route": "/invite/<仅本机隔离测试令牌>",
+  "instance": "http://127.0.0.1:3215",
+  "browserLanguage": "en-US",
+  "selectedLanguage": "zh-CN",
+  "localeSwitch": "账户菜单 Language 选择简体中文，随后进入本机隔离邀请页",
+  "viewports": [
+    "1440x900",
+    "390x844"
+  ],
+  "state": "本机隔离账户已属于该测试组织；邀请页显示已加入状态",
+  "visibleText": "你已受邀加入 Paperclip；加入汉化门禁测试组织；申请的访问权限：操作员；此账户已属于汉化门禁测试组织；未找到邀请；打开组织",
+  "pageErrors": [],
+  "untranslatedItems": {
+    "Paperclip": "产品专名",
+    "Board": "隔离测试账户显示名"
+  },
+  "note": "令牌未写入证据；截图只证明当前邀请页前端状态，不证明后端并行子单的响应。"
+}

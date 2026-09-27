@@ -67,7 +67,7 @@ import {
   selectedFolderFromList,
   type FolderSelection,
 } from "../components/folders/FolderControls";
-import { useTranslation } from "@/i18n";
+import { t, useTranslation } from "@/i18n";
 
 const concurrencyPolicies = ["coalesce_if_active", "always_enqueue", "skip_if_active"];
 const catchUpPolicies = ["skip_missed", "enqueue_missed_with_cap"];
@@ -197,7 +197,7 @@ export function buildRoutineGroups(
       })
       .map((key) => ({
         key,
-        label: key === "__unfiled" ? translate("unfiled", "Unfiled") : (folderById.get(key)?.name ?? translate("unknownfolder", "Unknown folder")),
+        label: key === "__unfiled" ? translate("unfiled", "Unfiled") : (folderById.get(key)?.name ?? translate("unknownfolder", t("tok225.unknown_folder"))),
         items: groups[key]!,
       }));
   }
@@ -206,13 +206,13 @@ export function buildRoutineGroups(
     const groups = groupBy(routines, (routine) => routine.projectId ?? "__no_project");
     return Object.keys(groups)
       .sort((left, right) => {
-        const leftLabel = left === "__no_project" ? translate("noproject", "No project") : (projectById.get(left)?.name ?? translate("unknownproject", "Unknown project"));
-        const rightLabel = right === "__no_project" ? translate("noproject", "No project") : (projectById.get(right)?.name ?? translate("unknownproject", "Unknown project"));
+        const leftLabel = left === "__no_project" ? translate("noproject", "No project") : (projectById.get(left)?.name ?? translate("unknownproject", t("tok224.unknownProject")));
+        const rightLabel = right === "__no_project" ? translate("noproject", "No project") : (projectById.get(right)?.name ?? translate("unknownproject", t("tok224.unknownProject")));
         return leftLabel.localeCompare(rightLabel);
       })
       .map((key) => ({
         key,
-        label: key === "__no_project" ? translate("noproject", "No project") : (projectById.get(key)?.name ?? translate("unknownproject", "Unknown project")),
+        label: key === "__no_project" ? translate("noproject", "No project") : (projectById.get(key)?.name ?? translate("unknownproject", t("tok224.unknownProject"))),
         items: groups[key]!,
       }));
   }
@@ -220,13 +220,13 @@ export function buildRoutineGroups(
   const groups = groupBy(routines, (routine) => routine.assigneeAgentId ?? "__unassigned");
   return Object.keys(groups)
     .sort((left, right) => {
-      const leftLabel = left === "__unassigned" ? translate("unassigned", "Unassigned") : (agentById.get(left)?.name ?? translate("unknownagent", "Unknown agent"));
-      const rightLabel = right === "__unassigned" ? translate("unassigned", "Unassigned") : (agentById.get(right)?.name ?? translate("unknownagent", "Unknown agent"));
+      const leftLabel = left === "__unassigned" ? translate("unassigned", "Unassigned") : (agentById.get(left)?.name ?? translate("unknownagent", t("tok224.unknownAgent")));
+      const rightLabel = right === "__unassigned" ? translate("unassigned", "Unassigned") : (agentById.get(right)?.name ?? translate("unknownagent", t("tok224.unknownAgent")));
       return leftLabel.localeCompare(rightLabel);
     })
     .map((key) => ({
       key,
-      label: key === "__unassigned" ? translate("unassigned", "Unassigned") : (agentById.get(key)?.name ?? translate("unknownagent", "Unknown agent")),
+      label: key === "__unassigned" ? translate("unassigned", "Unassigned") : (agentById.get(key)?.name ?? translate("unknownagent", t("tok224.unknownAgent"))),
       items: groups[key]!,
     }));
 }

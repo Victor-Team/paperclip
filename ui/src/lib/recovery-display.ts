@@ -105,9 +105,21 @@ export function recoveryChipLabel(
   state: ActiveRecoveryDisplayState,
   kind: IssueRecoveryActionKind,
   lineage?: RecoveryRetryLineage | null,
+  translate?: (key: string, values?: Record<string, unknown>) => string,
 ): string {
+  const localize = translate ?? ((key, values) => {
+    const labels: Record<string, string> = {
+      "issuerow.general.recoveryNeeded": "Recovery needed",
+      "issuerow.general.workspaceRecoveryNeeded": "Workspace recovery needed",
+      "issuerow.general.recoveryInProgress": "Recovery in progress",
+      "issuerow.general.observingActiveRun": "Observing active run",
+      "issuerow.general.recoveryEscalated": "Recovery escalated",
+      "issuerow.general.recoveryAttemptProgress": `Recovery in progress · ${values?.attempt}/${values?.maxAttempts}`,
+    };
+    return labels[key] ?? key;
+  });
   if (kind === "workspace_validation" && state === "needed") {
-    return "Workspace recovery needed";
+    return localize("issuerow.general.workspaceRecoveryNeeded");
   }
   if (
     state === "in_progress" &&
@@ -115,7 +127,16 @@ export function recoveryChipLabel(
     lineage.maxAttempts !== null &&
     lineage.attempt > 0
   ) {
-    return `Recovery in progress · ${Math.min(lineage.attempt, lineage.maxAttempts)}/${lineage.maxAttempts}`;
+    return localize("issuerow.general.recoveryAttemptProgress", {
+      attempt: Math.min(lineage.attempt, lineage.maxAttempts),
+      maxAttempts: lineage.maxAttempts,
+    });
   }
-  return RECOVERY_CHIP_DEFAULT_TONE[state].label;
+  const labelKeys: Record<ActiveRecoveryDisplayState, string> = {
+    needed: "issuerow.general.recoveryNeeded",
+    in_progress: "issuerow.general.recoveryInProgress",
+    observe_only: "issuerow.general.observingActiveRun",
+    escalated: "issuerow.general.recoveryEscalated",
+  };
+  return localize(labelKeys[state]);
 }

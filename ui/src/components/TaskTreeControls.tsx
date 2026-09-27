@@ -10,7 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "./ui/dialog";
-import { useTranslation } from "@/i18n";
+import { t, useTranslation } from "@/i18n";
 
 /** Shared by the task header and its Storybook composition. */
 export function TaskTreeControlMenuItems({
@@ -106,12 +106,12 @@ export function TaskTreeControlDialog({
   const cancel = mode === "cancel";
   const tasks = `${affectedCount} task${affectedCount === 1 ? "" : "s"}`;
   const title = cancel
-    ? "Cancel subtree?"
+    ? t("tok224.cancelSubtreeQuestion")
     : mode === "restore"
-      ? "Restore subtree"
+      ? t("tok224.restoreSubtreeTitle")
       : scope === "leaf"
-        ? "Resume work"
-        : "Resume subtree";
+        ? t("tok224.resumeWork")
+        : t("tok224.resumeSubtree");
   return (
     <Dialog
       open={open}
@@ -174,9 +174,9 @@ export function TaskTreeControlDialog({
             {pending
               ? t("tasktreecontrols.general.applying")
               : cancel
-                ? `Cancel ${tasks}`
+                ? t("tok224.cancelTasks", { tasks: tasks })
                 : mode === "restore"
-                  ? `Restore ${tasks}`
+                  ? t("tok224.restoreTasks", { tasks: tasks })
                   : title}
           </Button>
         </DialogFooter>

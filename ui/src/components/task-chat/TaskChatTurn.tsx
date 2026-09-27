@@ -44,6 +44,37 @@ export function turnSummaryMetrics(
   return parts.join(" · ");
 }
 
+function localizeCompactDuration(
+  label: string,
+  t: (key: string, options?: Record<string, unknown>) => string,
+): string {
+  const parts = [...label.matchAll(/(\d+)\s*([hms])/gi)].map((match) => {
+    const count = Number(match[1]);
+    const unit = match[2].toLowerCase();
+    const key = unit === "h" ? "durationShortHours" : unit === "m" ? "durationShortMinutes" : "durationShortSeconds";
+    return t(`tok225review.${key}`, { count });
+  });
+  return parts.length > 0 ? parts.join(" ") : label;
+}
+
+function localizedTurnSummaryMetrics(
+  summary: TaskChatTurnItem["summary"],
+  t: (key: string, options?: Record<string, unknown>) => string,
+): string {
+  const parts: string[] = [];
+  if (summary.durationLabel) parts.push(localizeCompactDuration(summary.durationLabel, t));
+  if (summary.toolCount > 0) {
+    parts.push(t("tok225review.runSummaryTools", { count: summary.toolCount }));
+  }
+  if (summary.added > 0 || summary.removed > 0)
+    parts.push(`+${summary.added} −${summary.removed}`);
+  if (summary.tokensLabel) {
+    const count = summary.tokensLabel.replace(/\s*tokens?$/i, "");
+    parts.push(t("tok225review.runSummaryTokens", { count }));
+  }
+  return parts.join(" · ");
+}
+
 /** "✓ Worked · 38s · 3 tools · +34 −3 · 12.3k tokens" (parts omitted when unknown). */
 export function turnSummaryText(summary: TaskChatTurnItem["summary"]): string {
   const metrics = turnSummaryMetrics(summary);
@@ -104,7 +135,7 @@ export function TaskChatTurn({
           <span className="min-w-0 truncate">
             {item.continuedAfterSteering ? t("taskchatturn.general.continuedaftersteering") : ""}
             {item.summary.durationLabel
-              ? `${item.summary.failed ? t("taskchatturn.general.stopped") : t("taskchatturn.general.worked")} for ${item.summary.durationLabel}`
+              ? `${item.summary.failed ? t("taskchatturn.general.stopped") : t("taskchatturn.general.worked")} ${t("tok225review.runFor")} ${localizeCompactDuration(item.summary.durationLabel, t)}`
               : item.summary.failed
                 ? t("taskchatturn.general.stopped1")
                 : t("taskchatturn.general.worked2")}
@@ -208,12 +239,12 @@ export function TaskChatTurn({
       ) : null}
       <span>
         {item.standaloneHeader && item.summary.durationLabel
-          ? `${item.summary.failed ? "Stopped" : "Worked"} for ${item.summary.durationLabel}`
+          ? `${item.summary.failed ? t("tok225review.runStopped") : t("tok225review.runWorked")} ${t("tok225review.runFor")} ${item.summary.durationLabel}`
           : item.summary.failed
-            ? "Stopped"
-            : "Worked"}
+            ? t("tok225review.runStopped")
+            : t("tok225review.runWorked")}
       </span>
-      {!item.standaloneHeader && turnSummaryMetrics(item.summary) ? (
+      {!item.standaloneHeader && localizedTurnSummaryMetrics(item.summary, t) ? (
         // Time/tools/tokens is demoted, not deleted (PAP-502): it stays in the
         // DOM (and the accessible tree) but fades in only on hover/focus so the
         // settled line reads as "2:34 PM · ✓ Worked" at rest. Revealed too when
@@ -223,7 +254,7 @@ export function TaskChatTurn({
           data-visible={open ? "true" : "false"}
         >
           <span className="min-w-0 overflow-hidden whitespace-nowrap font-mono text-(length:--text-micro)">
-            {turnSummaryMetrics(item.summary)}
+            {localizedTurnSummaryMetrics(item.summary, t)}
           </span>
         </span>
       ) : null}

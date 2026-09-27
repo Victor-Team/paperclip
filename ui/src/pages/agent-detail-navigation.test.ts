@@ -5,6 +5,7 @@ import {
   agentLegacyAuditSection,
   agentScopedAuditHref,
   parseAgentDetailView,
+  agentRoleDisplayLabel,
 } from "./agent-detail-navigation";
 
 describe("agent detail navigation", () => {
@@ -36,5 +37,13 @@ describe("agent detail navigation", () => {
     expect(agentLegacyAuditSection("budget")).toBe("budgets");
     expect(agentScopedAuditHref("agent-1", "activity")).toBe("/activity?mode=agents&agentId=agent-1");
     expect(agentScopedAuditHref("agent-1", "costs")).toBe("/activity/costs?agentId=agent-1");
+  });
+
+  it("localizes known role values without changing their identifiers", () => {
+    const translated = agentRoleDisplayLabel("general", (key) =>
+      key === "tok225review.roleGeneral" ? "通用" : key,
+    );
+    expect(translated).toBe("通用");
+    expect(agentRoleDisplayLabel("custom_role", (key) => key)).toBe("custom_role");
   });
 });

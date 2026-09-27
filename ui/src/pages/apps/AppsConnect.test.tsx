@@ -8,6 +8,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ApiError } from "@/api/client";
 import { aiConnectionsApi } from "@/api/ai-connections";
 import { queryKeys } from "@/lib/queryKeys";
+import { i18n } from "@/i18n";
 import { ConnectionSetupFlow } from "@/features/connections/ConnectionSetupFlow";
 import { AppsConnect } from "./AppsConnect";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -304,6 +305,7 @@ describe("AppsConnect — Connect with a link (M4 frame)", () => {
     document.body.innerHTML = "";
     vi.restoreAllMocks();
     vi.clearAllMocks();
+    await act(async () => { await i18n.changeLanguage("en"); });
   });
 
   async function render(queryClient?: QueryClient, byoOnly = false, content?: ReactNode) {
@@ -920,6 +922,20 @@ describe("AppsConnect — Connect with a link (M4 frame)", () => {
         clientSecret: "asana-client-secret",
       },
     }));
+  });
+
+  it("localizes the customer-owned OAuth form in Chinese and restores English", async () => {
+    mockParams.appKey = "asana";
+    listGalleryMock.mockResolvedValue({ apps: [ASANA] });
+    await render();
+    await passAccessStep();
+    await act(async () => { await i18n.changeLanguage("zh-CN"); });
+    expect(container.textContent).toContain("你的 OAuth 应用");
+    expect(container.textContent).toContain("Paperclip 回调 URL");
+    expect(container.textContent).toContain("打开 Asana 应用设置");
+    expect(container.textContent).not.toContain("Your OAuth app");
+    await act(async () => { await i18n.changeLanguage("en"); });
+    expect(container.textContent).toContain("Your OAuth app");
   });
 
   it("submits the Postman access mode selected on the setup screen", async () => {
@@ -1732,6 +1748,7 @@ describe("AppsConnect — Connect with a link (M4 frame)", () => {
     expect(container.querySelector<HTMLInputElement>('input[type="password"]')).toBeNull();
     const connectorInput = container.querySelector<HTMLInputElement>('#vercel-connect-connector');
     expect(connectorInput).toBeTruthy();
+    expect(connectorInput?.placeholder).toBe("service/my-connector or scl_…");
     await act(async () => {
       setInputValue(connectorInput!, "posthog/paperclip");
     });
@@ -1754,6 +1771,43 @@ describe("AppsConnect — Connect with a link (M4 frame)", () => {
       applicationId: undefined,
     });
     expect(JSON.stringify(connectAppMock.mock.calls[0])).not.toContain("credentialValues");
+  });
+
+  it("localizes known catalog connection methods and Vercel connector placeholder in Chinese", async () => {
+    await act(async () => { await i18n.changeLanguage("zh-CN"); });
+    mockParams.appKey = "posthog";
+    listGalleryMock.mockResolvedValueOnce({
+      apps: [POSTHOG],
+      credentialSources: {
+        vercelConnect: {
+          available: true,
+          enabled: true,
+          authentication: "access_token",
+          manageUrl: "https://vercel.com/connect",
+          reason: null,
+        },
+      },
+    });
+    await render(undefined, false, <AppsConnect credentialSource="vercel_connect" />);
+
+    await act(async () => {
+      radioContaining("任何智能体")?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    });
+    await flushReact();
+    await act(async () => {
+      buttonByText("继续")?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    });
+    await flushReact();
+
+    expect(radioContaining("使用 PostHog 登录")).toBeTruthy();
+    expect(radioContaining("使用个人 API 密钥")).toBeTruthy();
+    await act(async () => {
+      radioContaining("使用个人 API 密钥")?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    });
+    await flushReact();
+
+    expect(container.querySelector<HTMLInputElement>("#vercel-connect-connector")?.placeholder)
+      .toBe("service/my-connector 或 scl_…");
   });
 
   it("folds optional customer-owned OAuth details under Advanced", async () => {

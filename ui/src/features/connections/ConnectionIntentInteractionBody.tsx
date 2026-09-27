@@ -27,7 +27,7 @@ import {
   type ConnectionSetupCompletion,
   type ConnectionSetupFlowProps,
 } from "./ConnectionSetupFlow";
-import { useTranslation } from "@/i18n";
+import { t, useTranslation } from "@/i18n";
 
 export interface ConnectionIntentInteractionBodyProps {
   interaction: ConnectionIntentInteraction;
@@ -184,25 +184,25 @@ export function ConnectionIntentInteractionBody({
       ? {
           icon: CheckCircle2,
           title: `${interaction.payload.serviceName} connected`,
-          body: isAi ? "This agent can now use the connection." : `${interaction.payload.requestingAgentName} can use this connection on the continuation run.`,
+          body: isAi ? t("connectionIntent.agentCanUse") : `${interaction.payload.requestingAgentName} can use this connection on the continuation run.`,
         }
       : interaction.status === "rejected"
         ? {
             icon: XCircle,
-            title: "Connection declined",
-            body: isAi ? "The task still needs a working AI connection before it can run." : `${interaction.payload.requestingAgentName} was notified and can continue without it.`,
+            title: t("connectionIntent.declined"),
+            body: isAi ? t("connectionIntent.needsAi") : `${interaction.payload.requestingAgentName} was notified and can continue without it.`,
           }
         : interaction.status === "expired"
           ? {
               icon: Clock,
               title:
                 resultOutcome === "superseded"
-                  ? "Request superseded"
-                  : "Connection request expired",
+                  ? t("connectionIntent.superseded")
+                  : t("connectionIntent.expired"),
               body:
                 resultOutcome === "superseded"
-                  ? "This request was replaced. Use the latest connection card instead."
-                  : "This request is no longer active.",
+                  ? t("connectionIntent.replaced")
+                  : t("connectionIntent.inactive"),
             }
           : null;
   const StatusIcon = status?.icon;
@@ -269,7 +269,7 @@ export function ConnectionIntentInteractionBody({
                   <p className="mt-1 text-sm text-muted-foreground">
                     {setupQuery.error instanceof Error
                       ? setupQuery.error.message
-                      : "Try again."}
+                      : t("connectionIntent.tryAgainSentence")}
                   </p>
                   <Button
                     className="mt-4"
@@ -285,7 +285,7 @@ export function ConnectionIntentInteractionBody({
     : selectedReady ? <div className="space-y-3">
         <p className="text-sm">{repair.connection.name} {t("connectionintentinteractionbody.general.isready")}</p>
         <Button disabled={completeMutation.isPending} onClick={() => completeMutation.mutate(repair.connection.id)}>
-          {completeMutation.isPending ? "Continuing…" : "Continue task"}
+          {completeMutation.isPending ? "Continuing…" : t("connectionIntent.continueTask")}
         </Button>
       </div>
     : repair ? repair.canReconnect ? <AiConnectionCredentialStep
@@ -301,7 +301,7 @@ export function ConnectionIntentInteractionBody({
         onComplete={(result) => { void finishNewConnection(result); }}
         onCancel={() => { closeSetup(); returnFocusToCard(); }}
       /> : <p role="status" className="text-sm text-muted-foreground">
-        {repair.connection.ownership === "personal" ? `${repair.connection.ownerName ?? "The account owner"} must reconnect ${repair.connection.name}.` : `The account owner must reconnect ${repair.connection.name}.`}
+        {repair.connection.ownership === "personal" ? `${repair.connection.ownerName ?? t("connectionIntent.accountOwner")} must reconnect ${repair.connection.name}.` : `The account owner must reconnect ${repair.connection.name}.`}
         {" "}{t("connectionintentinteractionbody.general.youcancontinuehereonceitis")}</p>
     : setupQuery.data?.aiConnection && setupQuery.data.aiConnection.mode !== "responsible_user"
       ? <p role="status" className="text-sm text-muted-foreground">{t("connectionintentinteractionbody.general.theselectedaccountisnolongeravailable")}</p>

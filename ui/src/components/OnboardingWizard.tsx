@@ -141,7 +141,7 @@ import {
   Loader2,
   ChevronDown,
 } from "lucide-react";
-import { useTranslation } from "@/i18n";
+import { t, useTranslation } from "@/i18n";
 
 type Step = 0 | 1 | 2 | 3 | 4 | 5;
 // Plugin/external adapters use arbitrary type ids, so this mirrors the master
@@ -1390,7 +1390,7 @@ function OnboardingWizardInner({
               }
           : // Nothing is chosen on arrival, and the row is what chooses. Until
             // it has been answered the button has nothing to do.
-            { label: "Next", icon: "arrow", disabled: true };
+            { label: t("tok224.next"), icon: "arrow", disabled: true };
 
   /**
    * Back, on the connect step, unwinds the sign-in before it leaves the step.
@@ -2550,11 +2550,11 @@ function OnboardingWizardInner({
                       title={
                         <motion.span key={step} {...titleSwapMotion} className="inline-block">
                           {step === 1
-                            ? "What is the name of your organization?"
+                            ? t("tok224.onboardingCompanyQuestion")
                             : step === 3
-                              ? "Create your first agent"
+                              ? t("tok224.onboardingCreateAgent")
                               : step === 4
-                                ? "Connect a model"
+                                ? t("tok224.onboardingConnectModel")
                                 : "Let's get started..."}
                         </motion.span>
                       }
@@ -2578,7 +2578,7 @@ function OnboardingWizardInner({
                         <motion.span key={step} {...titleSwapMotion} className="inline-block">
                           {step === 4
                             ? t("onboardingwizard.general.paperclipworkswithyoursubscriptionorapi")
-                            : `${agentName.trim() || "Your first agent"} is ready to work!`}
+                            : `${agentName.trim() || t("tok224.firstAgent")} is ready to work!`}
                         </motion.span>
                       </p>
                     </motion.div>
@@ -3089,9 +3089,9 @@ function OnboardingWizardInner({
                   // prototype's own local flow draws with "Next".
                   primaryLabel={
                     step === 1
-                      ? "Continue"
+                      ? t("tok224.continue")
                       : step === 5
-                        ? "Get started"
+                        ? t("tok224.getStarted")
                         : step === 4
                           ? connectCta.label
                           : "Next"

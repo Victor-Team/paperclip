@@ -28,7 +28,7 @@ import {
 } from "@/components/ui/tooltip";
 import { ListFilter, Layers, ChevronDown, ChevronRight, User, Settings } from "lucide-react";
 import { timeAgo } from "../lib/timeAgo";
-import { useTranslation } from "@/i18n";
+import { t, useTranslation } from "@/i18n";
 
 /* ------------------------------------------------------------------ */
 /*  Event Tier Classification                                          */
@@ -260,8 +260,8 @@ function CollapsedFeedGroup({
     ? agentMap.get(group.latestEvent.actorId)
     : null;
   const actorName = actor?.name
-    ?? (group.latestEvent.actorType === "system" ? "System"
-      : group.latestEvent.actorType === "user" ? "Board"
+    ?? (group.latestEvent.actorType === "system" ? t("tok225review.dashboardSystem")
+      : group.latestEvent.actorType === "user" ? t("tok225review.dashboardBoard")
       : "Unknown");
   const entityName = entityNameMap.get(`${group.entityType}:${group.entityId}`);
 

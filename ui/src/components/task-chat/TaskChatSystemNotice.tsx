@@ -18,6 +18,7 @@ import {
 import { humanizeSystemNotice } from "@/lib/system-notice-humanizer";
 import { mapCommentMetadataToSystemNoticeSections } from "@/lib/system-notice-comment";
 import { timeAgo } from "@/lib/timeAgo";
+import { localizeRecoveryNoticeBody, localizeRecoveryMetadataIfApplicable } from "@/lib/system-notice-recovery";
 import type { TaskChatMessageItem } from "./task-chat-model";
 import { useTranslation } from "@/i18n";
 
@@ -59,12 +60,21 @@ export function TaskChatSystemNotice({
   const streamlined = useStreamlinedTaskChatPresentation();
   const [open, setOpen] = useState(Boolean(item.presentation?.detailsDefaultOpen));
   const detailsId = useId();
+  const displayText = item.text === "Paperclip needs a disposition before this issue can continue."
+    ? t("tok225review.noticeDispositionBody", { defaultValue: item.text })
+    : localizeRecoveryNoticeBody(item.text);
   const { title, tone, detail } = humanizeSystemNotice({
     body: item.text,
     presentation: item.presentation,
   });
-  const sections = mapCommentMetadataToSystemNoticeSections(item.metadata, {
+  const localizedMetadata = localizeRecoveryMetadataIfApplicable({
+    title: item.presentation?.title,
+    body: item.text,
+    metadata: item.metadata,
+  });
+  const sections = mapCommentMetadataToSystemNoticeSections(localizedMetadata, {
     runAgentId: item.runAgentId,
+    recoveryNotice: localizedMetadata !== item.metadata,
   });
   const isStructuredWorkspaceReadyNotice =
     item.presentation?.kind === "system_notice" &&
@@ -135,7 +145,7 @@ export function TaskChatSystemNotice({
           {showBody ? (
             <div className="px-3 py-2.5 text-foreground/90">
               <MarkdownBody softBreaks linkIssueReferences>
-                {item.text}
+              {displayText}
               </MarkdownBody>
             </div>
           ) : null}

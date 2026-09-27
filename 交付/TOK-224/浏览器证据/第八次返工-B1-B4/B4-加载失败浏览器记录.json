@@ -1,0 +1,25 @@
+{
+  "route": "/TOKAAAAA/apps/connect?source=asana&applicationId=app-asana&new=1&reconnect=<synthetic missing UUID>&identity=organization",
+  "browserLanguage": "en-US",
+  "languageSwitch": "en-US → account menu → zh-CN; restored English",
+  "viewports": [
+    "1440×900",
+    "390×844"
+  ],
+  "fixture": "HTTP 500 JSON responses injected only for tools/connections and tools/applications to exercise the retained-connection load error branch; no external connection and no database mutation.",
+  "assertions": {
+    "zhTitle": "无法加载连接设置",
+    "englishRestore": "Couldn’t load connection setup"
+  },
+  "injectedFailurePaths": [
+    "/api/companies/f09f7e1e-4a57-4a76-baac-015bc77d4e3f/tools/applications",
+    "/api/companies/f09f7e1e-4a57-4a76-baac-015bc77d4e3f/tools/connections",
+    "/api/companies/f09f7e1e-4a57-4a76-baac-015bc77d4e3f/tools/applications",
+    "/api/companies/f09f7e1e-4a57-4a76-baac-015bc77d4e3f/tools/connections",
+    "/api/companies/f09f7e1e-4a57-4a76-baac-015bc77d4e3f/tools/applications",
+    "/api/companies/f09f7e1e-4a57-4a76-baac-015bc77d4e3f/tools/connections",
+    "/api/companies/f09f7e1e-4a57-4a76-baac-015bc77d4e3f/tools/applications",
+    "/api/companies/f09f7e1e-4a57-4a76-baac-015bc77d4e3f/tools/connections"
+  ],
+  "uncaughtPageErrors": []
+}

@@ -44,7 +44,7 @@ import { ProposalJustification } from "../pages/secrets/proposal-review";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import { AppLogo } from "@/pages/apps/AppLogo";
 import { ConnectionIntentInteractionBody } from "@/features/connections/ConnectionIntentInteractionBody";
-import { useTranslation } from "@/i18n";
+import { t, t as translate, useTranslation } from "@/i18n";
 
 const OTHER_ANSWER_ID = "__paperclip_other__";
 
@@ -174,13 +174,13 @@ function getAdministrativeReason(interaction: IssueThreadInteraction): string | 
 function statusLabel(status: IssueThreadInteraction["status"]) {
   switch (status) {
     case "pending":
-      return "Pending";
+      return t("interactionCard.status.pending");
     case "accepted":
-      return "Accepted";
+      return t("interactionCard.status.accepted");
     case "rejected":
       return "Rejected";
     case "answered":
-      return "Answered";
+      return t("interactionCard.status.answered");
     case "cancelled":
       return "Cancelled";
     case "expired":
@@ -195,17 +195,17 @@ function statusLabel(status: IssueThreadInteraction["status"]) {
 function interactionKindLabel(kind: IssueThreadInteraction["kind"]) {
   switch (kind) {
     case "suggest_tasks":
-      return "Suggested tasks";
+      return translate("interactionCard.kind.suggestTasks");
     case "ask_user_questions":
-      return "Ask user questions";
+      return translate("interactionCard.kind.askQuestions");
     case "request_confirmation":
-      return "Confirmation";
+      return t("interactionCard.kind.confirmation");
     case "request_checkbox_confirmation":
-      return "Checkbox confirmation";
+      return translate("interactionCard.kind.checkbox");
     case "request_item_verdicts":
-      return "Item verdicts";
+      return translate("interactionCard.kind.verdicts");
     case "connection_intent":
-      return "Connection request";
+      return translate("interactionCard.kind.connectionRequest");
     default:
       return kind;
   }
@@ -3667,7 +3667,7 @@ export function IssueThreadInteractionCard({
     adminOutcome === "withdrawn"
       ? "Withdrawn"
       : adminOutcome === "issue_closed"
-        ? "Expired · issue closed"
+        ? t("interactionCard.status.issueClosed")
         : activeStyles
           ? activeStyles.label
           : statusLabel(interaction.status);

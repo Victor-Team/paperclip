@@ -42,6 +42,7 @@ function BlockerRecoveryIndicator({
   /** The blocker's own scheduled retry, used to verify that the stored attempt is in flight. */
   scheduledRetry?: IssueScheduledRetry | null;
 }) {
+  const { t } = useTranslation();
   const liveness = { scheduledRetry: scheduledRetry ?? null };
   const state = deriveActiveRecoveryDisplayState(action, liveness);
   if (!state) return null;
@@ -50,7 +51,7 @@ function BlockerRecoveryIndicator({
   // The blocker chip reads the same stored lineage as the source task's recovery card, so
   // a parent view never contradicts the task it is waiting on.
   const lineage = readRecoveryRetryLineage(action, liveness);
-  const label = recoveryChipLabel(state, action.kind, lineage);
+  const label = recoveryChipLabel(state, action.kind, lineage, (key, values) => t(key, values));
   const detail = lineage ? formatRecoveryLineageSummary(lineage) : null;
   return (
     <Badge variant="outline"

@@ -2,7 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { brandChipBadge } from "@/lib/status-colors";
 import type { BuiltInAgentStatus } from "@/api/builtInAgents";
-import { useTranslation } from "@/i18n";
+import { t, useTranslation } from "@/i18n";
 
 /**
  * Derived lifecycle chip. Rendered for the amber attention states
@@ -31,8 +31,8 @@ export function BuiltInLifecycleChip({
       )}
       title={
         isPendingApproval
-          ? "Waiting on board hire approval before the feature can run"
-          : "Needs adapter/model setup before the feature can run"
+          ? t("builtInLifecycle.pendingHelp")
+          : t("builtInLifecycle.setupHelp")
       }
     >
       {isPendingApproval ? (compact ? t("builtinagentbadges.general.approval") : t("builtinagentbadges.general.pendingapproval")) : compact ? t("builtinagentbadges.general.setup") : t("builtinagentbadges.general.needssetup")}

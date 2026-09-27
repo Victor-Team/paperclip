@@ -258,11 +258,11 @@ export function SystemNotice({
   const resolvedLabel =
     label ??
     {
-      neutral: "System notice",
-      info: "System notice",
-      success: "System notice",
-      warning: "System warning",
-      danger: "System alert",
+      neutral: t("tok225review.systemNoticeNeutral"),
+      info: t("tok225review.systemNoticeNeutral"),
+      success: t("tok225review.systemNoticeNeutral"),
+      warning: t("tok225review.systemNoticeWarning"),
+      danger: t("tok225review.systemNoticeAlert"),
     }[tone];
 
   return (

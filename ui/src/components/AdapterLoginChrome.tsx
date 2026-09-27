@@ -12,7 +12,7 @@ import {
   COPIED_REVEAL_DELAY_MS,
   COPIED_REVEAL_TRAVEL,
 } from "./onboarding/onboarding-motion";
-import { useTranslation } from "@/i18n";
+import { t, useTranslation } from "@/i18n";
 
 /**
  * Which shell a login panel draws itself in.
@@ -463,7 +463,7 @@ export function ProviderApiKeyCard({
   const { t } = useTranslation();
   return (
     <OnboardingLoginCard
-      instruction={`Provide your ${providerName} API key to connect`}
+      instruction={t("adapterLogin.provideKey", { name: providerName })}
     >
       <OnboardingCardField {...field} label={t("adapterloginchrome.general.apikey")} masked />
     </OnboardingLoginCard>
@@ -486,7 +486,7 @@ export function LocalProviderLoginInstructions({ adapterType, login }: {
     {ready ? <>
       <p role="status" className="flex items-center gap-2 text-foreground"><Check className="size-4 shrink-0 text-(--status-task-icon-done)" />{provider} {t("adapterloginchrome.general.issignedinclickconnecttouse")}</p>
       {!showCommand && <button type="button" className="underline underline-offset-4" onClick={() => setShowCommand(true)}>{t("adapterloginchrome.general.useadifferentaccount")}</button>}
-    </> : <p>{isolated ? `Sign in to ${provider} for this connection on the machine running Paperclip. Your existing terminal login stays separate.` : `Connect uses your local ${provider} account on the machine running Paperclip.`}</p>}
+    </> : <p>{isolated ? `Sign in to ${provider} for this connection on the machine running Paperclip. Your existing terminal login stays separate.` : t("adapterLogin.signInLocal", { name: provider })}</p>}
     {(!ready || showCommand) && !login?.error && <>
       <p>{t("adapterloginchrome.general.runthisinaterminalonthat")}</p>
       {command && <div className="flex min-w-0 max-w-full items-start gap-2 rounded-md border bg-muted p-3 text-foreground">

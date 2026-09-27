@@ -100,7 +100,7 @@ import {
   type GenericMcpAuthMode,
 } from "@/pages/apps/generic-mcp-connect";
 import { autoExtendNotice, INSTALL_ALL_WARNING, installInfoNotice, installPayload } from "@/lib/tool-installs";
-import { useTranslation } from "@/i18n";
+import { t, useTranslation } from "@/i18n";
 
 type Step = "gallery" | "access" | "key" | "success";
 export type OAuthConnectPhase = "entry" | "starting" | "redirecting" | "error";
@@ -307,7 +307,7 @@ type AppAccessSelection = "all_agents" | { agentIds: string[] };
 
 // Access comes before credentials so the reader knows what identity and reach
 // the secret is about to get before they share it (PAP-17835).
-const STEP_LABELS = ["Pick app", "Access", "Add your key"];
+const defaultStepLabels = () => [t("connectionSetup.pickApp"), t("connectionSetup.access"), t("connectionSetup.addYourKey")];
 const STEP_INDEX: Record<Exclude<Step, "success">, number> = {
   gallery: 0,
   access: 1,
@@ -317,12 +317,12 @@ const SELECTED_APP_STEP_INDEX: Record<Exclude<Step, "gallery" | "success">, numb
   access: 0,
   key: 1,
 };
-const ZAPIER_STEP_LABELS = ["Access", "Add MCP URL"];
+const zapierStepLabels = () => [t("connectionSetup.access"), t("connectionSetup.addMcpUrl")];
 // Waiting for browser sign-in happens *inside* the flow's last step, so the
 // waiting screen reuses the step model of the flow that opened it. It must not
 // append a trailing step the flow never lands on: a stepper that grows from two
 // dots to three the moment you press Connect reads as a step you missed.
-const OAUTH_SIGN_IN_STEP_LABELS = ["Access", "Sign in"];
+const oauthSignInStepLabels = () => [t("connectionSetup.access"), t("connectionSetup.signIn")];
 
 /**
  * Which identity a fresh connection should default to (PAP-17835).
@@ -951,8 +951,8 @@ function StandardConnectionSetupFlow({
   useEffect(() => {
     if (host !== "page") return;
     setBreadcrumbs([
-      { label: "Connectors", href: "/apps" },
-      { label: vercelConnectMode ? "Vercel Connect" : byoOnly ? "Connect your own tool" : "Connect an app" },
+      { label: t("connectionSetup.connectors"), href: "/apps" },
+      { label: vercelConnectMode ? "Vercel Connect" : byoOnly ? t("connectionSetup.connectOwnTool") : t("connectionSetup.connectAnApp") },
     ]);
     return () => setBreadcrumbs([]);
   }, [byoOnly, host, setBreadcrumbs, vercelConnectMode]);
@@ -2020,7 +2020,7 @@ function StandardConnectionSetupFlow({
         }}
         // A pasted endpoint walks the generic three-step wizard, so keep that
         // model rather than dropping to the curated two-step one.
-        steps={{ labels: STEP_LABELS, activeIndex: STEP_INDEX.key }}
+        steps={{ labels: defaultStepLabels(), activeIndex: STEP_INDEX.key }}
         phase={oauthPhase}
         error={oauthError}
         authorizationHost={authorizationHost}
@@ -2083,19 +2083,19 @@ function StandardConnectionSetupFlow({
     onCancel={() => onCancel ? onCancel() : navigate("/apps")}
     onComplete={result => { onComplete?.({ connectionId: result.connectionId }); if (!onComplete) navigate(`/apps/${result.connectionId}/permissions`); }}
   /></> : undefined) : undefined;
-  const stepLabels = reconnectConnection?.connectionPurpose === "ai" ? ["Reconnect account"] : credentialStep !== undefined
-    ? ["Access", "Connect account"]
+  const stepLabels = reconnectConnection?.connectionPurpose === "ai" ? [t("connectionSetup.reconnectAccount")] : credentialStep !== undefined
+    ? [t("connectionSetup.access"), t("connectionSetup.connectAccount")]
     : zapierSource
-    ? ZAPIER_STEP_LABELS
+    ? zapierStepLabels()
     : entry && setupCredentialSourceMethods.length > 1
-      ? ["Access", "Choose connection"]
+      ? [t("connectionSetup.access"), t("connectionSetup.chooseConnection")]
     : entry && setupCredentialSourceMethods[0]?.auth === "oauth"
-      ? ["Access", "Sign in"]
+      ? [t("connectionSetup.access"), t("connectionSetup.signIn")]
     : isGoogleSheetsRobotMethod(entry, connectionMethodKey)
-      ? ["Access", "Share sheet"]
+      ? [t("connectionSetup.access"), t("connectionSetup.shareSheet")]
       : entry
-        ? ["Access", "Add your key"]
-      : STEP_LABELS;
+        ? [t("connectionSetup.access"), t("connectionSetup.addYourKey")]
+      : defaultStepLabels();
   // The Access step's identity question only makes sense when there *is* a
   // credential, so it reads the selected method's auth kind.
   const accessStepMethod = entry
@@ -2115,7 +2115,7 @@ function StandardConnectionSetupFlow({
   const accessContinuesToProvider = Boolean(directOAuthEntry);
   const accessSubmitLabel = accessContinuesToProvider
     ? `Continue to ${entry?.name ?? "sign-in"}`
-    : accessStepAuthKind === "oauth" ? "Continue" : "Save and continue";
+    : accessStepAuthKind === "oauth" ? t("connectionSetup.continue") : t("connectionSetup.saveAndContinue");
 
   const stepIndex = reconnectConnection?.connectionPurpose === "ai" ? 0 : (zapierSource || entry) && step !== "gallery" && step !== "success"
     ? SELECTED_APP_STEP_INDEX[step]
@@ -2133,7 +2133,7 @@ function StandardConnectionSetupFlow({
                 ? vercelConnectMode
                   ? "Choose a reviewed app to connect through Vercel."
                   : "Pick the app you want your agents to use."
-                : `Step ${stepIndex + 1} of ${stepLabels.length}`
+                : t("connectionSetup.setupStep", { current: stepIndex + 1, total: stepLabels.length })
             }
             step={step}
             activeIndex={stepIndex}
@@ -2486,7 +2486,7 @@ export function StepHeader({
           ) : null}
           <div>
             <h1 ref={headingRef} tabIndex={headingRef ? -1 : undefined} className="text-2xl font-bold tracking-tight outline-none">
-              {title ?? (appIdentity ? `Connect ${appIdentity.name}` : t("connectionsetupflow.general.connectyourownmcpserver"))}
+              {title ?? (appIdentity ? t("connectionSetup.connectApp", { name: appIdentity.name }) : t("connectionsetupflow.general.connectyourownmcpserver"))}
             </h1>
             <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>
             {unverifiedHost ? <UnverifiedServerBadge host={unverifiedHost} className="mt-2" /> : null}
@@ -2529,7 +2529,7 @@ export function OAuthConnectStateScreen({
   recoveryActions,
   authorizationHost,
   authorizationUrl,
-  steps = { labels: OAUTH_SIGN_IN_STEP_LABELS, activeIndex: 1 },
+  steps = { labels: oauthSignInStepLabels(), activeIndex: 1 },
   onRetry,
   onOpenAuthorization,
   onBack,
@@ -3483,23 +3483,30 @@ function KeyStep({
       disabled={submitting}
       onClick={() => onMethodChange(usingCustomGoogleOAuth ? managedGoogleMethod : customerGoogleMethod)}
     >
-      {usingCustomGoogleOAuth ? "Use Paperclip instead" : "Use your own Google OAuth app"}
+      {usingCustomGoogleOAuth ? t("connectionSetup.usePaperclipInstead") : t("connectionSetup.useOwnGoogleOAuthApp")}
     </Button>
   ) : capabilityMethods.length > 1 ? (
     <div>
       <label className="text-sm font-medium text-foreground">{t("connectionsetupflow.general.howdoyouwanttoconnect")}</label>
       <RadioCardGroup
-        ariaLabel={`How to connect ${entry.name}`}
+        ariaLabel={t("connectionSetup.howToConnect", { name: entry.name })}
         className="mt-2"
         value={methodKey}
         onValueChange={(nextKey) => {
           const nextMethod = capabilityMethods.find((candidate) => candidate.key === nextKey);
           if (nextMethod) onMethodChange(nextMethod);
         }}
-        options={capabilityMethods.map((candidate) => ({
-          value: candidate.key,
-          title: candidate.label ?? (candidate.auth === "oauth" ? `Sign in with ${entry.name}` : "Use an API key"),
-        }))}
+        options={capabilityMethods.map((candidate) => {
+          const signInLabel = candidate.label?.match(/^Sign in with (.+)$/i);
+          const title = signInLabel
+            ? t("connectionSetup.signInWithProvider", { name: signInLabel[1] })
+            : candidate.label === "Use a personal API key"
+              ? t("connectionSetup.useApiKey")
+              : candidate.label === "Use an API key"
+                ? t("connectionSetup.useGenericApiKey")
+                : candidate.label ?? (candidate.auth === "oauth" ? t("connectionSetup.signInWithProvider", { name: entry.name }) : t("connectionSetup.useGenericApiKey"));
+          return { value: candidate.key, title };
+        })}
       />
       {!method && <p className="mt-2 text-xs text-muted-foreground">{t("connectionsetupflow.general.chooseaconnectionmethodtocontinue")}</p>}
     </div>
@@ -3793,7 +3800,7 @@ function OAuthClientFields({
             >
               {callbackUrl}
             </div>
-            <CopyValueButton value={callbackUrl} ariaLabel="Copy callback URL" />
+            <CopyValueButton value={callbackUrl} ariaLabel={t("tok225review.connectionCopyCallbackUrl")} />
           </div>
           <p className="mt-2 text-xs text-muted-foreground">
             {t("connectionsetupflow.general.addthisexacturlto")} {entry.name} {t("connectionsetupflow.general.beforecontinuingitmustmatchtheauthorization")}</p>
@@ -3807,7 +3814,7 @@ function OAuthClientFields({
           value={clientId}
           onChange={(event) => onClientIdChange(event.target.value)}
           autoComplete="off"
-          placeholder={required ? "Required" : "Optional"}
+          placeholder={required ? t("tok225review.connectionRequired") : "Optional"}
           className="mt-2 h-11 font-mono"
         />
       </div>
@@ -3979,15 +3986,15 @@ export function AccessStepContent({
   const lockedAgentName = lockedAgentId
     ? allAgents.find((agent) => agent.id === lockedAgentId)?.name ?? "the requesting agent"
     : null;
-  const identityHeading = githubIdentity ? "Connect GitHub as" : "Which humans can use this credential?";
+  const identityHeading = githubIdentity ? t("connectionSetup.connectGithubAs") : t("connectionSetup.whichHumans");
   const agentAccessHeading = grantKind === "agent"
-    ? "Which agent owns this GitHub account?"
+    ? t("connectionSetup.whichAgentOwns")
     : githubIdentity && grantKind === "user"
-      ? "Which agents may use your GitHub when you’re responsible?"
+      ? t("connectionSetup.whichAgentsUserGithub")
       : githubIdentity
-        ? "Which agents may use the shared GitHub account?"
-        : "Which agents can use this connection?";
-  const agentAccessLabel = githubIdentity ? agentAccessHeading : "Which agents can use this connection?";
+        ? t("connectionSetup.whichAgentsSharedGithub")
+        : t("connectionSetup.whichAgents");
+  const agentAccessLabel = githubIdentity ? agentAccessHeading : t("connectionSetup.whichAgents");
 
   return (
     <div className="mx-auto max-w-2xl">
@@ -4033,7 +4040,7 @@ export function AccessStepContent({
               </div>
             ) : needsIdentityChoice ? (
               <RadioCardGroup
-                ariaLabel={githubIdentity ? identityHeading : "Which humans can use this credential?"}
+                ariaLabel={githubIdentity ? identityHeading : t("connectionSetup.whichHumans")}
                 className="mt-4 sm:grid-cols-2"
                 value={grantKind}
                 onValueChange={(next) => {
@@ -4047,9 +4054,9 @@ export function AccessStepContent({
                 options={[
                   {
                     value: "user",
-                    title: githubIdentity ? "My GitHub account" : "Just me",
+                    title: githubIdentity ? t("connectionSetup.myGithub") : t("connectionSetup.justMe"),
                     description: githubIdentity
-                      ? "Agents use it only for runs where you are the responsible person."
+                      ? t("connectionSetup.userGithubDesc")
                       : undefined,
                     icon: <UserRound className="h-4 w-4" aria-hidden="true" />,
                   },
@@ -4057,25 +4064,25 @@ export function AccessStepContent({
                     value: "agent",
                     title: "A dedicated account for an agent",
                     description: githubIdentity
-                      ? "That agent always uses this account, regardless of who starts the run."
+                      ? t("connectionSetup.agentGithubDesc")
                       : undefined,
                     icon: <Bot className="h-4 w-4" aria-hidden="true" />,
                   },
                   {
                     value: "organization",
-                    title: githubIdentity ? "Shared organization GitHub account (advanced)" : "Any human in the organization",
+                    title: githubIdentity ? t("connectionSetup.sharedGithub") : t("connectionSetup.anyHuman"),
                     description: githubIdentity
-                      ? "Eligible agents use one shared credential, regardless of who starts the run."
+                      ? t("connectionSetup.sharedGithubDesc")
                       : undefined,
                     icon: <UsersRound className="h-4 w-4" aria-hidden="true" />,
                     accessibleLabel: canCreateOrganizationGrant
-                      ? githubIdentity ? "Shared organization GitHub account (advanced)" : "Any human in the organization"
-                      : `${githubIdentity ? "Shared organization GitHub account (advanced)" : "Any human in the organization"}. Unavailable: ${capabilities?.organizationGrantReason ??
-                        "Only a connection manager can share this credential with the organization."}`,
+                      ? githubIdentity ? "Shared organization GitHub account (advanced)" : t("connectionSetup.anyHuman")
+                      : `${githubIdentity ? "Shared organization GitHub account (advanced)" : t("connectionSetup.anyHuman")}. Unavailable: ${capabilities?.organizationGrantReason ??
+                        t("connectionSetup.managerOnly")}`,
                     tooltip: canCreateOrganizationGrant
                       ? undefined
                       : capabilities?.organizationGrantReason ??
-                        "Only a connection manager can share this credential with the organization.",
+                        t("connectionSetup.managerOnly"),
                     disabled: !canCreateOrganizationGrant,
                   },
                 ].filter((option) => allowedGrantKinds.includes(option.value as ConnectionGrantKind))}
@@ -4112,31 +4119,31 @@ export function AccessStepContent({
                 options={[
                   {
                     value: "specific",
-                    title: githubIdentity ? "Only agents I choose" : "Just agents I pick",
+                    title: githubIdentity ? t("connectionSetup.onlyChosen") : t("connectionSetup.justPicked"),
                     description: githubIdentity
                       ? grantKind === "user"
-                        ? "Only selected agents may use your GitHub when you’re responsible."
-                        : "Only selected agents may use the shared account."
+                        ? t("connectionSetup.onlySelectedUser")
+                        : t("connectionSetup.onlySelectedShared")
                       : undefined,
                     icon: <Bot className="h-4 w-4" aria-hidden="true" />,
                   },
                   {
                     value: "all",
-                    title: "Any agent",
+                    title: t("connectionSetup.anyAgent"),
                     description: githubIdentity
                       ? grantKind === "user"
-                        ? "Every agent may use your GitHub when you’re responsible."
-                        : "Every agent may use the shared account."
+                        ? t("connectionSetup.everyUser")
+                        : t("connectionSetup.everyShared")
                       : undefined,
                     icon: <BotGroupIcon />,
                     accessibleLabel: canSetCompanyInstall
-                      ? "Any agent"
+                      ? t("connectionSetup.anyAgent")
                       : `Any agent. Unavailable: ${capabilities?.companyInstallReason ??
-                        "Only someone who can configure this connection can choose this."}`,
+                        t("connectionSetup.configManagerOnly")}`,
                     tooltip: canSetCompanyInstall
                       ? undefined
                       : capabilities?.companyInstallReason ??
-                        "Only someone who can configure this connection can choose this.",
+                        t("connectionSetup.configManagerOnly"),
                     disabled: !canSetCompanyInstall,
                   },
                 ]}
@@ -4151,7 +4158,7 @@ export function AccessStepContent({
                     grantKind === "agent" && next.size > 1 ? new Set([[...next].at(-1)!]) : next,
                   )}
                   loading={agentsLoading}
-                  emptyMessage="You cannot edit any agents yet."
+                  emptyMessage={t("connectionSetup.noneEditable")}
                   showSelectionPreview={false}
                 />
               </div>
@@ -4207,7 +4214,7 @@ export function accessSummaryLines(input: {
         ? "Dedicated agent identity"
       : "Organization identity";
   const availableTo = input.installChoice === "all"
-    ? "Any agent"
+    ? t("connectionSetup.anyAgent")
     : `${input.installCount} selected ${input.installCount === 1 ? "agent" : "agents"}`;
   return [
     { label: "Identity", value: identity },

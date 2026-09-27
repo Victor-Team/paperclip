@@ -1,0 +1,12 @@
+{
+  "url": "http://127.0.0.1:3215/CMP/design-guide",
+  "title": "汉化门禁测试组织 • Paperclip",
+  "browserLanguage": "en-US",
+  "selectedLanguage": "zh-CN",
+  "cardText": "Core Exec Team\n\n3 智能体 · 1 项目 · 1 例程\n\nA starter executive team: a CEO who manages a CTO and a CMO, plus a launch project and a weekly standup routine. Installs ready-to-run agents you can customize.\n\nexec\nstarter",
+  "pageErrors": [],
+  "viewport": [
+    "1440x900",
+    "390x844"
+  ]
+}

@@ -1,0 +1,54 @@
+(node:2145715) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[43m[33m[[39m[49m[43m[30mWARN[39m[49m[43m[33m][39m[49m The "pnpm" field in package.json is no longer read by pnpm. The following keys were ignored: "pnpm.patchedDependencies", "pnpm.overrides". See https://pnpm.io/settings for the new home of each setting.
+(node:2145988) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Scope: 35 of 36 workspace projects
+[36mpackages/google-sheets-mcp-server[39m [96mtypecheck[39m$ tsc --noEmit
+[35mpackages/kv-demo-mcp-server[39m [96mtypecheck[39m$ tsc --noEmit
+[34mpackages/paperclip-eval-kernel[39m [96mtypecheck[39m$ tsc -p tsconfig.json --noEmit
+[33mpackages/shared[39m [96mtypecheck[39m$ tsc --noEmit
+[36mpackages/google-sheets-mcp-server[39m [96mtypecheck[39m: [90m(node:2146038) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.[39m
+[36mpackages/google-sheets-mcp-server[39m [96mtypecheck[39m: [90m(Use `node --trace-warnings ...` to show where the warning was created)[39m
+[34mpackages/paperclip-eval-kernel[39m [96mtypecheck[39m: [90m(node:2146047) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.[39m
+[34mpackages/paperclip-eval-kernel[39m [96mtypecheck[39m: [90m(Use `node --trace-warnings ...` to show where the warning was created)[39m
+[35mpackages/kv-demo-mcp-server[39m [96mtypecheck[39m: [90m(node:2146046) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.[39m
+[35mpackages/kv-demo-mcp-server[39m [96mtypecheck[39m: [90m(Use `node --trace-warnings ...` to show where the warning was created)[39m
+[33mpackages/shared[39m [96mtypecheck[39m: [90m(node:2146057) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.[39m
+[33mpackages/shared[39m [96mtypecheck[39m: [90m(Use `node --trace-warnings ...` to show where the warning was created)[39m
+[34mpackages/paperclip-eval-kernel[39m [96mtypecheck[39m: Done
+[32mpackages/tailscale-https-broker[39m [96mtypecheck[39m$ tsc --noEmit
+[32mpackages/tailscale-https-broker[39m [96mtypecheck[39m: [90m(node:2146200) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.[39m
+[32mpackages/tailscale-https-broker[39m [96mtypecheck[39m: [90m(Use `node --trace-warnings ...` to show where the warning was created)[39m
+[35mpackages/kv-demo-mcp-server[39m [96mtypecheck[39m: Done
+[31mpackages/teams-catalog[39m [96mtypecheck[39m$ tsc -p tsconfig.json --noEmit
+[31mpackages/teams-catalog[39m [96mtypecheck[39m: [90m(node:2146275) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.[39m
+[31mpackages/teams-catalog[39m [96mtypecheck[39m: [90m(Use `node --trace-warnings ...` to show where the warning was created)[39m
+[32mpackages/tailscale-https-broker[39m [96mtypecheck[39m: Done
+[31mpackages/teams-catalog[39m [96mtypecheck[39m: Done
+[36mpackages/google-sheets-mcp-server[39m [96mtypecheck[39m: Done
+[33mpackages/shared[39m [96mtypecheck[39m: Done
+[36mpackages/adapter-utils[39m [96mtypecheck[39m$ tsc --noEmit
+[35mpackages/db[39m [96mtypecheck[39m$ pnpm run check:migrations && tsc --noEmit
+[34mpackages/mcp-server[39m [96mtypecheck[39m$ tsc --noEmit
+[33mpackages/paperclip-runner[39m [96mtypecheck[39m$ pnpm run typecheck:typescript && pnpm run typecheck:rust
+[36mpackages/adapter-utils[39m [96mtypecheck[39m: [90m(node:2146358) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.[39m
+[36mpackages/adapter-utils[39m [96mtypecheck[39m: [90m(Use `node --trace-warnings ...` to show where the warning was created)[39m
+[34mpackages/mcp-server[39m [96mtypecheck[39m: [90m(node:2146372) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.[39m
+[34mpackages/mcp-server[39m [96mtypecheck[39m: [90m(Use `node --trace-warnings ...` to show where the warning was created)[39m
+[35mpackages/db[39m [96mtypecheck[39m: [90m(node:2146365) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.[39m
+[35mpackages/db[39m [96mtypecheck[39m: [90m(Use `node --trace-warnings ...` to show where the warning was created)[39m
+[33mpackages/paperclip-runner[39m [96mtypecheck[39m: [90m(node:2146380) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.[39m
+[33mpackages/paperclip-runner[39m [96mtypecheck[39m: [90m(Use `node --trace-warnings ...` to show where the warning was created)[39m
+[35mpackages/db[39m [96mtypecheck[39m: > @paperclipai/db@0.3.1 check:migrations /tmp/tok235-gate/work/packages/db
+[35mpackages/db[39m [96mtypecheck[39m: > tsx src/check-migration-numbering.ts && tsx src/check-migration-safety.ts
+[35mpackages/db[39m [96mtypecheck[39m: [90msh: 1: tsx: Permission denied[39m
+[35mpackages/db[39m [96mtypecheck[39m: [41m[30m ELIFECYCLE [39m[49m [31mCommand failed.[39m
+[33mpackages/paperclip-runner[39m [96mtypecheck[39m: > @paperclipai/paperclip-runner@0.0.0 typecheck:typescript /tmp/tok235-gate/work/packages/paperclip-runner
+[33mpackages/paperclip-runner[39m [96mtypecheck[39m: > pnpm run ensure:eval-build-deps && node --check scripts/protocol-contract.mjs && node --check scripts/generate-protocol-manifest.mjs && node --check scripts/generate-protocol-schema-module.mjs && node --check scripts/generate-acpx-sidecar-contract.mjs && node --check scripts/generate-replay-goldens.mjs && node --check scripts/generate-semantic-action-catalog.mjs && pnpm run check:protocol-types && node ./node_modules/typescript/bin/tsc --version && node ./node_modules/typescript/bin/tsc -p tsconfig.json --noEmit && node ./node_modules/typescript/bin/tsc -p tsconfig.surfaces.json --noEmit
+[35mpackages/db[39m [96mtypecheck[39m: Failed
+/tmp/tok235-gate/work/packages/db:
+[41m[30m ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL [39m[49m [31m@paperclipai/db@0.3.1 typecheck: `pnpm run check:migrations && tsc --noEmit`[39m
+[31mExit status 1[39m
+[32mpackages/plugins/sdk[39m [96mtypecheck[39m$ pnpm --filter @paperclipai/shared build && tsc --noEmit
+EXIT:1

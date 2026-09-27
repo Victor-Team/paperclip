@@ -534,8 +534,8 @@ function WebhookSettings({
             <CopyField
               label={
                 trigger.signingMode === "bearer"
-                  ? "Authorization header value"
-                  : "Secret key"
+                  ? t("tok225.authorization_header_value")
+                  : t("tok225.secret_key")
               }
               value={
                 trigger.signingMode === "bearer" ? `Bearer ${secret}` : secret

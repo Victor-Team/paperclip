@@ -290,15 +290,16 @@ function resolveContent(
   agentMap: Map<string, Agent>,
   entityNameMap: Map<string, string>,
   entityTitleMap: Map<string, string> | undefined,
+  t: (key: string) => string,
 ): CardContent {
   const details = event.details as Record<string, unknown> | null;
   const actor = event.actorType === "agent" ? agentMap.get(event.actorId) ?? null : null;
   const actorName =
     actor?.name ??
     (event.actorType === "system"
-      ? "System"
+      ? t("tok225review.dashboardSystem")
       : event.actorType === "user"
-        ? "Board"
+        ? t("tok225review.dashboardBoard")
         : event.actorId || "Unknown");
 
   const entityTitle = entityTitleMap?.get(`${event.entityType}:${event.entityId}`) ?? null;
@@ -428,8 +429,10 @@ export function FeedCard({
 }: FeedCardProps) {
   const { t } = useTranslation();
   const details = event.details as Record<string, unknown> | null;
-  const content = resolveContent(event, agentMap, entityNameMap, entityTitleMap);
-  const verb = formatVerb(event.action, details, isPinned ? "pinned" : "chronological");
+  const content = resolveContent(event, agentMap, entityNameMap, entityTitleMap, t);
+  const verb = event.action === "environment.lease_acquired" || event.action === "environment_lease_acquired"
+    ? t("tok225review.auditActionEnvironmentLeaseAcquired")
+    : formatVerb(event.action, details, isPinned ? "pinned" : "chronological");
   const iconSpec = getIconSpec(event, details, isActive);
 
   const mutedTextBase = isMuted ? "text-muted-foreground/70" : "text-(--hex-959596)";

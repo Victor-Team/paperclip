@@ -1,0 +1,76 @@
+[
+  {
+    "breakpoint": "桌面",
+    "method": "GET",
+    "path": "/api/issues/CMP-1",
+    "locale": "zh-CN",
+    "status": 500,
+    "body": "任务暂时无法加载，请稍后重试"
+  },
+  {
+    "breakpoint": "桌面",
+    "method": "GET",
+    "path": "/api/issues/CMP-1",
+    "locale": "zh-CN",
+    "status": 500,
+    "body": "任务暂时无法加载，请稍后重试"
+  },
+  {
+    "breakpoint": "桌面",
+    "method": "GET",
+    "path": "/api/issues/CMP-1",
+    "locale": "zh-CN",
+    "status": 500,
+    "body": "任务暂时无法加载，请稍后重试"
+  },
+  {
+    "breakpoint": "桌面",
+    "method": "GET",
+    "path": "/api/issues/CMP-1",
+    "locale": "zh-CN",
+    "status": 500,
+    "body": "任务暂时无法加载，请稍后重试"
+  },
+  {
+    "breakpoint": "桌面",
+    "state": "任务加载错误",
+    "text": "跳转到主要内容\n汉\n汉化返工测试组织\n新建任务\n搜索\n仪表盘\n收件箱\n工作\n任务\n项目\n例程\n产物\n公司\n智能体\n技能\n连接器\n审计\nBO\nBoard\n任务\nCMP-1\n\n任务暂时无法加载，请稍后重试\n\n命令面板\n\n搜索要运行的命令..."
+  },
+  {
+    "breakpoint": "窄屏",
+    "method": "GET",
+    "path": "/api/issues/CMP-1",
+    "locale": "zh-CN",
+    "status": 500,
+    "body": "任务暂时无法加载，请稍后重试"
+  },
+  {
+    "breakpoint": "窄屏",
+    "method": "GET",
+    "path": "/api/issues/CMP-1",
+    "locale": "zh-CN",
+    "status": 500,
+    "body": "任务暂时无法加载，请稍后重试"
+  },
+  {
+    "breakpoint": "窄屏",
+    "method": "GET",
+    "path": "/api/issues/CMP-1",
+    "locale": "zh-CN",
+    "status": 500,
+    "body": "任务暂时无法加载，请稍后重试"
+  },
+  {
+    "breakpoint": "窄屏",
+    "method": "GET",
+    "path": "/api/issues/CMP-1",
+    "locale": "zh-CN",
+    "status": 500,
+    "body": "任务暂时无法加载，请稍后重试"
+  },
+  {
+    "breakpoint": "窄屏",
+    "state": "任务加载错误",
+    "text": "跳转到主要内容\n汉\n汉化返工测试组织\n新建任务\n搜索\n仪表盘\n收件箱\n工作\n任务\n项目\n例程\n产物\n公司\n智能体\n技能\n连接器\n审计\nBO\nBoard\n任务\nCMP-1\n\n任务暂时无法加载，请稍后重试\n\n首页\n任务\n新建任务\n智能体\n收件箱\n命令面板\n\n搜索要运行的命令..."
+  }
+]

@@ -322,9 +322,10 @@ function findOffenders(relPath: string, text: string): string[] {
 // the runtime source that emits CLI instructions. It skips historical records
 // and internal automation, because a reader does not copy a command from them:
 // `doc/logs` holds past verification logs, `doc/plans` holds dated design
-// plans, and `scripts` holds trusted automation with fixed arguments. It skips
-// test files, because a test names the unsafe form to assert against it. The
-// root .paperclip-runtime directory contains ignored historical session
+// plans, `交付/` holds company delivery archives (not product operation
+// guidance), and `scripts` holds trusted automation with fixed arguments. It
+// skips test files, because a test names the unsafe form to assert against it.
+// The root .paperclip-runtime directory contains ignored historical session
 // recordings, not checked-in guidance; never scan those private recordings.
 
 const SKIP_DIRS = new Set([
@@ -342,6 +343,9 @@ const SKIP_PATH_PREFIXES = [
   "doc/logs/",
   "doc/plans/",
   "scripts/",
+  // Company delivery archives are historical records, not product operation
+  // guidance; a reader does not copy a command from them.
+  "交付/",
   // Generated paid-run transcripts contain historical copies of instructions,
   // including escaped warning examples; they are not authored guidance.
   "tests/runner-e2e/results/",

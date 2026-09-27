@@ -11,7 +11,7 @@ import { RemoteMcpManagement } from "./RemoteMcpManagement";
 import { AccessStepContent, StepHeader } from "../ConnectionSetupFlow";
 import type { RemoteMcpProvider } from "./providers";
 import type { RemoteMcpSetupActions, RemoteMcpSetupState } from "./types";
-import { useTranslation } from "@/i18n";
+import { t, useTranslation } from "@/i18n";
 
 const steps = ["access", "connect"] as const;
 const selectClass = "h-9 w-full rounded-md border border-input bg-background px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50";
@@ -19,7 +19,7 @@ const selectClass = "h-9 w-full rounded-md border border-input bg-background px-
 function FieldHelp({ label, children }: { label: string; children: ReactNode }) {
   const [open, setOpen] = useState(false);
   return <Tooltip open={open} onOpenChange={setOpen}>
-    <TooltipTrigger asChild><button type="button" aria-label={`Help with ${label}`} onClick={() => setOpen(!open)} className="rounded-sm text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><HelpCircle className="size-4" /></button></TooltipTrigger>
+    <TooltipTrigger asChild><button type="button" aria-label={t("remoteMcp.helpWith", { label: label })} onClick={() => setOpen(!open)} className="rounded-sm text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><HelpCircle className="size-4" /></button></TooltipTrigger>
     <TooltipContent className="max-w-xs">{children}</TooltipContent>
   </Tooltip>;
 }
@@ -54,24 +54,24 @@ export function RemoteMcpConnectionSetup({ provider, state: s, actions: a, agent
   </InlineBanner>;
   const footer = (children: ReactNode) => <SetupWizardFooter onSaveExit={a.saveExit} disabled={busy}>{children}</SetupWizardFooter>;
 
-  const error = s.connectStatus === "invalid_url" ? { title: "Enter a valid MCP URL", body: "Paste the complete server URL, including https:// or http://. A dashboard page is not an MCP endpoint." }
-    : s.connectStatus === "oauth_failed" ? { title: `${provider.name} couldn’t connect`, body: "Authorization did not complete. Your saved connection is still here, so you can try again." }
-    : s.connectStatus === "rejected" ? { title: "Credentials were rejected", body: `Check or replace the credentials from ${provider.name}, then reconnect. Your agent access and tool choices are preserved.` }
-    : s.connectStatus === "unreachable" ? { title: "Paperclip could not reach this server", body: "Check that the endpoint is running and reachable from Paperclip, then try again. Your draft is still here." }
+  const error = s.connectStatus === "invalid_url" ? { title: t("remoteMcp.invalidUrl"), body: "Paste the complete server URL, including https:// or http://. A dashboard page is not an MCP endpoint." }
+    : s.connectStatus === "oauth_failed" ? { title: `${provider.name} couldn’t connect`, body: t("remoteMcp.oauthFailedBody") }
+    : s.connectStatus === "rejected" ? { title: t("remoteMcp.rejected"), body: `Check or replace the credentials from ${provider.name}, then reconnect. Your agent access and tool choices are preserved.` }
+    : s.connectStatus === "unreachable" ? { title: t("remoteMcp.unreachable"), body: "Check that the endpoint is running and reachable from Paperclip, then try again. Your draft is still here." }
     : null;
 
   return <div className={host === "dialog" ? "min-w-0 text-foreground" : "mx-auto max-w-6xl p-4 text-foreground sm:p-8"} data-remote-mcp-provider={provider.id}>
     <StepHeader headingRef={heading} appIdentity={{ name: provider.name, logoUrl: null }}
-      title={s.step === "draft" ? "Continue your setup" : s.setupComplete ? s.step === "access" ? "Who can use this connection" : s.step === "connect" ? `Reconnect ${provider.name}` : provider.name : undefined}
-      subtitle={currentStep >= 0 && !s.setupComplete ? `Step ${currentStep + 1} of 2` : s.step === "draft" ? `Your ${provider.name} setup is ready to resume.` : s.step === "permissions" ? `Connected${s.identity ? ` as ${s.identity}` : ""} · ${s.tools.length} actions available` : `Manage this ${provider.name} connection.`}
-      step={currentStep >= 0 && !s.setupComplete ? "access" : "gallery"} activeIndex={currentStep} labels={["Access", "Connect"]} onCancel={busy || s.step === "management" || s.step === "permissions" || s.step === "draft" ? undefined : a.saveExit} />
+      title={s.step === "draft" ? t("remoteMcp.continueSetup") : s.setupComplete ? s.step === "access" ? t("remoteMcp.whoCanUse") : s.step === "connect" ? t("remoteMcp.reconnect", { name: provider.name }) : provider.name : undefined}
+      subtitle={currentStep >= 0 && !s.setupComplete ? t("remoteMcp.step", { index: currentStep + 1 }) : s.step === "draft" ? t("remoteMcp.resumeReady", { name: provider.name }) : s.step === "permissions" ? `Connected${s.identity ? ` as ${s.identity}` : ""} · ${s.tools.length} actions available` : t("remoteMcp.manageConnection", { name: provider.name })}
+      step={currentStep >= 0 && !s.setupComplete ? "access" : "gallery"} activeIndex={currentStep} labels={[t("remoteMcp.access"), t("remoteMcp.connect")]} onCancel={busy || s.step === "management" || s.step === "permissions" || s.step === "draft" ? undefined : a.saveExit} />
     <main className="space-y-6">
         {s.notice && <p role="status" className="text-sm text-muted-foreground">{s.notice}</p>}
 
         {s.step === "access" && <AccessStepContent agents={agents} lockedAgentId={lockedAgentId} authKind="oauth" grantKinds={fixedGrantKind ? [fixedGrantKind] : undefined} grantKind={s.grantKind} setGrantKind={(grantKind) => { if (grantKind !== "agent") change({ grantKind }); }}
           installChoice={s.allAgents ? "all" : "specific"} setInstallChoice={(choice) => change({ allAgents: choice === "all" })}
           installAgentIds={new Set(s.agentIds)} setInstallAgentIds={(ids) => change({ agentIds: [...ids] })}
-          submitLabel={s.setupComplete ? "Done" : "Continue"} onBack={s.setupComplete ? a.finish : a.saveExit} onContinue={s.setupComplete ? a.finish : () => a.navigate("connect")} />}
+          submitLabel={s.setupComplete ? t("remoteMcp.done") : t("remoteMcp.continue")} onBack={s.setupComplete ? a.finish : a.saveExit} onContinue={s.setupComplete ? a.finish : () => a.navigate("connect")} />}
         {s.step === "permissions" && <>
           <div className="flex items-center justify-between gap-3"><h2 className="text-sm font-semibold">{t("remotemcpconnectionsetup.general.permissions")}</h2><Button variant="outline" onClick={a.finish}>{t("remotemcpconnectionsetup.general.connectionsettings")}</Button></div>
           {s.tools.some((entry) => entry.broad) && boundary}
@@ -87,10 +87,10 @@ export function RemoteMcpConnectionSetup({ provider, state: s, actions: a, agent
         {s.step === "connect" && <>
           <div className="space-y-3">
             <ol className="list-decimal space-y-2 pl-5 text-sm">{provider.instructions.map((instruction) => <li key={instruction}>{instruction}</li>)}</ol>
-            {external("setup", `Open ${provider.name} setup guide`)}
+            {external("setup", t("remoteMcp.openSetupGuide", { name: provider.name }))}
           </div>
           {s.connectStatus === "sign_in" && provider.supportsBrowserAuth ? <>
-            <div role="status"><InlineBanner title={`Finish signing in to ${provider.name}`}>
+            <div role="status"><InlineBanner title={t("remoteMcp.finishSignIn", { name: provider.name })}>
               {t("remotemcpconnectionsetup.general.completesigninintheproviderwindow")}</InlineBanner></div>
             <p className="text-sm text-muted-foreground">{t("remotemcpconnectionsetup.general.ifawindowdidnotopen")} {authorizationUrl ? <a className="text-current underline" href={authorizationUrl} onClick={() => a.openProvider("sign_in")} target="_blank" rel="noopener noreferrer">{t("remotemcpconnectionsetup.general.opensigninagain")}</a> : external("sign_in", "open sign-in again")}.</p>
             {footer(<><Button variant="outline" onClick={a.cancelConnect}>{t("remotemcpconnectionsetup.general.cancelsignin")}</Button><Button disabled>{t("remotemcpconnectionsetup.general.waitingforsignin")}</Button></>)}
@@ -114,9 +114,9 @@ export function RemoteMcpConnectionSetup({ provider, state: s, actions: a, agent
                   {(s.auth === "bearer" || s.auth === "headers") && <div className="space-y-3">
                     <p className="text-sm font-medium">{s.auth === "bearer" ? t("remotemcpconnectionsetup.general.additionalheaders") : t("remotemcpconnectionsetup.general.headers")}</p>
                     {s.headers.map((header, index) => <div key={header.id} className="flex flex-wrap items-end gap-2">
-                      <div className="min-w-0 flex-1 space-y-2"><Label htmlFor={`${uid}-${header.id}-name`}>{t("remotemcpconnectionsetup.general.header")} {index + 1} {t("remotemcpconnectionsetup.general.name")}</Label><Input id={`${uid}-${header.id}-name`} value={header.name} placeholder={provider.id === "arcade" ? "Arcade-User-ID" : "Header name"} onChange={(event) => change({ headers: s.headers.map((h) => h.id === header.id ? { ...h, name: event.target.value } : h) })} /></div>
+                      <div className="min-w-0 flex-1 space-y-2"><Label htmlFor={`${uid}-${header.id}-name`}>{t("remotemcpconnectionsetup.general.header")} {index + 1} {t("remotemcpconnectionsetup.general.name")}</Label><Input id={`${uid}-${header.id}-name`} value={header.name} placeholder={provider.id === "arcade" ? "Arcade-User-ID" : t("connectionsetupflow.general.headername")} onChange={(event) => change({ headers: s.headers.map((h) => h.id === header.id ? { ...h, name: event.target.value } : h) })} /></div>
                       <div className="min-w-0 flex-1 space-y-2"><Label htmlFor={`${uid}-${header.id}-value`}>{t("remotemcpconnectionsetup.general.header4")} {index + 1} {t("remotemcpconnectionsetup.general.value")}</Label><Input id={`${uid}-${header.id}-value`} type="password" autoComplete="off" value={header.value} onChange={(event) => change({ headers: s.headers.map((h) => h.id === header.id ? { ...h, value: event.target.value } : h) })} /></div>
-                      <Button type="button" variant="ghost" size="icon" aria-label={`Remove header ${index + 1}`} onClick={() => change({ headers: s.headers.filter((h) => h.id !== header.id) })}><Trash2 className="size-4" /></Button>
+                      <Button type="button" variant="ghost" size="icon" aria-label={t("remoteMcp.removeHeader", { index: index + 1 })} onClick={() => change({ headers: s.headers.filter((h) => h.id !== header.id) })}><Trash2 className="size-4" /></Button>
                     </div>)}
                     <Button type="button" variant="outline" size="sm" onClick={() => change({ headers: [...s.headers, { id: crypto.randomUUID(), name: "", value: "" }] })}><Plus className="size-4" />{t("remotemcpconnectionsetup.general.addheader")}</Button>
                   </div>}
@@ -124,7 +124,7 @@ export function RemoteMcpConnectionSetup({ provider, state: s, actions: a, agent
               </details>
             </fieldset>
             {busy && <p role="status" className="flex items-center gap-2 text-sm"><Loader2 className="size-4 animate-spin motion-reduce:animate-none" />{t("remotemcpconnectionsetup.general.connectinganddiscoveringtools")}</p>}
-            {footer(<><Button type="button" variant="outline" disabled={busy} onClick={() => s.setupComplete ? a.finish() : a.navigate("access")}>{t("remotemcpconnectionsetup.general.back")}</Button><Button type="submit" disabled={busy || !s.url.trim()}>{busy ? "Connecting…" : error || s.connectStatus === "cancelled" ? "Try again" : "Connect"}</Button></>)}
+            {footer(<><Button type="button" variant="outline" disabled={busy} onClick={() => s.setupComplete ? a.finish() : a.navigate("access")}>{t("remotemcpconnectionsetup.general.back")}</Button><Button type="submit" disabled={busy || !s.url.trim()}>{busy ? "Connecting…" : error || s.connectStatus === "cancelled" ? t("remoteMcp.tryAgain") : "Connect"}</Button></>)}
           </form>}
         </>}
 
