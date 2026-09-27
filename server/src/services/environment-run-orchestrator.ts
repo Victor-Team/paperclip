@@ -57,6 +57,10 @@ import type { PluginWorkerManager } from "./plugin-worker-manager.js";
 // Error types
 // ---------------------------------------------------------------------------
 
+/** Stable activity action codes. The API returns these verbatim; UI maps them by current locale. */
+export const ENVIRONMENT_LEASE_ACQUIRED_ACTION = "environment.lease_acquired";
+export const ENVIRONMENT_LEASE_RELEASED_ACTION = "environment.lease_released";
+
 export type EnvironmentErrorCode =
   | "environment_not_found"
   | "environment_inactive"
@@ -297,7 +301,7 @@ export function environmentRunOrchestrator(
       actorId: input.agentId,
       agentId: input.agentId,
       runId: input.heartbeatRunId,
-      action: "environment.lease_acquired",
+      action: ENVIRONMENT_LEASE_ACQUIRED_ACTION,
       entityType: "environment_lease",
       entityId: leaseRecord.lease.id,
       issueId: input.issueId,
@@ -623,7 +627,7 @@ export function environmentRunOrchestrator(
           actorId: input.agentId,
           agentId: input.agentId,
           runId: input.heartbeatRunId,
-          action: "environment.lease_released",
+          action: ENVIRONMENT_LEASE_RELEASED_ACTION,
           entityType: "environment_lease",
           entityId: released.lease.id,
           issueId: released.lease.issueId,

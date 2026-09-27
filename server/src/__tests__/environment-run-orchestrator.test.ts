@@ -11,6 +11,8 @@ const mockUpdateLeaseMetadata = vi.hoisted(() => vi.fn());
 const mockUpdateExecutionWorkspace = vi.hoisted(() => vi.fn());
 const mockLogActivity = vi.hoisted(() => vi.fn());
 const mockLoggerInfo = vi.hoisted(() => vi.fn());
+const mockGetEnvironmentById = vi.hoisted(() => vi.fn());
+const mockEnsureLocalEnvironment = vi.hoisted(() => vi.fn());
 
 vi.mock("../services/environment-execution-target.js", () => ({
   resolveEnvironmentExecutionTarget: mockResolveEnvironmentExecutionTarget,
@@ -27,8 +29,8 @@ vi.mock("../services/workspace-realization.js", () => ({
 
 vi.mock("../services/environments.js", () => ({
   environmentService: vi.fn(() => ({
-    ensureLocalEnvironment: vi.fn(),
-    getById: vi.fn(),
+    ensureLocalEnvironment: mockEnsureLocalEnvironment,
+    getById: mockGetEnvironmentById,
     acquireLease: vi.fn(),
     releaseLease: vi.fn(),
     updateLeaseMetadata: mockUpdateLeaseMetadata,
@@ -59,6 +61,8 @@ vi.mock("../middleware/logger.js", () => ({
 // ---------------------------------------------------------------------------
 
 import {
+  ENVIRONMENT_LEASE_ACQUIRED_ACTION,
+  ENVIRONMENT_LEASE_RELEASED_ACTION,
   environmentRunOrchestrator,
   EnvironmentRunError,
 } from "../services/environment-run-orchestrator.ts";
@@ -253,6 +257,8 @@ describe("environmentRunOrchestrator — realizeForRun", () => {
     mockUpdateLeaseMetadata.mockResolvedValue(null);
     mockUpdateExecutionWorkspace.mockResolvedValue(null);
     mockLogActivity.mockResolvedValue(undefined);
+    mockGetEnvironmentById.mockResolvedValue(makeEnvironment());
+    mockEnsureLocalEnvironment.mockResolvedValue(makeEnvironment());
   });
 
   it.each([false, true])("only requests active-work cancellation for explicit Stop: %s", async (cancelActiveWork) => {
@@ -267,6 +273,70 @@ describe("environmentRunOrchestrator — realizeForRun", () => {
       "run-1", "released", expect.any(Function), "stop_and_retain",
       ...(cancelActiveWork ? [true] : []),
     );
+  });
+
+  it("acquireForRun logs environment.lease_acquired as the stable action code", async () => {
+    const lease = makeLease({ issueId: "issue-1" });
+    const environment = makeEnvironment();
+    mockGetEnvironmentById.mockResolvedValue(environment);
+    const acquireRunLease = vi.fn().mockResolvedValue({
+      environment,
+      lease,
+      leaseContext: { executionWorkspaceId: "ew-1" },
+    });
+    const runtime = makeMockRuntime({ acquireRunLease });
+    const orchestrator = environmentRunOrchestrator(mockDb, { environmentRuntime: runtime });
+
+    await orchestrator.acquireForRun({
+      companyId: "company-1",
+      selectedEnvironmentId: "env-1",
+      localEnvironmentId: "local-env",
+      adapterType: "claude_local",
+      issueId: "issue-1",
+      heartbeatRunId: "run-1",
+      agentId: "agent-1",
+      persistedExecutionWorkspace: { id: "ew-1", mode: "standard" },
+      executionWorkspaceSettings: null,
+    });
+
+    expect(mockLogActivity).toHaveBeenCalledWith(
+      mockDb,
+      expect.objectContaining({
+        action: ENVIRONMENT_LEASE_ACQUIRED_ACTION,
+        entityType: "environment_lease",
+        entityId: lease.id,
+        issueId: "issue-1",
+        agentId: "agent-1",
+        runId: "run-1",
+      }),
+    );
+    expect(ENVIRONMENT_LEASE_ACQUIRED_ACTION).toBe("environment.lease_acquired");
+  });
+
+  it("releaseForRun logs environment.lease_released as the stable action code", async () => {
+    const lease = makeLease({ issueId: "issue-1" });
+    const releaseRunLeases = vi.fn().mockResolvedValue([
+      { environment: makeEnvironment(), lease, leaseContext: { executionWorkspaceId: "ew-1" } },
+    ]);
+    const runtime = makeMockRuntime({ releaseRunLeases });
+    const orchestrator = environmentRunOrchestrator(mockDb, { environmentRuntime: runtime });
+
+    await orchestrator.releaseForRun({
+      heartbeatRunId: "run-1",
+      companyId: "company-1",
+      agentId: "agent-1",
+      providerResourceDisposition: "stop_and_retain",
+    });
+
+    expect(mockLogActivity).toHaveBeenCalledWith(
+      mockDb,
+      expect.objectContaining({
+        action: ENVIRONMENT_LEASE_RELEASED_ACTION,
+        entityType: "environment_lease",
+        entityId: lease.id,
+      }),
+    );
+    expect(ENVIRONMENT_LEASE_RELEASED_ACTION).toBe("environment.lease_released");
   });
 
   it("happy path: returns lease, executionTarget, and remoteExecution on successful realization", async () => {

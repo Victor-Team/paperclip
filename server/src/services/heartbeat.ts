@@ -580,7 +580,11 @@ import {
   type ProviderResourceDisposition,
 } from "./environment-runtime.js";
 import { skillVersionSelectionMap } from "./runtime-skill-selections.js";
-import { environmentRunOrchestrator } from "./environment-run-orchestrator.js";
+import {
+  ENVIRONMENT_LEASE_ACQUIRED_ACTION,
+  ENVIRONMENT_LEASE_RELEASED_ACTION,
+  environmentRunOrchestrator,
+} from "./environment-run-orchestrator.js";
 import { isUnsafeSessionWorkspaceCwd } from "./session-workspace-cwd.js";
 import {
   clearHeartbeatRunRuntimeStatus,
@@ -650,8 +654,8 @@ const HEARTBEAT_MAX_CONCURRENT_RUNS_DEFAULT = AGENT_DEFAULT_MAX_CONCURRENT_RUNS;
 const HEARTBEAT_MAX_CONCURRENT_RUNS_MIN = 1;
 const HEARTBEAT_MAX_CONCURRENT_RUNS_MAX = 50;
 const LIVENESS_BOOKKEEPING_ACTIVITY_ACTIONS = [
-  "environment.lease_acquired",
-  "environment.lease_released",
+  ENVIRONMENT_LEASE_ACQUIRED_ACTION,
+  ENVIRONMENT_LEASE_RELEASED_ACTION,
 ];
 const DEFERRED_WAKE_CONTEXT_KEY = "_paperclipWakeContext";
 const EXTERNAL_ATTACHMENT_OMISSIONS_KEY = "externalAttachmentOmissions";
