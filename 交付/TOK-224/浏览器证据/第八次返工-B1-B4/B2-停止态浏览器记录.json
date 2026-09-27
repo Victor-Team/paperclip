@@ -1,0 +1,14 @@
+{
+  "route": "/issues/TOKAAAAA-1",
+  "viewports": [
+    "1440×900",
+    "390×844"
+  ],
+  "accountLanguageSwitch": "en-US → account menu → zh-CN → English",
+  "fixture": "Synthetic user and agent comments linked to a cancelled run; response data only, no database mutations.",
+  "assertions": {
+    "stoppedZh": true,
+    "englishRestore": true
+  },
+  "errors": []
+}

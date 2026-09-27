@@ -73,7 +73,6 @@ import {
 import { CommentSubmissionUnknownError } from "../lib/comment-submit-result";
 import {
   buildIssueChatMessages,
-  formatDurationWords,
   isCoTSegmentActive,
   stabilizeThreadMessages,
   type IssueChatComment,
@@ -408,7 +407,16 @@ function useLiveElapsed(
   // timer rather than one per element.
   useSecondTick(Boolean(active && startMs));
   if (!active || !startMs) return null;
-  return formatDurationWords(Date.now() - startMs);
+  return localizedReviewDuration(Date.now() - startMs);
+}
+
+function localizedReviewDuration(durationMs: number): string {
+  const seconds = Math.max(1, Math.floor(durationMs / 1000));
+  if (seconds < 60) return t("tok225review.durationSeconds", { count: seconds });
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return t("tok225review.durationMinutes", { count: minutes });
+  const hours = Math.floor(minutes / 60);
+  return t("tok225review.durationHours", { count: hours });
 }
 
 function readCustomString(
@@ -444,14 +452,14 @@ function IssueChatLiveRunStatusLine({
   if (!active) return null;
 
   const primary = currentToolName
-    ? `Using ${currentToolName}`
+    ? t("tok225review.runUsing", { tool: currentToolName })
     : lastAssistantSnippet
       ? lastAssistantSnippet
       : currentStatusMessage;
   const activityText = lastActivityElapsed
     ? lastActivityAgeMs !== null && lastActivityAgeMs >= 15_000
-      ? `no output for ${lastActivityElapsed} - still running`
-      : `${lastActivityElapsed} ago`
+      ? t("tok225review.runNoOutputFor", { duration: lastActivityElapsed })
+      : t("tok225review.runAgo", { duration: lastActivityElapsed })
     : "";
   const text = [primary, activityText].filter(Boolean).join(" · ");
   if (!text) return null;
@@ -810,7 +818,7 @@ export function IssueAssigneePausedNotice({
         compact
         title={
           <>
-            <span className="font-medium">{agent.name}</span> is paused.
+          {t("tok225review.pausedTitle", { name: agent.name })}
           </>
         }
         actions={
@@ -827,7 +835,7 @@ export function IssueAssigneePausedNotice({
           ) : undefined
         }
       >
-        New runs will not start until the agent is resumed. {pauseDetail}
+        {t("tok225review.pausedBody")} {pauseDetail}
       </InlineBanner>
     </div>
   );
@@ -1188,8 +1196,8 @@ function toolCountSummary(toolParts: ToolCallMessagePart[]): string | null {
   }
   const parts: string[] = [];
   if (commands > 0)
-    parts.push(`ran ${commands} command${commands === 1 ? "" : "s"}`);
-  if (other > 0) parts.push(`called ${other} tool${other === 1 ? "" : "s"}`);
+    parts.push(t("tok225review.runCommandCount", { count: commands }));
+  if (other > 0) parts.push(t("tok225review.runToolCount", { count: other }));
   return parts.join(", ");
 }
 
@@ -1269,15 +1277,15 @@ function IssueChatChainOfThought({
   let headerVerb: string;
   let headerSuffix: string | null = null;
   if (isActive) {
-    headerVerb = "Working";
-    if (liveElapsed) headerSuffix = `for ${liveElapsed}`;
+    headerVerb = t("tok225review.runWorking");
+    if (liveElapsed) headerSuffix = `${t("tok225review.runFor")} ${liveElapsed}`;
   } else if (segmentTiming) {
     const durationMs = segmentTiming.endMs - segmentTiming.startMs;
-    const durationText = formatDurationWords(durationMs);
-    headerVerb = "Worked";
-    if (durationText) headerSuffix = `for ${durationText}`;
+    const durationText = localizedReviewDuration(durationMs);
+    headerVerb = t("tok225review.runWorked");
+    if (durationText) headerSuffix = `${t("tok225review.runFor")} ${durationText}`;
   } else {
-    headerVerb = "Worked";
+    headerVerb = t("tok225review.runWorked");
   }
 
   const toolSummary = toolCountSummary(toolParts);
@@ -3509,6 +3517,9 @@ function SystemNoticeCommentContent({
     .filter((p): p is { type: "text"; text: string } => p.type === "text")
     .map((p) => p.text)
     .join("\n\n");
+  const displayBodyText = bodyText === "Paperclip needs a disposition before this issue can continue."
+    ? t("tok225review.noticeDispositionBody", { defaultValue: bodyText })
+    : bodyText;
   const staleSuccessfulRunHandoffNotice = isStaleSuccessfulRunHandoffNotice({
     bodyText,
     issueStatus,
@@ -3548,7 +3559,7 @@ function SystemNoticeCommentContent({
         softBreaks
         onImageClick={onImageClick}
       >
-        {bodyText}
+        {displayBodyText}
       </MarkdownBody>
     ),
     timestamp: toValidIsoString(message.createdAt),

@@ -1,0 +1,3 @@
+PASS: 40 locale files; 8263 identical leaf keys each; mismatches=0
+COMMAND=git diff --check
+EXIT_CODE=0

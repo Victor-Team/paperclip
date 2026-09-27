@@ -5,6 +5,7 @@ import { createRoot } from "react-dom/client";
 import type { ActivityEvent } from "@paperclipai/shared";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { FeedCard } from "./FeedCard";
+import { i18n } from "@/i18n";
 
 const navigate = vi.fn();
 
@@ -41,6 +42,7 @@ describe("FeedCard", () => {
 
   afterEach(() => {
     container.remove();
+    void i18n.changeLanguage("en");
   });
 
   it.each([["waiting", "moved to idle"], [null, "moved to in review"]])("distinguishes waiting from review (%s)", (state, verb) => {
@@ -75,6 +77,21 @@ describe("FeedCard", () => {
     card?.click();
     expect(navigate).toHaveBeenCalledOnce();
 
+    act(() => root.unmount());
+  });
+
+  it("localizes fixed environment audit actions while preserving entity data", async () => {
+    await act(async () => { await i18n.changeLanguage("zh-CN"); });
+    const root = createRoot(container);
+    act(() => root.render(
+      <FeedCard
+        event={{ ...event, action: "environment.lease_acquired", entityType: "company", entityId: "company-1" }}
+        agentMap={new Map()}
+        entityNameMap={new Map()}
+      />,
+    ));
+    expect(container.querySelector('[data-fc="verb"]')?.textContent).toBe("已获取环境租约");
+    expect(container.querySelector('[data-fc="actor"]')?.textContent).toBe("董事会");
     act(() => root.unmount());
   });
 });

@@ -48,11 +48,12 @@ import type {
   AgentInstructionsFileSummary,
   HeartbeatRun,
 } from "@paperclipai/shared";
+import { useTranslation } from "@/i18n";
 
 export function RunButton({
   onClick,
   disabled,
-  label = "Run now",
+  label,
   size = "sm",
 }: {
   onClick: () => void;
@@ -60,10 +61,11 @@ export function RunButton({
   label?: string;
   size?: "sm" | "default";
 }) {
+  const { t } = useTranslation();
   return (
     <Button variant="outline" size={size} onClick={onClick} disabled={disabled}>
       <Play className="h-3.5 w-3.5 sm:mr-1" />
-      <span className="hidden sm:inline">{label}</span>
+      <span className="hidden sm:inline">{label ?? t("tok225review.agentRunNow")}</span>
     </Button>
   );
 }
@@ -81,11 +83,12 @@ export function PauseResumeButton({
   disabled?: boolean;
   size?: "sm" | "default";
 }) {
+  const { t } = useTranslation();
   if (isPaused) {
     return (
       <Button variant="outline" size={size} onClick={onResume} disabled={disabled}>
         <Play className="h-3.5 w-3.5 sm:mr-1" />
-        <span className="hidden sm:inline">Resume</span>
+        <span className="hidden sm:inline">{t("tok225review.agentResume")}</span>
       </Button>
     );
   }
@@ -93,7 +96,7 @@ export function PauseResumeButton({
   return (
     <Button variant="outline" size={size} onClick={onPause} disabled={disabled}>
       <Pause className="h-3.5 w-3.5 sm:mr-1" />
-      <span className="hidden sm:inline">Pause</span>
+        <span className="hidden sm:inline">{t("tok225review.agentPause")}</span>
     </Button>
   );
 }
@@ -159,8 +162,8 @@ export function AgentActionButtons({
   agent,
   companyId,
   size = "sm",
-  assignLabel = "Assign Task",
-  runLabel = "Run now",
+  assignLabel,
+  runLabel,
   showStatus = true,
   showRun = true,
   actionsDisabled = false,
@@ -213,6 +216,7 @@ export function AgentActionButtons({
   children?: React.ReactNode;
   className?: string;
 }) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { openNewIssue } = useDialogActions();
@@ -398,7 +402,7 @@ export function AgentActionButtons({
         title={workActionsDisabled ? workActionsDisabledReason : undefined}
       >
         <Plus className="h-3.5 w-3.5 sm:mr-1" />
-        <span className="hidden sm:inline">{assignLabel}</span>
+        <span className="hidden sm:inline">{assignLabel ?? t("tok225review.agentAssignTask")}</span>
       </Button>
       {showRun && <RunButton
         onClick={() => {
@@ -418,10 +422,10 @@ export function AgentActionButtons({
             providerTraceAction.mutate();
           }}
           disabled={assignAndRunDisabled}
-          title="Capture exact provider traffic for this run (expires after 24 hours)"
+          title={t("tok225review.agentProviderTraceTitle")}
         >
           <Bug className="h-3.5 w-3.5 sm:mr-1" />
-          <span className="hidden sm:inline">Run with provider trace</span>
+        <span className="hidden sm:inline">{t("tok225review.agentProviderTrace")}</span>
         </Button>
       )}
       {isError ? (
@@ -449,9 +453,9 @@ export function AgentActionButtons({
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogCancel>{t("tok225review.agentCancel")}</AlertDialogCancel>
               <AlertDialogAction onClick={() => agentAction.mutate("pause")}>
-                Pause anyway
+                {t("tok225review.agentPauseAnyway")}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

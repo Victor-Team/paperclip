@@ -4,6 +4,7 @@ import { useMemo, type ReactNode } from "react";
 import type { IssueAttachment } from "@paperclipai/shared";
 import { cn } from "@/lib/utils";
 import { useStreamlinedTaskChatPresentation } from "./presentation-mode";
+import { t } from "@/i18n";
 import type {
   TaskChatInteractionItem,
   TaskChatItem,
@@ -318,8 +319,8 @@ export function TaskChatThreadView({
             (item) =>
               item.kind === "marker" &&
               item.variant === "interrupted" &&
-              (item.label === "Run failed" ||
-                item.label === "Usage limit reached"),
+              (item.label === t("tok225review.runFailed") ||
+                item.label === t("tok225review.runUsageLimitReached")),
           )?.id
       : undefined;
   // Streaming tail and header updates must not rebuild settled markdown/tool trees.

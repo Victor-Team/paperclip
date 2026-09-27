@@ -1,0 +1,15 @@
+{
+  "route": "/board-chat",
+  "viewports": [
+    "1440×900",
+    "390×844"
+  ],
+  "accountLanguageSwitch": "en-US → account menu → zh-CN; restored en",
+  "browserFixture": "One synthetic environment lease activity event; actor type system and entity type agent, no persisted changes.",
+  "assertions": {
+    "actionZh": true,
+    "actionEn": true
+  },
+  "activityRequests": 2,
+  "errors": []
+}

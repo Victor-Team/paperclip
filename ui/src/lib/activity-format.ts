@@ -446,6 +446,10 @@ export function formatActivityVerb(
   details?: Record<string, unknown> | null,
   options: ActivityFormatOptions = {},
 ): string {
+  if (action === "environment.lease_acquired" || action === "environment_lease_acquired") {
+    return t("tok225review.auditActionEnvironmentLeaseAcquired", { defaultValue: "environment lease acquired" });
+  }
+
   if (action.startsWith("tool_gateway.")) {
     const rawTool = typeof details?.tool === "string"
       ? details.tool
@@ -510,6 +514,10 @@ export function formatIssueActivityAction(
   if (action === "issue.accepted_plan_decomposition_updated") {
     const detail = formatAcceptedPlanDecompositionDetail(details);
     if (detail) return detail;
+  }
+
+  if (action === "environment.lease_acquired" || action === "environment_lease_acquired") {
+    return t("tok225review.auditActionEnvironmentLeaseAcquired", { defaultValue: "environment lease acquired" });
   }
 
   if (action === "issue.stalled_review_decided") {

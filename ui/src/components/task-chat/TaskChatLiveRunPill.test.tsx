@@ -6,6 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { ExecutionProjection } from "@paperclipai/shared";
 import type { TranscriptEntry } from "../../adapters";
 import { TaskChatLiveRunPill, toolCountSummaryFromEntries } from "./TaskChatLiveRunPill";
+import { i18n } from "@/i18n";
 
 function toolCall(overrides: Partial<Extract<TranscriptEntry, { kind: "tool_call" }>>): TranscriptEntry {
   return { kind: "tool_call", ts: "2026-08-08T00:00:00.000Z", name: "read_file", input: {}, ...overrides };
@@ -48,7 +49,8 @@ describe("TaskChatLiveRunPill", () => {
     root = createRoot(container);
   });
 
-  afterEach(() => {
+  afterEach(async () => {
+    await i18n.changeLanguage("en");
     act(() => root.unmount());
     container.remove();
     vi.useRealTimers();
@@ -118,6 +120,29 @@ describe("TaskChatLiveRunPill", () => {
     expect(pill?.textContent).toContain("Worked");
     expect(pill?.textContent).toContain("for 42 seconds");
     expect(pill?.textContent).toContain("ran 1 command");
+  });
+
+  it("localizes running and terminal labels, elapsed time, and tool counts in Simplified Chinese", async () => {
+    await i18n.changeLanguage("zh-CN");
+    act(() => root.render(
+      <TaskChatLiveRunPill status="running" startedAtMs={Date.now() - 42_000}
+        toolSummary="ran 1 command, called 2 tools" />,
+    ));
+    expect(container.textContent).toContain("正在工作");
+    expect(container.textContent).toContain("用时 42 秒");
+    expect(container.textContent).toContain("已运行 1 条命令");
+    expect(container.textContent).toContain("已调用 2 个工具");
+    act(() => root.render(
+      <TaskChatLiveRunPill status="succeeded" startedAtMs={Date.now() - 42_000}
+        finishedAtMs={Date.now()} toolSummary={null} />,
+    ));
+    expect(container.textContent).toContain("已完成工作");
+    act(() => root.render(
+      <TaskChatLiveRunPill status="cancelled" startedAtMs={Date.now() - 42_000}
+        finishedAtMs={Date.now()} toolSummary={null} />,
+    ));
+    expect(container.textContent).toContain("已停止");
+    await i18n.changeLanguage("en");
   });
 
 });

@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/tooltip";
 import { ListFilter, Layers, ChevronDown, ChevronRight, User, Settings } from "lucide-react";
 import { timeAgo } from "../lib/timeAgo";
+import { useTranslation } from "@/i18n";
 
 /* ------------------------------------------------------------------ */
 /*  Event Tier Classification                                          */
@@ -253,13 +254,14 @@ function CollapsedFeedGroup({
   entityNameMap: Map<string, string>;
   entityTitleMap: Map<string, string>;
 }) {
+  const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
   const actor = group.latestEvent.actorType === "agent"
     ? agentMap.get(group.latestEvent.actorId)
     : null;
   const actorName = actor?.name
-    ?? (group.latestEvent.actorType === "system" ? "System"
-      : group.latestEvent.actorType === "user" ? "Board"
+    ?? (group.latestEvent.actorType === "system" ? t("tok225review.dashboardSystem")
+      : group.latestEvent.actorType === "user" ? t("tok225review.dashboardBoard")
       : "Unknown");
   const entityName = entityNameMap.get(`${group.entityType}:${group.entityId}`);
 
@@ -287,7 +289,7 @@ function CollapsedFeedGroup({
         }
         <span className="flex-1 min-w-0 truncate">
           <span data-fc="actor" className="font-medium text-(--hex-959596) group-hover:text-white">{actorName}</span>
-          <span data-fc="verb" className="ml-1 text-(--hex-959596)">made {group.events.length} updates to</span>
+          <span data-fc="verb" className="ml-1 text-(--hex-959596)">{t("tok225review.dashboardUpdates", { count: group.events.length })}</span>
           <span data-fc="title" className="ml-1 text-(--hex-959596) group-hover:text-white">{entityName ?? group.entityId}</span>
         </span>
         <span data-fc="time" className="text-muted-foreground shrink-0">

@@ -44,13 +44,15 @@ function currentActivityStatusItems(
   return items.slice(boundaryIndex + 1);
 }
 
-function formatCompactDuration(ms: number | null): string | null {
+function formatCompactDuration(ms: number | null, t: (key: string, options?: Record<string, unknown>) => string): string | null {
   if (ms == null || !Number.isFinite(ms)) return null;
   const totalSeconds = Math.max(0, Math.floor(ms / 1000));
-  if (totalSeconds < 60) return `${totalSeconds}s`;
+  if (totalSeconds < 60) return t("tok225review.durationShortSeconds", { count: totalSeconds });
   const minutes = Math.floor(totalSeconds / 60);
   const seconds = totalSeconds % 60;
-  return seconds === 0 ? `${minutes}m` : `${minutes}m ${seconds}s`;
+  return seconds === 0
+    ? t("tok225review.durationShortMinutes", { count: minutes })
+    : `${t("tok225review.durationShortMinutes", { count: minutes })} ${t("tok225review.durationShortSeconds", { count: seconds })}`;
 }
 
 function terminalStatusFailed(status: string): boolean {
@@ -82,17 +84,18 @@ function RunnerTurnStatus({
           0,
           (terminal ? (finishedAtMs ?? Date.now()) : Date.now()) - startedAtMs,
         );
-  const elapsed = formatCompactDuration(elapsedMs);
+  const { t } = useTranslation();
+  const elapsed = formatCompactDuration(elapsedMs, t);
 
   const failed = terminalStatusFailed(status);
-  const label = terminal ? (failed ? "Stopped" : "Worked") : "Working";
+  const label = t(`tok225review.${terminal ? (failed ? "runStopped" : "runWorked") : "runWorking"}`);
   const semanticLabel = terminal
     ? elapsed
-      ? `${label} ${failed ? "after" : "for"} ${elapsed}`
+      ? `${label} ${t(`tok225review.${failed ? "runAfter" : "runFor"}`)} ${elapsed}`
       : label
-    : `${label} for ${elapsed ?? "0s"}`;
+    : `${label} ${t("tok225review.runFor")} ${elapsed ?? "0s"}`;
   const visibleLabel = continuedAfterSteering
-    ? `Continued after steering · ${semanticLabel}`
+    ? `${t("tok225review.runContinuedAfterSteering")} · ${semanticLabel}`
     : semanticLabel;
 
   return (

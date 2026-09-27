@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { useTranslation } from "@/i18n";
 import {
   Activity,
   BadgeDollarSign,
@@ -52,7 +53,7 @@ export function AgentContextualSidebar({
   agentRef,
   agentId,
   agentName,
-  labels = { secrets: "Secrets & variables" },
+  labels,
 }: {
   agentRef: string;
   agentId?: string;
@@ -60,6 +61,7 @@ export function AgentContextualSidebar({
   labels?: Partial<Record<AgentLocalDetailView, string>>;
 }) {
   const { selectedCompanyId } = useCompany();
+  const { t } = useTranslation();
   const { enabled: chatConnectorsEnabled } = useChatConnectorsEnabled();
   const shouldResolveAgent = !agentId || !agentName;
   const { data: resolvedAgent } = useQuery({
@@ -93,7 +95,7 @@ export function AgentContextualSidebar({
               data-slot="contextual-sidebar-section-label"
               className={contextualSidebarStyles.sectionLabel}
             >
-              {section.label}
+              {t(`tok225review.agent${section.label.replace(/(^|[ /])([a-z])/gi, (_m, _s, c: string) => c.toUpperCase()).replaceAll(" ", "").replaceAll("/", "")}`)}
             </p>
             <div data-slot="contextual-sidebar-group" className={contextualSidebarStyles.group}>
               {section.items
@@ -104,7 +106,9 @@ export function AgentContextualSidebar({
                     <SidebarNavItem
                       key={item.value}
                       to={href}
-                      label={labels?.[item.value] ?? item.label}
+                      label={item.value === "secrets" && labels?.[item.value] === "Secrets & variables"
+                        ? t("tok225review.agentSecretsVariables")
+                        : labels?.[item.value] ?? t(`tok225review.agent${({ overview: "Overview", instructions: "Instructions", skills: "Skills", runtime: "HarnessRuntime", secrets: "SecretsVariables", tools: "Tools", channels: "Channels", permissions: "PermissionsTrust", "api-keys": "ApiKeys", revisions: "Revisions" } as const)[item.value]}`)}
                       icon={localIcons[item.value]}
                     />
                   );
@@ -118,18 +122,18 @@ export function AgentContextualSidebar({
             data-slot="contextual-sidebar-section-label"
             className={contextualSidebarStyles.sectionLabel}
           >
-            Audit
+            {t("tok225review.agentAudit")}
           </p>
           <div data-slot="contextual-sidebar-group" className={contextualSidebarStyles.group}>
             {resolvedId ? auditItems.map((item) => (
               <SidebarNavItem
                 key={item.section}
                 to={agentScopedAuditHref(resolvedId, item.section)}
-                label={item.label}
+                label={t(`tok225review.agent${({ activity: "Activity", runs: "Runs", costs: "Costs", budgets: "Budgets" } as const)[item.section]}`)}
                 icon={item.icon}
               />
             )) : (
-              <p className="px-2 py-1.5 text-xs text-muted-foreground">Loading audit links…</p>
+              <p className="px-2 py-1.5 text-xs text-muted-foreground">{t("tok225review.agentLoadingAudit")}</p>
             )}
           </div>
         </div>

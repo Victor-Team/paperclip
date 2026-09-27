@@ -1,4 +1,11 @@
 import { auditSectionHref, type AuditSection } from "./audit/audit-navigation";
+import { AGENT_ROLE_LABELS } from "@paperclipai/shared";
+
+export function agentRoleDisplayLabel(role: string, t: (key: string) => string): string {
+  if (!(role in AGENT_ROLE_LABELS)) return role;
+  const key = `tok225review.role${role.replace(/(^|-)([a-z])/g, (_match, _sep, letter: string) => letter.toUpperCase())}`;
+  return t(key);
+}
 
 export type AgentDetailView =
   | "overview"

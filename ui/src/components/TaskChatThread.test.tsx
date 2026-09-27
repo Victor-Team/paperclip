@@ -14,6 +14,7 @@ import type {
   IssueThreadInteraction,
 } from "@paperclipai/shared";
 import { heartbeatsApi } from "@/api/heartbeats";
+import { i18n } from "@/i18n";
 import { nativeRunEventsToTranscript } from "./transcript/native-run-events";
 import type { HeartbeatRunEvent } from "@paperclipai/shared";
 
@@ -2188,6 +2189,67 @@ describe("TaskChatThread runtime transcript selection", () => {
       ).toBeNull();
     },
   );
+
+  it("localizes fixed terminal cancellation copy in the selected UI language", async () => {
+    await i18n.changeLanguage("zh-CN");
+    render(
+      <TaskChatThread
+        comments={[]}
+        onAdd={async () => {}}
+        issueStatus="blocked"
+        linkedRuns={[
+          {
+            runId: "legacy-cancelled-localized",
+            runtimeMode: "legacy",
+            status: "cancelled",
+            errorCode: "legacy_process_exited",
+            agentId: "agent-1",
+            agentName: "Direct Codex",
+            adapterType: "codex_local",
+            createdAt: "2026-08-25T18:00:00.000Z",
+            startedAt: "2026-08-25T18:00:00.000Z",
+            finishedAt: "2026-08-25T18:00:02.000Z",
+          },
+        ]}
+      />,
+    );
+
+    expect(container.textContent).toContain("已停止");
+    expect(container.textContent).toContain("运行在返回答复前已停止");
+    expect(container.textContent).not.toContain("Execution was stopped");
+    await i18n.changeLanguage("en");
+  });
+
+  it("localizes the legacy withheld-transcript placeholder when it is shown", async () => {
+    await i18n.changeLanguage("zh-CN");
+    render(
+      <TaskChatThread
+        comments={[
+          {
+            id: "legacy-withheld-placeholder",
+            companyId: "company-1",
+            issueId: "issue-1",
+            authorType: "agent",
+            authorAgentId: "agent-1",
+            authorUserId: null,
+            body: "Run completed. Agent did not post a summary comment this run (transcript withheld — see run log).",
+            presentation: null,
+            metadata: null,
+            runId: "legacy-withheld-run",
+            createdAt: new Date("2026-08-25T18:00:03.000Z"),
+            updatedAt: new Date("2026-08-25T18:00:03.000Z"),
+          },
+        ]}
+        onAdd={async () => {}}
+        linkedRuns={[]}
+      />,
+    );
+
+    expect(container.textContent).toContain("运行已完成");
+    expect(container.textContent).toContain("记录已隐藏");
+    expect(container.textContent).not.toContain("transcript withheld");
+    await i18n.changeLanguage("en");
+  });
 
   it.each(["failed", "timed_out"] as const)(
     "retries the latest legacy %s attempt even when it has a transcript and final comment",

@@ -1,7 +1,8 @@
 // @vitest-environment node
 
 import { describe, expect, it } from "vitest";
-import { buildSystemNoticeProps, mapCommentMetadataToSystemNoticeSections } from "./system-notice-comment";
+import { buildSystemNoticeProps, mapCommentMetadataToSystemNoticeSections, systemNoticeLabelForTone } from "./system-notice-comment";
+import { i18n } from "@/i18n";
 
 describe("mapCommentMetadataToSystemNoticeSections", () => {
   it("maps server metadata row types to SystemNotice rows", () => {
@@ -82,6 +83,12 @@ describe("mapCommentMetadataToSystemNoticeSections", () => {
 });
 
 describe("buildSystemNoticeProps", () => {
+  it("localizes the known disposition notice title and preserves unknown titles", async () => {
+    await i18n.changeLanguage("zh-CN");
+    expect(systemNoticeLabelForTone("warning", "Missing issue disposition")).toBe("缺少工单处置状态");
+    expect(systemNoticeLabelForTone("warning", "Provider supplied title")).toBe("Provider supplied title");
+    await i18n.changeLanguage("en");
+  });
   it("derives tone, label, and metadata from a system_notice presentation", () => {
     const props = buildSystemNoticeProps({
       presentation: {

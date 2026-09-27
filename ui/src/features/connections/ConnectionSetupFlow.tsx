@@ -549,12 +549,12 @@ export function ConnectionSetupFlow(props: ConnectionSetupFlowProps = {}) {
   const existing = useQuery({ queryKey: ["tools", "connection", existingId], queryFn: () => toolsApi.getConnection(existingId!), enabled: lookup });
   const provider = source || existing.data?.config?.sourceTemplateKey;
   const method = searchParams.get("method") || existing.data?.config?.connectionMethodKey;
-  if (lookup && existing.isPending) return <p className="p-6 text-sm text-muted-foreground">Loading connection…</p>;
-  if (lookup && existing.isError) return <div role="alert" className="space-y-3 p-6"><p>Could not load this connection. Your saved access and credentials have not changed.</p><Button variant="outline" onClick={() => void existing.refetch()}>Try again</Button></div>;
+  if (lookup && existing.isPending) return <p className="p-6 text-sm text-muted-foreground">{t("connectionSetup.loadingConnection")}</p>;
+  if (lookup && existing.isError) return <div role="alert" className="space-y-3 p-6"><p>{t("tok225review.connectionRetainedCheckFailed")}</p><Button variant="outline" onClick={() => void existing.refetch()}>{t("tok225review.connectionTryAgain")}</Button></div>;
   if (!props.byoOnly && (props.credentialSource ?? "paperclip_vault") === "paperclip_vault"
     && isRemoteMcpConnectorId(provider) && (!method || isRemoteMcpConnectorMethod(provider, method))) {
-    if (!aggregators.loaded) return <p className="p-6 text-sm text-muted-foreground">Loading connection settings…</p>;
-    if (!aggregators.enabled) return <p role="status" className="p-6 text-sm text-muted-foreground">Enable MCP aggregators in Settings → Experimental to set up this connection.</p>;
+    if (!aggregators.loaded) return <p className="p-6 text-sm text-muted-foreground">{t("connectionSetup.loadingConnection")}</p>;
+    if (!aggregators.enabled) return <p role="status" className="p-6 text-sm text-muted-foreground">{t("connectionSetup.enableMcpAggregators")}</p>;
     return <RemoteMcpProductionSetup key={`${interactionId || "page"}:${provider}`} {...props} interactionId={interactionId} providerId={provider} connection={existing.data} />;
   }
   return <StandardConnectionSetupFlow {...props} />;
@@ -1730,7 +1730,7 @@ function StandardConnectionSetupFlow({
   });
 
   if (!selectedCompanyId) {
-    return <div className="p-6 text-sm text-muted-foreground">Select an organization to connect apps.</div>;
+    return <div className="p-6 text-sm text-muted-foreground">{t("tok225review.connectionSelectOrganization")}</div>;
   }
 
   if (
@@ -1739,9 +1739,9 @@ function StandardConnectionSetupFlow({
   ) {
     return (
       <div className="mx-auto max-w-xl rounded-xl border border-border bg-card p-6">
-        <h2 className="text-lg font-semibold text-foreground">Couldn’t load connection setup</h2>
+        <h2 className="text-lg font-semibold text-foreground">{t("tok225review.connectionLoadFailedTitle")}</h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          Paperclip couldn’t check the retained connection. The retained connection was not changed.
+          {t("tok225review.connectionRetainedCheckFailed")}
         </p>
         <div className="mt-5 flex flex-wrap gap-2">
           <Button
@@ -1757,10 +1757,10 @@ function StandardConnectionSetupFlow({
               }
             }}
           >
-            Try again
+            {t("tok225review.connectionTryAgain")}
           </Button>
           <Button type="button" variant="outline" onClick={() => navigate("/apps")}>
-            Back to apps
+            {t("tok225review.connectionBackToApps")}
           </Button>
         </div>
       </div>
@@ -1770,12 +1770,12 @@ function StandardConnectionSetupFlow({
   if (resumeConnectionId && connectionsQuery.isFetchedAfterMount && !resumeConnection) {
     return (
       <div className="mx-auto max-w-xl rounded-xl border border-border bg-card p-6">
-        <h2 className="text-lg font-semibold text-foreground">This setup can’t be resumed</h2>
+        <h2 className="text-lg font-semibold text-foreground">{t("tok225review.connectionResumeInvalidTitle")}</h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          The saved connection no longer exists or is not available to this organization.
+          {t("tok225review.connectionResumeInvalidBody")}
         </p>
         <Button type="button" variant="outline" className="mt-5" onClick={() => navigate("/apps")}>
-          Back to apps
+          {t("tok225review.connectionBackToApps")}
         </Button>
       </div>
     );
@@ -1789,14 +1789,14 @@ function StandardConnectionSetupFlow({
   ) {
     return (
       <div className="mx-auto max-w-xl rounded-xl border border-border bg-card p-6">
-        <h2 className="text-lg font-semibold text-foreground">This connection can’t be reconnected</h2>
+        <h2 className="text-lg font-semibold text-foreground">{t("tok225review.connectionReconnectInvalidTitle")}</h2>
         <p className="mt-2 text-sm text-muted-foreground">
           {!reconnectConnection
-            ? "The retained connection no longer exists or is not available to this organization."
-            : "This reconnect link does not match the retained connection's provider."}
+            ? t("tok225review.connectionReconnectMissingBody")
+            : t("tok225review.connectionReconnectMismatchBody")}
         </p>
         <Button type="button" variant="outline" className="mt-5" onClick={() => navigate("/apps")}>
-          Back to apps
+          {t("tok225review.connectionBackToApps")}
         </Button>
       </div>
     );
@@ -1805,16 +1805,16 @@ function StandardConnectionSetupFlow({
   if ((resumeConnectionId || reconnectConnectionId) && galleryQuery.isError) {
     return (
       <div className="mx-auto max-w-xl rounded-xl border border-border bg-card p-6">
-        <h2 className="text-lg font-semibold text-foreground">Couldn’t load connection setup</h2>
+      <h2 className="text-lg font-semibold text-foreground">{t("tok225review.connectionLoadFailedTitle")}</h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          Paperclip couldn’t load the provider details needed to restore this connection. The retained connection was not changed.
+          {t("tok225review.connectionProviderLoadFailed")}
         </p>
         <div className="mt-5 flex flex-wrap gap-2">
           <Button type="button" onClick={() => void galleryQuery.refetch()}>
-            Try again
+            {t("tok225review.connectionTryAgain")}
           </Button>
           <Button type="button" variant="outline" onClick={() => navigate("/apps")}>
-            Back to apps
+            {t("tok225review.connectionBackToApps")}
           </Button>
         </div>
       </div>
@@ -1824,12 +1824,12 @@ function StandardConnectionSetupFlow({
   if (reconnectConnectionId && unavailableReconnectId === reconnectConnectionId) {
     return (
       <div className="mx-auto max-w-xl rounded-xl border border-border bg-card p-6">
-        <h2 className="text-lg font-semibold text-foreground">This connection can’t be reconnected</h2>
+      <h2 className="text-lg font-semibold text-foreground">{t("tok225review.connectionReconnectInvalidTitle")}</h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          Paperclip no longer has a supported setup method for this retained connection. The retained connection was not changed.
+          {t("tok225review.connectionUnsupportedReconnect")}
         </p>
         <Button type="button" variant="outline" className="mt-5" onClick={() => navigate("/apps")}>
-          Back to apps
+          {t("tok225review.connectionBackToApps")}
         </Button>
       </div>
     );
@@ -1842,7 +1842,7 @@ function StandardConnectionSetupFlow({
     || hydratedResumeConnectionId !== resumeConnection?.id
   )) {
     return (
-      <div className="mx-auto max-w-xl space-y-4" aria-label="Loading saved connection setup">
+      <div className="mx-auto max-w-xl space-y-4" aria-label={t("tok225review.connectionLoadingSavedSetup")}>
         <Skeleton className="h-8 w-48" />
         <Skeleton className="h-40 w-full rounded-xl" />
       </div>
@@ -1856,7 +1856,7 @@ function StandardConnectionSetupFlow({
     || Boolean(requestedAppKey && !entry)
   )) {
     return (
-      <div className="mx-auto max-w-xl space-y-4" aria-label="Loading retained connection setup">
+      <div className="mx-auto max-w-xl space-y-4" aria-label={t("tok225review.connectionLoadingRetainedSetup")}>
         <Skeleton className="h-8 w-48" />
         <Skeleton className="h-40 w-full rounded-xl" />
       </div>
@@ -3707,7 +3707,7 @@ function KeyStep({
         )}
 
         {!usingVercel && method?.auth === "oauth" && customerOAuthClientRequired ? (
-          <div id={googleOAuthFieldsId} role="region" aria-label="Your OAuth app">
+          <div id={googleOAuthFieldsId} role="region" aria-label={t("tok225review.connectionYourOAuthApp")}>
             <OAuthClientFields
               entry={entry}
               method={method}
@@ -3813,14 +3813,15 @@ function OAuthClientFields({
   onClientSecretChange: (next: string) => void;
   required: boolean;
 }) {
+  const { t } = useTranslation();
   return (
     <div className="space-y-4 rounded-lg border border-border p-4">
       <div>
         <div className="text-sm font-medium text-foreground">
-          {required ? "Your OAuth app" : "Use your own OAuth app"}
+          {required ? t("tok225review.connectionYourOAuthApp") : t("tok225review.connectionUseOwnOAuthApp")}
         </div>
         <p className="mt-1 text-xs text-muted-foreground">
-          Register Paperclip's callback URI in {entry.name}, then enter the customer-owned client details.
+          {t("tok225review.connectionOAuthRegisterCallback", { provider: entry.name })}
         </p>
         {method.consoleLinks?.register ? (
           <a
@@ -3829,14 +3830,14 @@ function OAuthClientFields({
             rel="noreferrer"
             className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-foreground underline underline-offset-2"
           >
-            Open {entry.name} app settings
+            {t("tok225review.connectionOpenProviderSettings", { provider: entry.name })}
             <ArrowUpRight className="h-3 w-3" />
           </a>
         ) : null}
       </div>
       {callbackUrl ? (
         <div>
-          <label className="text-sm font-medium text-foreground">Paperclip callback URL</label>
+          <label className="text-sm font-medium text-foreground">{t("tok225review.connectionCallbackUrl")}</label>
           <div className="mt-2 flex min-w-0 flex-col gap-2 sm:flex-row">
             <div
               title={callbackUrl}
@@ -3844,29 +3845,29 @@ function OAuthClientFields({
             >
               {callbackUrl}
             </div>
-            <CopyValueButton value={callbackUrl} ariaLabel="Copy callback URL" />
+            <CopyValueButton value={callbackUrl} ariaLabel={t("tok225review.connectionCopyCallbackUrl")} />
           </div>
           <p className="mt-2 text-xs text-muted-foreground">
-            Add this exact URL to {entry.name} before continuing. It must match the authorization request.
+            {t("tok225review.connectionAddExactUrl", { provider: entry.name })}
           </p>
         </div>
       ) : null}
       <div>
         <label className="text-sm font-medium text-foreground" htmlFor="curated-oauth-client-id">
-          Client ID
+          {t("tok225review.connectionClientId")}
         </label>
         <Input
           id="curated-oauth-client-id"
           value={clientId}
           onChange={(event) => onClientIdChange(event.target.value)}
           autoComplete="off"
-          placeholder={required ? "Required" : "Optional"}
+          placeholder={required ? t("tok225review.connectionRequired") : t("tok225review.connectionOptional")}
           className="mt-2 h-11 font-mono"
         />
       </div>
       <div>
         <label className="text-sm font-medium text-foreground" htmlFor="curated-oauth-client-secret">
-          Client secret
+          {t("tok225review.connectionClientSecret")}
         </label>
         <Input
           id="curated-oauth-client-secret"
@@ -3874,7 +3875,7 @@ function OAuthClientFields({
           value={clientSecret}
           onChange={(event) => onClientSecretChange(event.target.value)}
           autoComplete="off"
-          placeholder="Optional for public clients"
+          placeholder={t("tok225review.connectionOptionalPublicClients")}
           className="mt-2 h-11 font-mono"
         />
       </div>

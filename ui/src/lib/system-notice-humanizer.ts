@@ -1,5 +1,6 @@
 import type { IssueCommentPresentation } from "@paperclipai/shared";
 import type { SystemNoticeTone } from "../components/SystemNotice";
+import { t } from "@/i18n";
 
 /**
  * Pure classifier for system comments in the chat shell (PAP-443 / PAP-442
@@ -50,6 +51,12 @@ export function humanizeSystemNotice(input: {
   const presentationTitle = input.presentation?.title?.trim();
   const presentationTone = input.presentation?.tone;
   if (presentationTitle) {
+    if (presentationTitle === "Missing issue disposition") {
+      return {
+        title: t("tok225review.noticeMissingDisposition", { defaultValue: presentationTitle }),
+        tone: presentationTone ?? "neutral",
+      };
+    }
     return { title: presentationTitle, tone: presentationTone ?? "neutral" };
   }
 

@@ -924,6 +924,20 @@ describe("AppsConnect — Connect with a link (M4 frame)", () => {
     }));
   });
 
+  it("localizes the customer-owned OAuth form in Chinese and restores English", async () => {
+    mockParams.appKey = "asana";
+    listGalleryMock.mockResolvedValue({ apps: [ASANA] });
+    await render();
+    await passAccessStep();
+    await act(async () => { await i18n.changeLanguage("zh-CN"); });
+    expect(container.textContent).toContain("你的 OAuth 应用");
+    expect(container.textContent).toContain("Paperclip 回调 URL");
+    expect(container.textContent).toContain("打开 Asana 应用设置");
+    expect(container.textContent).not.toContain("Your OAuth app");
+    await act(async () => { await i18n.changeLanguage("en"); });
+    expect(container.textContent).toContain("Your OAuth app");
+  });
+
   it("submits the Postman access mode selected on the setup screen", async () => {
     listGalleryMock.mockResolvedValue({ apps: [POSTMAN] });
     mockParams.appKey = "postman";
