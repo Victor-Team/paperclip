@@ -90,6 +90,7 @@ import {
 } from "lucide-react";
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { agentInvocationSourceLabel, agentMoreSkillsLabel, agentRunStatusLabel, agentWorkspacePhaseLabel } from "./agent-detail-presentation";
 import { Input } from "@/components/ui/input";
 import { RunTranscriptView, type TranscriptMode } from "../components/transcript/RunTranscriptView";
 import { AgentToolsTab } from "./AgentToolsTab";
@@ -232,13 +233,6 @@ function formatEnvForDisplay(envValue: unknown, censorUsernameInLogs: boolean): 
     .map((key) => `${key}=${redactEnvValue(key, env[key], censorUsernameInLogs)}`)
     .join("\n");
 }
-
-const sourceLabels: Record<string, string> = {
-  timer: "Timer",
-  assignment: "Assignment",
-  on_demand: "On-demand",
-  automation: "Automation",
-};
 
 const LIVE_SCROLL_BOTTOM_TOLERANCE_PX = 32;
 type ScrollContainer = Window | HTMLElement;
@@ -545,23 +539,6 @@ function parseStoredLogContent(content: string): RunLogChunk[] {
   return parsed;
 }
 
-function workspaceOperationPhaseLabel(phase: WorkspaceOperation["phase"]) {
-  switch (phase) {
-    case "worktree_prepare":
-      return "Worktree setup";
-    case "workspace_config_freshness":
-      return "Config freshness";
-    case "workspace_provision":
-      return "Provision";
-    case "workspace_teardown":
-      return "Teardown";
-    case "worktree_cleanup":
-      return "Worktree cleanup";
-    default:
-      return phase;
-  }
-}
-
 function workspaceOperationStatusTone(status: WorkspaceOperation["status"]) {
   switch (status) {
     case "succeeded":
@@ -578,6 +555,7 @@ function workspaceOperationStatusTone(status: WorkspaceOperation["status"]) {
 }
 
 function WorkspaceOperationStatusBadge({ status }: { status: WorkspaceOperation["status"] }) {
+  const { t } = useTranslation();
   return (
     <Badge variant="outline"
       className={cn(
@@ -585,7 +563,7 @@ function WorkspaceOperationStatusBadge({ status }: { status: WorkspaceOperation[
         workspaceOperationStatusTone(status),
       )}
     >
-      {status.replace("_", " ")}
+      {agentRunStatusLabel(status, t)}
     </Badge>
   );
 }
@@ -597,6 +575,7 @@ function WorkspaceOperationLogViewer({
   operation: WorkspaceOperation;
   censorUsernameInLogs: boolean;
 }) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const { data: logData, isLoading, error } = useQuery({
     queryKey: ["workspace-operation-log", operation.id],
@@ -617,18 +596,18 @@ function WorkspaceOperationLogViewer({
         className="text-(length:--text-micro) text-muted-foreground underline underline-offset-2 hover:text-foreground"
         onClick={() => setOpen((value) => !value)}
       >
-        {open ? "Hide full log" : "Show full log"}
+        {open ? t("tok225review.agentHideFullLog") : t("tok225review.agentShowFullLog")}
       </button>
       {open && (
         <div className="rounded-md border border-border bg-background/70 p-2">
-          {isLoading && <div className="text-xs text-muted-foreground">Loading log...</div>}
+          {isLoading && <div className="text-xs text-muted-foreground">{t("tok225review.agentLoadingLog")}</div>}
           {error && (
             <div className="text-xs text-destructive">
-              {error instanceof Error ? error.message : "Failed to load workspace operation log"}
+              {error instanceof Error ? error.message : t("tok225review.agentWorkspaceLogFailed")}
             </div>
           )}
           {!isLoading && !error && chunks.length === 0 && (
-            <div className="text-xs text-muted-foreground">No persisted log lines.</div>
+            <div className="text-xs text-muted-foreground">{t("tok225review.agentNoPersistedLogLines")}</div>
           )}
           {chunks.length > 0 && (
             <div className="max-h-64 overflow-y-auto rounded bg-neutral-100 p-2 font-mono text-xs dark:bg-neutral-950">
@@ -667,12 +646,13 @@ function WorkspaceOperationsSection({
   operations: WorkspaceOperation[];
   censorUsernameInLogs: boolean;
 }) {
+  const { t } = useTranslation();
   if (operations.length === 0) return null;
 
   return (
     <div className="rounded-lg border border-border bg-background/60 p-3 space-y-3">
       <div className="text-xs font-medium text-muted-foreground">
-        Workspace ({operations.length})
+        {t("tok225review.agentWorkspaceCount", { count: operations.length })}
       </div>
       <div className="space-y-3">
         {operations.map((operation) => {
@@ -680,22 +660,22 @@ function WorkspaceOperationsSection({
           return (
             <div key={operation.id} className="rounded-md border border-border/70 bg-background/70 p-3 space-y-2">
               <div className="flex flex-wrap items-center gap-2">
-                <div className="text-sm font-medium">{workspaceOperationPhaseLabel(operation.phase)}</div>
+                <div className="text-sm font-medium">{agentWorkspacePhaseLabel(operation.phase, t)}</div>
                 <WorkspaceOperationStatusBadge status={operation.status} />
                 <div className="text-(length:--text-micro) text-muted-foreground">
                   {relativeTime(operation.startedAt)}
-                  {operation.finishedAt && ` to ${relativeTime(operation.finishedAt)}`}
+                  {operation.finishedAt && ` ${t("tok225review.agentTimeRangeTo")} ${relativeTime(operation.finishedAt)}`}
                 </div>
               </div>
               {operation.command && (
                 <div className="text-xs break-all">
-                  <span className="text-muted-foreground">Command: </span>
+                  <span className="text-muted-foreground">{t("tok225review.agentCommandLabel")}: </span>
                   <span className="font-mono">{operation.command}</span>
                 </div>
               )}
               {operation.cwd && (
                 <div className="text-xs break-all">
-                  <span className="text-muted-foreground">Working dir: </span>
+                  <span className="text-muted-foreground">{t("tok225review.agentWorkingDirectoryLabel")}: </span>
                   <span className="font-mono">{operation.cwd}</span>
                 </div>
               )}
@@ -706,30 +686,30 @@ function WorkspaceOperationsSection({
                 || asNonEmptyString(metadata?.cleanupAction)) && (
                 <div className="grid gap-1 text-xs sm:grid-cols-2">
                   {asNonEmptyString(metadata?.branchName) && (
-                    <div><span className="text-muted-foreground">Branch: </span><span className="font-mono">{metadata?.branchName as string}</span></div>
+                    <div><span className="text-muted-foreground">{t("tok225review.agentBranchLabel")}: </span><span className="font-mono">{metadata?.branchName as string}</span></div>
                   )}
                   {asNonEmptyString(metadata?.baseRef) && (
-                    <div><span className="text-muted-foreground">Base ref: </span><span className="font-mono">{metadata?.baseRef as string}</span></div>
+                    <div><span className="text-muted-foreground">{t("tok225review.agentBaseRefLabel")}: </span><span className="font-mono">{metadata?.baseRef as string}</span></div>
                   )}
                   {asNonEmptyString(metadata?.worktreePath) && (
-                    <div className="break-all"><span className="text-muted-foreground">Worktree: </span><span className="font-mono">{metadata?.worktreePath as string}</span></div>
+                    <div className="break-all"><span className="text-muted-foreground">{t("tok225review.agentWorktreeLabel")}: </span><span className="font-mono">{metadata?.worktreePath as string}</span></div>
                   )}
                   {asNonEmptyString(metadata?.repoRoot) && (
-                    <div className="break-all"><span className="text-muted-foreground">Repo root: </span><span className="font-mono">{metadata?.repoRoot as string}</span></div>
+                    <div className="break-all"><span className="text-muted-foreground">{t("tok225review.agentRepoRootLabel")}: </span><span className="font-mono">{metadata?.repoRoot as string}</span></div>
                   )}
                   {asNonEmptyString(metadata?.cleanupAction) && (
-                    <div><span className="text-muted-foreground">Cleanup: </span><span className="font-mono">{metadata?.cleanupAction as string}</span></div>
+                    <div><span className="text-muted-foreground">{t("tok225review.agentCleanupLabel")}: </span><span className="font-mono">{metadata?.cleanupAction as string}</span></div>
                   )}
                 </div>
               )}
               {typeof metadata?.created === "boolean" && (
                 <div className="text-xs text-muted-foreground">
-                  {metadata.created ? "Created by this run" : "Reused existing workspace"}
+                  {metadata.created ? t("tok225review.agentWorkspaceCreatedByRun") : t("tok225review.agentWorkspaceReused")}
                 </div>
               )}
               {operation.stderrExcerpt && operation.stderrExcerpt.trim() && (
                 <div>
-                  <div className="mb-1 text-xs text-red-700 dark:text-red-300">stderr excerpt</div>
+                  <div className="mb-1 text-xs text-red-700 dark:text-red-300">{t("tok225review.agentStderrExcerpt")}</div>
                   <pre className="rounded-md bg-red-50 p-2 text-xs whitespace-pre-wrap break-all text-red-800 dark:bg-neutral-950 dark:text-red-100">
                     {redactPathText(operation.stderrExcerpt, censorUsernameInLogs)}
                   </pre>
@@ -737,7 +717,7 @@ function WorkspaceOperationsSection({
               )}
               {operation.stdoutExcerpt && operation.stdoutExcerpt.trim() && (
                 <div>
-                  <div className="mb-1 text-xs text-muted-foreground">stdout excerpt</div>
+                  <div className="mb-1 text-xs text-muted-foreground">{t("tok225review.agentStdoutExcerpt")}</div>
                   <pre className="rounded-md bg-neutral-100 p-2 text-xs whitespace-pre-wrap break-all dark:bg-neutral-950">
                     {redactPathText(operation.stdoutExcerpt, censorUsernameInLogs)}
                   </pre>
@@ -1569,6 +1549,7 @@ function LatestRunCard({
   agentId: string;
   issuesById: Map<string, LatestRunIssue>;
 }) {
+  const { t } = useTranslation();
   const sorted = useMemo(
     () =>
       [...runs].sort(
@@ -1650,7 +1631,7 @@ function LatestRunCard({
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500" />
               </span>
             )}
-            <span>{isLive ? "Live Run" : "Latest Run"}</span>
+            <span>{isLive ? t("tok225review.agentLiveRun") : t("tok225review.agentLatestRun")}</span>
             <span className="font-mono text-xs font-normal text-muted-foreground">
               &middot; {run.id.slice(0, 8)}
             </span>
@@ -1686,7 +1667,7 @@ function LatestRunCard({
                   : run.invocationSource === "on_demand" ? "bg-cyan-100 text-cyan-700 dark:bg-cyan-900/50 dark:text-cyan-300"
                   : "bg-muted text-muted-foreground"
               )}>
-                {sourceLabels[run.invocationSource] ?? run.invocationSource}
+                {agentInvocationSourceLabel(run.invocationSource, t)}
               </Badge>
             </>
           )}
@@ -1770,7 +1751,7 @@ export function AgentOverview({
             <SummaryRow label={t("tok225review.agentModel")}><span className="max-w-64 truncate text-sm font-mono">{configuredModel}</span></SummaryRow>
             <SummaryRow label={t("tok225review.agentSession")}><span className="max-w-64 truncate text-sm font-mono">{runtimeState?.sessionDisplayId ?? runtimeState?.sessionId ?? t("tok225review.agentNoSession")}</span></SummaryRow>
             <SummaryRow label={t("tok225review.agentLastRun")}>
-              <span className="text-sm">{lastRun ? `${lastRun.status} · ${relativeTime(lastRun.createdAt)}` : t("tok225review.agentNoRuns")}</span>
+              <span className="text-sm">{lastRun ? `${agentRunStatusLabel(lastRun.status, t)} · ${relativeTime(lastRun.createdAt)}` : t("tok225review.agentNoRuns")}</span>
             </SummaryRow>
           </div>
         </section>
@@ -1792,7 +1773,7 @@ export function AgentOverview({
           {skillNames.length > 0 ? (
             <div className="flex flex-wrap gap-2">
               {skillNames.slice(0, 8).map((skill) => <Badge key={skill} variant="secondary">{skill}</Badge>)}
-              {skillNames.length > 8 ? <Badge variant="outline">+{skillNames.length - 8} more</Badge> : null}
+              {skillNames.length > 8 ? <Badge variant="outline">{agentMoreSkillsLabel(skillNames.length - 8, t)}</Badge> : null}
             </div>
           ) : (
             <p className="text-sm text-muted-foreground">{t("tok225review.agentNoSkills")}</p>
@@ -3064,6 +3045,7 @@ function PromptEditorSkeleton() {
 /* ---- Runs Tab ---- */
 
 function RunListItem({ run, isSelected, agentId }: { run: HeartbeatRun; isSelected: boolean; agentId: string }) {
+  const { t } = useTranslation();
   const statusInfo = runStatusIcons[run.status] ?? { icon: Clock, color: "text-neutral-400" };
   const StatusIcon = statusInfo.icon;
   const metrics = runMetrics(run);
@@ -3092,7 +3074,7 @@ function RunListItem({ run, isSelected, agentId }: { run: HeartbeatRun; isSelect
             : run.invocationSource === "on_demand" ? "bg-cyan-100 text-cyan-700 dark:bg-cyan-900/50 dark:text-cyan-300"
             : "bg-muted text-muted-foreground"
         )}>
-          {sourceLabels[run.invocationSource] ?? run.invocationSource}
+          {agentInvocationSourceLabel(run.invocationSource, t)}
         </Badge>
         {sourceResolvedFold ? <SourceResolvedFoldBadge showIcon={false} className="shrink-0 text-(length:--text-nano) py-0" /> : null}
         <span className="ml-auto text-(length:--text-micro) text-muted-foreground shrink-0">

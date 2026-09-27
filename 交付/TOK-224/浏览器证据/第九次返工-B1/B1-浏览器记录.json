@@ -1,0 +1,54 @@
+{
+  "instance": "http://127.0.0.1:3220",
+  "route": "/TOK/agents/review-agent/overview",
+  "browserLocale": "en-US",
+  "fixture": {
+    "heartbeatRun": "Local API agent-run response replaced with one succeeded run.",
+    "recoveryAction": "Browser route fixture added active missing-disposition recovery action to local test task TOK-1."
+  },
+  "viewports": [
+    {
+      "name": "桌面",
+      "width": 1440,
+      "height": 900,
+      "localeSwitch": "account menu Language: English → 简体中文",
+      "localStorageLocale": "zh-CN",
+      "englishBaseline": {
+        "latestRun": true,
+        "succeeded": true,
+        "recoveryNeeded": true
+      },
+      "chinese": {
+        "latestRun": true,
+        "succeeded": true,
+        "recoveryNeeded": true,
+        "noLatestRunEnglish": true,
+        "noSucceededEnglish": true,
+        "noRecoveryEnglish": true,
+        "invocationSource": true
+      }
+    },
+    {
+      "name": "窄屏",
+      "width": 390,
+      "height": 844,
+      "chineseRequiredLabels": true,
+      "englishRestored": {
+        "latestRun": true,
+        "succeeded": true,
+        "recoveryNeeded": true
+      },
+      "screenshots": [
+        "B1-智能体详情-窄屏-简中.png",
+        "B1-智能体详情-窄屏-英文.png"
+      ]
+    }
+  ],
+  "errors": [],
+  "failedResponses": [],
+  "englishModeRestored": {
+    "latestRun": true,
+    "succeeded": true,
+    "recoveryNeeded": true
+  }
+}

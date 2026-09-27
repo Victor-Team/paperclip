@@ -53,6 +53,29 @@ describe("recoveryChipLabel", () => {
       "Observing active run",
     );
   });
+
+  it("uses the active UI locale for recovery labels while retaining lineage counts", () => {
+    const translated = (key: string, values?: Record<string, unknown>) => {
+      if (key === "issuerow.general.recoveryNeeded") return "需要处理恢复";
+      if (key === "issuerow.general.workspaceRecoveryNeeded") return "需要恢复工作区";
+      if (key === "issuerow.general.recoveryAttemptProgress") {
+        return `正在恢复 · ${values?.attempt}/${values?.maxAttempts}`;
+      }
+      return key;
+    };
+    const lineage = readRecoveryRetryLineage({
+      wakePolicy: {
+        type: "bounded_owner_disposition_repair",
+        attempt: 2,
+        maxAttempts: 5,
+        retryAt: "2099-01-01T00:00:00.000Z",
+      },
+    });
+
+    expect(recoveryChipLabel("needed", "missing_disposition", null, translated)).toBe("需要处理恢复");
+    expect(recoveryChipLabel("needed", "workspace_validation", null, translated)).toBe("需要恢复工作区");
+    expect(recoveryChipLabel("in_progress", "deliberate_wait_without_target", lineage, translated)).toBe("正在恢复 · 2/5");
+  });
 });
 
 describe("deriveRecoveryDisplayState", () => {
