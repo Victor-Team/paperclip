@@ -1767,7 +1767,7 @@ export function AgentOverview({
             <SummaryRow label={t("agentdetail.general.model")}><span className="max-w-64 truncate text-sm font-mono">{configuredModel}</span></SummaryRow>
             <SummaryRow label={t("agentdetail.general.session")}><span className="max-w-64 truncate text-sm font-mono">{runtimeState?.sessionDisplayId ?? runtimeState?.sessionId ?? t("agentdetail.general.nosession")}</span></SummaryRow>
             <SummaryRow label={t("agentdetail.general.lastrun")}>
-              <span className="text-sm">{lastRun ? `${lastRun.status} · ${relativeTime(lastRun.createdAt)}` : t("agentdetail.general.noruns")}</span>
+              <span className="text-sm">{lastRun ? `${lastRun.status === "succeeded" ? t("statusbadge.general.succeeded") : lastRun.status} · ${relativeTime(lastRun.createdAt)}` : t("agentdetail.general.noruns")}</span>
             </SummaryRow>
           </div>
         </section>
@@ -1836,7 +1836,7 @@ export function AgentOverview({
               to={agentScopedAuditHref(agent.id, section)}
               className="rounded-lg border border-border px-3 py-2 text-sm font-medium capitalize hover:bg-accent"
             >
-              {section}
+              {t(`auditnavigation.sections.${section}`)}
             </Link>
           ))}
         </div>

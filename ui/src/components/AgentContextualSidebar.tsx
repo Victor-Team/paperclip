@@ -43,17 +43,23 @@ const localIcons = {
 } satisfies Record<AgentLocalDetailView, typeof Sparkles>;
 
 const auditItems = [
-  { section: "activity", label: "Activity", icon: Activity },
-  { section: "runs", label: "Runs", icon: PlayCircle },
-  { section: "costs", label: "Costs", icon: ReceiptText },
-  { section: "budgets", label: "Budgets", icon: BadgeDollarSign },
+  { section: "activity", icon: Activity },
+  { section: "runs", icon: PlayCircle },
+  { section: "costs", icon: ReceiptText },
+  { section: "budgets", icon: BadgeDollarSign },
 ] as const;
+
+const navigationGroupKeys: Record<string, string> = {
+  Agent: "agentdetail.general.navigationgroupagent",
+  Runtime: "agentdetail.general.navigationgroupruntime",
+  Governance: "agentdetail.general.navigationgroupgovernance",
+};
 
 export function AgentContextualSidebar({
   agentRef,
   agentId,
   agentName,
-  labels = { secrets: "Secrets & variables" },
+  labels,
 }: {
   agentRef: string;
   agentId?: string;
@@ -95,7 +101,7 @@ export function AgentContextualSidebar({
               data-slot="contextual-sidebar-section-label"
               className={contextualSidebarStyles.sectionLabel}
             >
-              {section.label}
+              {t(navigationGroupKeys[section.label])}
             </p>
             <div data-slot="contextual-sidebar-group" className={contextualSidebarStyles.group}>
               {section.items
@@ -106,7 +112,7 @@ export function AgentContextualSidebar({
                     <SidebarNavItem
                       key={item.value}
                       to={href}
-                      label={labels?.[item.value] ?? item.label}
+                      label={labels?.[item.value] ?? t(item.value === "secrets" ? "agentdetail.general.secretsvariables" : `agentdetail.general.navigation${item.value.replaceAll("-", "")}`)}
                       icon={localIcons[item.value]}
                     />
                   );
@@ -126,7 +132,7 @@ export function AgentContextualSidebar({
               <SidebarNavItem
                 key={item.section}
                 to={agentScopedAuditHref(resolvedId, item.section)}
-                label={item.label}
+                label={t(`auditnavigation.sections.${item.section}`)}
                 icon={item.icon}
               />
             )) : (

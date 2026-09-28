@@ -13,9 +13,9 @@ export type TestState = "idle" | "running" | "pass" | "fail";
 
 const copy = {
   idle: {
-    title: "Test your agent",
-    description: "Check that your runtime and model can respond.",
-    action: "Run test",
+    titleKey: "runtimetestcard.general.testyouragent",
+    descriptionKey: "runtimetestcard.general.runtimeandmodelresponse",
+    actionKey: "runtimetestcard.general.runtest",
   },
   running: {
     title: "Testing connection",
@@ -92,9 +92,9 @@ export function RuntimeTestCard({
             aria-atomic="true"
             className="min-w-0 space-y-1"
           >
-            <h3 className="text-sm font-medium">{content.title}</h3>
+            <h3 className="text-sm font-medium">{"titleKey" in content ? t(content.titleKey) : content.title}</h3>
             <p className="text-xs leading-relaxed text-muted-foreground">
-              {state === "fail" && error ? error : content.description}
+              {state === "fail" && error ? error : "descriptionKey" in content ? t(content.descriptionKey) : content.description}
             </p>
           </div>
           <Button
@@ -105,7 +105,7 @@ export function RuntimeTestCard({
             disabled={disabled || state === "running"}
             onClick={onTest}
           >
-            {content.action}
+            {"actionKey" in content ? t(content.actionKey) : content.action}
           </Button>
         </div>
       </div>

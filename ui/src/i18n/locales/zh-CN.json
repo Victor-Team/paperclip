@@ -8761,14 +8761,17 @@
       "custom": "自定义",
       "from": "从",
       "to": "至",
-      "clear": "清除"
+      "clear": "清除",
+      "thismonth": "本月"
     }
   },
   "decisionqueuerail": {
     "general": {
       "decisionqueues": "决策队列",
       "all": "全部",
-      "recentactivity": "最近动态"
+      "recentactivity": "最近动态",
+      "questions": "问题",
+      "plans": "计划"
     }
   },
   "decisionresolver": {
@@ -11342,7 +11345,10 @@
   "runtimetestcard": {
     "general": {
       "runtimetest": "运行时测试",
-      "testdetails": "测试详情"
+      "testdetails": "测试详情",
+      "testyouragent": "测试智能体",
+      "runtimeandmodelresponse": "检查运行环境和模型是否能够响应。",
+      "runtest": "运行测试"
     }
   },
   "scheduleeditor": {
@@ -12700,7 +12706,10 @@
       "navigationruntime": "运行环境",
       "navigationpermissions": "权限与信任",
       "navigationapikeys": "API 密钥",
-      "navigationrevisions": "修订记录"
+      "navigationrevisions": "修订记录",
+      "navigationgroupagent": "智能体",
+      "navigationgroupruntime": "运行环境",
+      "navigationgroupgovernance": "治理"
     }
   },
   "agentsproduction": {
