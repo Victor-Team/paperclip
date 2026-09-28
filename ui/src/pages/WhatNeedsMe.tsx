@@ -96,7 +96,7 @@ function LocalizedDecisionQueueRail({ companyId }: { companyId: string }) {
             to={`/decisions/queues/${encodeURIComponent(queue.key)}`}
             className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1 text-xs font-medium text-muted-foreground transition-colors hover:bg-accent/50 hover:text-foreground"
           >
-            {recent && <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-primary" aria-hidden="true" />}
+            {recent && <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-primary" aria-label={t("decisionqueuerail.general.recentactivity")} />}
             <span className="truncate">{label}</span>
             {queue.itemCount > 0 && <span className="tabular-nums text-(length:--text-nano) text-muted-foreground">{queue.itemCount}</span>}
           </Link>
