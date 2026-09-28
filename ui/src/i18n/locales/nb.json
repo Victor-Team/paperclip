@@ -8761,14 +8761,17 @@
       "custom": "Custom",
       "from": "From",
       "to": "To",
-      "clear": "Clear"
+      "clear": "Clear",
+      "thismonth": "This month"
     }
   },
   "decisionqueuerail": {
     "general": {
       "decisionqueues": "Decision queues",
       "all": "All",
-      "recentactivity": "Recent activity"
+      "recentactivity": "Recent activity",
+      "questions": "Questions",
+      "plans": "Plans"
     }
   },
   "decisionresolver": {
@@ -11342,7 +11345,10 @@
   "runtimetestcard": {
     "general": {
       "runtimetest": "Runtime test",
-      "testdetails": "Test details"
+      "testdetails": "Test details",
+      "testyouragent": "Test your agent",
+      "runtimeandmodelresponse": "Check that your runtime and model can respond.",
+      "runtest": "Run test"
     }
   },
   "scheduleeditor": {
@@ -12715,7 +12721,10 @@
       "navigationruntime": "Harness / Runtime",
       "navigationpermissions": "Permissions / Trust",
       "navigationapikeys": "API Keys",
-      "navigationrevisions": "Revisions"
+      "navigationrevisions": "Revisions",
+      "navigationgroupagent": "Agent",
+      "navigationgroupruntime": "Runtime",
+      "navigationgroupgovernance": "Governance"
     }
   },
   "agentsproduction": {

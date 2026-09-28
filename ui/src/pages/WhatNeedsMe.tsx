@@ -2,8 +2,9 @@ import { Fragment, useCallback, useEffect, useMemo, useRef, useState, type React
 import { useQuery } from "@tanstack/react-query";
 import { CheckCircle2, Inbox } from "lucide-react";
 import type { Agent, AttentionItem, AttentionSubject } from "@paperclipai/shared";
-import { useNavigate, useSearchParams } from "@/lib/router";
+import { Link, useNavigate, useSearchParams } from "@/lib/router";
 import { attentionApi } from "../api/attention";
+import { decisionQueuesApi } from "../api/decisionQueues";
 import { agentsApi } from "../api/agents";
 import { authApi } from "../api/auth";
 import { decisionsApi } from "../api/decisions";
@@ -43,7 +44,6 @@ import { PageSkeleton } from "../components/PageSkeleton";
 import { AttentionQueueRow } from "../components/AttentionQueueRow";
 import { DecisionsToolbar } from "../components/DecisionsToolbar";
 import { Curtain, AgingItemRow } from "../components/DecisionShelf";
-import { DecisionQueueRail } from "../components/DecisionQueueRail";
 import { DecisionDateChips, type AttentionCustomRange } from "../components/DecisionDateChips";
 import { DecisionResolver } from "../components/DecisionResolver";
 import { IssueGroupHeader } from "../components/IssueGroupHeader";
@@ -62,9 +62,48 @@ const ATTENTION_ROW_RENDER_BATCH_SIZE = 100;
 const ATTENTION_SCROLL_LOAD_THRESHOLD_PX = 480;
 const DECISION_HISTORY_VISIBLE_LIMIT = 50;
 const DECISION_HISTORY_QUERY_LIMIT = DECISION_HISTORY_VISIBLE_LIMIT + 1;
+const QUEUE_RECENT_ACTIVITY_MS = 24 * 60 * 60 * 1000;
 
 export function decisionHistoryQueryEnabled(companyId: string | null | undefined, open: boolean) {
   return Boolean(companyId && open);
+}
+
+function LocalizedDecisionQueueRail({ companyId }: { companyId: string }) {
+  const { t } = useTranslation();
+  const { data: queues } = useQuery({
+    queryKey: queryKeys.decisionQueues.list(companyId),
+    queryFn: () => decisionQueuesApi.list(companyId),
+    enabled: Boolean(companyId),
+  });
+  if (!queues?.length) return null;
+
+  const now = Date.now();
+  return (
+    <nav className="flex flex-wrap items-center gap-1.5" aria-label={t("decisionqueuerail.general.decisionqueues")} data-decision-queue-rail>
+      <Link to="/decisions" className="inline-flex items-center gap-1.5 rounded-full border border-primary bg-primary/10 px-3 py-1 text-xs font-medium text-primary" aria-current="page">
+        {t("decisionqueuerail.general.all")}
+      </Link>
+      {queues.map((queue) => {
+        const label = queue.title === "Questions"
+          ? t("decisionqueuerail.general.questions")
+          : queue.title === "Plans"
+            ? t("decisionqueuerail.general.plans")
+            : queue.title;
+        const recent = now - new Date(queue.updatedAt).getTime() < QUEUE_RECENT_ACTIVITY_MS;
+        return (
+          <Link
+            key={queue.key}
+            to={`/decisions/queues/${encodeURIComponent(queue.key)}`}
+            className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1 text-xs font-medium text-muted-foreground transition-colors hover:bg-accent/50 hover:text-foreground"
+          >
+            {recent && <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-primary" aria-hidden="true" />}
+            <span className="truncate">{label}</span>
+            {queue.itemCount > 0 && <span className="tabular-nums text-(length:--text-nano) text-muted-foreground">{queue.itemCount}</span>}
+          </Link>
+        );
+      })}
+    </nav>
+  );
 }
 
 export function decisionHistoryCount(count: number | undefined) {
@@ -137,8 +176,8 @@ export function WhatNeedsMe() {
   );
 
   useEffect(() => {
-    setBreadcrumbs([{ label: "Decisions" }]);
-  }, [setBreadcrumbs]);
+    setBreadcrumbs([{ label: t("whatneedsme.general.decisions") }]);
+  }, [setBreadcrumbs, t]);
 
   // Re-hydrate per-company preferences when the company changes.
   useEffect(() => {
@@ -537,7 +576,7 @@ export function WhatNeedsMe() {
       {/* Queue quicklinks + date-range chips (§4.1–§4.2). The rail self-hides
           when the company has no queues; the chips filter the desk server-side. */}
       <div className="space-y-2">
-        <DecisionQueueRail companyId={selectedCompanyId} activeQueueKey={null} />
+        <LocalizedDecisionQueueRail companyId={selectedCompanyId} />
         <DecisionDateChips
           value={dateRange}
           custom={customRange}

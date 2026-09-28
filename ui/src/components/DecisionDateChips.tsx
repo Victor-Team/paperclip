@@ -32,9 +32,9 @@ export function DecisionDateChips({ value, custom, onChange }: DecisionDateChips
 
   return (
     <div className="flex flex-wrap items-center gap-1.5" data-decision-date-chips>
-      {ATTENTION_DATE_RANGE_OPTIONS.map(([id, label]) => (
+      {ATTENTION_DATE_RANGE_OPTIONS.map(([id]) => (
         <ChipButton key={id} active={value === id} onClick={() => onChange(id, custom)}>
-          {label}
+          {id === "all" ? t("decisionqueuerail.general.all") : id === "today" ? t("taskdategroups.general.today") : id === "yesterday" ? t("taskdategroups.general.yesterday") : id === "last_7_days" ? t("searchfilters.general.last7days") : t("decisiondatechips.general.thismonth")}
         </ChipButton>
       ))}
       <Popover open={open} onOpenChange={setOpen}>
