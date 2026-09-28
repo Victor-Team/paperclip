@@ -1,0 +1,51 @@
+{
+  "localService": {
+    "viteOrigin": "http://127.0.0.1:5176",
+    "proxiedApiOrigin": "http://127.0.0.1:3100",
+    "apiRequest": "GET /api/instance/settings/experimental",
+    "apiHttpStatus": 200,
+    "actualResponse": {
+      "enableStreamlinedUi": true,
+      "enableStreamlinedLeftNavigation": true
+    },
+    "apiStateChanged": false
+  },
+  "browserCases": [
+    {
+      "image": 1,
+      "route": "/TOK/agents/ca5b4df8-b0fa-4a61-9a61-6543be210cd1/runtime?lng=zh-CN",
+      "responseMode": "real API response, true",
+      "AppBranch": "Layout + AgentDetail + AgentContextualSidebar",
+      "screenshot": "改后-图1-运行环境.png"
+    },
+    {
+      "image": 2,
+      "route": "/TOK/agents/ceo/overview?lng=zh-CN",
+      "responseMode": "browser-only CDP Fetch response override: enableStreamlinedUi=false, enableStreamlinedLeftNavigation=false",
+      "AppBranch": "ProductionLayout + shared AgentDetail; screenshot component is the main overview content region",
+      "screenshot": "改后-图2-CEO概览-legacy外壳.png"
+    },
+    {
+      "image": 3,
+      "route": "/TOK/agents/all?lng=zh-CN",
+      "responseMode": "browser-only CDP Fetch response override: shell flags false; other experimental settings retained in main capture",
+      "AppBranch": "ProductionLayout + ProductionAgents loaded from src/pages/Agents.production.tsx",
+      "before": "改前-图3-production树.png",
+      "after": "改后-图3-production树.png"
+    },
+    {
+      "image": 4,
+      "route": "/TOK/decisions?lng=zh-CN",
+      "responseMode": "browser-only CDP Fetch response override: enableStreamlinedUi=false, enableStreamlinedLeftNavigation=false",
+      "AppBranch": "ProductionLayout + shared WhatNeedsMe + DecisionDateChips",
+      "screenshot": "改后-图4-决策页-legacy外壳.png"
+    }
+  ],
+  "codeBranchEvidence": {
+    "settingsHook": "ui/src/App.tsx:744",
+    "rootLayoutConditional": "ui/src/App.tsx:835",
+    "agentsRouteConditional": "ui/src/App.tsx:276-280",
+    "decisionRoute": "ui/src/App.tsx:420",
+    "historicalCause": "Unresolved: original Board captures have no capture-time API response, network log, or build identifier. Current API true does not prove historical settings."
+  }
+}
