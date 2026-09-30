@@ -38,6 +38,8 @@ function cacheKeyForTarget(command: string, target: AdapterExecutionTarget | nul
 export function minimumClaudeCliVersionForModel(model: string): string | null {
   const modelId = model.trim().replace(/\[1m\]$/, "").replace(/^(?:(?:us|eu|apac|global)\.)?anthropic\./, "");
   if (modelId === "claude-opus-5-5") return "2.1.280";
+  // Sonnet 5.5: first seen in Claude Code 2.1.284 (2.1.283 does not know the ID; checked on the local CLI builds, 2026-09-30).
+  if (modelId === "claude-sonnet-5-5") return "2.1.284";
   return modelId === "claude-fable-5-1"
     ? CLAUDE_FABLE_5_1_MIN_CLI_VERSION
     : null;
