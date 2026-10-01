@@ -6,7 +6,7 @@ import { models as cursorFallbackModels } from "@paperclipai/adapter-cursor-loca
 import { models as opencodeFallbackModels } from "@paperclipai/adapter-opencode-local";
 import { resetOpenCodeModelsCacheForTests } from "@paperclipai/adapter-opencode-local/server";
 import { listAdapterModels, listServerAdapters, refreshAdapterModels } from "../adapters/index.js";
-import { resetCodexModelsCacheForTests } from "../adapters/codex-models.js";
+import { resetCodexModelsCacheForTests, setCodexModelsRunnerForTests } from "../adapters/codex-models.js";
 import { resetCursorModelsCacheForTests, setCursorModelsRunnerForTests } from "../adapters/cursor-models.js";
 
 vi.mock("acpx/runtime", () => ({
@@ -26,6 +26,8 @@ describe("adapter model listing", () => {
     delete process.env.PAPERCLIP_OPENCODE_COMMAND;
     resetClaudeModelsCacheForTests();
     resetCodexModelsCacheForTests();
+    // Hermetic: never shell out to a real `codex` binary from tests.
+    setCodexModelsRunnerForTests(() => ({ status: 1, stdout: "", hasError: true }));
     resetCursorModelsCacheForTests();
     setCursorModelsRunnerForTests(null);
     resetOpenCodeModelsCacheForTests();
@@ -193,6 +195,59 @@ describe("adapter model listing", () => {
       "composer-2.5", "claude-opus-5-5", "claude-fable-5-1", "claude-sonnet-5",
       "gpt-5.6-sol", "gpt-5.6-terra", "gpt-5.6-luna", "grok-4.7", "gemini-3.8-flash", "muse-spark-1.3",
     ]));
+  });
+
+  it("lists the installed codex CLI catalog first, in priority order, hiding hidden entries", async () => {
+    const runner = vi.fn(() => ({
+      status: 0,
+      hasError: false,
+      stdout: JSON.stringify({
+        models: [
+          { slug: "gpt-6-astra", display_name: "GPT-6 Astra", visibility: "list", priority: 2 },
+          { slug: "gpt-9-new", display_name: "GPT-9 New", visibility: "list", priority: 1 },
+          { slug: "internal-reserve", display_name: "Reserve", visibility: "hide", priority: 0 },
+        ],
+      }),
+    }));
+    setCodexModelsRunnerForTests(runner);
+
+    const models = await listAdapterModels("codex_local");
+
+    expect(models[0]).toEqual({ id: "gpt-9-new", label: "GPT-9 New" });
+    expect(models[1]).toEqual({ id: "gpt-6-astra", label: "GPT-6 Astra" });
+    expect(models.some((model) => model.id === "internal-reserve")).toBe(false);
+    // Static aliases are still offered after the CLI entries.
+    for (const fallback of codexFallbackModels) {
+      expect(models.some((model) => model.id === fallback.id)).toBe(true);
+    }
+    expect(models.filter((model) => model.id === "gpt-6-astra")).toHaveLength(1);
+  });
+
+  it("caches the codex CLI catalog and re-reads it on refresh", async () => {
+    let slug = "gpt-9-new";
+    const runner = vi.fn(() => ({
+      status: 0,
+      hasError: false,
+      stdout: JSON.stringify({ models: [{ slug, display_name: slug, visibility: "list", priority: 1 }] }),
+    }));
+    setCodexModelsRunnerForTests(runner);
+
+    await listAdapterModels("codex_local");
+    slug = "gpt-9-newer";
+    const cachedList = await listAdapterModels("codex_local");
+    const refreshed = await refreshAdapterModels("codex_local");
+
+    expect(runner).toHaveBeenCalledTimes(2);
+    expect(cachedList[0]?.id).toBe("gpt-9-new");
+    expect(refreshed[0]?.id).toBe("gpt-9-newer");
+  });
+
+  it("falls back to the static codex list when the CLI catalog is unreadable", async () => {
+    setCodexModelsRunnerForTests(() => ({ status: 0, hasError: false, stdout: "not json" }));
+
+    const models = await listAdapterModels("codex_local");
+
+    expect(models).toEqual(codexFallbackModels);
   });
 
   it("loads codex models dynamically and merges fallback options", async () => {
