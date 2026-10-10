@@ -12787,7 +12787,10 @@
       "board": "董事会",
       "budgetStopOutro": "，使用预算控件解除此预算停用。",
       "deleteAgentConfirm": "要删除这个未获批准的智能体吗？此操作无法撤销。",
-      "commentsCount": "评论（{{count}}）"
+      "commentsCount": "评论（{{count}}）",
+      "decisionnoteplaceholder": "写下给提交人的意见（要求修改时必填），会随你的决定一起送达。",
+      "decisionnoterequired": "先写意见：提交人要照着它修改。",
+      "revisionwaiting": "已退回提交人修改。要补充意见，在下方写评论，提交人会收到。"
     }
   },
   "boardchat": {

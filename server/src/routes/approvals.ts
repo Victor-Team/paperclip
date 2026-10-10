@@ -152,6 +152,88 @@ export function approvalRoutes(
     }
   }
 
+  /**
+   * Tell the requesting agent that the board answered its approval with
+   * something other than an approval: a rejection, a revision request or a
+   * comment. Upstream only wakes the requester on approve, so a board that
+   * asks for changes or writes its direction on the card is never heard
+   * (tracker #69). The wake carries the approval and its linked issues the
+   * same way the approve wake does, so the agent's environment gets
+   * PAPERCLIP_APPROVAL_ID / PAPERCLIP_APPROVAL_STATUS.
+   */
+  async function queueRequesterFeedbackWake(input: {
+    approval: { id: string; companyId: string; status: string; requestedByAgentId: string | null };
+    reason: "approval_rejected" | "approval_revision_requested" | "approval_comment";
+    idempotencyKey: string;
+    actorUserId: string;
+    decisionNote?: string | null;
+    approvalCommentId?: string | null;
+  }) {
+    const { approval } = input;
+    if (!approval.requestedByAgentId) return;
+    const linkedIssues = await issueApprovalsSvc.listIssuesForApproval(approval.id);
+    const linkedIssueIds = linkedIssues.map((issue) => issue.id);
+    const primaryIssueId = linkedIssueIds[0] ?? null;
+    const feedback = {
+      approvalId: approval.id,
+      approvalStatus: approval.status,
+      issueId: primaryIssueId,
+      issueIds: linkedIssueIds,
+      ...(input.decisionNote ? { decisionNote: input.decisionNote } : {}),
+      ...(input.approvalCommentId ? { approvalCommentId: input.approvalCommentId } : {}),
+    };
+    try {
+      const wakeRun = await heartbeat.wakeup(approval.requestedByAgentId, {
+        source: "automation",
+        triggerDetail: "system",
+        reason: input.reason,
+        idempotencyKey: input.idempotencyKey,
+        payload: feedback,
+        requestedByActorType: "user",
+        requestedByActorId: input.actorUserId,
+        contextSnapshot: {
+          source: `approval.${input.reason.replace(/^approval_/, "")}`,
+          ...feedback,
+          taskId: primaryIssueId,
+          wakeReason: input.reason,
+        },
+      });
+      await logActivity(db, {
+        companyId: approval.companyId,
+        actorType: "user",
+        actorId: input.actorUserId,
+        action: "approval.requester_wakeup_queued",
+        entityType: "approval",
+        entityId: approval.id,
+        details: {
+          requesterAgentId: approval.requestedByAgentId,
+          wakeReason: input.reason,
+          wakeRunId: wakeRun?.id ?? null,
+          linkedIssueIds,
+        },
+      });
+    } catch (err) {
+      logger.warn(
+        { err, approvalId: approval.id, requestedByAgentId: approval.requestedByAgentId, reason: input.reason },
+        "failed to queue requester wakeup after board feedback",
+      );
+      await logActivity(db, {
+        companyId: approval.companyId,
+        actorType: "user",
+        actorId: input.actorUserId,
+        action: "approval.requester_wakeup_failed",
+        entityType: "approval",
+        entityId: approval.id,
+        details: {
+          requesterAgentId: approval.requestedByAgentId,
+          wakeReason: input.reason,
+          linkedIssueIds,
+          error: err instanceof Error ? err.message : String(err),
+        },
+      });
+    }
+  }
+
   async function requireApprovalAccess(req: Request, id: string) {
     const approval = await svc.getById(id);
     if (!approval || !hasCompanyAccess(req, approval.companyId)) {
@@ -421,6 +503,13 @@ export function approvalRoutes(
         entityId: approval.id,
         details: { type: approval.type },
       });
+      await queueRequesterFeedbackWake({
+        approval,
+        reason: "approval_rejected",
+        idempotencyKey: `approval-feedback:${approval.id}:rejected:${approval.decidedAt ? new Date(approval.decidedAt).getTime() : Date.now()}`,
+        actorUserId: req.actor.userId ?? "board",
+        decisionNote: approval.decisionNote,
+      });
       await queueAdditionalApprovalReviewPathWakes({
         approvalId: approval.id,
         approvalStatus: approval.status,
@@ -455,6 +544,13 @@ export function approvalRoutes(
         entityType: "approval",
         entityId: approval.id,
         details: { type: approval.type },
+      });
+      await queueRequesterFeedbackWake({
+        approval,
+        reason: "approval_revision_requested",
+        idempotencyKey: `approval-feedback:${approval.id}:revision_requested:${approval.decidedAt ? new Date(approval.decidedAt).getTime() : Date.now()}`,
+        actorUserId: req.actor.userId ?? "board",
+        decisionNote: approval.decisionNote,
       });
 
       res.json(redactApprovalPayload(approval));
@@ -525,6 +621,18 @@ export function approvalRoutes(
       entityId: approval.id,
       details: { commentId: comment.id },
     });
+    if (
+      actor.actorType === "user"
+      && (approval.status === "pending" || approval.status === "revision_requested" || approval.status === "rejected")
+    ) {
+      await queueRequesterFeedbackWake({
+        approval,
+        reason: "approval_comment",
+        idempotencyKey: `approval-comment:${comment.id}`,
+        actorUserId: actor.actorId,
+        approvalCommentId: comment.id,
+      });
+    }
 
     res.status(201).json(comment);
   });

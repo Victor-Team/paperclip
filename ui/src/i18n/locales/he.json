@@ -12787,7 +12787,10 @@
       "board": "Board",
       "budgetStopOutro": ".",
       "deleteAgentConfirm": "Delete this disapproved agent? This cannot be undone.",
-      "commentsCount": "Comments ({{count}})"
+      "commentsCount": "Comments ({{count}})",
+      "decisionnoteplaceholder": "Your note to the requester (required to request a revision). It is sent with your decision.",
+      "decisionnoterequired": "Write a note first: the requester revises from it.",
+      "revisionwaiting": "Sent back to the requester for revision. To add more, write a comment below; the requester is notified."
     }
   },
   "boardchat": {

@@ -438,4 +438,106 @@ describe("approval routes idempotent retries", () => {
     expect(res.body.error).toContain("Status-only recovery runs cannot create or modify approvals");
     expect(mockApprovalService.addComment).not.toHaveBeenCalled();
   });
+
+  describe("board feedback wakes the requesting agent (#69)", () => {
+    const openCard = {
+      id: "approval-9",
+      companyId: "company-1",
+      type: "request_board_approval",
+      status: "pending",
+      payload: {},
+      requestedByAgentId: "agent-9",
+    };
+
+    it("wakes the requester with the note when the board requests a revision", async () => {
+      mockApprovalService.getById.mockResolvedValue(openCard);
+      mockApprovalService.requestRevision.mockResolvedValue({
+        ...openCard,
+        status: "revision_requested",
+        decisionNote: "Show me the plan itself",
+        decidedAt: new Date("2026-10-10T14:28:47.475Z"),
+      });
+
+      const res = await request(await createApp())
+        .post("/api/approvals/approval-9/request-revision")
+        .send({ decisionNote: "Show me the plan itself" });
+
+      expect(res.status).toBe(200);
+      expect(mockHeartbeatService.wakeup).toHaveBeenCalledTimes(1);
+      const [agentId, wake] = mockHeartbeatService.wakeup.mock.calls[0];
+      expect(agentId).toBe("agent-9");
+      expect(wake.reason).toBe("approval_revision_requested");
+      expect(wake.idempotencyKey).toBe(
+        `approval-feedback:approval-9:revision_requested:${new Date("2026-10-10T14:28:47.475Z").getTime()}`,
+      );
+      expect(wake.contextSnapshot).toMatchObject({
+        approvalId: "approval-9",
+        approvalStatus: "revision_requested",
+        issueId: "issue-1",
+        issueIds: ["issue-1"],
+        taskId: "issue-1",
+        decisionNote: "Show me the plan itself",
+        wakeReason: "approval_revision_requested",
+      });
+    });
+
+    it("wakes the requester when the board rejects", async () => {
+      mockApprovalService.getById.mockResolvedValue(openCard);
+      mockApprovalService.reject.mockResolvedValue({
+        approval: { ...openCard, status: "rejected", decisionNote: "Wrong direction", decidedAt: new Date() },
+        applied: true,
+      });
+
+      const res = await request(await createApp())
+        .post("/api/approvals/approval-9/reject")
+        .send({ decisionNote: "Wrong direction" });
+
+      expect(res.status).toBe(200);
+      const requesterWakes = mockHeartbeatService.wakeup.mock.calls.filter(([agentId]) => agentId === "agent-9");
+      expect(requesterWakes).toHaveLength(1);
+      expect(requesterWakes[0][1].reason).toBe("approval_rejected");
+      expect(requesterWakes[0][1].contextSnapshot).toMatchObject({
+        approvalStatus: "rejected",
+        decisionNote: "Wrong direction",
+      });
+    });
+
+    it("wakes the requester when the board comments on an open card, not when the requester comments", async () => {
+      mockApprovalService.getById.mockResolvedValue({ ...openCard, status: "revision_requested" });
+      mockApprovalService.addComment.mockResolvedValue({ id: "comment-1", body: "Here is what I want" });
+
+      const boardRes = await request(await createApp())
+        .post("/api/approvals/approval-9/comments")
+        .send({ body: "Here is what I want" });
+
+      expect(boardRes.status).toBe(201);
+      expect(mockHeartbeatService.wakeup).toHaveBeenCalledTimes(1);
+      const [agentId, wake] = mockHeartbeatService.wakeup.mock.calls[0];
+      expect(agentId).toBe("agent-9");
+      expect(wake.reason).toBe("approval_comment");
+      expect(wake.idempotencyKey).toBe("approval-comment:comment-1");
+      expect(wake.contextSnapshot).toMatchObject({ approvalId: "approval-9", approvalCommentId: "comment-1" });
+
+      mockHeartbeatService.wakeup.mockClear();
+      mockApprovalService.addComment.mockResolvedValue({ id: "comment-2", body: "Resubmitted" });
+      const agentRes = await request(await createAgentApp())
+        .post("/api/approvals/approval-9/comments")
+        .send({ body: "Resubmitted" });
+
+      expect(agentRes.status).toBe(201);
+      expect(mockHeartbeatService.wakeup).not.toHaveBeenCalled();
+    });
+
+    it("does not wake anyone for a board comment on an approved card", async () => {
+      mockApprovalService.getById.mockResolvedValue({ ...openCard, status: "approved" });
+      mockApprovalService.addComment.mockResolvedValue({ id: "comment-3", body: "Thanks" });
+
+      const res = await request(await createApp())
+        .post("/api/approvals/approval-9/comments")
+        .send({ body: "Thanks" });
+
+      expect(res.status).toBe(201);
+      expect(mockHeartbeatService.wakeup).not.toHaveBeenCalled();
+    });
+  });
 });

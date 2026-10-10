@@ -27,6 +27,9 @@ export function ApprovalDetail() {
   const [searchParams] = useSearchParams();
   const queryClient = useQueryClient();
   const [commentBody, setCommentBody] = useState("");
+  // The board's note travels with its decision (#69): the requester is woken
+  // with it, so a revision request without a note would tell it nothing.
+  const [decisionNote, setDecisionNote] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [showRawPayload, setShowRawPayload] = useState(false);
 
@@ -88,9 +91,10 @@ export function ApprovalDetail() {
   };
 
   const approveMutation = useMutation({
-    mutationFn: () => approvalsApi.approve(approvalId!),
+    mutationFn: () => approvalsApi.approve(approvalId!, decisionNote.trim() || undefined),
     onSuccess: () => {
       setError(null);
+      setDecisionNote("");
       refresh();
       navigate(`/approvals/${approvalId}?resolved=approved`, { replace: true });
     },
@@ -98,18 +102,20 @@ export function ApprovalDetail() {
   });
 
   const rejectMutation = useMutation({
-    mutationFn: () => approvalsApi.reject(approvalId!),
+    mutationFn: () => approvalsApi.reject(approvalId!, decisionNote.trim() || undefined),
     onSuccess: () => {
       setError(null);
+      setDecisionNote("");
       refresh();
     },
     onError: (err) => setError(err instanceof Error ? err.message : t("approvaldetail.general.rejectFailed")),
   });
 
   const revisionMutation = useMutation({
-    mutationFn: () => approvalsApi.requestRevision(approvalId!),
+    mutationFn: () => approvalsApi.requestRevision(approvalId!, decisionNote.trim()),
     onSuccess: () => {
       setError(null);
+      setDecisionNote("");
       refresh();
     },
     onError: (err) => setError(err instanceof Error ? err.message : t("approvaldetail.general.revisionFailed")),
@@ -260,6 +266,20 @@ export function ApprovalDetail() {
               {t("approvaldetail.general.linkedtasksremainopenuntiltherequesting")}</p>
           </div>
         )}
+        {isActionable && !isBudgetApproval && (
+          <Textarea
+            value={decisionNote}
+            onChange={(e) => setDecisionNote(e.target.value)}
+            placeholder={t("approvaldetail.general.decisionnoteplaceholder")}
+            rows={3}
+            data-testid="approval-decision-note"
+          />
+        )}
+        {approval.status === "revision_requested" && approval.requestedByAgentId && (
+          <p className="text-xs text-muted-foreground" data-testid="approval-revision-waiting">
+            {t("approvaldetail.general.revisionwaiting")}
+          </p>
+        )}
         <div className="flex flex-wrap items-center gap-2">
           {isActionable && !isBudgetApproval && (
             <>
@@ -289,11 +309,13 @@ export function ApprovalDetail() {
               size="sm"
               variant="outline"
               onClick={() => revisionMutation.mutate()}
-              disabled={revisionMutation.isPending}
+              disabled={revisionMutation.isPending || !decisionNote.trim()}
+              title={decisionNote.trim() ? undefined : t("approvaldetail.general.decisionnoterequired")}
+              data-testid="approval-request-revision"
             >
               {t("approvaldetail.general.requestrevision")}</Button>
           )}
-          {approval.status === "revision_requested" && (
+          {approval.status === "revision_requested" && !approval.requestedByAgentId && (
             <Button
               size="sm"
               variant="outline"
