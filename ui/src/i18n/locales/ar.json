@@ -11475,6 +11475,18 @@
       "approve": "Approve"
     }
   },
+  "executionstageactions": {
+    "general": {
+      "awaiting": "This stage is waiting for your decision",
+      "noteplaceholder": "Write your decision note (required to approve or request changes)…",
+      "noterequired": "Write a note first",
+      "requestchanges": "Request changes",
+      "approve": "Approve",
+      "approved": "Approved — the decision is recorded.",
+      "changesrequested": "Changes requested — returned to the assignee.",
+      "failed": "Could not record the decision"
+    }
+  },
   "standalonebrowsercontrols": {
     "general": {
       "refresh": "Refresh",

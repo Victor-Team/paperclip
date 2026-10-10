@@ -32,6 +32,8 @@ vi.mock("../api/issues", () => ({
     acceptInteraction: vi.fn(),
     rejectInteraction: vi.fn(),
     decideStalledReview: vi.fn(() => Promise.resolve({})),
+    get: vi.fn(),
+    update: vi.fn(() => Promise.resolve({})),
   },
 }));
 
@@ -1000,5 +1002,117 @@ describe("AttentionQueueRow", () => {
     expect(container?.querySelector('[data-testid="attention-trained-badge"]')).toBeNull();
     expect(container?.querySelector('[data-testid="attention-train-inline"]')).toBeNull();
     expect(container?.querySelector('[data-testid="attention-train-button"]')).toBeNull();
+  });
+});
+
+// #63: a healthy review / approval stage is not inline-resolvable (that flag is
+// for stalled reviews), so its human approver had no verbs on the card.
+describe("AttentionQueueRow — normal stage approver (#63)", () => {
+  const healthyReview = () =>
+    buildItem({
+      sourceKind: "review" as AttentionSourceKind,
+      inlineResolvable: false,
+      subject: {
+        kind: "issue",
+        id: "issue-1",
+        companyId: "c1",
+        title: "Task sheet waiting for the board",
+        identifier: "CMP-56",
+        status: "in_review",
+        href: "/CMP/issues/CMP-56",
+        metadata: {},
+      },
+    });
+  const issueWaitingOn = (userId: string) => ({
+    id: "issue-1",
+    companyId: "c1",
+    status: "in_review",
+    executionState: {
+      status: "pending",
+      currentStageType: "approval",
+      currentParticipant: { type: "user", userId, agentId: null },
+    },
+  });
+  // React Query batches its notifications on a timer, so let a few ticks pass.
+  const flush = async () => {
+    for (let tick = 0; tick < 3; tick += 1) {
+      await act(async () => {
+        await new Promise((resolve) => setTimeout(resolve, 0));
+      });
+    }
+  };
+  const button = (testId: string) =>
+    container?.querySelector<HTMLButtonElement>(`[data-testid="${testId}"]`) ?? null;
+  const typeNote = (value: string) => {
+    const note = container?.querySelector<HTMLTextAreaElement>('[data-testid="execution-stage-note"]');
+    const setter = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, "value")!.set!;
+    act(() => {
+      setter.call(note, value);
+      note?.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+  };
+  const renderFor = (viewer: string) =>
+    render(
+      <AttentionQueueRow
+        item={healthyReview()}
+        companyId="c1"
+        currentUserId={viewer}
+        expanded
+        onToggleExpand={noop}
+        onDismiss={noop}
+      />,
+    );
+
+  it("offers approve and request changes to the stage's current approver", async () => {
+    vi.mocked(issuesApi.get).mockResolvedValue(issueWaitingOn("board-1") as never);
+    renderFor("board-1");
+    await flush();
+    expect(button("execution-stage-approve")).not.toBeNull();
+    expect(button("execution-stage-request-changes")).not.toBeNull();
+    expect(container?.textContent).toContain("Open");
+  });
+
+  it("offers nothing to a viewer the stage is not waiting on", async () => {
+    vi.mocked(issuesApi.get).mockResolvedValue(issueWaitingOn("board-1") as never);
+    renderFor("someone-else");
+    await flush();
+    expect(button("execution-stage-approve")).toBeNull();
+    expect(button("execution-stage-request-changes")).toBeNull();
+  });
+
+  it("needs a note, then approves through the ordinary PATCH as done", async () => {
+    vi.mocked(issuesApi.get).mockResolvedValue(issueWaitingOn("board-1") as never);
+    renderFor("board-1");
+    await flush();
+    expect(button("execution-stage-approve")?.disabled).toBe(true);
+    expect(button("execution-stage-request-changes")?.disabled).toBe(true);
+    typeNote("整理结果核过，通过。");
+    expect(button("execution-stage-approve")?.disabled).toBe(false);
+    act(() => button("execution-stage-approve")?.dispatchEvent(new MouseEvent("click", { bubbles: true })));
+    await flush();
+    expect(issuesApi.update).toHaveBeenCalledWith("issue-1", { status: "done", comment: "整理结果核过，通过。" });
+    expect(issuesApi.decideStalledReview).not.toHaveBeenCalled();
+  });
+
+  it("requests changes as in_progress with the note, never another status", async () => {
+    vi.mocked(issuesApi.get).mockResolvedValue(issueWaitingOn("board-1") as never);
+    renderFor("board-1");
+    await flush();
+    typeNote("法律条目还有两条没删。");
+    act(() => button("execution-stage-request-changes")?.dispatchEvent(new MouseEvent("click", { bubbles: true })));
+    await flush();
+    expect(issuesApi.update).toHaveBeenCalledWith("issue-1", { status: "in_progress", comment: "法律条目还有两条没删。" });
+  });
+
+  it("shows the server's reason when the decision is refused", async () => {
+    vi.mocked(issuesApi.get).mockResolvedValue(issueWaitingOn("board-1") as never);
+    vi.mocked(issuesApi.update).mockRejectedValueOnce(new Error("Only the active participant can advance"));
+    renderFor("board-1");
+    await flush();
+    typeNote("通过。");
+    act(() => button("execution-stage-approve")?.dispatchEvent(new MouseEvent("click", { bubbles: true })));
+    await flush();
+    expect(document.body.textContent).toContain("Could not record the decision");
+    expect(document.body.textContent).toContain("Only the active participant can advance");
   });
 });

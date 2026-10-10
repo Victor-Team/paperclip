@@ -11475,6 +11475,18 @@
       "approve": "批准"
     }
   },
+  "executionstageactions": {
+    "general": {
+      "awaiting": "这一阶段等你审批",
+      "noteplaceholder": "写下审批意见（通过和要求修改都必须写）…",
+      "noterequired": "请先写审批意见",
+      "requestchanges": "要求修改",
+      "approve": "通过",
+      "approved": "已通过，审批记录已写入",
+      "changesrequested": "已要求修改，已退回执行人",
+      "failed": "审批没有提交成功"
+    }
+  },
   "standalonebrowsercontrols": {
     "general": {
       "refresh": "刷新",

@@ -1,5 +1,5 @@
 import { memo, useState, type KeyboardEvent, type ReactNode } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   AlarmClock,
   CalendarClock,
@@ -50,6 +50,7 @@ import {
 import { AttentionInteractionResolver } from "./AttentionInteractionResolver";
 import { DecisionResolver } from "./DecisionResolver";
 import { StalledReviewActions } from "./StalledReviewActions";
+import { ExecutionStageDecisionActions, isCurrentStageParticipant } from "./ExecutionStageDecisionActions";
 import { readIssueReviewPolicyMetadata } from "../lib/review-policy";
 import { useTranslation } from "@/i18n";
 
@@ -395,6 +396,9 @@ export const AttentionQueueRow = memo(function AttentionQueueRow({
                 userLabelMap={userLabelMap}
                 toggle={toggle}
               />
+            )}
+            {!inline && item.sourceKind === "review" && (
+              <ReviewStageResolver issueId={item.subject.id} companyId={companyId} currentUserId={currentUserId} />
             )}
           </div>
         </CollapsibleContent>
@@ -814,6 +818,29 @@ function InlineResolver({
   }
 
   return null;
+}
+
+/**
+ * A healthy review or approval stage is not inline-resolvable — that flag is
+ * for stalled reviews — so the human it waits on had no verbs on the card
+ * (#63). Read the issue once and offer approve / request changes to that
+ * participant only; everyone else keeps just the Open button.
+ */
+function ReviewStageResolver({
+  issueId,
+  companyId,
+  currentUserId,
+}: {
+  issueId: string;
+  companyId: string;
+  currentUserId?: string | null;
+}) {
+  const { data: issue } = useQuery({
+    queryKey: queryKeys.issues.detail(issueId),
+    queryFn: () => issuesApi.get(issueId),
+  });
+  if (!isCurrentStageParticipant(issue, currentUserId)) return null;
+  return <ExecutionStageDecisionActions issueId={issueId} companyId={companyId} />;
 }
 
 /** Footer shared by the resolvers that own their verbs: toggle left, verbs right. */

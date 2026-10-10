@@ -128,6 +128,7 @@ import {
   type TaskDetailRelationItem,
 } from "../task-detail/TaskDetailRelationsPanel";
 import { useTranslation } from "@/i18n";
+import { ExecutionStageDecisionActions, isCurrentStageParticipant } from "../ExecutionStageDecisionActions";
 
 function splitMiddleTruncation(value: string): { prefix: string; suffix: string } | null {
   const splitAt = Math.max(value.lastIndexOf("/"), value.lastIndexOf("\\"));
@@ -2631,6 +2632,10 @@ export function IssueProperties({
           <PropertyRow label={t("issueproperties.general.execution26")}>
             <span className="text-sm truncate min-w-0" title={currentExecutionLabel}>{currentExecutionLabel}</span>
           </PropertyRow>
+        )}
+        {/* #63: the human the current stage waits on gets approve / request changes here too. */}
+        {isCurrentStageParticipant(issue, currentUserId) && (
+          <ExecutionStageDecisionActions issueId={issue.id} companyId={issue.companyId} className="py-2" />
         )}
 
         {showScheduledRetryRow && scheduledRetry?.scheduledRetryReason === "workspace_busy" ? (
