@@ -1023,10 +1023,11 @@ describe("AttentionQueueRow — normal stage approver (#63)", () => {
         metadata: {},
       },
     });
-  const issueWaitingOn = (userId: string) => ({
+  const issueWaitingOn = (userId: string, blockedBy: unknown[] = []) => ({
     id: "issue-1",
     companyId: "c1",
     status: "in_review",
+    blockedBy,
     executionState: {
       status: "pending",
       currentStageType: "approval",
@@ -1051,17 +1052,44 @@ describe("AttentionQueueRow — normal stage approver (#63)", () => {
       note?.dispatchEvent(new Event("input", { bubbles: true }));
     });
   };
-  const renderFor = (viewer: string) =>
+  const renderFor = (viewer: string, expanded = true, onToggleExpand: (item: AttentionItem) => void = noop) =>
     render(
       <AttentionQueueRow
         item={healthyReview()}
         companyId="c1"
         currentUserId={viewer}
-        expanded
-        onToggleExpand={noop}
+        expanded={expanded}
+        onToggleExpand={onToggleExpand}
         onDismiss={noop}
       />,
     );
+
+  it("puts a review-now button on the collapsed card of the stage's approver, which expands it", async () => {
+    vi.mocked(issuesApi.get).mockResolvedValue(issueWaitingOn("board-1") as never);
+    const onToggleExpand = vi.fn();
+    renderFor("board-1", false, onToggleExpand);
+    await flush();
+    const reviewNow = button("execution-stage-review-now");
+    expect(reviewNow).not.toBeNull();
+    expect(reviewNow?.textContent).toContain("Review now");
+    act(() => reviewNow?.dispatchEvent(new MouseEvent("click", { bubbles: true })));
+    expect(onToggleExpand).toHaveBeenCalledOnce();
+  });
+
+  it("puts no review-now button on a collapsed card the stage is not waiting on this viewer for", async () => {
+    vi.mocked(issuesApi.get).mockResolvedValue(issueWaitingOn("board-1") as never);
+    renderFor("someone-else", false);
+    await flush();
+    expect(button("execution-stage-review-now")).toBeNull();
+  });
+
+  it("drops the review-now button once the card is expanded and the verbs are in view", async () => {
+    vi.mocked(issuesApi.get).mockResolvedValue(issueWaitingOn("board-1") as never);
+    renderFor("board-1", true);
+    await flush();
+    expect(button("execution-stage-review-now")).toBeNull();
+    expect(button("execution-stage-approve")).not.toBeNull();
+  });
 
   it("offers approve and request changes to the stage's current approver", async () => {
     vi.mocked(issuesApi.get).mockResolvedValue(issueWaitingOn("board-1") as never);
@@ -1102,6 +1130,34 @@ describe("AttentionQueueRow — normal stage approver (#63)", () => {
     act(() => button("execution-stage-request-changes")?.dispatchEvent(new MouseEvent("click", { bubbles: true })));
     await flush();
     expect(issuesApi.update).toHaveBeenCalledWith("issue-1", { status: "in_progress", comment: "法律条目还有两条没删。" });
+  });
+
+  it("warns about an open blocker and greys out request changes, approve stays available", async () => {
+    vi.mocked(issuesApi.get).mockResolvedValue(
+      issueWaitingOn("board-1", [{ id: "b1", identifier: "CMP-98", title: "Fix", status: "todo" }]) as never,
+    );
+    renderFor("board-1");
+    await flush();
+    expect(container?.querySelector('[data-testid="execution-stage-blocked-note"]')?.textContent).toContain("CMP-98");
+    typeNote("内容还要改。");
+    expect(button("execution-stage-request-changes")?.disabled).toBe(true);
+    expect(button("execution-stage-approve")?.disabled).toBe(false);
+  });
+
+  it("names the blocker when the server refuses to send the issue back to work", async () => {
+    vi.mocked(issuesApi.get).mockResolvedValue(issueWaitingOn("board-1") as never);
+    vi.mocked(issuesApi.update).mockRejectedValueOnce(
+      new ApiError("请求无法处理", 422, {
+        error: "请求无法处理",
+        details: { unresolvedBlockers: [{ identifier: "CMP-98", title: "Fix" }] },
+      }),
+    );
+    renderFor("board-1");
+    await flush();
+    typeNote("内容还要改。");
+    act(() => button("execution-stage-request-changes")?.dispatchEvent(new MouseEvent("click", { bubbles: true })));
+    await flush();
+    expect(document.body.textContent).toContain("Still blocked by CMP-98");
   });
 
   it("shows the server's reason when the decision is refused", async () => {

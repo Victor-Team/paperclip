@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { CheckCircle2, Loader2, RotateCcw } from "lucide-react";
-import type { Issue } from "@paperclipai/shared";
+import type { Issue, IssueRelationIssueSummary } from "@paperclipai/shared";
+import { ApiError } from "../api/client";
 import { issuesApi } from "../api/issues";
 import { useToastActions } from "../context/ToastContext";
 import { queryKeys } from "../lib/queryKeys";
@@ -33,9 +34,32 @@ export function isCurrentStageParticipant(
   );
 }
 
+/** Blockers that still stop the issue from going back to work (anything not done). */
+function unresolvedBlockers(blockedBy: IssueRelationIssueSummary[] | null | undefined) {
+  return (blockedBy ?? []).filter((blocker) => blocker.status !== "done");
+}
+
+function blockerLabel(blockers: { identifier?: string | null; title?: string | null }[]): string {
+  return blockers.map((blocker) => blocker.identifier ?? blocker.title ?? "?").join("、");
+}
+
+/**
+ * The server answers a refused move to `in_progress` with the unresolved
+ * blockers in `details`; on a zh-CN request its English message is replaced by
+ * a generic status sentence, so the blockers are the only precise reason left.
+ */
+function refusalBlockers(error: unknown): { identifier?: string | null; title?: string | null }[] {
+  if (!(error instanceof ApiError)) return [];
+  const details = (error.body as { details?: { unresolvedBlockers?: unknown } } | null)?.details;
+  const list = details?.unresolvedBlockers;
+  return Array.isArray(list) ? (list as { identifier?: string | null; title?: string | null }[]) : [];
+}
+
 interface ExecutionStageDecisionActionsProps {
   issueId: string;
   companyId: string;
+  /** The issue's blockers: request changes moves it back to work, which the server refuses while any is open. */
+  blockedBy?: IssueRelationIssueSummary[] | null;
   className?: string;
   /** Fired after the decision lands so the surface can collapse or refetch extras. */
   onResolved?: (decision: ExecutionStageDecision) => void;
@@ -54,6 +78,7 @@ interface ExecutionStageDecisionActionsProps {
 export function ExecutionStageDecisionActions({
   issueId,
   companyId,
+  blockedBy,
   className,
   onResolved,
 }: ExecutionStageDecisionActionsProps) {
@@ -83,9 +108,12 @@ export function ExecutionStageDecisionActions({
       onResolved?.(decision);
     },
     onError: (error) => {
+      const blockers = refusalBlockers(error);
       pushToast({
         title: t("executionstageactions.general.failed"),
-        body: error instanceof Error ? error.message : undefined,
+        body: blockers.length > 0
+          ? t("executionstageactions.general.refusedblocked", { blockers: blockerLabel(blockers) })
+          : error instanceof Error ? error.message : undefined,
         tone: "error",
       });
     },
@@ -93,6 +121,8 @@ export function ExecutionStageDecisionActions({
 
   const pending = decide.isPending;
   const noteEmpty = note.trim().length === 0;
+  const openBlockers = unresolvedBlockers(blockedBy);
+  const blocked = openBlockers.length > 0;
   const runningFor = (decision: ExecutionStageDecision) =>
     pending && decide.variables === decision;
 
@@ -107,14 +137,19 @@ export function ExecutionStageDecisionActions({
         data-testid="execution-stage-note"
         disabled={pending}
       />
+      {blocked ? (
+        <p className="text-xs text-amber-700 dark:text-amber-300" data-testid="execution-stage-blocked-note">
+          {t("executionstageactions.general.blockednote", { blockers: blockerLabel(openBlockers) })}
+        </p>
+      ) : null}
       <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
         <Button
           type="button"
           variant="outline"
           size="sm"
           className="w-full border-amber-400/70 text-amber-900 hover:bg-amber-100 dark:border-amber-500/50 dark:text-amber-100 dark:hover:bg-amber-500/15 sm:w-auto"
-          disabled={pending || noteEmpty}
-          title={noteEmpty ? t("executionstageactions.general.noterequired") : undefined}
+          disabled={pending || noteEmpty || blocked}
+          title={blocked ? undefined : noteEmpty ? t("executionstageactions.general.noterequired") : undefined}
           onClick={() => decide.mutate("request_changes")}
           data-testid="execution-stage-request-changes"
         >

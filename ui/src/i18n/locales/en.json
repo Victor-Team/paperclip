@@ -11484,7 +11484,10 @@
       "approve": "Approve",
       "approved": "Approved — the decision is recorded.",
       "changesrequested": "Changes requested — returned to the assignee.",
-      "failed": "Could not record the decision"
+      "failed": "Could not record the decision",
+      "reviewnow": "Review now",
+      "blockednote": "Still blocked by {{blockers}}: requesting changes needs the blocker resolved first (the platform refuses to send it back to work); approving is not affected.",
+      "refusedblocked": "Still blocked by {{blockers}}, so it cannot go back to work. Resolve or remove the blocker, then request changes."
     }
   },
   "standalonebrowsercontrols": {

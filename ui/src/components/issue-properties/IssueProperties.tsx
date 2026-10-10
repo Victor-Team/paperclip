@@ -2635,7 +2635,7 @@ export function IssueProperties({
         )}
         {/* #63: the human the current stage waits on gets approve / request changes here too. */}
         {isCurrentStageParticipant(issue, currentUserId) && (
-          <ExecutionStageDecisionActions issueId={issue.id} companyId={issue.companyId} className="py-2" />
+          <ExecutionStageDecisionActions issueId={issue.id} companyId={issue.companyId} blockedBy={issue.blockedBy} className="py-2" />
         )}
 
         {showScheduledRetryRow && scheduledRetry?.scheduledRetryReason === "workspace_busy" ? (

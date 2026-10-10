@@ -57,6 +57,7 @@ export const ZH_CN_EXACT: Record<string, string> = {
 
   // --- entity not-found family (top-frequency messages) ---
   "Issue not found": "未找到任务",
+  "Issue is blocked by unresolved blockers": "该任务还有未完成的阻塞任务，不能开始执行",
   "Source issue not found": "未找到来源任务",
   "Agent not found": "未找到智能体",
   "Target agent not found": "未找到目标智能体",

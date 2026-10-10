@@ -10,6 +10,10 @@ describe("translateServerMessage", () => {
 
   it("translates exact catalog entries to zh-CN", () => {
     expect(translateServerMessage("Issue not found", "zh-CN")).toBe("未找到任务");
+    // #63 follow-up: a board "request changes" on a blocked issue is refused with this one
+    expect(translateServerMessage("Issue is blocked by unresolved blockers", "zh-CN")).toBe(
+      "该任务还有未完成的阻塞任务，不能开始执行",
+    );
     expect(translateServerMessage("Agent not found", "zh-CN")).toBe("未找到智能体");
     expect(translateServerMessage("Validation error", "zh-CN")).toBe("校验错误");
     expect(translateServerMessage("Internal server error", "zh-CN")).toBe("服务器内部错误");

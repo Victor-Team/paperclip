@@ -11484,7 +11484,10 @@
       "approve": "通过",
       "approved": "已通过，审批记录已写入",
       "changesrequested": "已要求修改，已退回执行人",
-      "failed": "审批没有提交成功"
+      "failed": "审批没有提交成功",
+      "reviewnow": "去审批",
+      "blockednote": "这张单还被 {{blockers}} 挡着：要求修改要先解除阻塞（退回执行时平台会拒绝）；通过不受影响。",
+      "refusedblocked": "这张单还被 {{blockers}} 挡着，平台不允许退回执行。先处理或解除这条阻塞，再要求修改。"
     }
   },
   "standalonebrowsercontrols": {

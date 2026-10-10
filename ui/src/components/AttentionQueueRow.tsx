@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   AlarmClock,
   CalendarClock,
+  CheckCircle2,
   ChevronDown,
   ChevronUp,
   ExternalLink,
@@ -162,6 +163,12 @@ export const AttentionQueueRow = memo(function AttentionQueueRow({
   // Which rows contribute an action bar. Inline rows carry compact decision
   // verbs; deep-link rows carry an Open button; curtain rows carry Restore.
   const compactActions = !isHidden ? collectCompactActions(item) : [];
+  // #63: a review stage waiting on this viewer gets a "review now" button even
+  // while collapsed — first-time users do not know the verbs sit behind "See more".
+  const { awaits: awaitsViewer } = useStageAwaitsViewer(
+    !isHidden && !inline && item.sourceKind === "review" ? item.subject.id : null,
+    currentUserId,
+  );
   // Who the server will let resolve this interaction. A collapsed row offers
   // Accept/Reject before anything fetches the interaction, so the audience
   // travels with the feed item; null for every non-interaction source and for a
@@ -213,6 +220,20 @@ export const AttentionQueueRow = memo(function AttentionQueueRow({
               audience={audience}
               onOpen={() => onToggleExpand(item)}
             />
+          )}
+
+          {awaitsViewer && !expanded && (
+            <Button
+              type="button"
+              variant="default"
+              size="xs"
+              className={ACTION_BTN}
+              onClick={() => onToggleExpand(item)}
+              data-testid="execution-stage-review-now"
+            >
+              <CheckCircle2 className="h-3 w-3" />
+              {t("executionstageactions.general.reviewnow")}
+            </Button>
           )}
 
           {showOpen && (
@@ -826,6 +847,16 @@ function InlineResolver({
  * (#63). Read the issue once and offer approve / request changes to that
  * participant only; everyone else keeps just the Open button.
  */
+/** Whether the review stage on `issueId` is waiting on this viewer; `null` id skips the read. */
+function useStageAwaitsViewer(issueId: string | null, currentUserId?: string | null) {
+  const { data: issue } = useQuery({
+    queryKey: queryKeys.issues.detail(issueId ?? ""),
+    queryFn: () => issuesApi.get(issueId!),
+    enabled: !!issueId && !!currentUserId,
+  });
+  return { awaits: !!issueId && isCurrentStageParticipant(issue, currentUserId), issue };
+}
+
 function ReviewStageResolver({
   issueId,
   companyId,
@@ -835,12 +866,9 @@ function ReviewStageResolver({
   companyId: string;
   currentUserId?: string | null;
 }) {
-  const { data: issue } = useQuery({
-    queryKey: queryKeys.issues.detail(issueId),
-    queryFn: () => issuesApi.get(issueId),
-  });
-  if (!isCurrentStageParticipant(issue, currentUserId)) return null;
-  return <ExecutionStageDecisionActions issueId={issueId} companyId={companyId} />;
+  const { awaits, issue } = useStageAwaitsViewer(issueId, currentUserId);
+  if (!awaits) return null;
+  return <ExecutionStageDecisionActions issueId={issueId} companyId={companyId} blockedBy={issue?.blockedBy} />;
 }
 
 /** Footer shared by the resolvers that own their verbs: toggle left, verbs right. */
