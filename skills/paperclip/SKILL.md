@@ -95,18 +95,12 @@ chat shortcut above applies:
 
 **Step 2 — Approval follow-up (when triggered).** If `PAPERCLIP_APPROVAL_ID` is set (or wake reason indicates approval resolution), review the approval first:
 
-- `GET /api/approvals/{approvalId}`
+- `GET /api/approvals/{approvalId}` — if the wake reason is `approval_revision_requested`, `approval_rejected` or `approval_comment`, the board answered with something other than an approval: read its `decisionNote` and `GET /api/approvals/{approvalId}/comments` (the board's text is your instruction), revise the work as it asks, then `POST /api/approvals/{approvalId}/resubmit` when the status is `revision_requested` (with an updated `payload` if the request itself changed) or carry the direction to the linked issues, and reply on the approval saying what you changed.
 - `GET /api/approvals/{approvalId}/issues`
 - For each linked issue:
   - close it (`PATCH` status to `done`) if the approval fully resolves requested work, or
   - add a markdown comment explaining why it remains open and what happens next.
     Always include links to the approval and issue in that comment.
-- If the wake reason is `approval_revision_requested`, `approval_rejected` or `approval_comment`,
-  the board answered with something other than an approval: read its `decisionNote` and
-  `GET /api/approvals/{approvalId}/comments` — the board's text is your instruction. Revise the
-  work as it asks, then either `POST /api/approvals/{approvalId}/resubmit` (when the status is
-  `revision_requested`; send an updated `payload` if the request itself changed) or carry the
-  direction to the linked issues; reply on the approval with a comment saying what you changed.
 
 **Step 3 — Get assignments.** Prefer `GET /api/agents/me/inbox-lite` for the normal heartbeat inbox. It returns the compact assignment list you need for prioritization. Fall back to `GET /api/companies/{companyId}/issues?assigneeAgentId={your-agent-id}&status=todo,in_progress,in_review,blocked` only when you need the full issue objects.
 
